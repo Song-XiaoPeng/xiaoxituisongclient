@@ -1,10 +1,6 @@
 <template>
   <div>
-    <Form :model="formItem" :label-width="80">
-      <FormItem label="Input">
-        <Input v-model="formItem.input" placeholder="Enter something..."></Input>
-      </FormItem>
-    </Form>
+    <Button type="primary" @click="open">Primary</Button>
   </div>
 </template>
 
@@ -13,24 +9,13 @@
     name: 'landing-page',
     data () {
       return {
-        formItem: {
-          input: '',
-          select: '',
-          radio: 'male',
-          checkbox: [],
-          switch: true,
-          date: '',
-          time: '',
-          slider: [20, 50],
-          textarea: ''
-        }
       };
     },
     components: {
     },
     methods: {
-      open (link) {
-        this.$electron.shell.openExternal(link);
+      open () {
+        this.$electron.shell.openExternal('https://www.baidu.com');
       }
     }
   };
