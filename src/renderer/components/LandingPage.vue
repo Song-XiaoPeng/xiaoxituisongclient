@@ -15,7 +15,8 @@
     },
     methods: {
       open () {
-        this.$electron.shell.openExternal('https://www.baidu.com');
+        // this.$electron.shell.openExternal('https://www.baidu.com');
+        this.$router.push({ path: 'showChart' });
       }
     }
   };

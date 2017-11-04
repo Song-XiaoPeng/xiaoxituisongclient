@@ -11,6 +11,11 @@ export default new Router({
       component: require('@/components/LandingPage').default
     },
     {
+      path: '/showChart',
+      name: 'showChart',
+      component: require('@/components/showChart').default
+    },
+    {
       path: '*',
       redirect: '/'
     }
