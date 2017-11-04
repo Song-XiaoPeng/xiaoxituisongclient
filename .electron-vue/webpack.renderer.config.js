@@ -101,6 +101,13 @@ let rendererConfig = {
             name: 'fonts/[name]--[folder].[ext]'
           }
         }
+      },
+      {
+        test: /\.less/,
+        use: ExtractTextPlugin.extract({
+          use: ['css-loader?minimize', 'autoprefixer-loader', 'less-loader'],
+          fallback: 'style-loader'
+        })
       }
     ]
   },
@@ -135,7 +142,7 @@ let rendererConfig = {
       '@': path.join(__dirname, '../src/renderer'),
       'vue$': 'vue/dist/vue.esm.js'
     },
-    extensions: ['.js', '.vue', '.json', '.css', '.node']
+    extensions: ['.js', '.vue', '.json', '.css', '.node', '.less']
   },
   target: 'electron-renderer'
 }

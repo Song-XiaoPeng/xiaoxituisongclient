@@ -77,6 +77,13 @@ let webConfig = {
             name: 'fonts/[name].[ext]'
           }
         }
+      },
+      {
+        test: /\.less/,
+        use: ExtractTextPlugin.extract({
+          use: ['css-loader?minimize', 'autoprefixer-loader', 'less-loader'],
+          fallback: 'style-loader'
+        })
       }
     ]
   },
@@ -104,10 +111,9 @@ let webConfig = {
   },
   resolve: {
     alias: {
-      '@': path.join(__dirname, '../src/renderer'),
       'vue$': 'vue/dist/vue.esm.js'
     },
-    extensions: ['.js', '.vue', '.json', '.css']
+    extensions: ['.js', '.vue', '.json', '.css', '.less']
   },
   target: 'web'
 }
