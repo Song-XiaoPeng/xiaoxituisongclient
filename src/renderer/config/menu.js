@@ -1,12 +1,12 @@
 let menuData = [
   {
     menuTitle: '首页',
-    iconName: 'ios-speedometer',
+    iconName: 'ios-home',
     son: {
       sonTitle: '商品管理',
       sonList: [
         {
-          menuTitle: '概况数据',
+          menuTitle: '概况',
           route: 'survey',
           routeBreadcrumb: ['首页', '概况数据'],
           sonMenu: []

@@ -1,4 +1,4 @@
-html,body,#app{
+html,body,#app,.layout,.ivu-row-flex{
     width: 100%;
     height: 100%;
 }
@@ -6,4 +6,40 @@ html,body,#app{
     overflow: hidden;
     font-size: 12px;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif ,'微软雅黑';
+    background: #f2f2f2;
+    min-width: 1167px;
+    min-height: 700px;
+}
+
+/* 导航字体大小 */
+.ivu-menu-submenu-title{
+    font-size: 18px
+}
+.layout{
+
+}
+.layout-menu-left{
+    height: 100%;
+}
+#container{
+    height: 100%;
+    overflow: auto;
+    font-size: 12px;
+}
+
+
+/*清除浮动的影响*/
+.cl:after{
+    display:block;clear:both;content:"";visibility:hidden;height:0
+}
+
+.f-r{
+    float: right;
+}
+.f-l{
+    float: left;
+}
+
+#tab-box .ivu-tabs-nav{
+    float: right;
 }
