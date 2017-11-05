@@ -48,15 +48,6 @@ app.on('activate', () => {
   }
 });
 
-app.on('showChart', function (e, data) {
-  const modalPath = process.env.NODE_ENV === 'development'
-    ? `http://localhost:9080`
-    : `file://${__dirname}/index.html`;
-  let win = new BrowserWindow({ width: 400, height: 320, webPreferences: {webSecurity: false} });
-  win.on('close', function () { win = null; });
-  win.loadURL(modalPath);
-});
-
 /**
  * Auto Updater
  *

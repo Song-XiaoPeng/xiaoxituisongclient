@@ -7,17 +7,29 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'landing-page',
-      component: require('@/components/LandingPage').default
+      name: '/',
+      meta: {
+        title: '登录'
+      },
+      component: require('@/views/login').default
     },
     {
-      path: '/showChart',
-      name: 'showChart',
-      component: require('@/components/showChart').default
-    },
-    {
-      path: '*',
-      redirect: '/'
+      path: '/panel',
+      name: 'panel',
+      meta: {
+        title: '面板'
+      },
+      component: (resolve) => require(['@/views/panel'], resolve),
+      children: [
+        {
+          path: 'survey',
+          name: 'survey',
+          meta: {
+            title: '概况'
+          },
+          component: (resolve) => require(['@/views/survey/index'], resolve)
+        }
+      ]
     }
   ]
 });
