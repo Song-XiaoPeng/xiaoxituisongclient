@@ -6,7 +6,7 @@
   <div class="layout">
     <Row type="flex">
       <Col span="4" class="layout-menu-left">
-        <Menu :active-name="activeName" theme="dark" width="auto" :open-names=openNames>
+        <Menu :active-name="activeName" theme="dark" width="auto" :open-names=openNames @on-select="selectMenu">
           <div class="layout-logo-left"></div>
           
           <Submenu :name="key"  v-for="(item, key) in menuList" :key="key">
@@ -85,6 +85,22 @@
           }
 
           this.menuList.push(menu[i]);
+        }
+      },
+      selectMenu (name) {
+        let obj = name.split('-');
+        let select1 = parseInt(obj[0]);
+        let select2 = parseInt(obj[1]);
+
+        for (let i = 0; i < menu.length; i++) {
+          if (i === select1) {
+            for (let c = 0; c < menu[i].son.sonList.length; c++) {
+              if (c === select2) {
+                this.$router.push({name: menu[i].son.sonList[c].route});
+                return;
+              }
+            }
+          }
         }
       }
     },
