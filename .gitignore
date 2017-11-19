@@ -12,3 +12,4 @@ thumbs.db
 .idea
 appveyor.yml
 .travis.yml
+package-lock.json
