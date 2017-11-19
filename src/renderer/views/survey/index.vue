@@ -162,8 +162,8 @@
 </template>
 
 <script>
-//  import IEcharts from 'vue-echarts-v3/src/full.vue';
-//  import 'echarts/lib/chart/pie';
+  //  import IEcharts from 'vue-echarts-v3/src/full.vue';
+  //  import 'echarts/lib/chart/pie';
   export default {
     data () {
       return {
