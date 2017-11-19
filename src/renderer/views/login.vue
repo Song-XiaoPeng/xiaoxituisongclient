@@ -4,7 +4,7 @@
     width: 100%;
   }
   .bg{
-      background: url("../../../static/images/timg.jpg");
+      background: url("~@/assets/images/timg.jpg");
       background-repeat: no-repeat;
       background-size: 100%;
   }

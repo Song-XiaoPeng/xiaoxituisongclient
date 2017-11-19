@@ -1,7 +1,0 @@
-#adverts{margin-bottom:10px;clear:both;}
-#adverts .well{width:999px;height:110px;margin:0 auto;padding:0 20px;background-color:#fff;}
-#adverts img{width:472px;height:90px;cursor:pointer;object-fit: cover;}
-#adverts .left{float:left;padding:0;}
-#adverts .left img{width:461px;height:90px;}
-#adverts .right{float:right;padding:0;margin-left:0;}
-#adverts .right img{width:533px;height:90px;margin-left:3px;}
