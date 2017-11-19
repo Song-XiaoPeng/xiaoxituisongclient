@@ -154,7 +154,6 @@
           </Select>
         </div>
         <div class="chart" >
-          <vue-chart type="pie" :data="financeDatay"></vue-chart>
           <!--<IEcharts :option="pie1" :resizable="true" :loading="loading"  @ready="onReady" @click="onClick"></IEcharts>-->
         </div>
       </div>
@@ -163,11 +162,7 @@
 </template>
 
 <script>
-  //  import IEcharts from 'vue-echarts-v3/src/full.vue';
-  //  import 'echarts/lib/chart/pie';
-  import { Bar } from 'vue-chartjs';
   export default {
-    extends: Bar,
     data () {
       return {
         columns1: [
@@ -284,8 +279,6 @@
       };
     },
     components: {
-      // IEcharts
-      Bar
     },
     watch: {
     },
