@@ -41,11 +41,10 @@
 <template>
   <div class="bg">
      <div class="videoEl">
-       <video  autoplay loop>
-         <source src="../../../static/mp4/Composition2.mp4" type="video/mp4">
-         <source src="../../../static/mp4/Composition2.webm" type="video/webm">
-         您的浏览器不支持Video标签。
-       </video>
+        <video  autoplay loop>
+          <source :src="video" type="video/mp4">
+          您的浏览器不支持Video标签。
+        </video>
      </div>
      <div class="form-box">
         <div class="form" id="login">
@@ -68,12 +67,14 @@
 
 <script>
   import md5 from 'js-md5';
+  
   export default {
     name: 'login',
     data () {
       return {
         password: '',
-        name: ''
+        name: '',
+        video: require('../../../src/renderer/assets/mp4/Composition2.mp4')
       };
     },
     components: {
