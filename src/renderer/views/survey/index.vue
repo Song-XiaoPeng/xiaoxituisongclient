@@ -153,7 +153,8 @@
             <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
         </div>
-        <div class="chart" >
+        <div class="chart">
+          <vue-chart type="bar" :data="chartData"></vue-chart>
           <!--<IEcharts :option="pie1" :resizable="true" :loading="loading"  @ready="onReady" @click="onClick"></IEcharts>-->
         </div>
       </div>
@@ -162,6 +163,8 @@
 </template>
 
 <script>
+  import VueChart from 'vue-chart-js';
+
   export default {
     data () {
       return {
@@ -275,10 +278,24 @@
               data: [55, 33, 99, 999]
             }
           ]
+        },
+        chartData: {
+          labels: ['Item 1', 'Item 2', 'Item 3'],
+          datasets: [
+            {
+              label: 'Component 1',
+              data: [10, 20, 30]
+            },
+            {
+              label: 'Component 2',
+              data: [20, 30, 40]
+            }
+          ]
         }
       };
     },
     components: {
+      VueChart
     },
     watch: {
     },
