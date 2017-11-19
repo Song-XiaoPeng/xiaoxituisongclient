@@ -18,71 +18,21 @@ let menuData = [
     sonMenu: []
   },
   {
-    menuTitle: '商品',
-    iconName: 'bag',
+    menuTitle: '客服接待',
+    iconName: 'chatbubbles',
     son: {
-      sonTitle: '商品管理',
+      sonTitle: '客服',
       sonList: [
         {
-          menuTitle: '服务管理',
-          route: 'goodsServeManage',
-          routeBreadcrumb: ['服务管理', '服务管理首页'],
+          menuTitle: '客服',
+          route: 'ServeIndex',
+          routeBreadcrumb: [],
           sonMenu: []
         },
         {
-          menuTitle: '拼团管理',
-          route: 'groupBooking',
-          routeBreadcrumb: ['拼团管理', '拼团列表'],
-          sonMenu: [
-            {
-              menuTitle: '发布拼团活动',
-              route: 'issueGroupBooking',
-              routeBreadcrumb: ['卡项管理', '卡项管理首页', '发布拼团活动'],
-              sonMenu: []
-            }
-          ]
-        },
-        {
-          menuTitle: '抢购管理',
-          route: 'seckill',
-          routeBreadcrumb: ['抢购管理', '抢购列表'],
-          sonMenu: [
-            {
-              menuTitle: '发布秒杀活动',
-              route: 'createSeckill',
-              routeBreadcrumb: ['卡项管理', '卡项管理首页', '发布秒杀活动'],
-              sonMenu: []
-            }
-          ]
-        }
-      ]
-    },
-    route: [],
-    routeBreadcrumb: [],
-    sonMenu: []
-  },
-  {
-    menuTitle: '订单',
-    iconName: 'ios-cart',
-    son: {
-      sonTitle: '订单管理',
-      sonList: [
-        {
-          menuTitle: '普通订单',
-          route: 'orderServer',
-          routeBreadcrumb: ['订单', '普通订单'],
-          sonMenu: []
-        },
-        {
-          menuTitle: '拼团订单',
-          route: 'orderCard',
-          routeBreadcrumb: ['订单', '拼团订单'],
-          sonMenu: []
-        },
-        {
-          menuTitle: '秒杀订单',
-          route: 'seckillOrder',
-          routeBreadcrumb: ['订单', '秒杀订单'],
+          menuTitle: '添加客服人员',
+          route: 'staff',
+          routeBreadcrumb: [],
           sonMenu: []
         }
       ]
@@ -92,27 +42,129 @@ let menuData = [
     sonMenu: []
   },
   {
-    menuTitle: '设置',
-    iconName: 'gear-b',
+    menuTitle: '客户管理',
+    iconName: 'android-contacts',
     son: {
-      sonTitle: '系统设置',
+      sonTitle: '',
       sonList: [
         {
-          menuTitle: '店铺信息',
-          route: 'settingStore',
+          menuTitle: '管理',
+          route: 'clientCrm',
+          routeBreadcrumb: ['管理', '客户列表'],
+          sonMenu: []
+        }
+      ]
+    },
+    route: [],
+    routeBreadcrumb: [],
+    sonMenu: []
+  },
+  {
+    menuTitle: '跟踪提醒',
+    iconName: 'android-alarm-clock',
+    son: {
+      sonTitle: '跟踪提醒',
+      sonList: [
+        {
+          menuTitle: '提醒列表',
+          route: 'remind',
           routeBreadcrumb: ['设置', '店铺信息'],
           sonMenu: []
-        },
+        }
+      ]
+    },
+    route: [],
+    routeBreadcrumb: [],
+    sonMenu: []
+  },
+  {
+    menuTitle: '监控',
+    iconName: 'ios-videocam',
+    son: {
+      sonTitle: '监控',
+      sonList: [
         {
-          menuTitle: '员工管理',
-          route: 'settingStaff',
-          routeBreadcrumb: ['设置', '员工管理'],
+          menuTitle: '监控聊天',
+          route: 'monitoring',
+          routeBreadcrumb: [],
+          sonMenu: []
+        }
+      ]
+    },
+    route: [],
+    routeBreadcrumb: [],
+    sonMenu: []
+  },
+  {
+    menuTitle: '数据分析',
+    iconName: 'stats-bars',
+    son: {
+      sonTitle: '访问分析',
+      sonList: [
+        {
+          menuTitle: '访问分析',
+          route: 'visit',
+          routeBreadcrumb: [],
           sonMenu: []
         },
         {
-          menuTitle: '密码修改',
-          route: 'settingPassword',
-          routeBreadcrumb: ['设置', '密码修改'],
+          menuTitle: '粉丝分析',
+          route: 'fans',
+          routeBreadcrumb: [],
+          sonMenu: []
+        },
+        {
+          menuTitle: '工作量分析',
+          route: 'workload',
+          routeBreadcrumb: [],
+          sonMenu: []
+        },
+        {
+          menuTitle: '质量分析',
+          route: 'quality',
+          routeBreadcrumb: [],
+          sonMenu: []
+        }
+      ]
+    },
+    route: [],
+    routeBreadcrumb: [],
+    sonMenu: []
+  },
+  {
+    menuTitle: '微信营销平台',
+    iconName: 'chatbubbles',
+    son: {
+      sonTitle: '授权接入',
+      sonList: [
+        {
+          menuTitle: '授权接入',
+          route: 'Jurisdiction',
+          routeBreadcrumb: [],
+          sonMenu: []
+        },
+        {
+          menuTitle: '增强功能',
+          route: 'enhance',
+          routeBreadcrumb: [],
+          sonMenu: []
+        },
+        {
+          menuTitle: '带参二维码',
+          route: 'yard',
+          routeBreadcrumb: [],
+          sonMenu: []
+        },
+        {
+          menuTitle: '群发',
+          route: 'Mass',
+          routeBreadcrumb: [],
+          sonMenu: []
+        },
+        {
+          menuTitle: '同步粉丝',
+          route: 'wxfans',
+          routeBreadcrumb: [],
           sonMenu: []
         }
       ]

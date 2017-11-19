@@ -7,7 +7,7 @@ html,body,#app,.layout,.ivu-row-flex{
     font-size: 12px;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif ,'微软雅黑';
     background: #f2f2f2;
-    min-width: 1167px;
+    min-width: 1300px;
     min-height: 700px;
 }
 
@@ -28,6 +28,10 @@ html,body,#app,.layout,.ivu-row-flex{
 }
 
 
+#login .ivu-form .ivu-form-item-label{
+    color: #fff;
+}
+
 /*清除浮动的影响*/
 .cl:after{
     display:block;clear:both;content:"";visibility:hidden;height:0
@@ -42,4 +46,23 @@ html,body,#app,.layout,.ivu-row-flex{
 
 #tab-box .ivu-tabs-nav{
     float: right;
+}
+
+#index{
+    background: #ffffff;
+}
+
+
+.demo-spin-icon-load{
+    animation: ani-demo-spin 1s linear infinite;
+}
+@keyframes ani-demo-spin {
+    from { transform: rotate(0deg);}
+    50%  { transform: rotate(180deg);}
+    to   { transform: rotate(360deg);}
+}
+.demo-spin-col{
+    height: 100px;
+    position: relative;
+    border: 1px solid #eee;
 }

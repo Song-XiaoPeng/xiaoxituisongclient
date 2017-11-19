@@ -14,7 +14,7 @@ let mainWindow;
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`;
-
+console.log(winURL, 11231);
 function createWindow () {
   /**
    * Initial window options
@@ -23,10 +23,11 @@ function createWindow () {
     height: 900,
     useContentSize: true,
     resizable: true,
-    width: 1200,
+    width: 1300,
     autoHideMenuBar: true,
     minWidth: 1167,
-    minHeight: 700
+    minHeight: 700,
+    webPreferences: {webSecurity: false}
   });
 
   mainWindow.loadURL(winURL);
@@ -35,7 +36,6 @@ function createWindow () {
     mainWindow = null;
   });
 }
-
 app.on('ready', createWindow);
 
 app.on('window-all-closed', () => {
@@ -43,13 +43,26 @@ app.on('window-all-closed', () => {
     app.quit();
   }
 });
-
+// app.on('showChart', function () {
+//   const modalPath = process.env.NODE_ENV === 'development' ? 'http://localhost:9080/#/enhance/winEdit' : `file://${__dirname}/index.html#enhance/winEdit`;
+//   console.log(modalPath);
+//   let win = new BrowserWindow({
+//     width: 400,
+//     height: 320,
+//     webPreferences: {
+//       webSecurity: false
+//     }
+//   });
+//   win.on('close', function () {
+//     win = null;
+//   });
+//   win.loadURL(modalPath);
+// });
 app.on('activate', () => {
   if (mainWindow === null) {
     createWindow();
   }
 });
-
 /**
  * Auto Updater
  *

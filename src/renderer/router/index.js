@@ -28,6 +28,158 @@ export default new Router({
             title: '概况'
           },
           component: (resolve) => require(['@/views/survey/index'], resolve)
+        },
+        {
+          path: 'CustomerService',
+          name: 'ServeIndex',
+          meta: {
+            title: '概况'
+          },
+          component: (resolve) => require(['@/views/CustomerService/index'], resolve)
+        },
+        {
+          path: 'clientCrm',
+          name: 'clientCrm',
+          meta: {
+            title: '客户管理'
+          },
+          component: (resolve) => require(['@/views/clientCrm/index'], resolve)
+        },
+        {
+          path: 'remind',
+          name: 'remind',
+          meta: {
+            title: '客户管理'
+          },
+          component: (resolve) => require(['@/views/remind/index'], resolve)
+        },
+        {
+          path: 'monitoring',
+          name: 'monitoring',
+          meta: {
+            title: ''
+          },
+          component: (resolve) => require(['@/views/monitoring/index'], resolve)
+        },
+        {
+          path: 'analyze',
+          name: 'visit',
+          meta: {
+            title: ''
+          },
+          component: (resolve) => require(['@/views/analyze/visit'], resolve)
+        },
+        {
+          path: 'fans',
+          name: 'fans',
+          meta: {
+            title: ''
+          },
+          component: (resolve) => require(['@/views/analyze/fans'], resolve)
+        },
+        {
+          path: 'workload',
+          name: 'workload',
+          meta: {
+            title: '工作量'
+          },
+          component: (resolve) => require(['@/views/analyze/workload'], resolve)
+        },
+        {
+          path: 'quality',
+          name: 'quality',
+          meta: {
+            title: '质量分析'
+          },
+          component: (resolve) => require(['@/views/analyze/quality'], resolve)
+        },
+        {
+          path: 'Jurisdiction',
+          name: 'Jurisdiction',
+          meta: {
+            title: '授权接入'
+          },
+          component: (resolve) => require(['@/views/weixin/Jurisdiction'], resolve)
+        },
+        {
+          path: 'enhance',
+          name: 'enhance',
+          meta: {
+            title: '增强功能'
+          },
+          component: (resolve) => require(['@/views/weixin/enhance'], resolve)
+        },
+        {
+          path: 'addMenu',
+          name: 'addMenu',
+          meta: {
+            title: '添加默认菜单'
+          },
+          component: (resolve) => require(['@/views/weixin/addMenu'], resolve)
+        },
+        {
+          path: 'revertEdit',
+          name: 'revertEdit',
+          meta: {
+            title: '添加回复'
+          },
+          component: (resolve) => require(['@/views/weixin/enhance/revertEdit'], resolve)
+        },
+        {
+          path: 'addMaterial',
+          name: 'addMaterial',
+          meta: {
+            title: '添加素材'
+          },
+          component: (resolve) => require(['@/views/weixin/enhance/revertEdit'], resolve)
+        },
+        {
+          path: 'yard',
+          name: 'yard',
+          meta: {
+            title: '带参二维码'
+          },
+          component: (resolve) => require(['@/views/weixin/yard'], resolve)
+        },
+        {
+          path: 'Mass',
+          name: 'Mass',
+          meta: {
+            title: '群发'
+          },
+          component: (resolve) => require(['@/views/weixin/Mass'], resolve)
+        },
+        {
+          path: 'addMass',
+          name: 'addMass',
+          meta: {
+            title: '添加发送条目'
+          },
+          component: (resolve) => require(['@/views/weixin/addMass'], resolve)
+        },
+        {
+          path: 'staff',
+          name: 'staff',
+          meta: {
+            title: '添加客服'
+          },
+          component: (resolve) => require(['@/views/CustomerService/staff'], resolve)
+        },
+        {
+          path: 'winEdit',
+          name: 'winEdit',
+          meta: {
+            title: '编辑器'
+          },
+          component: (resolve) => require(['@/views/weixin/enhance/winEdit'], resolve)
+        },
+        {
+          path: 'wxfans',
+          name: 'wxfans',
+          meta: {
+            title: '同步粉丝'
+          },
+          component: (resolve) => require(['@/views/weixin/fans'], resolve)
         }
       ]
     }

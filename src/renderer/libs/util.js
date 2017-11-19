@@ -1,9 +1,11 @@
 import axios from 'axios';
-import env from '../config/env';
+// import env from '../config/env';
 
 let util = {};
 
-util.ajaxUrl = env === 'development' ? 'http://192.168.1.69:81/api.php' : env === 'production' ? 'http://wxyx.lyfz.net/api.php' : 'http://wxyx.lyfz.net/api.php';
+// util.ajaxUrl = env === 'development' ? 'http://192.168.1.69:91' : env === 'production' ? 'http://wxyx.lyfz.net/api.php' : 'http://wxyx.lyfz.net/api.php';
+// util.ajaxUrl = 'http://192.168.1.69:91';
+util.ajaxUrl = 'http://kf.lyfz.net';
 
 util.ajax = axios.create({
   baseURL: util.ajaxUrl,
@@ -12,7 +14,7 @@ util.ajax = axios.create({
 
 // axios请求拦截器
 util.ajax.interceptors.request.use(function (config) {
-  config.headers.token = JSON.parse(localStorage.getItem('userInfo')) === null ? null : JSON.parse(localStorage.getItem('userInfo')).token;
+  config.headers.token = JSON.parse(sessionStorage.getItem('userInfo')) === null ? null : JSON.parse(sessionStorage.getItem('userInfo')).token;
   return config;
 }, function (error) {
   return error;

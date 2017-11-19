@@ -6,7 +6,7 @@
   <div class="layout">
     <Row type="flex">
       <Col span="4" class="layout-menu-left">
-        <Menu :active-name="activeName" theme="dark" width="auto" :open-names=openNames @on-select="selectMenu">
+        <Menu :active-name="activeName" theme="dark" width="auto" :open-names=openNames @on-select="selectMenu" accordion>
           <div class="layout-logo-left"></div>
           
           <Submenu :name="key"  v-for="(item, key) in menuList" :key="key">
@@ -73,17 +73,19 @@
     methods: {
       // 注销事件
       signOut () {
+        sessionStorage.clear('userInfo');
         this.$router.push({name: '/'});
       },
       routeSwitchMenu (name) {
+        this.menuList = [];
         for (let i = 0; i < menu.length; i++) {
           for (let c = 0; c < menu[i].son.sonList.length; c++) {
             if (menu[i].son.sonList[c].route === name) {
               this.activeName = i + '-' + c;
               this.openNames = [i];
+              break;
             }
           }
-
           this.menuList.push(menu[i]);
         }
       },
