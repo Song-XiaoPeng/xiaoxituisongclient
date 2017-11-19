@@ -35,7 +35,7 @@
                 </Select>
             </div>
             <div style="height: 450px">
-                <IEcharts :option="pie1" :resizable="true" :loading="loading"  @ready="onReady" @click="onClick"></IEcharts>
+                <!--<IEcharts :option="pie1" :resizable="true" :loading="loading"  @ready="onReady" @click="onClick"></IEcharts>-->
             </div>
         </Card>
         <Card style="width:100%;margin-top: 10px">
@@ -47,7 +47,7 @@
                 <Button type="dashed">添加时间点</Button>
             </div>
             <div style="height: 450px">
-                <IEcharts :option="pie2" :resizable="true" :loading="loading1"  @ready="onReady" @click="onClick"></IEcharts>
+                <!--<IEcharts :option="pie2" :resizable="true" :loading="loading1"  @ready="onReady" @click="onClick"></IEcharts>-->
             </div>
         </Card>
         <Card style="width:100%;margin-top: 10px">
@@ -61,8 +61,8 @@
     </div>
 </template>
 <script>
-  import IEcharts from 'vue-echarts-v3/src/full.vue';
-  import 'echarts/lib/chart/pie';
+//  import IEcharts from 'vue-echarts-v3/src/full.vue';
+//  import 'echarts/lib/chart/pie';
   export default {
     data () {
       return {
@@ -253,7 +253,7 @@
       };
     },
     components: {
-      IEcharts
+      // IEcharts
     },
     mounted () {
     },

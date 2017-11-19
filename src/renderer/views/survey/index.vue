@@ -154,7 +154,7 @@
           </Select>
         </div>
         <div class="chart" >
-          <IEcharts :option="pie1" :resizable="true" :loading="loading"  @ready="onReady" @click="onClick"></IEcharts>
+          <!--<IEcharts :option="pie1" :resizable="true" :loading="loading"  @ready="onReady" @click="onClick"></IEcharts>-->
         </div>
       </div>
     </Card>
@@ -162,8 +162,8 @@
 </template>
 
 <script>
-  import IEcharts from 'vue-echarts-v3/src/full.vue';
-  import 'echarts/lib/chart/pie';
+//  import IEcharts from 'vue-echarts-v3/src/full.vue';
+//  import 'echarts/lib/chart/pie';
   export default {
     data () {
       return {
@@ -271,7 +271,7 @@
       };
     },
     components: {
-      IEcharts
+      // IEcharts
     },
     watch: {
     },
