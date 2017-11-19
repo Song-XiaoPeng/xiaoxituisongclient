@@ -14,7 +14,7 @@
                 height: 80px;
                 width: 100%;
                 overflow: hidden;
-                background-image: url("../../../../static/images/top.jpg");
+                background-image: url("~@/assets/images/top.jpg");
                 background-repeat: no-repeat;
                 background-size: 100%;
                 text-align: center;
@@ -56,7 +56,7 @@
                 .jianpan{
                     width: 60px;
                     height: 60px;
-                    background-image: url("../../../../static/images/jianpan.jpg");
+                    background-image: url("~@/assets/images/jianpan.jpg");
                     background-repeat: no-repeat;
                     background-size: 100%;
                 }
