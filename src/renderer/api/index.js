@@ -271,4 +271,101 @@ ajax.addWxGroup = (obj) => {
     console.log(error);
   });
 };
+// 移动分组
+ajax.moveUserWxGroup = (obj) => {
+  util.ajax.post('/api/v1/we_chat/WxOperation/moveUserWxGroup', obj.data).then(function (response) {
+    if (response.data.meta.code === 200) {
+      obj.success(response.data);
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    console.log(error);
+  });
+};
+// 获取同步任务列表
+ajax.getTaskList = (obj) => {
+  util.ajax.post('/api/v1/we_chat/WxOperation/getTaskList', obj.data).then(function (response) {
+    if (response.data.meta.code === 200) {
+      obj.success(response.data);
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    console.log(error);
+  });
+};
+// 创建同步任务
+ajax.syncWxUser = (obj) => {
+  util.ajax.post('/api/v1/we_chat/WxOperation/syncWxUser', obj.data).then(function (response) {
+    if (response.data.meta.code === 200) {
+      obj.success(response.data);
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    console.log(error);
+  });
+};
+// 删除粉丝分组
+ajax.delWxGroup = (obj) => {
+  util.ajax.post('/api/v1/we_chat/WxOperation/delWxGroup', obj.data).then(function (response) {
+    if (response.data.meta.code === 200) {
+      obj.success(response.data);
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    console.log(error);
+  });
+};
+// 添加群发
+ajax.addMassNews = (obj) => {
+  util.ajax.post('/api/v1/we_chat/WxOperation/addMassNews', obj.data).then(function (response) {
+    if (response.data.meta.code === 200) {
+      obj.success(response.data);
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    console.log(error);
+  });
+};
+// 获取群发列表
+ajax.getMassNewsList = (obj) => {
+  util.ajax.post('/api/v1/we_chat/WxOperation/getMassNewsList', obj.data).then(function (response) {
+    if (response.data.meta.code === 200) {
+      obj.success(response.data);
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    console.log(error);
+  });
+};
+// 删除群发条目
+ajax.delMassNews = (obj) => {
+  util.ajax.post('/api/v1/we_chat/WxOperation/delMassNews', obj.data).then(function (response) {
+    if (response.data.meta.code === 200) {
+      obj.success(response.data);
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    console.log(error);
+  });
+};
+
+// 获取增长粉丝 / 增长 / 取消关注
+ajax.getUserSummary = (obj) => {
+  util.ajax.post('/api/v1/we_chat/WxOperation/getUserSummary', obj.data).then(function (response) {
+    if (response.data.meta.code === 200) {
+      obj.success(response.data);
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    console.log(error);
+  });
+};
 export default ajax;

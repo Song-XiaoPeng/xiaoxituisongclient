@@ -9,8 +9,9 @@
 <template>
     <div id="index">
         <div class="top-box">
-            <Select v-model="model1" style="width:200px">
-                <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            <span>当前公共号：</span>
+            <Select v-model="appid" style="width:200px" @on-change="selAppidFun">
+                <Option v-for="item in cityList" :value="item.appid" :key="item.appid">{{ item.nick_name }}</Option>
             </Select>
             <Button type="info" class="f-r" @click="addMassFun" >
                 新建发送条目
@@ -18,68 +19,52 @@
         </div>
         <div class="tab">
             <Table border :columns="columns7" :data="data6"></Table>
+            <div style="text-align: center;padding: 10px">
+                <Page :total="pageData1.count" :page-size="pageData1.rows_num"  @on-change="pageFun1"></Page>
+            </div>
         </div>
+
+
+        <!-- 请求状态 -->
+        <Spin fix v-if="is_Loading">
+            <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
+            <div>请求中....</div>
+        </Spin>
+        <!-- end请求状态 -->
     </div>
 </template>
 <script>
   export default {
     data () {
       return {
-        cityList: [
-          {
-            value: 'New York',
-            label: 'New York'
-          },
-          {
-            value: 'London',
-            label: 'London'
-          },
-          {
-            value: 'Sydney',
-            label: 'Sydney'
-          },
-          {
-            value: 'Ottawa',
-            label: 'Ottawa'
-          },
-          {
-            value: 'Paris',
-            label: 'Paris'
-          },
-          {
-            value: 'Canberra',
-            label: 'Canberra'
-          }
-        ],
+        cityList: [],
         model1: '',
         columns7: [
           {
+            title: '消息类型',
+            render: (h, p) => {
+              return h('span', p.row.send_message_type === 1 ? '文字' : p.row.send_message_type === 2 ? '图文' : '图片');
+            }
+          },
+          {
+            title: '发送公共号名',
+            key: 'app_name'
+          },
+          {
             title: '发送类型',
-            key: 'age'
+            render: (h, p) => {
+              return h('span', p.row.send_type === 1 ? '立即发送' : '定时发送 ：' + p.row.send_time);
+            }
           },
           {
-            title: '群发类别',
-            key: 'address'
-          },
-          {
-            title: '群发条件',
-            key: 'address'
-          },
-          {
-            title: '接受粉丝人数',
-            key: 'address'
-          },
-          {
-            title: '群发内容',
-            key: 'address'
+            title: '接受类型',
+            render: (h, p) => {
+              return h('span', p.row.type === 1 ? '全部' : p.row.type === 2 ? '按分组' : '指定用户');
+            }
           },
           {
             title: '创建时间',
-            key: 'address'
-          },
-          {
-            title: '发送时间',
-            key: 'address'
+            key: 'add_time'
           },
           {
             title: '操作',
@@ -90,53 +75,27 @@
               return h('div', [
                 h('Button', {
                   props: {
-                    type: 'primary',
-                    size: 'small'
-                  },
-                  style: {
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                    }
-                  }
-                }, '停止'),
-                h('Button', {
-                  props: {
                     type: 'error',
                     size: 'small'
                   },
                   on: {
                     click: () => {
+                      this.delMassNews(params.row.news_id, params.index);
                     }
                   }
-                }, '详情')
+                }, '删除')
               ]);
             }
           }
         ],
-        data6: [
-          {
-            name: 'John Brown',
-            age: 18,
-            address: 'New York No. 1 Lake Park'
-          },
-          {
-            name: 'Jim Green',
-            age: 24,
-            address: 'London No. 1 Lake Park'
-          },
-          {
-            name: 'Joe Black',
-            age: 30,
-            address: 'Sydney No. 1 Lake Park'
-          },
-          {
-            name: 'Jon Snow',
-            age: 26,
-            address: 'Ottawa No. 2 Lake Park'
-          }
-        ]
+        data6: [],
+        appid: '',
+        pageData1: {
+          count: 0,
+          rows_num: 0,
+          page: 1
+        },
+        is_Loading: false
       };
     },
     mounted () {
@@ -146,9 +105,73 @@
     methods: {
       addMassFun () {
         this.$router.push({
-          name: 'addMass'
+          name: 'addMass',
+          query: {
+            appid: this.appid
+          }
         });
+      },
+      // 获取发送数据列表
+      getMassListFun () {
+        this.ajax.getMassNewsList({
+          data: {
+            appid: this.appid,
+            page: this.pageData1.page
+          },
+          success: (res) => {
+            this.is_Loading = false;
+            this.data6 = res.body.data_list;
+            this.pageData1.count = parseInt(res.body.page_data.count);
+            this.pageData1.rows_num = res.body.page_data.rows_num;
+          },
+          error: (res) => {
+            this.is_Loading = false;
+            this.$Message.warning(res.meta.message);
+          }
+        });
+      },
+      // 删除群发条目
+      delMassNews (id, i) {
+        this.is_Loading = true;
+        this.ajax.delMassNews({
+          data: {
+            appid: this.appid,
+            news_id: id
+          },
+          success: (res) => {
+            this.is_Loading = false;
+            this.$Message.success('操作成功');
+            this.data6.splice(i, 1);
+          },
+          error: (res) => {
+            this.is_Loading = false;
+            this.$Message.warning(res.meta.message);
+          }
+        });
+      },
+      // 分页
+      pageFun1 (v) {
+        this.pageData1.page = v;
+        this.getMassListFun();
+      },
+      // 公共号appid 改变方法
+      selAppidFun () {
+        this.getMassListFun();
       }
+    },
+    created () {
+      this.ajax.getWxAuthList({
+        data: {},
+        success: (res) => {
+          this.cityList = res.body;
+          this.appid = res.body[0].appid;
+          this.getMassListFun();
+        },
+        error: (res) => {
+          this.is_Loading = false;
+          this.$Message.warning(res.meta.message);
+        }
+      });
     }
   };
 </script>

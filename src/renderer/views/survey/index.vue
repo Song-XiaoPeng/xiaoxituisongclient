@@ -154,7 +154,6 @@
           </Select>
         </div>
         <div class="chart">
-          <vue-chart type="bar" :data="chartData"></vue-chart>
           <!--<IEcharts :option="pie1" :resizable="true" :loading="loading"  @ready="onReady" @click="onClick"></IEcharts>-->
         </div>
       </div>
@@ -163,8 +162,6 @@
 </template>
 
 <script>
-  import VueChart from 'vue-chart-js';
-
   export default {
     data () {
       return {
@@ -196,63 +193,6 @@
             date: '2016-10-04'
           }
         ],
-        pie1: {
-          title: {
-            text: '咨询绩效'
-          },
-          tooltip: {
-            trigger: 'axis'
-          },
-          legend: {
-            data: ['咨询总量', '有效咨询', '无效咨询', '资讯遗漏', '采集客咨']
-          },
-          grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
-            containLabel: true
-          },
-          xAxis: {
-            type: 'category',
-            boundaryGap: false,
-            data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
-          },
-          yAxis: {
-            type: 'value'
-          },
-          series: [
-            {
-              name: '咨询总量',
-              type: 'line',
-              stack: '总量',
-              data: [120, 132, 101, 134, 90, 230, 210]
-            },
-            {
-              name: '有效咨询',
-              type: 'line',
-              stack: '总量',
-              data: [320, 332, 301, 334, 390, 330, 320]
-            },
-            {
-              name: '无效咨询',
-              type: 'line',
-              stack: '总量',
-              data: [20, 932, 901, 934, 1290, 1330, 120]
-            },
-            {
-              name: '资讯遗漏',
-              type: 'line',
-              stack: '总量',
-              data: [820, 932, 901, 94, 1290, 1330, 1320]
-            },
-            {
-              name: '采集客咨',
-              type: 'line',
-              stack: '总量',
-              data: [820, 32, 901, 934, 190, 1330, 1320]
-            }
-          ]
-        },
         loading: false,
         cityList: [
           {value: 'New York', label: 'New York'
@@ -268,34 +208,10 @@
           {value: 'Canberra', label: 'Canberra'
           }
         ],
-        model1: '',
-        financeDatay: {
-          labels: ['dwad', 'dwada', 'dwad', 'dwad'],
-          datasets: [
-            {
-              label: 'News reports',
-              backgroundColor: [],
-              data: [55, 33, 99, 999]
-            }
-          ]
-        },
-        chartData: {
-          labels: ['Item 1', 'Item 2', 'Item 3'],
-          datasets: [
-            {
-              label: 'Component 1',
-              data: [10, 20, 30]
-            },
-            {
-              label: 'Component 2',
-              data: [20, 30, 40]
-            }
-          ]
-        }
+        model1: ''
       };
     },
     components: {
-      VueChart
     },
     watch: {
     },

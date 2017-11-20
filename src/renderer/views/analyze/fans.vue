@@ -15,27 +15,88 @@
        }
 
    }
+   .count-box{
+       height: 100px;
+       padding: 10px 0;
+       overflow: hidden;
+       .count-card{
+           height: 70px;
+           width: 200px;
+           margin: 5px;
+           float: left;
+           box-shadow: 3px 3px 5px 1px #999;
+           border-radius: 6px;
+           box-sizing: border-box;
+           padding: 10px 0;
+           background-color: #3399cc;
+           >div{
+               display: inline-block;
+               width: 50%;
+               height: 100%;
+               float: left;
+               line-height: 50px;
+               text-align: center;
+               color: #EAEAEA;
+           }
+           >div:first-child{
+               border-right: 1px #ffffff solid;
+           }
+       }
+       .ivu-tabs-nav{
+           float: right;
+       }
+   }
+    #myCanvas{
+        height:  100% !important;
+        width: 100% !important;
+    }
 </style>
 <template>
     <div id="index">
         <Card style="width:100%">
             <p slot="title" class="title">
                 <span>访问总览</span>
-                <span class="btn" style="border: 0">利亚方舟</span>
-                <span class="btn">点赞科技</span>
-                <span class="btn">本月</span>
-                <span class="btn">本周</span>
-                <span class="btn">昨日</span>
-                <span class="btn" >今日</span>
             </p>
-            <div>
-                <span>来源：</span>
-                <Select v-model="model1" style="width:200px">
-                    <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                </Select>
+            <div class="count-box">
+                <div class="count-card">
+                    <div>
+                        新关注
+                    </div>
+                    <div>
+                       1010
+                    </div>
+                </div>
+                <div class="count-card" style="background-color: #ff9966">
+                    <div>
+                      取消关注
+                    </div>
+                    <div>
+                        100
+                    </div>
+                </div>
+                <div class="count-card" style="background-color: #666699">
+                    <div>
+                        净增长
+                    </div>
+                    <div>
+                        100
+                    </div>
+                </div>
+                <div class="count-card" style="background-color: #cc6699">
+                    <div>
+                        当前粉丝总数
+                    </div>
+                    <div>
+                        100
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: right">
+                <span>自定义时间：</span>
+                <DatePicker type="daterange" v-model="time" :options="options2" placement="bottom-end" placeholder="请选择" style="width: 200px" @on-change="selTimeFun"></DatePicker>
             </div>
             <div style="height: 450px">
-                <!--<IEcharts :option="pie1" :resizable="true" :loading="loading"  @ready="onReady" @click="onClick"></IEcharts>-->
+                <ve-line :data="chartData"></ve-line>
             </div>
         </Card>
         <Card style="width:100%;margin-top: 10px">
@@ -61,139 +122,24 @@
     </div>
 </template>
 <script>
-  //  import IEcharts from 'vue-echarts-v3/src/full.vue';
-  //  import 'echarts/lib/chart/pie';
+  import VeLine from 'v-charts/lib/line';
   export default {
     data () {
       return {
-        pie1: {
-          tooltip: {
-            trigger: 'item',
-            formatter: '{a}<br/>{b}:{c}({d}%)'
-          },
-          legend: {
-            orient: 'vertical',
-            x: 'left',
-            data: ['当前总粉丝', '净增长', '取消关注', '新关注']
-          },
-          series: [
+        options2: {
+          shortcuts: [
             {
-              name: '粉丝',
-              type: 'pie',
-              selectedMode: 'single',
-              radius: [0, '30%'],
-
-              label: {
-                normal: {
-                  position: 'inner'
-                }
-              },
-              labelLine: {
-                normal: {
-                  show: false
-                }
-              },
-              data: [
-                {value: 335, name: '当前总粉丝', selected: true},
-                {value: 679, name: '新关注'}
-              ]
-            },
-            {
-              name: '粉丝',
-              type: 'pie',
-              radius: ['40%', '55%'],
-              label: {
-                normal: {
-                  formatter: '{a|{a}}{abg|}\n{hr|}\n  {b|{b}：}{c}  {per|{d}%}  ',
-                  backgroundColor: '#eee',
-                  borderColor: '#aaa',
-                  borderWidth: 1,
-                  borderRadius: 4,
-                  rich: {
-                    a: {
-                      color: '#999',
-                      lineHeight: 22,
-                      align: 'center'
-                    },
-                    hr: {
-                      borderColor: '#aaa',
-                      width: '100%',
-                      borderWidth: 0.5,
-                      height: 0
-                    },
-                    b: {
-                      fontSize: 16,
-                      lineHeight: 33
-                    },
-                    per: {
-                      color: '#eee',
-                      backgroundColor: '#334455',
-                      padding: [2, 4],
-                      borderRadius: 2
-                    }
-                  }
-                }
-              },
-              data: [
-                {value: 335, name: '当前总粉丝'},
-                {value: 310, name: '净增长'},
-                {value: 234, name: '取消关注'},
-                {value: 135, name: '新关注'}
-              ]
+              text: '近7天',
+              value () {
+                const end = new Date();
+                const start = new Date();
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                return [start, end];
+              }
             }
           ]
         },
-        pie2: {
-          title: {
-            text: '咨询绩效'
-          },
-          tooltip: {
-            trigger: 'axis'
-          },
-          legend: {
-            data: ['8点', '9点', '10点', '11点', '12点', '13点', '14点', '15点', '16点', '17点', '18点', '19点', '20点', '21点', '22点', '23点', '00点', '01点']
-          },
-          grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
-            containLabel: true
-          },
-          xAxis: {
-            type: 'category',
-            boundaryGap: false,
-            data: ['8点', '9点', '10点', '11点', '12点', '13点', '14点', '15点', '16点', '17点', '18点', '19点', '20点', '21点', '22点', '23点', '00点', '01点']
-          },
-          yAxis: {
-            type: 'value'
-          },
-          series: [
-            {
-              name: '粉丝总数',
-              type: 'line',
-              stack: '',
-              data: [120, 132, 101, 134, 90, 23, 210, 120, 132, 101, 134, 90, 230, 210, 120, 132, 101, 134]
-            },
-            {
-              name: '取消关注',
-              type: 'line',
-              stack: '',
-              data: [120, 12, 101, 134, 90, 230, 210, 120, 132, 101, 134, 90, 230, 20, 120, 132, 101, 134]
-            },
-            {
-              name: '新关注',
-              type: 'line',
-              stack: '',
-              data: [120, 132, 101, 134, 90, 230, 210, 120, 132, 101, 134, 90, 230, 210, 12, 132, 101, 14]
-            },
-            {
-              name: '净增长',
-              type: 'line',
-              stack: '',
-              data: [120, 132, 11, 134, 90, 230, 210, 120, 132, 101, 134, 90, 230, 210, 120, 132, 101, 134]
-            }
-          ]
-        },
+        time: false,
         loading: false,
         loading1: false,
         columns1: [
@@ -249,21 +195,55 @@
             label: 'Canberra'
           }
         ],
-        model1: ''
+        model1: '',
+        chart: '',
+        myChart: '',
+        chartData: {
+          columns: ['日期', '销售量'],
+          rows: [
+            { '日期': '1月1日', '销售量': 123 },
+            { '日期': '1月2日', '销售量': 1223 },
+            { '日期': '1月3日', '销售量': 2123 },
+            { '日期': '1月4日', '销售量': 4123 },
+            { '日期': '1月5日', '销售量': 3123 },
+            { '日期': '1月6日', '销售量': 7123 }
+          ]
+        }
       };
     },
     components: {
-      // IEcharts
+      VeLine
     },
     mounted () {
+      this.createChart();
     },
     beforeDestroy () {
     },
     methods: {
+      createChart () {
+      },
       onReady () {
       },
       onClick () {
-        console.log(13447845314);
+        console.log(45651);
+      },
+      // 选择时间
+      selTimeFun (v) {
+        console.log(v);
+        console.log(this.DateDifference(v[0], v[1]));
+      },
+      // 返回
+      DateDifference (sDate1, sDate2) {
+        // sDate1和sDate2是2006-12-18格式
+        let aDate, oDate1, oDate2, iDays;
+        aDate = sDate1.split('-');
+        // 调用Date的构造函数，转换为12-18-2006格式
+        oDate1 = new Date(aDate[0], aDate[1] - 1, aDate[2]);
+        aDate = sDate2.split('-');
+        oDate2 = oDate2 = new Date(aDate[0], aDate[1] - 1, aDate[2]);
+        // 把相差的毫秒数转换为天数
+        iDays = parseInt(Math.abs(oDate1 - oDate2) / 1000 / 60 / 60 / 24);
+        return iDays;
       }
     },
     created () {

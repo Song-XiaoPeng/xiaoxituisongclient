@@ -49,6 +49,28 @@
         float: right;
         width: 122px;
     }
+    .table-copy {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    .table-copy, td, th{
+        border:1px solid #e9eaec;
+        text-align: center;
+        height: 40px;
+    }
+
+    .table-copy th{
+        background-color: #f8f8f9;
+    }
+
+    .table-copy tr:nth-child(even){
+        background: #f8f8f9;
+    }
+
+    .table-copy tr:hover{
+        background: #ebf7ff;
+    }
 </style>
 <template>
     <div id="index">
@@ -58,15 +80,16 @@
                 <Option v-for="item in cityList" :value="item.appid" :key="item.appid">{{ item.nick_name }}</Option>
             </Select>
         </div>
-        <Tabs value="name1">
+        <Tabs value="name1" @on-click="tabFun">
             <TabPane label="全部粉丝" name="name1">
                 <div class="cl" style="padding: 10px">
                     <Button type="info" class="f-r" @click="modal4 = true" >新建分组</Button>
                 </div>
                 <div class="tab cl">
                     <div class="f-l l">
-                        <Table border :columns="columns7" :data="data6" @on-select="selWxUser" @on-select-all="allWxUser"></Table>
+                        <Table border :columns="columns7" :data="data6" @on-selection-change="selWxUser" ></Table>
                         <div class="" style="text-align: center; padding: 10px">
+                            <Button type="info" class="f-l" @click="modal5 = true">批量移动分组</Button>
                             <Page :total="pageData1.count" :page-size="pageData1.rows_num"  @on-change="pageFun1"></Page>
                         </div>
                     </div>
@@ -74,7 +97,15 @@
                         <div class="title">所有分组</div>
                         <div class="list">
                             <ul>
-                                <li v-for="k in data7">{{k.name}}({{k.count}})</li>
+                                <li v-for="k in data7">
+                                    {{k.name}}({{k.count}})
+                                    <span  color="group_del" style="float: right" title="删除当前组" @click="delGroupFun(k)">
+                                        <Icon type="trash-a"></Icon>
+                                    </span>
+                                    <span  color="" style="float: right;margin-right: 15px" title="修改当前组名" @click="modal4 = true,GroupId = k.id">
+                                        <Icon type="edit"></Icon>
+                                    </span>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -82,18 +113,53 @@
                 </div>
             </TabPane>
             <TabPane label="同步粉丝" name="name2">
-                <div class="synchronization-switch">
-                    <span>同步粉丝：</span>
-                    <i-switch>
-                        <span slot="open">开</span>
-                        <span slot="close">关</span>
-                    </i-switch>
+                <div class="cl" style="padding: 10px">
+                    <Button type="info" class="f-r" @click="modal6 = true">创建同步任务</Button>
+                </div>
+                <div style="padding:0 10px;">
+                    <table class="table-copy">
+                        <thead>
+                        <tr>
+                            <th>商户名称</th>
+                            <th>任务类型</th>
+                            <th>添加时间</th>
+                            <th>结束时间</th>
+                            <th>任务状态</th>
+                            <th>任务进度</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="k in data8">
+                            <td style="padding: 4px;">
+                                {{k.app_name}}
+                            </td>
+                            <td style="padding: 4px;">
+                                {{k.task_type === 1 ? '同步粉丝列表' : k.task_type === 2 ? '同步粉丝基本信息' : '未知'}}
+                            </td>
+                            <td style="padding: 4px;">
+                                {{k.add_time}}
+                            </td>
+                            <td style="padding: 4px;">
+                                {{k.handle_end_time}}
+                            </td>
+                            <td>
+                                {{k.state === -1 ? '执行失败' : k.state === 0 ? '等待执行' : k.state === 1 ? '执行中' : k.state === 2 ? '完成' : '未知'}}
+                            </td>
+                            <td>
+                                <Progress :percent="parseInt(k.speed_progress)" status="active"></Progress>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="text-align: center;padding: 10px">
+                    <Page :total="pageData2.count" :page-size="pageData2.rows_num"  @on-change="pageFun2"></Page>
                 </div>
             </TabPane>
         </Tabs>
 
         <!-- 创建分组弹窗 -->
-        <Modal v-model="modal4" title="图片" width="750" @on-ok="addWxGroup">
+        <Modal v-model="modal4" title="组名称" @on-ok="addWxGroup">
             <Form label-position="left" :label-width="100">
                 <FormItem label="名称">
                     <Input v-model="group_name"></Input>
@@ -101,6 +167,34 @@
             </Form>
         </Modal>
         <!-- end创建分组弹窗 -->
+
+        <!-- 选择分组弹窗 -->
+        <Modal v-model="modal5" title="移至分组"  @on-ok="allMove">
+            <Form label-position="left" :label-width="100">
+                <FormItem label="请选择分组">
+                    <Select v-model="group_id" style="width:200px">
+                        <Option v-for="item in data7" :value="item.id" :key="item.id">{{ item.name }}</Option>
+                    </Select>
+                </FormItem>
+            </Form>
+        </Modal>
+        <!-- end选择分组弹窗 -->
+
+
+
+        <!-- 选择分组弹窗 -->
+        <Modal v-model="modal6" title="创建同步任务" @on-ok="synchronizationFun">
+            <Form label-position="left" :label-width="100">
+                <FormItem label="任务类型">
+                    <Select v-model="synchronization" style="width:200px">
+                        <Option :value=1 >同步粉丝列表</Option>
+                        <Option :value=2 >同步粉丝基本信息</Option>
+                    </Select>
+                </FormItem>
+            </Form>
+        </Modal>
+        <!-- end选择分组弹窗 -->
+
 
 
         <!-- 请求状态 -->
@@ -125,72 +219,71 @@
             align: 'center'
           },
           {
+            title: '图像',
+            render: (h, p) => {
+              return h('img', {
+                style: {
+                  width: '50px',
+                  height: '50px'
+                },
+                attrs: {
+                  src: p.row.portrait
+                }
+              });
+            }
+          },
+          {
             title: '微信昵称',
-            key: 'nickname'
+            render: (h, p) => {
+              return h('span', p.row.nickname === null ? '未同步基本信息' : p.row.nickname);
+            }
           },
           {
             title: '微信用户性别',
             render: (h, p) => {
-              return h('span', p.row.gender === 1 ? '男' : p.row.gender === 2 ? '女' : '未知');
+              return h('span', p.row.gender === 1 ? '男' : p.row.gender === 2 ? '女' : p.row.gender === null ? '未同步基本信息' : '未知');
             }
           },
           {
             title: '所属公共号名称',
-            key: 'app_name'
+            render: (h, p) => {
+              return h('span', p.row.app_name === null ? '未同步基本信息' : p.row.app_name);
+            }
           },
           {
             title: '所在地',
             render: (h, p) => {
-              return h('span', p.row.province + '-' + p.row.city);
+              return h('span', p.row.province === null ? '未同步基本信息' : p.row.province + '-' + p.row.city);
             }
           },
           {
             title: '添加时间',
-            key: 'add_time'
-          },
-          {
-            title: '操作',
-            key: 'action',
-            width: 150,
-            align: 'center',
-            render: (h, params) => {
-              return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'primary',
-                    size: 'small'
-                  },
-                  style: {
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                    }
-                  }
-                }, '移至分组'),
-                h('Button', {
-                  props: {
-                    type: 'error',
-                    size: 'small'
-                  },
-                  on: {
-                    click: () => {
-                    }
-                  }
-                }, '详情')
-              ]);
+            render: (h, p) => {
+              return h('span', p.row.add_time === null ? '未同步基本信息' : p.row.add_time);
             }
           }
         ],
         data6: [],
+        modal5: false,
+        modal6: false,
         pageData1: {
           count: 0,
           rows_num: 0,
           page: 1
         },
+        pageData2: {
+          count: 0,
+          rows_num: 0,
+          page: 1
+        },
         data7: [],
+        data8: [],
         group_name: '',
-        modal4: false
+        modal4: false,
+        userArr: [],
+        group_id: '',
+        synchronization: 1,
+        GroupId: ''
       };
     },
     mounted () {
@@ -202,6 +295,15 @@
         this.$router.push({
           name: 'addMass'
         });
+      },
+      // tab切换方法
+      tabFun (v) {
+        if (v === 'name1') {
+          this.getFansFun();
+        } else if (v === 'name2') {
+          this.getTaskList();
+        }
+        console.log(v);
       },
       // 获取粉丝列表
       getFansFun () {
@@ -217,6 +319,7 @@
             this.pageData1.rows_num = res.body.page_data.rows_num;
           },
           error: (res) => {
+            this.is_Loading = false;
             this.$Message.warning(res.meta.message);
           }
         });
@@ -233,38 +336,133 @@
             this.data7 = res.body;
           },
           error: (res) => {
+            this.is_Loading = false;
             this.$Message.warning(res.meta.message);
           }
         });
       },
-      // 创建粉丝分组
+      // 创建粉丝分组或修改组名称
       addWxGroup () {
-        this.is_Loading = true;
-        this.ajax.addWxGroup({
-          data: {
+        let data = null;
+        if (this.GroupId !== '') {
+          data = {
+            appid: this.model1,
+            name: this.group_name,
+            group_id: this.GroupId
+          };
+        } else {
+          data = {
             appid: this.model1,
             name: this.group_name
-          },
+          };
+        }
+        this.is_Loading = true;
+        this.ajax.addWxGroup({
+          data: data,
           success: (res) => {
+            this.GroupId = '';
             this.getWxGroup();
           },
           error: (res) => {
+            this.is_Loading = false;
             this.$Message.warning(res.meta.message);
           }
         });
       },
-      // 单选
+      // 选
       selWxUser (v) {
-        console.log(v, 333);
+        this.userArr.length = 0;
+        this.userArr.push(v);
       },
-      // 全选
-      allWxUser (v) {
-        console.log(v);
+      // 批量移分组
+      allMove () {
+        this.is_Loading = true;
+        let arr = [];
+        this.userArr.forEach((k) => {
+          k.forEach((s) => {
+            arr.push(s.openid);
+          });
+        });
+        this.ajax.moveUserWxGroup({
+          data: {
+            appid: this.model1,
+            group_id: this.group_id,
+            openid_list: arr
+          },
+          success: () => {
+            this.$Message.success('操作成功');
+            this.getWxGroup();
+            this.getFansFun();
+          },
+          error: (res) => {
+            this.is_Loading = false;
+            this.$Message.warning(res.meta.message);
+          }
+        });
+      },
+      // 获取任务进度
+      getTaskList () {
+        this.is_Loading = true;
+        this.ajax.getTaskList({
+          data: {
+            page: this.pageData2.page
+          },
+          success: (res) => {
+            this.is_Loading = false;
+            this.data8 = res.body.data_list;
+            this.pageData2.count = parseInt(res.body.page_data.count);
+            this.pageData2.rows_num = res.body.page_data.rows_num;
+          },
+          error: (res) => {
+            this.is_Loading = false;
+            this.$Message.warning(res.meta.message);
+          }
+        });
+      },
+      // 创建同步任务
+      synchronizationFun () {
+        this.ajax.syncWxUser({
+          data: {
+            appid: this.model1,
+            type: this.synchronization
+          },
+          success: (res) => {
+            this.getTaskList();
+            this.$Message.success('操作成功');
+          },
+          error: (res) => {
+            this.is_Loading = false;
+            this.$Message.warning(res.meta.message);
+          }
+        });
+      },
+      // 删除组
+      delGroupFun (k) {
+        let id = k.id;
+        this.ajax.delWxGroup({
+          data: {
+            appid: this.model1,
+            group_id: id
+          },
+          success: (res) => {
+            this.getWxGroup();
+            this.$Message.success('操作成功');
+          },
+          error: (res) => {
+            this.is_Loading = false;
+            this.$Message.warning(res.meta.message);
+          }
+        });
       },
       // 分页
       pageFun1 (v) {
         this.pageData1.page = v;
         this.getFansFun();
+      },
+      // 同步任务分页
+      pageFun2 (v) {
+        this.pageData2.page = v;
+        this.getTaskList();
       }
     },
     created () {
@@ -275,6 +473,7 @@
           this.model1 = res.body[0].appid;
           this.getFansFun();
           this.getWxGroup();
+          this.getTaskList();
         },
         error: (res) => {
           this.is_Loading = false;
