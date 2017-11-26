@@ -79,9 +79,15 @@
       <div class="form-box">
          <Form label-position="right" :label-width="80">
             <FormItem label="粉丝分组：">
-               <Select v-model="model1" style="width:  100%;">
-                  <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+               <Select v-model="WxAutId" style="width:  100%;">
+                  <Option v-for="item in cityList1" :value="item.id" :key="item.id">{{ item.name }}</Option>
                </Select>
+            </FormItem>
+            <FormItem label="客户池组：">
+               <Select v-model="wxUserGroupId" style="width:  44%;">
+                  <Option v-for="item in cityList" :value="parseInt(item.wx_user_group_id)" :key="item.wx_user_group_id">{{ item.group_name }}</Option>
+               </Select>
+               <Button type="dashed" @click="popup2 = true">操作</Button>
             </FormItem>
             <FormItem label="客户生日：" >
                <DatePicker type="datetime" placeholder="选择时间" style="width:  100%;"></DatePicker>
@@ -107,9 +113,35 @@
       <div class="custom-group-box">
          <Button type="dashed" class="f-r"  @click="modal1 = true" icon="plus-round">添加标签</Button>
       </div>
-      <Modal v-model="modal1" title="选项名称" @on-ok="ok">
 
+      <!-- 添加或修改客户池 -->
+      <Modal v-model="popup1" title="客户池组" @on-ok="addCustomerGroup" :styles="{'z-index': 1000}">
+         <Form label-position="right" :label-width="80">
+            <FormItem label="池组名称：">
+               <Input v-model="pondName" placeholder="请输入" style="width:  100%;"></Input>
+            </FormItem>
+         </Form>
       </Modal>
+      <!-- end添加或修改客户池 -->
+
+
+
+      <!-- 客户池列表弹窗 -->
+      <Modal v-model="popup2" title="选项名称" :styles="{'z-index': 100}">
+         <div style="padding: 5px"><Button type="primary" @click="popup1 = true,is_pond = '1', popup2 = false">添加池组</Button></div>
+         <div>
+            <Table border :columns="columns7" :data="data6"></Table>
+         </div>
+      </Modal>
+      <!-- end客户池列表弹窗 -->
+
+
+      <!-- 请求状态 -->
+      <Spin fix v-if="is_Loading">
+         <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
+         <div>请求中....</div>
+      </Spin>
+      <!-- end请求状态 -->
    </div>
 </template>
 <script>
@@ -142,45 +174,170 @@
               value: ''
             }
           ],
-          cityList: [
-            {
-              value: 'New York',
-              label: 'New York'
-            },
-            {
-              value: 'London',
-              label: 'London'
-            },
-            {
-              value: 'Sydney',
-              label: 'Sydney'
-            },
-            {
-              value: 'Ottawa',
-              label: 'Ottawa'
-            },
-            {
-              value: 'Paris',
-              label: 'Paris'
-            },
-            {
-              value: 'Canberra',
-              label: 'Canberra'
-            }
-          ],
+          cityList: [],
+          cityList1: [],
           model1: '',
           addName: '',
           modal1: false,
-          sex: 1
+          sex: 1,
+          is_pond: '',
+          popup1: false,
+          popup2: false,
+          pondName: '',
+          is_Loading: false,
+          wxUserGroupId: '',
+          columns7: [
+            {
+              title: '池组名称',
+              key: 'group_name'
+            },
+            {
+              title: '池组ID',
+              key: 'wx_user_group_id'
+            },
+            {
+              title: 'Action',
+              key: 'action',
+              width: 150,
+              align: 'center',
+              render: (h, params) => {
+                return h('div', [
+                  h('Button', {
+                    props: {
+                      type: 'primary',
+                      size: 'small'
+                    },
+                    style: {
+                      marginRight: '5px'
+                    },
+                    on: {
+                      click: () => {
+                        this.pondName = params.row.group_name;
+                        this.wxUserGroupId = params.row.wx_user_group_id;
+                        this.popup1 = true;
+                        this.popup2 = false;
+                        this.is_pond = '2';
+                      }
+                    }
+                  }, '修改名称'),
+                  h('Button', {
+                    props: {
+                      type: 'error',
+                      size: 'small'
+                    },
+                    on: {
+                      click: () => {
+                        this.delCustomerGroup(params.row.wx_user_group_id, params.index);
+                      }
+                    }
+                  }, '删除')
+                ]);
+              }
+            }
+          ],
+          data6: [],
+          WxAuthList: null,
+          WxAutId: ''
         };
       },
       mounted () {
+        this.WxAuthList = JSON.parse(sessionStorage.getItem('WxAuthList'));
+        this.getWxGroup();
       },
       beforeDestroy () {
       },
       methods: {
         ok () {
+        },
+        // 添加/修改 池组
+        addCustomerGroup () {
+          let data = {};
+          if (this.is_pond === '1') {
+            if (this.pondName === '') {
+              this.$Message.warning('请输入池组名称');
+              return;
+            } else {
+              data['group_name'] = this.pondName;
+            }
+          } else if (this.is_pond === '2') {
+            data['group_name'] = this.pondName;
+            data['wx_user_group_id'] = this.wxUserGroupId;
+            this.popup2 = true;
+          }
+          this.is_Loading = true;
+          this.ajax.addCustomerGroup({
+            data: data,
+            success: () => {
+              this.getCustomerGroupList();
+              this.is_Loading = false;
+              this.is_pond = '';
+            },
+            error: (res) => {
+              this.is_Loading = false;
+              this.$Message.warning(res.meta.message);
+            }
+          });
+        },
+        // 获取池组列表
+        getCustomerGroupList () {
+          this.cityList.length = 0;
+          this.ajax.getCustomerGroupList({
+            data: {},
+            success: (res) => {
+              this.cityList = res.body;
+              this.wxUserGroupId = res.body[0].wx_user_group_id;
+              this.data6 = res.body;
+              this.is_Loading = false;
+            },
+            error: (res) => {
+              this.is_Loading = false;
+              this.$Message.warning(res.meta.message);
+            }
+          });
+        },
+        // 删除池组方法
+        delCustomerGroup (id, i) {
+          this.ajax.delCustomerGroup({
+            data: {
+              wx_user_group_id: id
+            },
+            success: () => {
+              this.$Message.success('操作成功');
+              this.data6.splice(i, 1);
+              this.cityList.splice(i, 1);
+            },
+            error: (res) => {
+              this.is_Loading = false;
+              this.$Message.warning(res.meta.message);
+            }
+          });
+        },
+        // 获取粉丝分组
+        getWxGroup () {
+          this.is_Loading = true;
+          this.ajax.getWxGroup({
+            data: {
+              appid: this.WxAuthList[0].appid
+            },
+            success: (res) => {
+              this.is_Loading = false;
+              this.cityList1 = res.body;
+              this.WxAutId = res.body[0].id;
+            },
+            error: (res) => {
+              this.is_Loading = false;
+              this.$Message.warning(res.meta.message);
+            }
+          });
+        },
+        // 客户池分组改变方法
+        groupcChangeFun (v) {
+          console.log(v);
         }
+      },
+      created () {
+        this.is_Loading = true;
+        this.getCustomerGroupList();
       }
     };
 </script>

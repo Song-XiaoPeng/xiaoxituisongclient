@@ -2,3 +2,6 @@ test/unit/coverage/**
 test/unit/*.js
 test/e2e/*.js
 src/renderer/config/address.js
+src/renderer/views/commonComponent/luyin.js
+src/renderer/assets/eventBus.js
+src/renderer/assets/webDB.js

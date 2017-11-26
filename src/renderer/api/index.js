@@ -368,4 +368,161 @@ ajax.getUserSummary = (obj) => {
     console.log(error);
   });
 };
+// 获取粉丝总数
+ajax.getUserCumulate = (obj) => {
+  util.ajax.post('/api/v1/we_chat/WxOperation/getUserCumulate', obj.data).then(function (response) {
+    if (response.data.meta.code === 200) {
+      obj.success(response.data);
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    console.log(error);
+  });
+};
+
+// 设置客服
+ajax.setUserCustomerService = (obj) => {
+  util.ajax.post('/api/v1/user/UserOperation/setUserCustomerService', obj.data).then(function (response) {
+    if (response.data.meta.code === 200) {
+      obj.success(response.data);
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    console.log(error);
+  });
+};
+// 修改客服名称
+ajax.updateCustomerServiceName = (obj) => {
+  util.ajax.post('/api/v1/user/UserOperation/updateCustomerServiceName', obj.data).then(function (response) {
+    if (response.data.meta.code === 200) {
+      obj.success(response.data);
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    console.log(error);
+  });
+};
+// 获取微信客服列表
+ajax.getCustomerServiceList = (obj) => {
+  util.ajax.post('/api/v1/user/UserOperation/getCustomerServiceList', obj.data).then(function (response) {
+    if (response.data.meta.code === 200) {
+      obj.success(response.data);
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    console.log(error);
+  });
+};
+// 添加/修改 池组名
+ajax.addCustomerGroup = (obj) => {
+  util.ajax.post('/api/v1/we_chat/WxOperation/addCustomerGroup', obj.data).then(function (response) {
+    if (response.data.meta.code === 200) {
+      obj.success(response.data);
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    console.log(error);
+  });
+};
+// 获取池组列表
+ajax.getCustomerGroupList = (obj) => {
+  util.ajax.post('/api/v1/we_chat/WxOperation/getCustomerGroupList', obj.data).then(function (response) {
+    if (response.data.meta.code === 200) {
+      obj.success(response.data);
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    console.log(error);
+  });
+};
+// 删除池组
+ajax.delCustomerGroup = (obj) => {
+  util.ajax.post('/api/v1/we_chat/WxOperation/delCustomerGroup', obj.data).then(function (response) {
+    if (response.data.meta.code === 200) {
+      obj.success(response.data);
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    console.log(error);
+  });
+};
+// 获取会话列表
+ajax.getSessionList = (obj) => {
+  util.ajax.post('/api/v1/we_chat/WxOperation/getSessionList', obj.data, {timeout: 60000}).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    console.log(error);
+  });
+};
+// 会话接入
+ajax.sessionAccess = (obj) => {
+  util.ajax.post('/api/v1/we_chat/WxOperation/sessionAccess', obj.data).then(function (response) {
+    if (response.data.meta.code === 200) {
+      obj.success(response.data);
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    console.log(error);
+  });
+};
+// 结束会话
+ajax.closeSession = (obj) => {
+  util.ajax.post('/api/v1/we_chat/WxOperation/closeSession', obj.data).then(function (response) {
+    if (response.data.meta.code === 200) {
+      obj.success(response.data);
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    console.log(error);
+  });
+};
+// 获取正在会话列表中客户会话数据
+ajax.getMessage = (obj) => {
+  util.ajax.post('/api/v1/we_chat/WxOperation/getMessage', obj.data, {timeout: 60000}).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    console.log(error);
+  });
+};
+// 将会话设为已读
+ajax.setSessionReceive = (obj) => {
+  util.ajax.post('/api/v1/we_chat/WxOperation/setSessionReceive', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    console.log(error);
+  });
+};
 export default ajax;

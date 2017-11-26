@@ -22,6 +22,49 @@
     .chart-win{
         height: 600px;
         border-bottom: 1px #eaeaea solid;
+        background-color: #f2f2f2;
+        .content-box{
+            text-align: left;margin: 10px 0;
+            width: 97%;
+            .graphic{
+                display: inline-block
+            }
+            .crate{
+                display: inline-block;
+                position: relative;
+                background-color: #fff;
+                padding: 10px;
+                border-radius: 8px;
+                max-width: 70%;
+                vertical-align: top;
+                .arrow_out {
+                    position: absolute;
+                    display: inline-block;
+                    top: 15px;
+                    width: 0;
+                    height: 0;
+                    border-width: 6px;
+                    border-style: dashed;
+                    border-color: transparent;
+                    border-bottom-width: 0;
+                    border-top-color: #fff;
+                    border-top-style: solid;
+                }
+                .arrow_in {
+                    position: absolute;
+                    display: inline-block;
+                    top: 15px;
+                    width: 0;
+                    height: 0;
+                    border-width: 6px;
+                    border-style: dashed;
+                    border-color: transparent;
+                    border-bottom-width: 0;
+                    border-top-color: #fff;
+                    border-top-style: solid;
+                }
+            }
+        }
     }
     .is_mass_chart{
         height: 400px;
@@ -76,17 +119,33 @@
 <template>
   <div class="chart-box">
      <div class="user-top" v-if="isMass ? false : true">
-         <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" style="margin-left: 5px"/>
-         <span class="name">的哇好快的</span>
-         <span class="txt">来访：5次</span>
-         <span class="txt">主动邀请：5次</span>
-         <span class="txt">来自：官网</span>
+         <Avatar :src="clientData.customer_wx_portrait" style="margin-left: 5px"/>
+         <span class="name">{{clientData.customer_wx_nickname}}</span>
+         <span class="txt">来访：{{clientData.session_frequency}}次</span>
+         <span class="txt">主动邀请：{{clientData.invitation_frequency}}次</span>
+         <span class="txt">来自：{{clientData.app_name}}</span>
          <span v-if="isAdministrator" style="position: absolute;right: 15px;">
              <Button  type="ghost" class="btn-r">领导评价</Button>
          </span>
 
      </div>
-     <div class="chart-win" v-bind:class="{'is_mass_chart':isMass}">
+     <div class="chart-win" v-bind:class="{'is_mass_chart':isMass}" style="width: 103%;overflow-y: auto">
+         <div class="content-box" v-for="k in elmetArr">
+             <div class="graphic" ><Avatar :src="clientData.customer_wx_portrait" style="margin-left: 5px"/></div>
+             <div class="crate" style="left: 10px">
+                 <div v-html="k" style="display: inline-block"></div>
+                 <i class="arrow arrow_out" style="left: -10px;transform: rotate(90deg);"></i>
+                 <i class="arrow arrow_in" style="left: -9px;transform: rotate(90deg);"></i>
+             </div>
+         </div>
+         <div class="content-box" style="text-align: right" v-for="k in elmetArr">
+             <div class="crate" style="right: 10px">
+                 <div v-html="k" style="display: inline-block"></div>
+                 <i class="arrow arrow_out" style="right: -10px;transform: rotate(270deg);"></i>
+                 <i class="arrow arrow_in" style="right: -9px;transform: rotate(270deg);"></i>
+             </div>
+             <div class="graphic" ><Avatar :src="clientData.customer_wx_portrait" style="margin-right: 5px"/></div>
+         </div>
          <div v-if="isMass">
              <Tabs value="name1">
                  <TabPane label="48小时内" name="name1"></TabPane>
@@ -119,6 +178,8 @@
   </div>
 </template>
 <script>
+    import HZRecorder from './luyin';
+    import Bus from '../../assets/eventBus';
     export default {
       data () {
         return {
@@ -203,8 +264,13 @@
               address: 'Ottawa No. 2 Lake Park',
               date: '2016-10-04'
             }
-          ]
+          ],
+          clientData: {},
+          elmetArr: []
         };
+      },
+      components: {
+        HZRecorder
       },
       mounted () {
       },
@@ -220,10 +286,35 @@
       },
       beforeDestroy () {
       },
-      methods: {},
+      methods: {
+        // 获取会话客户相关数据
+        getclientData () {
+        },
+        // 创建txt文本
+        txt (t) {
+          return {
+            render: (h) => {
+              return h('span', t);
+            }
+          };
+        }
+      },
       watch: {
       },
       created () {
+        Bus.$on('change', (k) => {
+          this.clientData = k;
+          if (k.data) {
+            console.log(k);
+            k.data.forEach((k) => {
+              if (k.message_type === 1) {
+                this.elmetArr.push('<span>' + k.text + '</span>');
+                console.log(123);
+              }
+            });
+          }
+        });
+        console.log(21);
       }
     };
 </script>

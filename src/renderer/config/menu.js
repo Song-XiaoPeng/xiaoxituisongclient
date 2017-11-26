@@ -30,8 +30,14 @@ let menuData = [
           sonMenu: []
         },
         {
-          menuTitle: '添加客服人员',
+          menuTitle: '添加子账号人员',
           route: 'staff',
+          routeBreadcrumb: [],
+          sonMenu: []
+        },
+        {
+          menuTitle: '微信客服列表',
+          route: 'serviceList',
           routeBreadcrumb: [],
           sonMenu: []
         }
