@@ -63,6 +63,16 @@
       },
       methods: {},
       created () {
+        this.ajax.getWxAuthList({
+          data: {},
+          success: (res) => {
+            sessionStorage.setItem('WxAuthList', JSON.stringify(res.body));
+          },
+          error: (res) => {
+            this.is_Loading = false;
+            this.$Message.warning(res.meta.message);
+          }
+        });
         console.log(114);
       }
     };

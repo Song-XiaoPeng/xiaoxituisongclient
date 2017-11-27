@@ -102,7 +102,8 @@
       return {
         data6: [],
         modal1: false,
-        is_Loading: true
+        is_Loading: true,
+        userInfo: null
       };
     },
     mounted () {
@@ -116,7 +117,7 @@
           setTimeout(() => {
             this.modal1 = true;
           }, 1000);
-          shell.openExternal('http://kf.lyfz.net/api/v1/we_chat/Business/getAuthUrl?company_id=00798f0c8f84562d994e543a43e7f4d1');
+          shell.openExternal('http://kf.lyfz.net/api/v1/we_chat/Business/getAuthUrl?company_id=' + this.userInfo.company_id);
         }
       },
       getWxAuthList () {
@@ -135,6 +136,8 @@
       }
     },
     created () {
+      this.userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+      console.log(this.userInfo);
       this.getWxAuthList();
     }
   };

@@ -180,6 +180,14 @@ export default new Router({
             title: '同步粉丝'
           },
           component: (resolve) => require(['@/views/weixin/fans'], resolve)
+        },
+        {
+          path: 'serviceList',
+          name: 'serviceList',
+          meta: {
+            title: '同步粉丝'
+          },
+          component: (resolve) => require(['@/views/CustomerService/serviceList'], resolve)
         }
       ]
     }

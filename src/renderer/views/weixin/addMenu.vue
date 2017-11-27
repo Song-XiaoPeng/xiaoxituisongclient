@@ -373,15 +373,11 @@
           },
           {
             title: '客服名',
-            key: 'user_name'
+            key: 'name'
           },
           {
             title: '所属组',
             key: 'user_group_name'
-          },
-          {
-            title: '状态',
-            key: 'user_state_name'
           }
         ],
         data1: [],
@@ -497,7 +493,8 @@
             this.is_tab = 'name1';
           } else if (obj.type === 'view') {
             this.is_tab = 'name2';
-          } else {
+          } else if (obj.type === 'media_id') {
+            this.is_tab = 'name1';
           }
           // 如果是客服 切换tab
           if (isKf === 'kf') {
@@ -576,7 +573,8 @@
             this.is_tab = 'name1';
           } else if (obj.type === 'view') {
             this.is_tab = 'name2';
-          } else {
+          } else if (obj.type === 'media_id') {
+            this.is_tab = 'name1';
           }
           // 切换 客服tab
           if (isKf === 'kf') {
@@ -593,6 +591,7 @@
           },
           success: (res) => {
             this.is_Loading = false;
+            console.log(res.body);
             this.defaultData(res.body);
           },
           error: (res) => {
@@ -827,16 +826,17 @@
       /* 获取客服列表 */
       getUserList () {
         this.is_Loading = true;
-        this.ajax.getUserList({
+        this.ajax.getCustomerServiceList({
           data: {
-            user_group_id: this.sectionId,
+            appid: this.model1,
             page: this.pageData.page
           },
           success: (res) => {
+            console.log(res.body);
             this.is_Loading = false;
             this.pageData.count = parseInt(res.body.page_data.count);
             this.pageData.rows_num = res.body.page_data.rows_num;
-            this.data1 = res.body.user_list;
+            this.data1 = res.body.data_list;
           },
           error: (res) => {
             this.is_Loading = false;
@@ -1154,14 +1154,16 @@
         success: (res) => {
           this.cityList = res.body;
           this.model1 = res.body[0].appid;
+          this.getUserList();
         },
         error: (res) => {
           this.is_Loading = false;
           this.$Message.warning(res.meta.message);
         }
       });
-      this.getUserList();
+
       this.getSection();
+      // 默认地区方法
       for (let item of address) {
         let obj1 = {};
         obj1.value = item._area;

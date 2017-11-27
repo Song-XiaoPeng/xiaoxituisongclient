@@ -1,231 +1,277 @@
 <style scoped lang="less">
-   .title{
-     .btn{
-         font-weight: 100;
-         padding: 0px 5px;
-         border-right: 1px #eaeaea solid;
-         float: right;
-         font-size: 12px;
-         color: #1a1a1a;
-         cursor: pointer;
-         transition: all .2s;
-     }
-       .btn:hover{
-           color: #2db7f5;
-       }
+    .title{
+        .btn{
+            font-weight: 100;
+            padding: 0px 5px;
+            border-right: 1px #eaeaea solid;
+            float: right;
+            font-size: 12px;
+            color: #1a1a1a;
+            cursor: pointer;
+            transition: all .2s;
+        }
+        .btn:hover{
+            color: #2db7f5;
+        }
 
-   }
+    }
+    .count-box{
+        height: 100px;
+        padding: 10px 0;
+        overflow: hidden;
+        .count-card{
+            height: 70px;
+            width: 200px;
+            margin: 5px;
+            float: left;
+            box-shadow: 3px 3px 5px 1px #999;
+            border-radius: 6px;
+            box-sizing: border-box;
+            padding: 10px 0;
+            background-color: #3399cc;
+            >div{
+                display: inline-block;
+                width: 50%;
+                height: 100%;
+                float: left;
+                line-height: 50px;
+                text-align: center;
+                color: #EAEAEA;
+            }
+            >div:first-child{
+                border-right: 1px #ffffff solid;
+            }
+        }
+        .ivu-tabs-nav{
+            float: right;
+        }
+    }
+    #myCanvas{
+        height:  100% !important;
+        width: 100% !important;
+    }
 </style>
 <template>
     <div id="index">
         <Card style="width:100%">
             <p slot="title" class="title">
-                <span>访问总览</span>
-                <span class="btn" style="border: 0">利亚方舟</span>
-                <span class="btn">点赞科技</span>
-                <span class="btn">本月</span>
-                <span class="btn">本周</span>
-                <span class="btn">昨日</span>
-                <span class="btn" >今日</span>
+                <span>图文转发分享分析</span>
             </p>
-            <div style="height: 450px">
-                <!--<IEcharts :option="pie1" :resizable="true" :loading="loading"  @ready="onReady" @click="onClick"></IEcharts>-->
-            </div>
-        </Card>
-        <Card style="width:100%;margin-top: 10px">
-            <p slot="title" class="title">
-                <span>访问时间</span>
-
-            </p>
-            <div style="text-align: right">
-                <Button type="dashed">添加时间点</Button>
+            <div class="cl" style="overflow: hidden">
+                <div class="f-r">
+                    <span>自定义时间：</span>
+                    <DatePicker type="daterange" v-model="time" :options="options2" placement="bottom-end" placeholder="请选择" style="width: 200px" @on-change="selTimeFun"></DatePicker>
+                </div>
+                <div class="top-box f-l">
+                    <span>当前公共号：</span>
+                    <Select v-model="appid" style="width:200px" @on-change="selAppidFun">
+                        <Option v-for="item in cityList" :value="item.appid" :key="item.appid">{{ item.nick_name }}</Option>
+                    </Select>
+                </div>
             </div>
             <div style="height: 450px">
-                <!--<IEcharts :option="pie2" :resizable="true" :loading="loading1"  @ready="onReady" @click="onClick"></IEcharts>-->
+                <div class="" style="color:#ff0033;text-align: right">单次统计，只限间隔不能超过7天</div>
+                <ve-line :data="chartData"></ve-line>
             </div>
         </Card>
         <Card style="width:100%;margin-top: 10px">
             <p slot="title" class="title">
                 <span>详情</span>
             </p>
-            <div style="height: 450px">
+            <div >
                 <Table :columns="columns1" :data="data1"></Table>
             </div>
         </Card>
+
+
+
+        <!-- 请求状态 -->
+        <Spin fix v-if="is_Loading">
+            <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
+            <div>请求中....</div>
+        </Spin>
+        <!-- end请求状态 -->
     </div>
 </template>
 <script>
-  //  import IEcharts from 'vue-echarts-v3/src/full.vue';
-  //  import 'echarts/lib/chart/pie';
+  import VeLine from 'v-charts/lib/line';
   export default {
     data () {
       return {
-        pie1: {
-          tooltip: {
-            trigger: 'item',
-            formatter: '{a}<br/>{b}:{c}({d}%)'
-          },
-          legend: {
-            orient: 'vertical',
-            x: 'left',
-            data: ['微信分组', '粉丝分组', '搜索引擎', '邮件营销', '联盟广告', '视频广告', '百度', '谷歌', '必应', '其他']
-          },
-          series: [
+        options2: {
+          shortcuts: [
             {
-              name: '访问',
-              type: 'pie',
-              selectedMode: 'single',
-              radius: [0, '30%'],
-
-              label: {
-                normal: {
-                  position: 'inner'
-                }
-              },
-              labelLine: {
-                normal: {
-                  show: false
-                }
-              },
-              data: [
-                {value: 335, name: '访问量', selected: true},
-                {value: 679, name: '首次访问'}
-              ]
-            },
-            {
-              name: '访问',
-              type: 'pie',
-              radius: ['40%', '55%'],
-              label: {
-                normal: {
-                  formatter: '{a|{a}}{abg|}\n{hr|}\n  {b|{b}：}{c}  {per|{d}%}  ',
-                  backgroundColor: '#eee',
-                  borderColor: '#aaa',
-                  borderWidth: 1,
-                  borderRadius: 4,
-                  rich: {
-                    a: {
-                      color: '#999',
-                      lineHeight: 22,
-                      align: 'center'
-                    },
-                    hr: {
-                      borderColor: '#aaa',
-                      width: '100%',
-                      borderWidth: 0.5,
-                      height: 0
-                    },
-                    b: {
-                      fontSize: 16,
-                      lineHeight: 33
-                    },
-                    per: {
-                      color: '#eee',
-                      backgroundColor: '#334455',
-                      padding: [2, 4],
-                      borderRadius: 2
-                    }
-                  }
-                }
-              },
-              data: [
-                {value: 335, name: '微信分组'},
-                {value: 310, name: '粉丝分组'},
-                {value: 234, name: '联盟广告'},
-                {value: 135, name: '视频广告'},
-                {value: 1048, name: '百度'},
-                {value: 251, name: '谷歌'},
-                {value: 147, name: '必应'},
-                {value: 102, name: '其他'}
-              ]
+              text: '近7天',
+              value () {
+                const end = new Date();
+                const start = new Date();
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                return [start, end];
+              }
             }
           ]
         },
-        pie2: {
-          title: {
-            text: '分析表'
-          },
-          tooltip: {
-            trigger: 'axis'
-          },
-          legend: {
-            data: ['8点', '9点', '10点', '11点', '12点', '13点', '14点', '15点', '16点', '17点', '18点', '19点', '20点', '21点', '22点', '23点', '00点', '01点']
-          },
-          grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
-            containLabel: true
-          },
-          xAxis: {
-            type: 'category',
-            boundaryGap: false,
-            data: ['8点', '9点', '10点', '11点', '12点', '13点', '14点', '15点', '16点', '17点', '18点', '19点', '20点', '21点', '22点', '23点', '00点', '01点']
-          },
-          yAxis: {
-            type: 'value'
-          },
-          series: [
-            {
-              name: '微信分许',
-              type: 'line',
-              stack: '数量',
-              data: [120, 132, 101, 134, 90, 230, 210, 120, 132, 101, 134, 90, 230, 210, 120, 132, 101, 134]
-            },
-            {
-              name: '微信粉丝',
-              type: 'line',
-              stack: '数量',
-              data: [120, 132, 101, 134, 90, 230, 210, 120, 132, 101, 134, 90, 230, 210, 120, 132, 101, 134]
-            }
-          ]
-        },
+        is_Loading: false,
+        time: false,
         loading: false,
         loading1: false,
         columns1: [
           {
             title: '时间',
-            key: 'name1'
+            key: 'ref_date'
           },
           {
-            title: '访问量',
-            key: 'name2'
+            title: '分享次数',
+            key: 'share_count'
           },
           {
-            title: '首次访问',
-            key: 'name3'
+            title: '分享人数',
+            key: 'share_user'
           },
           {
-            title: '粉丝分组',
-            key: 'name4'
+            title: '阅读该文类型',
+            render: (h, p) => {
+              return h('span', this.readType[p.row.user_source]);
+            }
+          },
+          {
+            title: '分享场景',
+            render: (h, p) => {
+              return h('span', this.share[p.row.share_scene]);
+            }
           }
         ],
-        data1: [
-          {
-            name1: '8点',
-            name2: '100',
-            name3: '20',
-            name4: '10'
-
-          }
-        ]
+        data1: [],
+        cityList: [],
+        model1: '',
+        chartData: {
+          columns: ['日期', '分享次数', '分享人数'],
+          rows: []
+        },
+        appid: '',
+        readType: {
+          0: '会话',
+          1: '好友',
+          2: '朋友圈',
+          3: '腾讯微博',
+          4: '历史消息',
+          5: '其他'
+        },
+        share: {
+          1: '好友转发',
+          2: '朋友圈',
+          3: '腾讯微博',
+          255: '其他'
+        },
+        start_date: '',
+        end_date: ''
       };
     },
     components: {
-      // IEcharts
+      VeLine
     },
     mounted () {
+      this.createChart();
     },
     beforeDestroy () {
     },
     methods: {
+      createChart () {
+      },
       onReady () {
       },
       onClick () {
-        console.log(13414);
+        console.log(1398778851);
+      },
+      // 获取 数据列表
+      getUserSummary () {
+        this.increase = 0;
+        this.cancel = 0;
+        this.clean = 0;
+        this.is_Loading = true;
+        this.ajax.getUserShareSummary({
+          data: {
+            appid: this.appid,
+            start_date: this.start_date,
+            end_date: this.end_date
+          },
+          success: (res) => {
+            this.is_Loading = false;
+            let arr = [];
+            this.data1 = res.body;
+            res.body.forEach((k) => {
+              this.increase += k.new_user;
+              this.cancel += k.cancel_user;
+              this.clean += k.new_user - k.cancel_user;
+              arr.push({
+                '日期': k.ref_date,
+                // '来源': ,
+                '分享次数': k.share_count,
+                '分享人数': k.share_user
+              });
+            });
+            this.data1 = res.body;
+            this.chartData.rows = arr;
+            console.log(this.chartData.rows);
+          },
+          error: (res) => {
+            this.is_Loading = false;
+            this.$Message.warning('无法统计包含今天数据或大于7天数据');
+          }
+        });
+      },
+      // 选择时间
+      selTimeFun (v) {
+        let d = this.DateDifference(v[0], v[1]);
+        if (d > 7) {
+          this.$Message.warning('请选择小于等于7天');
+        } else {
+          this.start_date = v[0];
+          this.end_date = v[1];
+          this.getUserSummary();
+          this.getUserCumulate();
+        }
+      },
+      // 判断所选的 开始时间和结束时间之间的间隔天数
+      DateDifference (sDate1, sDate2) {
+        // sDate1和sDate2是2006-12-18格式
+        let aDate, oDate1, oDate2, iDays;
+        aDate = sDate1.split('-');
+        // 调用Date的构造函数，转换为12-18-2006格式
+        oDate1 = new Date(aDate[0], aDate[1] - 1, aDate[2]);
+        aDate = sDate2.split('-');
+        oDate2 = oDate2 = new Date(aDate[0], aDate[1] - 1, aDate[2]);
+        // 把相差的毫秒数转换为天数
+        iDays = parseInt(Math.abs(oDate1 - oDate2) / 1000 / 60 / 60 / 24);
+        return iDays;
+      },
+      // appid 改变请求数据
+      selAppidFun () {
+        this.getUserSummary();
       }
     },
     created () {
+      this.ajax.getWxAuthList({
+        data: {},
+        success: (res) => {
+          this.cityList = res.body;
+          this.appid = res.body[0].appid;
+          let day1 = new Date();
+          let y = day1.getFullYear();
+          let m = day1.getMonth() + 1;
+          let d = day1.getDate();
+          day1.setTime(day1.getTime() - 168 * 60 * 60 * 1000);
+          let s1 = day1.getFullYear() + '-' + (day1.getMonth() + 1) + '-' + day1.getDate();
+          this.start_date = s1;
+          this.end_date = y + '-' + m + '-' + (d - 1);
+          this.getUserSummary();
+          this.getUserCumulate();
+        },
+        error: (res) => {
+          this.is_Loading = false;
+          this.$Message.warning(res.meta.message);
+        }
+      });
     }
   };
 </script>
