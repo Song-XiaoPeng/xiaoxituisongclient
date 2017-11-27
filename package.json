@@ -21,7 +21,7 @@
     "postinstall": "npm run lint:fix"
   },
   "build": {
-    "productName": "customer-service-client",
+    "productName": "网鱼客服系统",
     "appId": "org.simulatedgreg.electron-vue",
     "directories": {
       "output": "build"
