@@ -5,6 +5,7 @@
 // 数据库类
 class webDB {
   constructor (nema) {
+    console.log(999);
     this.name = name;
     //第一个参数是数据库的名称，第二个参数是数据库的版本号
     this.myDB =  window.indexedDB.open('mysql');
@@ -120,7 +121,10 @@ class webDB {
       transaction.onerror = function(event) {
         // 不要忘记进行错误处理！
       };
-
+      transaction.onerror = function(event) {
+        console.log(event);
+        // 错误处理!
+      };
       var objectStore = transaction.objectStore(obj.name);
       for (var i in obj.data) {
         console.log(obj.data[i]);
