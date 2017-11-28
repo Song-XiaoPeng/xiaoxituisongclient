@@ -5,3 +5,4 @@ src/renderer/config/address.js
 src/renderer/views/commonComponent/luyin.js
 src/renderer/assets/eventBus.js
 src/renderer/assets/webDB.js
+src/renderer/assets/myDB.js

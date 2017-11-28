@@ -172,7 +172,7 @@
      <div class="chart-txt" v-bind:class="{'is_mass_chart-txt':isMass}">
          <textarea class="txt" ></textarea>
          <div class="btm">
-             <Button class="f-r" type="primary" size="small">发送</Button>
+             <Button class="f-r" type="primary" size="small" @click="subFun" v-on:keyup.13="subFun">发送</Button>
          </div>
      </div>
   </div>
@@ -297,6 +297,10 @@
               return h('span', t);
             }
           };
+        },
+        // 发送信息
+        subFun () {
+          console.log(1231);
         }
       },
       watch: {

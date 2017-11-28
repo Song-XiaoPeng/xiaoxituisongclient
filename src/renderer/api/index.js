@@ -455,7 +455,7 @@ ajax.delCustomerGroup = (obj) => {
 };
 // 获取会话列表
 ajax.getSessionList = (obj) => {
-  util.ajax.post('/api/v1/we_chat/WxOperation/getSessionList', obj.data, {timeout: 60000}).then(function (response) {
+  util.ajax.post('/api/v1/we_chat/WxOperation/getSessionList', obj.data, {timeout: 180000}).then(function (response) {
     if (response.data) {
       if (response.data.meta.code === 200) {
         obj.success(response.data);

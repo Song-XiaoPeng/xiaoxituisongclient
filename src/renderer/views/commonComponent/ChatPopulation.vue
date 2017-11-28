@@ -123,7 +123,25 @@
                </div>
                <ul ref="list1" class="list" :style="'height:' + data1.length * 66 + 'px'">
                    <li v-for="(k, i) in data1" v-bind:class="data1Index == i ? 'active' : ''" @click.stop="underwayFun(k, i), data1Index = i">
-                       <span class="end" title="结束会话" @click="popup2 = true, clientName = k"><Icon  type="close-circled" style="vertical-align: top"></Icon></span>
+                       <span class="end" title="结束会话" @click="popup2 = true, clientName = k, is_w_v = 1, clientDataIndex = i"><Icon  type="close-circled" style="vertical-align: top"></Icon></span>
+                       <div class="picture">
+                           <img :src="k.customer_wx_portrait" alt="">
+                       </div>
+                       <div class="txt">
+                           <div class="name">{{k.customer_wx_nickname}}</div>
+                           <div class="remark">{{k.app_name}}</div>
+                       </div>
+                   </li>
+               </ul>
+           </div>
+           <div class="list-box" style="border-bottom: 1px #fff solid">
+               <div class="tle" @click.stop="telFun('list2')">
+                   <Icon type="arrow-right-b"></Icon>
+                   等待中
+               </div>
+               <ul ref="list2" class="list" :style="'height:' + data2.length * 66 + 'px'">
+                   <li v-for="(k, i) in data2" @click.stop="popup1 = true,clientName = k.customer_wx_nickname,clientData = k,clientDataIndex = i, is_w_v = 2">
+                       <span class="end" title="结束会话" @click.stop="popup2 = true, clientName = k, is_w_v = 2, clientDataIndex = i"><Icon  type="close-circled" style="vertical-align: top"></Icon></span>
                        <div class="picture">
                            <img :src="k.customer_wx_portrait" alt="">
                        </div>
@@ -135,12 +153,12 @@
                </ul>
            </div>
            <div class="list-box">
-               <div class="tle" @click="telFun('list2')">
+               <div class="tle" @click.stop="telFun('list3')">
                    <Icon type="arrow-right-b"></Icon>
-                   等待中
+                   排队中
                </div>
-               <ul ref="list2" class="list" :style="'height:' + data2.length * 66 + 'px'">
-                   <li v-for="k in data2" @click="popup1 = true,clientName = k.customer_wx_nickname,clientData = k">
+               <ul ref="list3" class="list" :style="'height:' + data3.length * 66 + 'px'">
+                   <li v-for="(k, i) in data3" @click.stop="popup1 = true,clientName = k.customer_wx_nickname,clientData = k,clientDataIndex = i, is_w_v = 3">
                        <div class="picture">
                            <img :src="k.customer_wx_portrait" alt="">
                        </div>
@@ -187,29 +205,8 @@
       data () {
         return {
           data1: [],
-          data2: [
-            {
-              title: '等待中',
-              expand: true,
-              children: []
-            }
-          ],
-          data3: [
-            {
-              title: '排队中',
-              expand: true,
-              children: [
-                {
-                  title: 'parent 1-1',
-                  expand: true
-                },
-                {
-                  title: 'parent 1-2',
-                  expand: true
-                }
-              ]
-            }
-          ],
+          data2: [],
+          data3: [],
           data4: [
             {
               title: '最近沟通',
@@ -231,6 +228,8 @@
           popup2: false,
           clientName: '',
           clientData: null,
+          clientDataIndex: null,
+          is_w_v: null,
           is_Loading: false,
           data1Index: null
         };
@@ -240,67 +239,42 @@
       beforeDestroy () {
       },
       methods: {
-        // 定时轮询 会话列表
-        longTime () {
-          let that = this;
-          if (window.timeInt) {
-            clearInterval(window.timeInt);
-          }
-          window.timeInt = setInterval(function () {
-            that.getDialogueList();
-          }, 3000);
-        },
-        // 定时轮询 会话数据
-        longTimeData () {
-          let that = this;
-          if (window.timeInt1) {
-            clearInterval(window.timeInt1);
-          }
-          window.timeInt1 = setInterval(function () {
-            that.getMessage();
-          }, 3000);
-        },
         // 请求会话列表数据
         getDialogueList () {
           this.ajax.getSessionList({
             data: {},
             success: (res) => {
-              console.log(res, 123);
-              this.setSessionReceive(res.body);
-              let db = new DB(); // 实例化本地数据库
-              db.addData({
-                name: 'visitor',
-                data: res.body
+              res.body.queue_up.forEach((k) => {
+                this.data3.push(k);
               });
+              res.body.waiting.forEach((k) => {
+                this.data2.push(k);
+              });
+              let db = new DB();
+              db.type = 'update'; // 执行类型
+              db.tabName = 'waiting'; // 数据表名称
+              db.data = res.body.waiting;
+              db.fun = function (res) { // 执行成功回掉函数
+                console.log(res, 'DB --- 等待会话数据添加成功');
+              };
+              let db1 = new DB();
+              db1.type = 'update'; // 执行类型
+              db1.tabName = 'queue_up'; // 数据表名称
+              db1.data = res.body.queue_up;
+              db1.fun = function (res) { // 执行成功回掉函数
+                console.log(res, 'DB --- 排队数据添加成功');
+              };
               // 会话中的客户数据
               // res.body.contacting_session['data'] = [];
               // res.body.pending_access_session['data'] = [];
-              this.data1 = res.body;
               // 等待中的客户数据
-              this.data2 = res.body;
               // this.getMessage();
+              this.getDialogueList();
             },
             error: (res) => {
               if (res === undefined) {
                 this.getDialogueList();
               }
-              this.$Message.warning(res.meta.message);
-            }
-          });
-        },
-        // 将会话设为已读
-        setSessionReceive (data) {
-          let arr = data.map((k) => {
-            return k.session_id;
-          });
-          this.ajax.setSessionReceive({
-            data: {
-              session_list: arr
-            },
-            success: () => {
-              this.getDialogueList();
-            },
-            error: (res) => {
               this.$Message.warning(res.meta.message);
             }
           });
@@ -318,12 +292,39 @@
         },
         // 确定加入会话
         underwayPopupFun () {
+          let k = this.clientData;
+          console.log(k);
           this.is_Loading = true;
           this.ajax.sessionAccess({
             data: {
               session_id: this.clientData.session_id
             },
             success: (res) => {
+              let db2 = new DB();
+              db2.type = 'update'; // 执行类型
+              db2.tabName = 'visitor'; // 数据表名称
+              db2.data = [k];
+              db2.fun = function (res) { // 执行成功回掉函数
+              };
+              if (this.is_w_v === 2) {
+                let db = new DB();
+                db.type = 'remove'; // 执行类型
+                db.tabName = 'waiting'; // 数据表名称
+                db.key = k.customer_wx_openid;
+                db.fun = function (res) { // 执行成功回掉函数
+                };
+                this.data1.push(this.data2[this.clientDataIndex]);
+                this.data2.splice(this.clientDataIndex, 1);
+              } else if (this.is_w_v === 3) {
+                let db1 = new DB();
+                db1.type = 'remove'; // 执行类型
+                db1.tabName = 'queue_up'; // 数据表名称
+                db1.key = k.customer_wx_openid;
+                db1.fun = function (res) { // 执行成功回掉函数
+                };
+                this.data1.push(this.data3[this.clientDataIndex]);
+                this.data3.splice(this.clientDataIndex, 1);
+              }
               this.getDialogueList();
               this.is_Loading = false;
               this.clientName = '';
@@ -343,6 +344,25 @@
               session_list: [k.session_id]
             },
             success: (res) => {
+              if (this.is_w_v === 1) {
+                let db1 = new DB();
+                db1.type = 'remove'; // 执行类型
+                db1.tabName = 'visitor'; // 数据表名称
+                db1.key = k.customer_wx_openid;
+                db1.fun = function (res) { // 执行成功回掉函数
+                  console.log(res);
+                };
+                this.data1.splice(this.clientDataIndex, 1);
+              } else if (this.is_w_v === 2) {
+                let db = new DB();
+                db.type = 'remove'; // 执行类型
+                db.tabName = 'waiting'; // 数据表名称
+                db.key = k.customer_wx_openid;
+                db.fun = function (res) { // 执行成功回掉函数
+                  console.log(res);
+                };
+                this.data2.splice(this.clientDataIndex, 1);
+              }
               this.getDialogueList();
               Bus.$emit('change', {});
               this.is_Loading = false;
@@ -393,14 +413,43 @@
             let e = this.$refs.list2;
             let h = e.offsetHeight;
             e.style.height = h === 0 ? this.data2.length * 66 + 'px' : 0 + 'px';
+          } else if (t === 'list3') {
+            let e = this.$refs.list3;
+            let h = e.offsetHeight;
+            e.style.height = h === 0 ? this.data3.length * 66 + 'px' : 0 + 'px';
           }
+        },
+        // 读取等待会话表中的数据
+        getWaitingTab () {
+          let that = this;
+          let db = new DB();
+          db.type = 'get'; // 执行类型
+          db.tabName = 'waiting'; // 数据表名称
+          db.fun = function (res) { // 执行成功回掉函数
+            that.data2 = res;
+          };
+          let db1 = new DB();
+          db1.type = 'get'; // 执行类型
+          db1.tabName = 'visitor'; // 数据表名称
+          db1.fun = function (res) { // 执行成功回掉函数
+            that.data1 = res;
+          };
+          // waiting
+        },
+        // 读取会话表中的人员
+        getVisitorTab () {
+          let db = new DB(); // 实例化本地数据库
+          db.addData(
+            // {name: 'visitor', data: res.body}
+          );
+          // waiting
         }
       },
       created () {
         // this.longTime();
         // this.longTimeData();
         this.getDialogueList();
-        console.log(12123);
+        this.getWaitingTab();
       }
     };
 </script>

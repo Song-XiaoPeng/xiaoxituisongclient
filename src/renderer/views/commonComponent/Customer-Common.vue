@@ -241,10 +241,12 @@
         };
       },
       mounted () {
-        this.WxAuthList = JSON.parse(sessionStorage.getItem('WxAuthList'));
+        this.getCustomerGroupList();
         this.getWxGroup();
       },
       beforeDestroy () {
+      },
+      watch: {
       },
       methods: {
         ok () {
@@ -332,12 +334,11 @@
         },
         // 客户池分组改变方法
         groupcChangeFun (v) {
-          console.log(v);
+          console.log(v, 1237897987123);
         }
       },
       created () {
-        this.is_Loading = true;
-        this.getCustomerGroupList();
+        this.WxAuthList = JSON.parse(sessionStorage.getItem('WxAuthList'));
       }
     };
 </script>
