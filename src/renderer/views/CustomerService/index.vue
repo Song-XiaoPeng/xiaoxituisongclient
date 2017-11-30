@@ -45,6 +45,7 @@
   </div>
 </template>
 <script>
+    import Bus from '../../assets/eventBus';
     import personnel from '../commonComponent/ChatPopulation';
     import formation from '../commonComponent/commoninformation';
     import chart from '../commonComponent/Chatting';
@@ -66,7 +67,8 @@
         this.ajax.getWxAuthList({
           data: {},
           success: (res) => {
-            sessionStorage.setItem('WxAuthList', JSON.stringify(res.body));
+            Bus.$emit('WxAuthList', res);
+            // sessionStorage.setItem('WxAuthList', JSON.stringify(res.body));
           },
           error: (res) => {
             this.is_Loading = false;

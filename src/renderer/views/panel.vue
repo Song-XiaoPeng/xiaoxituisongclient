@@ -7,7 +7,9 @@
     <Row type="flex">
       <Col span="4" class="layout-menu-left">
         <Menu :active-name="activeName" theme="dark" width="auto" :open-names=openNames @on-select="selectMenu" accordion>
-          <div class="layout-logo-left"></div>
+          <div class="layout-logo-left">
+
+          </div>
           
           <Submenu :name="key"  v-for="(item, key) in menuList" :key="key">
             <template slot="title">
@@ -46,14 +48,17 @@
 
 <script>
   import menu from '../config/menu';
-
+  import Bus from '../assets/eventBus';
+  import DB from '../assets/webDB';
   export default {
     data () {
       return {
         customerServiceState: '1',
         menuList: [],
         activeName: '0-0',
-        openNames: [0]
+        openNames: [0],
+        is_Message: true,
+        is_tongzhi: true // 是否离开页面提示通知
       };
     },
     components: {
@@ -104,10 +109,93 @@
             }
           }
         }
+      },
+      // 请求会话列表数据
+      getDialogueList () {
+        this.ajax.getSessionList({
+          data: {},
+          success: (res) => {
+            Bus.$emit('conversationList', res);
+            // 更新/添加 等待数据表
+            let db = new DB();
+            db.type = 'update'; // 执行类型
+            db.tabName = 'waiting'; // 数据表名称
+            db.data = res.body.waiting;
+            db.fun = function (res) { // 执行成功回掉函数
+            };
+            // 更新/添加 排队数据表
+            let db1 = new DB();
+            db1.type = 'update'; // 执行类型
+            db1.tabName = 'queue_up'; // 数据表名称
+            db1.data = res.body.queue_up;
+            db1.fun = function (res) { // 执行成功回掉函数
+            };
+            // 会话中的客户数据
+            // res.body.contacting_session['data'] = [];
+            // res.body.pending_access_session['data'] = [];
+            // 等待中的客户数据
+            this.getDialogueList();
+          },
+          error: (res) => {
+            this.getDialogueList();
+          }
+        });
+      },
+      // 获取正在会话列表中客户会话数据
+      getMessage () {
+        let that = this;
+        // 读取会话数据表中的数据
+        let db1 = new DB();
+        db1.type = 'get'; // 执行类型
+        db1.tabName = 'visitor'; // 数据表名称
+        db1.fun = function (res) { // 执行成功回掉函数
+          db1.close();
+          let user = res;
+          that.is_Message = false;
+          that.ajax.getMessage({
+            data: {
+              // openid_list: arr
+            },
+            success: (res) => {
+              for (let k in res.body) {
+                // that.messageData.data = that.arr;
+                // 调用自定义事件 发送信息到组件 聊天窗口
+                // 添加数据到本地数据库
+                user.forEach((s) => {
+                  if (s.customer_wx_openid === k) {
+                    if (that.is_tongzhi) {
+                      that.$Notice.warning({
+                        title: '收到一条（' + s.customer_wx_nickname + '）的消息',
+                        duration: 2
+                      });
+                    }
+                  }
+                });
+                let db = new DB();
+                db.type = 'set';
+                db.tabName = 'message';
+                db.data = res.body[k];
+                db.fun = function (res) {
+                  console.log('DB---》添加数据成功');
+                  db.close();
+                };
+              }
+              // Bus.$emit('change', that.messageData);
+              that.getMessage();
+              Bus.$emit('MessageList', res);
+            },
+            error: (res) => {
+              that.getMessage();
+              // that.$Message.warning(res.meta.message);
+            }
+          });
+        };
       }
     },
     created () {
       this.routeSwitchMenu(this.$route.name);
+      this.getDialogueList();
+      this.getMessage();
     }
   };
 </script>

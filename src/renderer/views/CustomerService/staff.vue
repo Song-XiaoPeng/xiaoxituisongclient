@@ -52,10 +52,11 @@
                     <thead>
                     <tr>
                         <th>姓名</th>
+                        <th>图像</th>
                         <th>账号</th>
                         <th>所属部门</th>
-                        <th>添加时间</th>
                         <th>员工状态</th>
+                        <th>头像</th>
                         <th>设置客服</th>
                         <th>在职/离职 操作</th>
                     </tr>
@@ -66,19 +67,29 @@
                             {{k.user_name}}
                         </td>
                         <td style="padding: 4px;">
+                            <img :src="k.avatar_url" alt="" style="height: 50px;width: 50px">
+                        </td>
+                        <td style="padding: 4px;">
                             {{k.phone_no}}
                         </td>
                         <td style="padding: 4px;">
                             {{k.user_group_name}}
                         </td>
-                        <td style="padding: 4px;">
-                            {{k.create_time}}
-                        </td>
                         <td>
                             {{k.user_state_name}}
                         </td>
                         <td>
-                            <Button type="ghost" @click="is_sectionPupop1 = true, selUser = k">设置为客服</Button>
+                            <Upload  action="http://kf.lyfz.net/api/v1/we_chat/WxOperation/uploadResources"
+                                    name="file" :data="{resources_type: 2}"
+                                    :show-upload-list="false"
+                                    :headers="{token: userInfo.token}"
+                                    :on-success="upImgFun">
+                                <Button type="ghost" size="small" icon="ios-cloud-upload-outline" @click="selEdit = k">上传图像</Button>
+                            </Upload>
+                        </td>
+                        <td>
+                            <Button type="ghost" size="small" @click="is_sectionPupop1 = true, selUser = k">设为客服</Button>
+                            <Button type="ghost" size="small" @click="is_sectionPupop2 = true, selEdit = k">调部门</Button>
                         </td>
                         <td>
                             <i-switch v-model="k.is_switch" @on-change="switchFun(k)">
@@ -133,6 +144,19 @@
 
 
 
+        <!-- 改部门弹窗 -->
+        <Modal v-model="is_sectionPupop2" title="调部门" :width="500" @on-ok="editBranch">
+            <Form  :label-width="120">
+                <Form-item label="选择部门">
+                    <Select v-model="edit_branch_id" >
+                        <Option v-for="(item, key) in userGroupData" :key="key" :value="item.user_group_id">{{ item.user_group_name }}</Option>
+                    </Select>
+                </Form-item>
+            </Form>
+        </Modal>
+        <!-- end改部门弹窗 -->
+
+
         <!-- 添加部门弹窗 -->
         <Modal v-model="is_sectionPupop1" title="选择公共号" :width="500" @on-ok="setServer">
             <Form  :label-width="120">
@@ -178,6 +202,7 @@
         radioVal: '',
         userGroupData: [],
         is_sectionPupop1: false,
+        is_sectionPupop2: false,
         pageData: null,
         page: 1,
         isShow: false,
@@ -188,7 +213,10 @@
         is_Loading: true,
         appid: '',
         cityList: [],
-        selUser: ''
+        selUser: '',
+        edit_branch_id: '',
+        selEdit: null,
+        userInfo: null
       };
     },
     components: {
@@ -225,7 +253,7 @@
           data: {},
           success: (res) => {
             this.is_Loading = false;
-            this.sectionId = res.body[0].user_group_id;
+            // this.sectionId = res.body[0].user_group_id;
             this.userGroupData = res.body;
             // this.getUserList();
           },
@@ -277,7 +305,7 @@
         this.ajax.getUserList({
           data: {
             user_group_id: this.sectionId,
-            page: 1
+            page: this.page
           },
           success: (res) => {
             this.is_Loading = false;
@@ -319,6 +347,10 @@
         });
       },
       delFun () {
+        if (this.sectionId === '') {
+          this.$Message.warning('请选择部门');
+          return;
+        }
         this.is_Loading = true;
         this.ajax.delUserGroup({
           data: {
@@ -354,16 +386,48 @@
             this.$Message.warning(res.meta.message);
           }
         });
+      },
+      // 改部门
+      editBranch () {
+        this.ajax.setUserGroup({
+          data: {
+            set_uid: this.selEdit.uid,
+            user_group_id: this.edit_branch_id
+          },
+          success: () => {
+            this.getUserList();
+          },
+          error: (res) => {
+            this.is_Loading = false;
+            this.$Message.warning(res.meta.message);
+          }
+        });
+      },
+      upImgFun (d) {
+        this.ajax.setUserPortrait({
+          data: {
+            uid: this.selEdit.uid,
+            resources_id: d.body.resources_id
+          },
+          success: (res) => {
+            this.selEdit.avatar_url = res.body.avatar_url;
+            this.$Message.success('设置成功');
+          },
+          error: (res) => {
+            this.$Message.warning(res.meta.message);
+          }
+        });
       }
     },
     created () {
+      this.userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
       this.ajax.getWxAuthList({
         data: {},
         success: (res) => {
           this.cityList = res.body;
           this.appid = res.body[0].appid;
           this.getSection();
-          // this.getUserList();
+          this.getUserList();
         },
         error: (res) => {
           this.is_Loading = false;

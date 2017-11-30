@@ -57,14 +57,14 @@
    <div class="box">
       <div class="client cl">
          <div class="portrait f-l">
-            <img src="" alt="">
+            <img :src="clientData.customer_wx_portrait" alt="">
          </div>
          <div class="txt f-l">
             <ul>
-               <li><span>微信名称：</span> <span style="color:#999">asda</span> </li>
-               <li><span>来源：</span> <span style="color:#999">官网</span> </li>
-               <li><span>公共平台</span> <span style="color:#999">哇大王</span> </li>
-               <li><span>会话次数</span> <span style="color:#999">5次</span> </li>
+               <li><span>微信名称：</span> <span style="color:#999">{{clientData.customer_wx_nickname}}</span> </li>
+               <li><span>来源：</span> <span style="color:#999">{{clientData.app_name}}</span> </li>
+               <!--<li><span>公共平台</span> <span style="color:#999">哇大王</span> </li>-->
+               <li><span>来访次数</span> <span style="color:#999">{{clientData.session_frequency}}</span> </li>
             </ul>
          </div>
          <div class="txt-bot">
@@ -145,6 +145,7 @@
    </div>
 </template>
 <script>
+    import Bus from '../../assets/eventBus';
     export default {
       data () {
         return {
@@ -237,12 +238,12 @@
           ],
           data6: [],
           WxAuthList: null,
-          WxAutId: ''
+          WxAutId: '',
+          clientData: {}
         };
       },
       mounted () {
         this.getCustomerGroupList();
-        this.getWxGroup();
       },
       beforeDestroy () {
       },
@@ -334,11 +335,17 @@
         },
         // 客户池分组改变方法
         groupcChangeFun (v) {
-          console.log(v, 1237897987123);
+          console.log(v, 23323);
         }
       },
       created () {
-        this.WxAuthList = JSON.parse(sessionStorage.getItem('WxAuthList'));
+        Bus.$on('WxAuthList', (k) => {
+          this.WxAuthList = k.body;
+          this.getWxGroup();
+        });
+        Bus.$on('change', (k) => {
+          this.clientData = k;
+        });
       }
     };
 </script>

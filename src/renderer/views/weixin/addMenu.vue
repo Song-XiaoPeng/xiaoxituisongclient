@@ -264,6 +264,7 @@
                                    <RadioGroup v-model="animal">
                                        <Radio label="客服人员"></Radio>
                                        <Radio label="客服分组"></Radio>
+                                       <Radio label="空"></Radio>
                                    </RadioGroup>
                                </div>
                                <div class="" style="width: 99%;height: 420px;overflow: auto">
@@ -584,6 +585,7 @@
       },
       // 获取菜单
       getMenuFun () {
+        this.menu = [];
         this.is_Loading = true;
         this.ajax.getMenuList({
           data: {
@@ -981,6 +983,11 @@
                   obj['name'] = this.menu[i].menu_name;
                   obj['type'] = this.menu[i].type;
                   obj['sub_button'] = [];
+                } else {
+                  obj['key'] = 'kf_other';
+                  obj['name'] = this.menu[i].menu_name;
+                  obj['type'] = this.menu[i].type;
+                  obj['sub_button'] = [];
                 }
               } else if (this.menu[i].type === '') {
                 this.$Message.warning(this.menu[i].menu_name + '--> 请选择图文或图片！！！');
@@ -1035,6 +1042,11 @@
                       obj['key'] = 'kf_group_' + this.menu[i].child_menu[s].Personnel.user_group_id;
                       obj['name'] = this.menu[i].child_menu[s].child_menu_name;
                       obj['type'] = this.menu[i].child_menu[s].type;
+                      obj['sub_button'] = [];
+                    } else {
+                      obj['key'] = 'kf_other';
+                      obj['name'] = this.menu[i].child_menu[s].child_menu_name;
+                      obj['type'] = this.menu[i].type;
                       obj['sub_button'] = [];
                     }
                   } else if (this.menu[i].child_menu[s].type === '') {
@@ -1185,7 +1197,7 @@
         }
         this.addressData.push(obj1);
       }
-      console.log(156);
+      console.log(157894561236);
     }
   };
 </script>

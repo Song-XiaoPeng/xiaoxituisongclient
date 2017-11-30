@@ -27,7 +27,8 @@ var INDEXDB = {
       console.log('成功建立并打开数据库:'+myDB.name+' version'+dbversion);
     };
     request.onupgradeneeded=function(e){
-      var db=e.target.result,transaction= e.target.transaction,store;
+      var db=e.target.result,
+        transaction= e.target.transaction,store;
       if(!db.objectStoreNames.contains(myDB.ojstore.name)){
         //没有该对象空间时创建该对象空间
         store = db.createObjectStore(myDB.ojstore.name,{keyPath:myDB.ojstore.keypath});

@@ -90,14 +90,14 @@
                         {{fansSum}}
                     </div>
                 </div>
-                <div class="top-box f-r">
+            </div>
+            <div class="cl" style="text-align: right">
+                <div class="f-l" style="text-align: left;">
                     <span>当前公共号：</span>
                     <Select v-model="appid" style="width:200px" @on-change="selAppidFun">
                         <Option v-for="item in cityList" :value="item.appid" :key="item.appid">{{ item.nick_name }}</Option>
                     </Select>
                 </div>
-            </div>
-            <div style="text-align: right">
                 <span>自定义时间：</span>
                 <DatePicker type="daterange" v-model="time" :options="options2" placement="bottom-end" placeholder="请选择" style="width: 200px" @on-change="selTimeFun"></DatePicker>
             </div>
@@ -214,7 +214,7 @@
       onReady () {
       },
       onClick () {
-        console.log(1398778851);
+        console.log(179);
       },
       // 获取 数据列表
       getUserSummary () {
@@ -301,6 +301,7 @@
       // appid 改变请求数据
       selAppidFun () {
         this.getUserCumulate();
+        this.getUserSummary();
       }
     },
     created () {

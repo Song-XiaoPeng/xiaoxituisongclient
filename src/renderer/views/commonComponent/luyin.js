@@ -12,6 +12,7 @@
 
 
     //创建一个音频环境对象
+    var audioContext;
     audioContext = window.AudioContext || window.webkitAudioContext;
     var context = new audioContext();
 
@@ -195,22 +196,27 @@
             switch (error.code || error.name) {
               case 'PERMISSION_DENIED':
               case 'PermissionDeniedError':
+                window.alert('用户拒绝提供信息。');
                 HZRecorder.throwError('用户拒绝提供信息。');
                 break;
               case 'NOT_SUPPORTED_ERROR':
               case 'NotSupportedError':
+                window.alert('浏览器不支持硬件设备。');
                 HZRecorder.throwError('<a href="http://www.it165.net/edu/ewl/" target="_blank" class="keylink">浏览器</a>不支持硬件设备。');
                 break;
               case 'MANDATORY_UNSATISFIED_ERROR':
               case 'MandatoryUnsatisfiedError':
+                window.alert('无法发现指定的硬件设备。');
                 HZRecorder.throwError('无法发现指定的硬件设备。');
                 break;
               default:
+                window.alert('无法打开麦克风。异常信息');
                 HZRecorder.throwError('无法打开麦克风。异常信息:' + (error.code || error.name));
                 break;
             }
           });
       } else {
+        window.alert('当前浏览器不支持录音功能');
         HZRecorder.throwErr('当前<a href="http://www.it165.net/edu/ewl/" target="_blank" class="keylink">浏览器</a>不支持录音功能。');
         return;
       }

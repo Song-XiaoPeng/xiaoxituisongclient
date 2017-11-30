@@ -158,16 +158,15 @@ class IndexedDB{
 
 
       //@@@  创建会话数据表（储存对象）  @@@//
-      var objectStore1 = db.createObjectStore("message", { keyPath: "message_id" });
+      var objectStore1 = db.createObjectStore("message", { autoIncrement: true });
 
       // 创建一个索引来通过 name 搜索客户。
       // 可能会有重复的，因此我们不能使用 unique 索引。
       objectStore1.createIndex("name", "session_id", { unique: false });
+      objectStore1.createIndex("customer_wx_openid", "customer_wx_openid", { unique: false });
 
       // 我们希望确保不会有两个客户使用相同的 appid ，
       objectStore1.createIndex("appid", "appid", { unique: false });
-      // 客户微信openid
-      objectStore1.createIndex('customer_wx_openid' ,"customer_wx_openid", { unique: false });
       // 图像
       objectStore1.createIndex('customer_wx_portrait' ,"customer_wx_portrait", { unique: false });
       // 客户id
@@ -188,8 +187,6 @@ class IndexedDB{
       objectStore1.createIndex('lat' ,"lat", { unique: false });
       // 是否已读
       objectStore1.createIndex('is_read' ,"is_read", { unique: false });
-      // 会话id
-      objectStore1.createIndex('session_id' ,"session_id", { unique: false });
       // 客服id
       objectStore1.createIndex('uid' ,"uid", { unique: false });
       // 素材id
@@ -235,7 +232,7 @@ class IndexedDB{
         callback(event.target.result);
       };
       request.onerror = e => {
-        console.info('Can not add value', e);
+        console.info('Can not add value ....', e);
       };
     }
     // let oldValue;

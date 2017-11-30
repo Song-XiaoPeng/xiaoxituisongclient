@@ -16,6 +16,7 @@ ajax.login = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -28,6 +29,7 @@ ajax.section = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -40,6 +42,7 @@ ajax.getSection = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -52,6 +55,7 @@ ajax.addAccountNumber = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -64,6 +68,7 @@ ajax.getUserList = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -76,6 +81,7 @@ ajax.setUserState = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -88,6 +94,7 @@ ajax.delUserGroup = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -100,6 +107,7 @@ ajax.getWxAuthList = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -112,6 +120,7 @@ ajax.setMenuList = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -124,6 +133,7 @@ ajax.getMenuList = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -136,6 +146,7 @@ ajax.setMessageRuld = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -148,6 +159,7 @@ ajax.getMessageRuleList = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -160,6 +172,7 @@ ajax.delMessageRule = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -172,6 +185,7 @@ ajax.getArticleList = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -184,6 +198,7 @@ ajax.setMenu = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -196,6 +211,7 @@ ajax.setWxIndividualizationMenu = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -208,6 +224,7 @@ ajax.getWxIndividualizationMenu = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -220,6 +237,7 @@ ajax.delWxIndividualizationMenu = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -232,6 +250,7 @@ ajax.delSourceMaterial = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -244,6 +263,7 @@ ajax.getWxUserList = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -256,6 +276,7 @@ ajax.getWxGroup = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -268,6 +289,7 @@ ajax.addWxGroup = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -280,6 +302,7 @@ ajax.moveUserWxGroup = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -292,6 +315,7 @@ ajax.getTaskList = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -304,6 +328,7 @@ ajax.syncWxUser = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -316,6 +341,7 @@ ajax.delWxGroup = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -328,6 +354,7 @@ ajax.addMassNews = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -340,6 +367,7 @@ ajax.getMassNewsList = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -352,6 +380,7 @@ ajax.delMassNews = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -365,6 +394,7 @@ ajax.getUserSummary = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -377,6 +407,7 @@ ajax.getUserCumulate = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -390,6 +421,7 @@ ajax.setUserCustomerService = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -402,6 +434,7 @@ ajax.updateCustomerServiceName = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -414,6 +447,7 @@ ajax.getCustomerServiceList = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -426,6 +460,7 @@ ajax.addCustomerGroup = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -438,6 +473,7 @@ ajax.getCustomerGroupList = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -450,6 +486,7 @@ ajax.delCustomerGroup = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -466,6 +503,7 @@ ajax.getSessionList = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -478,6 +516,8 @@ ajax.sessionAccess = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
+    obj.error(error);
     console.log(error);
   });
 };
@@ -490,12 +530,13 @@ ajax.closeSession = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
 // 获取正在会话列表中客户会话数据
 ajax.getMessage = (obj) => {
-  util.ajax.post('/api/v1/we_chat/WxOperation/getMessage', obj.data, {timeout: 60000}).then(function (response) {
+  util.ajax.get('/api/v1/we_chat/WxOperation/getMessage', obj.data, {timeout: 180000}).then(function (response) {
     if (response.data) {
       if (response.data.meta.code === 200) {
         obj.success(response.data);
@@ -506,6 +547,7 @@ ajax.getMessage = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };
@@ -522,6 +564,75 @@ ajax.setSessionReceive = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 改部门
+ajax.setUserGroup = (obj) => {
+  util.ajax.post('/api/v1/user/UserOperation/setUserGroup', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 获取分享数据
+ajax.getUserShareSummary = (obj) => {
+  util.ajax.post('/api/v1/we_chat/WxOperation/getUserShareSummary', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 发送信息
+ajax.sendMessage = (obj) => {
+  util.ajax.post('/api/v1/we_chat/WxOperation/sendMessage', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 设置客服头像
+ajax.setUserPortrait = (obj) => {
+  util.ajax.post('/api/v1/user/UserOperation/setUserPortrait', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
     console.log(error);
   });
 };

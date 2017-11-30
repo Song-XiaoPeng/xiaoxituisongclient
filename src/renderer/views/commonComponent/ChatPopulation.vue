@@ -122,7 +122,7 @@
                    会话中
                </div>
                <ul ref="list1" class="list" :style="'height:' + data1.length * 66 + 'px'">
-                   <li v-for="(k, i) in data1" v-bind:class="data1Index == i ? 'active' : ''" @click.stop="underwayFun(k, i), data1Index = i">
+                   <li v-for="(k, i) in data1" v-bind:class="data1Index == i ? 'active' : ''" @click.stop="underwayFun(k), data1Index = i">
                        <span class="end" title="结束会话" @click="popup2 = true, clientName = k, is_w_v = 1, clientDataIndex = i"><Icon  type="close-circled" style="vertical-align: top"></Icon></span>
                        <div class="picture">
                            <img :src="k.customer_wx_portrait" alt="">
@@ -231,7 +231,11 @@
           clientDataIndex: null,
           is_w_v: null,
           is_Loading: false,
-          data1Index: null
+          data1Index: null,
+          messageData: null,
+          arr: null,
+          is_tongzhi: true,
+          is_Message: false
         };
       },
       mounted () {
@@ -240,42 +244,29 @@
       },
       methods: {
         // 请求会话列表数据
-        getDialogueList () {
-          this.ajax.getSessionList({
-            data: {},
-            success: (res) => {
-              res.body.queue_up.forEach((k) => {
-                this.data3.push(k);
+        getDialogueList (res) {
+          res.body.queue_up.forEach((k) => {
+            // 排队列表
+            if (this.data3.length === 0) {
+              this.data3.push(k);
+            } else {
+              this.data3.forEach((s) => {
+                if (k.customer_wx_openid !== s.customer_wx_openid) {
+                  this.data3.push(k);
+                }
               });
-              res.body.waiting.forEach((k) => {
-                this.data2.push(k);
+            }
+          });
+          // 等待列表
+          res.body.waiting.forEach((k) => {
+            if (this.data2.length === 0) {
+              this.data2.push(k);
+            } else {
+              this.data2.forEach((s) => {
+                if (k.customer_wx_openid !== s.customer_wx_openid) {
+                  this.data2.push(k);
+                }
               });
-              let db = new DB();
-              db.type = 'update'; // 执行类型
-              db.tabName = 'waiting'; // 数据表名称
-              db.data = res.body.waiting;
-              db.fun = function (res) { // 执行成功回掉函数
-                console.log(res, 'DB --- 等待会话数据添加成功');
-              };
-              let db1 = new DB();
-              db1.type = 'update'; // 执行类型
-              db1.tabName = 'queue_up'; // 数据表名称
-              db1.data = res.body.queue_up;
-              db1.fun = function (res) { // 执行成功回掉函数
-                console.log(res, 'DB --- 排队数据添加成功');
-              };
-              // 会话中的客户数据
-              // res.body.contacting_session['data'] = [];
-              // res.body.pending_access_session['data'] = [];
-              // 等待中的客户数据
-              // this.getMessage();
-              this.getDialogueList();
-            },
-            error: (res) => {
-              if (res === undefined) {
-                this.getDialogueList();
-              }
-              this.$Message.warning(res.meta.message);
             }
           });
         },
@@ -284,54 +275,79 @@
           this.clientName = k[0].obj.customer_wx_nickname;
           this.clientData = k[0].obj;
           this.popup1 = true;
-          console.log(k, 156789798795);
         },
         // 会话中---》点击进入会话
         underwayFun (k) {
-          Bus.$emit('change', k);
+          let that = this;
+          let arr = [];
+          let db = new DB();
+          that.messageData = k;
+          Object.assign(that.messageData, {'data': null});
+          // 获取选择客户的相关数据
+          db.type = 'get'; // 执行类型
+          db.tabName = 'message'; // 数据表名称
+          db.fun = function (res) { // 执行成功回掉函数
+            res.forEach((k) => {
+              if (k.customer_wx_openid === that.messageData.customer_wx_openid) {
+                arr.push(k);
+              }
+            });
+            that.arr = arr;
+            that.messageData.data = arr;
+            // that.messageData.data = arr;
+            // 调用自定义事件传递数据到 聊天窗口
+            Bus.$emit('change', that.messageData);
+            db.close();
+          };
         },
         // 确定加入会话
         underwayPopupFun () {
+          let that = this;
           let k = this.clientData;
-          console.log(k);
-          this.is_Loading = true;
-          this.ajax.sessionAccess({
+          that.is_Loading = true;
+          that.ajax.sessionAccess({
             data: {
               session_id: this.clientData.session_id
             },
             success: (res) => {
+              // 更新相关数据
               let db2 = new DB();
               db2.type = 'update'; // 执行类型
               db2.tabName = 'visitor'; // 数据表名称
               db2.data = [k];
               db2.fun = function (res) { // 执行成功回掉函数
+                db2.close();
+                that.getWaitingTab();
               };
-              if (this.is_w_v === 2) {
+              if (that.is_w_v === 2) {
+                // 删除等待数据表中的数据
                 let db = new DB();
                 db.type = 'remove'; // 执行类型
                 db.tabName = 'waiting'; // 数据表名称
                 db.key = k.customer_wx_openid;
                 db.fun = function (res) { // 执行成功回掉函数
+                  db.close();
                 };
-                this.data1.push(this.data2[this.clientDataIndex]);
-                this.data2.splice(this.clientDataIndex, 1);
-              } else if (this.is_w_v === 3) {
+                that.data1.push(this.data2[this.clientDataIndex]);
+                that.data2.splice(this.clientDataIndex, 1);
+              } else if (that.is_w_v === 3) {
+                // 删除排队中的数据
                 let db1 = new DB();
                 db1.type = 'remove'; // 执行类型
                 db1.tabName = 'queue_up'; // 数据表名称
                 db1.key = k.customer_wx_openid;
                 db1.fun = function (res) { // 执行成功回掉函数
+                  db1.close();
                 };
-                this.data1.push(this.data3[this.clientDataIndex]);
-                this.data3.splice(this.clientDataIndex, 1);
+                that.data1.push(this.data3[this.clientDataIndex]);
+                that.data3.splice(this.clientDataIndex, 1);
               }
-              this.getDialogueList();
-              this.is_Loading = false;
-              this.clientName = '';
+              that.is_Loading = false;
+              that.clientName = '';
             },
             error: (res) => {
-              this.is_Loading = false;
-              this.$Message.warning(res.meta.message);
+              that.is_Loading = false;
+              that.$Message.warning(res.meta.message);
             }
           });
         },
@@ -350,7 +366,7 @@
                 db1.tabName = 'visitor'; // 数据表名称
                 db1.key = k.customer_wx_openid;
                 db1.fun = function (res) { // 执行成功回掉函数
-                  console.log(res);
+                  db1.close();
                 };
                 this.data1.splice(this.clientDataIndex, 1);
               } else if (this.is_w_v === 2) {
@@ -359,12 +375,27 @@
                 db.tabName = 'waiting'; // 数据表名称
                 db.key = k.customer_wx_openid;
                 db.fun = function (res) { // 执行成功回掉函数
-                  console.log(res);
+                  db.close();
                 };
                 this.data2.splice(this.clientDataIndex, 1);
               }
-              this.getDialogueList();
-              Bus.$emit('change', {});
+              this.messageData = {
+                add_time: '',
+                app_name: '',
+                appid: '',
+                company_id: '',
+                customer_service_id: '',
+                customer_wx_nickname: '',
+                customer_wx_openid: '',
+                customer_wx_portrait: '',
+                data: [],
+                invitation_frequency: '',
+                session_frequency: '',
+                session_id: '',
+                state: '',
+                uid: ''
+              };
+              Bus.$emit('change', this.messageData);
               this.is_Loading = false;
               this.clientName = '';
             },
@@ -375,33 +406,16 @@
           });
         },
         // 获取正在会话列表中客户会话数据
-        getMessage () {
-          let arr = this.data1.map((k) => {
-            return k.session_id;
-          });
-          this.ajax.getMessage({
-            data: {
-              session_list: arr
-            },
-            success: (res) => {
-              this.data1.forEach((k) => {
-                let id = k.session_id;
-                if (res.body[id]) {
-                  k['data'] = res.body[id];
-                }
-              });
-              if (this.data1Index !== null) {
-                this.underwayFun(this.data1[this.data1Index]);
+        getMessage (res) {
+          for (let k in res.body) {
+            res.body[k].forEach((s) => {
+              // 判断是否当前选择的客户 并添加数据
+              if (s.customer_wx_openid === this.messageData.customer_wx_openid) {
+                this.arr.push(s);
               }
-              this.getMessage();
-            },
-            error: (res) => {
-              if (res === undefined) {
-                this.getMessage();
-              }
-              this.$Message.warning(res.meta.message);
-            }
-          });
+            });
+            // Bus.$emit('change', that.messageData);
+          }
         },
         // 点击列表头动态隐藏效果
         telFun (t) {
@@ -423,17 +437,27 @@
         getWaitingTab () {
           let that = this;
           let db = new DB();
+          // 读取等待数据表中的数据
           db.type = 'get'; // 执行类型
           db.tabName = 'waiting'; // 数据表名称
           db.fun = function (res) { // 执行成功回掉函数
             that.data2 = res;
+            db.close();
           };
+          // 读取会话数据表中的数据
           let db1 = new DB();
           db1.type = 'get'; // 执行类型
           db1.tabName = 'visitor'; // 数据表名称
           db1.fun = function (res) { // 执行成功回掉函数
+            if (res.length === 0) {
+              that.is_Message = true;
+            } else {
+              that.is_Message = false;
+            }
             that.data1 = res;
+            db1.close();
           };
+          // 调用请求客户聊天信息AJAX
           // waiting
         },
         // 读取会话表中的人员
@@ -446,10 +470,14 @@
         }
       },
       created () {
-        // this.longTime();
-        // this.longTimeData();
-        this.getDialogueList();
+        // 调用本地数据库 获取储存的数据
         this.getWaitingTab();
+        Bus.$on('conversationList', (k) => {
+          this.getDialogueList(k);
+        });
+        Bus.$on('MessageList', (k) => {
+          this.getMessage(k);
+        });
       }
     };
 </script>
