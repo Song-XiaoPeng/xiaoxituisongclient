@@ -118,8 +118,8 @@
             data.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
           }
         }
-
-        return new Blob([data], { type: 'audio/wav' });
+        var bold = new Blob([data], { type: 'audio/wav'})
+        return bold;
       }
     };
 
@@ -146,13 +146,14 @@
     };
 
     //上传
-    this.upload = function (url, callback) {
+    var date = new Date()
+    this.upload = function (url, token, callback) {
       var fd = new FormData();
-      fd.append('audioData', this.getBlob());
+      fd.append('file', this.getBlob(), date.getTime() + '.wav');
       var xhr = new XMLHttpRequest();
       if (callback) {
         xhr.upload.addEventListener('progress', function (e) {
-          callback('uploading', e);
+         callback('uploading', e);
         }, false);
         xhr.addEventListener('load', function (e) {
           callback('ok', e);
@@ -165,6 +166,7 @@
         }, false);
       }
       xhr.open('POST', url);
+      xhr.setRequestHeader("token", token);
       xhr.send(fd);
     };
 

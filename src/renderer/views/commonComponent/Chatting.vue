@@ -119,6 +119,21 @@
         position: relative;
         top: -18px;
     }
+    .audio-box{
+        display: inline-block;
+        width: 100px;
+        height: 100px;
+        position: relative;
+        .time{
+            position: absolute;
+            height: 14px;
+            width: 34px;
+            display: inline-block;
+            top: 50%;
+            margin-top: -7px;
+            left: -48px;
+        }
+    }
 </style>
 <template>
   <div class="chart-box">
@@ -135,7 +150,7 @@
      </div>
      <div class="chart-win" ref="win" v-bind:class="{'is_mass_chart':isMass}" style="width: 100%;overflow-y: auto;position: relative;">
          <div ref="win1">
-             <div v-for="k in elmetArr" >
+             <div v-for="(k, i) in elmetArr" >
                  <div class="content-box"  v-if="k.opercode == 2">
                      <div class="graphic" ><Avatar :src="clientData.customer_wx_portrait" style="margin-left: 5px"/></div>
                      <div class="crate" style="left: 10px">
@@ -143,6 +158,11 @@
                              <span v-if="k.message_type == 1">{{k.text}}</span>
                              <img  v-if="k.message_type == 2" :src="k.file_url" alt="" style="max-height: 400px;max-width: 360px"  v-on:load="loadFun">
                              <Button v-if="k.message_type == 4" type="dashed" @click="mp4Url = 'http://kf.lyfz.net/api/v1/we_chat/Business/getMaterial?company_id=' + k.company_id + '&appid=' + k.appid + '&media_id=' + k.media_id + '&type=2',popup2 = true"><Icon type="play"></Icon>视频文件</Button>
+                             <audio  style="width: 200px;height: 100px" ></audio>
+                             <audio v-if="k.message_type == 3" controls>
+                                 <source :src="'http://kf.lyfz.net/api/v1/we_chat/Business/getMaterial?company_id=' + k.company_id + '&appid=' + k.appid + '&media_id=' + k.media_id + '&type=3'">
+                                 您的浏览器不支持 audio 元素。
+                             </audio>
                          </div>
                          <i class="arrow arrow_out" style="left: -10px;transform: rotate(90deg);"></i>
                          <i class="arrow arrow_in" style="left: -9px;transform: rotate(90deg);"></i>
@@ -157,6 +177,16 @@
                                  <source :src="k.file_url" type="video/mp4">
                                  您的浏览器不支持Video标签。
                              </video>
+                             <div v-if="k.message_type == 3" class="audio-box" @click="audioFun('audio' + i)">
+                                 <div class="time">
+                                     <span><span style="font-size: 14px">5</span>s</span>
+                                     <Icon type="android-arrow-dropright-circle" style="font-size: 20px;vertical-align: bottom;color: #5cadff"></Icon>
+                                     <Icon type="record" style="font-size: 20px;vertical-align: bottom;color: #ed3f14"></Icon>
+                                 </div>
+                                 <audio :ref="'audio' + i" v-if="k.message_type == 3" v-on:loadedmetadata="audioTimeFun(k, 'audio' + i)">
+                                     <source  :src="k.file_url">
+                                 </audio>
+                             </div>
                          </div>
                          <i class="arrow arrow_out" style="right: -10px;transform: rotate(270deg);border-top-color: #66cc00"></i>
                          <i class="arrow arrow_in" style="right: -9px;transform: rotate(270deg);border-top-color: #66cc00"></i>
@@ -179,7 +209,7 @@
          </div>
      </div>
      <div class="chart-icon">
-        <span style="color: #333" title="语音" @click="popup3 = true,replyType = 5"><Icon type="ios-mic"></Icon></span>
+        <span style="color: #333" title="语音" @click="popup3 = true,replyType = 3"><Icon type="ios-mic"></Icon></span>
         <span style="color: #ff9933" title="表情"><Icon type="happy-outline"></Icon></span>
         <span style="color: #333" title="截图"><Icon type="scissors"></Icon></span>
          <Upload style="display: inline-block;"  action="http://kf.lyfz.net/api/v1/we_chat/WxOperation/uploadResources"
@@ -208,7 +238,7 @@
                  :on-success="upMp4Fun">
              <span style="color: #ffcc33" title="视频" @click="replyType = 4"> <Icon type="ios-film-outline"></Icon></span>
          </Upload>
-        <span style="color: #99ccff" title="超链接"><Icon type="link"></Icon></Icon></span>
+        <span style="color: #99ccff" title="超链接321"><Icon type="link"></Icon></Icon></span>
         <span style="color: #996600" title="模板消息"><Icon type="ios-albums-outline"></Icon></span>
         <!--<span style="color: #9999cc" title="群聊"><Icon type="android-person-add"></Icon></span>-->
         <!--<span style="color: #cccc99" title="转发"><Icon type="android-share-alt"></Icon></span>-->
@@ -239,10 +269,10 @@
       <!-- 音频弹窗 -->
       <Modal v-model="popup3" title="提示">
           <div style="padding: 10px">
-              <Button  type="primary" size="small" @click="voiceFun">开始录音</Button>
-              <Button  type="primary" size="small" @click="obtainRecord">发送录音</Button>
-              <Button  type="primary" size="small" @click="stopRecord">停止录音</Button>
-              <Button  type="primary" size="small" @click="playRecord">播放录音</Button>
+              <Button  type="primary"  @click="voiceFun"><Icon type="ios-mic-outline"></Icon>&nbsp;开始录音</Button>
+              <Button  type="success"  @click="obtainRecord"><Icon type="ios-paperplane-outline"></Icon>&nbsp;发送录音</Button>
+              <Button  type="ghost"  @click="stopRecord"><Icon type="ios-pause-outline"></Icon>&nbsp;停止录音</Button>
+              <Button  type="info"  @click="playRecord"><Icon type="ios-play"></Icon>&nbsp;播放录音</Button>
           </div>
           <div style="padding: 10px">
               <audio controls autoplay ref="audio"></audio>
@@ -364,6 +394,7 @@
           is_percent: false,
           up_state: 0,
           mp4Data: null,
+          mp3Data: null,
           mp4Url: '',
           recorder: null,
           audioData: null
@@ -398,6 +429,28 @@
       methods: {
         // 获取会话客户相关数据
         getclientData () {
+        },
+        // 播放音频
+        audioFun (c) {
+          let el = c;
+          let au = this.$refs[el];
+          let audio = au[0];
+          audio.onloadedmetadata = function (res) {
+            // console.log(res, 99999);
+            // console.log(audio.duration, 3333333);
+          };
+          audio.currentTime = 0;
+          audio.play();
+          audio.onended = function () {
+            console.log('播放完成');
+          };
+        },
+        // 获取音频播放时长
+        audioTimeFun (k, e) {
+          let el = e;
+          let au = this.$refs[el];
+          let audio = au[0];
+          console.log(audio.duration, 999222);
         },
         // 创建txt文本
         txt (t) {
@@ -438,10 +491,19 @@
               type: this.replyType
             };
           } else if (this.replyType === 4) {
+            // 发送视频
             data = {
               session_id: this.clientData.session_id,
               message: '',
               resources_id: this.mp4Data.resources_id,
+              type: this.replyType
+            };
+          } else if (this.replyType === 3) {
+            // 发送音频
+            data = {
+              session_id: this.clientData.session_id,
+              message: '',
+              resources_id: this.mp3Data.resources_id,
               type: this.replyType
             };
           }
@@ -451,6 +513,7 @@
             success: (res) => {
               this.is_Loading = false;
               let obj;
+              // 组合发送成功的数据  保存到本地数据库
               if (this.replyType === 1) {
                 obj = {
                   add_time: this.getAtTimeFun(),
@@ -497,6 +560,24 @@
                   text: this.txtra,
                   uid: this.datalistArr.uid
                 };
+              } else if (this.replyType === 3) {
+                obj = {
+                  add_time: this.getAtTimeFun(),
+                  appid: '',
+                  company_id: '',
+                  customer_service_id: 4,
+                  customer_wx_openid: this.datalistArr.customer_wx_openid,
+                  message_id: '',
+                  message_type: 3,
+                  opercode: 1,
+                  file_url: this.mp3Data.url,
+                  resources_id: this.mp3Data.resources_id,
+                  session_id: this.clientData.session_id,
+                  text: this.txtra,
+                  uid: this.datalistArr.uid,
+                  is_state: false,
+                  is_time: false
+                };
               }
               this.is_percent = false;
               this.clientData.data.push(obj);
@@ -519,11 +600,16 @@
           });
         },
         obtainRecord () {
+          let that = this;
           // var record = this.recorder.getBlob();
-          console.log(this.recorder);
           let url = 'http://kf.lyfz.net/api/v1/we_chat/WxOperation/uploadResources';
-          this.recorder.upload(url, function (res) {
-            console.log(res);
+          that.recorder.upload(url, this.userInfo.token, function (r, e) {
+            if (r === 'ok') {
+              let res = JSON.parse(e.target.response);
+              that.mp3Data = res.body;
+              that.subFun();
+              console.log(res, 31);
+            }
           });
         },
         stopRecord () {
@@ -614,6 +700,19 @@
       created () {
         this.userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
         Bus.$on('change', (k) => {
+          k.data.forEach((k) => {
+            if (k.message_type === 3) {
+              // 音频数据 添加 时间显示状态/是否播放状态
+              if (!k.is_state) {
+                // 如果k 没有is_state 这个属性或属性为falss  就添加
+                Object.assign(k, {'is_state': false});
+              }
+              if (!k.is_time) {
+                // 如果k is_time 这个属性或属性为falss  就添加
+                Object.assign(k, {'is_time': false});
+              }
+            }
+          });
           this.elmetArr.length = 0;
           this.elmetArr = k.data;
           this.clientData = k;
