@@ -58,7 +58,7 @@
     }
   },
   "updater": {
-    "url": "http://localhost:91/update.json"
+    "url": "http://kf.lyfz.net/api/v1/update/Client/getVersion"
   },
   "dependencies": {
     "axios": "^0.16.1",
