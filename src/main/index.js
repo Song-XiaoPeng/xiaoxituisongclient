@@ -33,8 +33,10 @@ function createWindow () {
     webPreferences: {webSecurity: false}
   });
 
-  // 默认开启调试窗口
-  mainWindow.webContents.openDevTools();
+  // 开发环境默认开启调试窗口
+  if (process.env.NODE_ENV === 'development') {
+    mainWindow.webContents.openDevTools();
+  }
 
   mainWindow.loadURL(winURL);
 
