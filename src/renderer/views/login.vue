@@ -244,8 +244,8 @@
           });
         });
 
-        updater.on('error', (err) => {
-          this.$Message.error(err);
+        updater.on('error', () => {
+          this.$Message.error('获取更新镜像源失败');
           this.$Loading.error();
         });
 
