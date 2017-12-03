@@ -174,6 +174,7 @@
 
 <script>
   import md5 from 'js-md5';
+  import cookies from 'js-cookie';
   import { remote } from 'electron';
   let updater = remote.require('electron-simple-updater');
 
@@ -211,6 +212,7 @@
             password: md5(this.password)
           },
           success: (res) => {
+            cookies.set('name', this.name, { expires: 7 });
             this.loginLoading = false;
             res.body.token = res.body.login_token;
             sessionStorage.setItem('userInfo', JSON.stringify(res.body));
@@ -304,6 +306,11 @@
     created () {
       let obj = require('../../../package.json');
       this.version = obj.version;
+
+      let name = cookies.get('name');
+      if (name !== '') {
+        this.name = name;
+      }
 
       this.checkUpload();
     }
