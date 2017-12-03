@@ -1,7 +1,7 @@
 {
   "name": "customer-service-client",
-  "version": "0.1.1",
-  "author": "",
+  "version": "0.2.7",
+  "author": "lyfz",
   "description": "view",
   "license": null,
   "main": "./dist/electron/main.js",
@@ -48,14 +48,21 @@
       "icon": "build/icons/icon.icns"
     },
     "win": {
-      "icon": "build/icons/icon.ico"
+      "target": "squirrel"
+    },
+    "squirrelWindows": {
+      "iconUrl": "http://kf.lyfz.net/favicon.ico"
     },
     "linux": {
       "icon": "build/icons"
     }
   },
+  "updater": {
+    "url": "http://localhost:91/update.json"
+  },
   "dependencies": {
     "axios": "^0.16.1",
+    "electron-simple-updater": "^1.2.3",
     "iview": "^2.7.3",
     "js-md5": "^0.7.2",
     "localforage": "^1.5.3",

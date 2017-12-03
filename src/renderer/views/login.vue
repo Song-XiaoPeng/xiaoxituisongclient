@@ -3,11 +3,13 @@
     height: 100%;
     width: 100%;
   }
+
   .bg{
       background: url("~@/assets/images/timg.jpg");
       background-repeat: no-repeat;
       background-size: 100% 100%;
   }
+
   .form-box{
     position: absolute;
     height: 100%;
@@ -37,7 +39,7 @@
           background-size: 100% 100%;
       }
     .form{
-        height: 200px;
+        height: 222px;
         width: 400px;
         position: absolute;
         overflow: hidden;
@@ -67,6 +69,7 @@
         }
     }
   }
+
   video{
     height: 100%;
     width: 100%;
@@ -75,50 +78,95 @@
     -webkit-filter: blur(1px);
     filter: blur(1px);
   }
+
+  .window-border {
+    width: 90%;
+    height: 35px;
+    -webkit-app-region: drag;
+    position: relative;
+
+  }
+
+  .window-control {
+    position: absolute;
+    right: 0;
+    width: 120px;
+    height: 50px;
+    line-height: 40px;
+    font-size: 18px;
+    color: #fff;
+    top: 0;
+    right: 0;
+    z-index: 9999;
+  }
+
+  .window-icon {
+    cursor: pointer;
+    padding: 10px;
+  }
+
+  .window-icon:hover {
+    color:#ccc;
+  }
 </style>
 
 <template>
   <div class="bg">
-     <div class="videoEl">
-        <!--<video  autoplay loop>-->
-          <!--<source :src="video" type="video/mp4">-->
-          <!--您的浏览器不支持Video标签。-->
-        <!--</video>-->
-     </div>
-     <div class="form-box">
-         <div class="logo"></div>
-         <div class="middle-mg1"></div>
-        <div class="form" id="login">
-          <div class="login-bg">
-
-          </div>
-          <Form  :label-width="80" class="form-content">
-            <FormItem label="登录账号">
-              <Input v-model="name" type="text" placeholder="请输入手机号"></Input>
-            </FormItem>
-            <FormItem label="登录密码">
-              <Input v-model="password" type="password" placeholder="请输入密码"></Input>
-            </FormItem>
-            <FormItem>
-              <Button type="primary" @click="login()">登录</Button>
-              <Button type="ghost" style="margin-left: 8px">获取最新版本</Button>
-            </FormItem>
-          </Form>
+    <div class="window-control">
+      <span class="window-icon" @click="hideWindow()">
+        <Icon type="minus"></Icon>
+      </span>
+      <span class="window-icon" @click="showWindow()">
+        <Icon type="arrow-expand"></Icon>
+      </span>
+      <span class="window-icon" @click="closeWindow()">
+        <Icon type="close"></Icon>
+      </span>
+    </div>
+    
+    <div class="form-box">
+      <div class="window-border"></div>
+      
+      <div class="logo"></div>
+      <div class="middle-mg1"></div>
+      <div class="form" id="login">
+        <div class="login-bg">
         </div>
-     </div>
+        <Form  :label-width="80" class="form-content">
+          <FormItem label="登录账号">
+            <Input v-model="name" type="text" placeholder="请输入手机号" @on-enter="login()"></Input>
+          </FormItem>
+          <FormItem label="登录密码">
+            <Input v-model="password" type="password" placeholder="请输入密码" @on-enter="login()"></Input>
+          </FormItem>
+          <FormItem>
+            <Button type="primary" @click="login()" :loading="loginLoading">登录</Button>
+            <Badge dot :count="isRemindUpload">
+              <Button type="ghost" style="margin-left: 8px" @click="update()">获取最新版本</Button>
+            </Badge>
+            <p>当前客户端版本：{{version}}</p>
+          </FormItem>
+        </Form>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
   import md5 from 'js-md5';
-  
+  import { remote } from 'electron';
+  let updater = remote.require('electron-simple-updater');
+
   export default {
     name: 'login',
     data () {
       return {
         password: '',
         name: '',
-        video: require('../../../src/renderer/assets/mp4/Composition2.mp4')
+        version: '',
+        isOpen: false,
+        loginLoading: false,
+        isRemindUpload: 0
       };
     },
     components: {
@@ -133,21 +181,105 @@
           this.$Message.warning('密码不能为空');
           return;
         }
+
+        this.loginLoading = true;
+
         this.ajax.login({
           data: {
             phone_no: this.name,
             password: md5(this.password)
           },
           success: (res) => {
+            this.loginLoading = false;
             res.body.token = res.body.login_token;
             sessionStorage.setItem('userInfo', JSON.stringify(res.body));
             this.$router.push({name: 'survey'});
           },
           error: (res) => {
-            this.$Message.warning(res.meta.message);
+            this.loginLoading = false;
+            this.$Message.error(res.meta.message);
           }
         });
+      },
+      update () {
+        updater.on('update-available', (meta) => {
+          this.$Modal.confirm({
+            title: '更新提醒',
+            content: '检测到新版本' + meta.version,
+            onOk: () => {
+              updater.downloadUpdate();
+            },
+            okText: '开始更新应用',
+            cancelText: '暂不更新'
+          });
+        });
+
+        updater.on('update-not-available', () => {
+          this.$Message.warning('暂无可升级更新');
+        });
+
+        updater.on('update-downloading', (meta) => {
+          this.$Loading.config({
+            color: '#19be6b',
+            height: 10
+          });
+          this.$Loading.start();
+          this.$Message.warning({content: '正在下载并安装' + meta.version + '版本更新请稍等！'});
+        });
+
+        updater.on('update-downloaded', () => {
+          this.$Message.destroy();
+          this.$Loading.destroy();
+
+          this.$Modal.success({
+            title: '更新提醒',
+            content: '更新包已下载更新完毕',
+            okText: '重启应用',
+            onOk: () => {
+              updater.quitAndInstall();
+            },
+            onCancel: () => {
+              updater.quitAndInstall();
+            }
+          });
+        });
+
+        updater.on('error', (err) => {
+          this.$Message.error(err);
+          this.$Loading.error();
+        });
+
+        updater.checkForUpdates();
+      },
+      checkUpload () {
+        updater.on('update-available', (meta) => {
+          console.log(meta);
+          this.isRemindUpload = 1;
+        });
+
+        updater.checkForUpdates();
+      },
+      hideWindow () {
+        this.$electron.ipcRenderer.send('hide-window');
+      },
+      showWindow () {
+        if (!this.isOpen) {
+          this.isOpen = true;
+          this.$electron.ipcRenderer.send('show-window');
+        } else {
+          this.isOpen = false;
+          this.$electron.ipcRenderer.send('orignal-window');
+        }
+      },
+      closeWindow () {
+        this.$electron.ipcRenderer.send('window-all-closed');
       }
+    },
+    created () {
+      let obj = require('../../../package.json');
+      this.version = obj.version;
+
+      this.checkUpload();
     }
   };
 </script>

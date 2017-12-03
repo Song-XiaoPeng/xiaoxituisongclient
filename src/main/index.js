@@ -1,6 +1,7 @@
 'use strict';
 
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
+import updater from 'electron-simple-updater';
 
 /**
  * Set `__static` path to static files in production
@@ -20,15 +21,20 @@ function createWindow () {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    height: 900,
+    center: true,
+    height: 800,
     useContentSize: true,
     resizable: true,
     width: 1300,
     autoHideMenuBar: true,
-    minWidth: 1167,
-    minHeight: 700,
+    frame: false,
+    minWidth: 1300,
+    minHeight: 800,
     webPreferences: {webSecurity: false}
   });
+
+  // 默认开启调试窗口
+  mainWindow.webContents.openDevTools();
 
   mainWindow.loadURL(winURL);
 
@@ -43,42 +49,34 @@ app.on('window-all-closed', () => {
     app.quit();
   }
 });
-// app.on('showChart', function () {
-//   const modalPath = process.env.NODE_ENV === 'development' ? 'http://localhost:9080/#/enhance/winEdit' : `file://${__dirname}/index.html#enhance/winEdit`;
-//   console.log(modalPath);
-//   let win = new BrowserWindow({
-//     width: 400,
-//     height: 320,
-//     webPreferences: {
-//       webSecurity: false
-//     }
-//   });
-//   win.on('close', function () {
-//     win = null;
-//   });
-//   win.loadURL(modalPath);
-// });
+
+updater.init({
+  checkUpdateOnStart: false,
+  autoDownload: false
+});
+
 app.on('activate', () => {
   if (mainWindow === null) {
     createWindow();
   }
 });
-/**
- * Auto Updater
- *
- * Uncomment the following code below and install `electron-updater` to
- * support auto updating. Code Signing with a valid certificate is required.
- * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-electron-builder.html#auto-updating
- */
 
-/*
-import { autoUpdater } from 'electron-updater'
+// 退出
+ipcMain.on('window-all-closed', () => {
+  app.quit();
+});
 
-autoUpdater.on('update-downloaded', () => {
-  autoUpdater.quitAndInstall()
-})
+// 最小化
+ipcMain.on('hide-window', () => {
+  mainWindow.minimize();
+});
 
-app.on('ready', () => {
-  if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
-})
- */
+// 最大化
+ipcMain.on('show-window', () => {
+  mainWindow.maximize();
+});
+
+// 还原
+ipcMain.on('orignal-window', () => {
+  mainWindow.unmaximize();
+});
