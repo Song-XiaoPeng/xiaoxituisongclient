@@ -33,7 +33,7 @@
                 display: inline-block;
                 position: relative;
                 background-color: #fff;
-                padding: 10px;
+                padding: 5px;
                 border-radius: 8px;
                 max-width: 70%;
                 vertical-align: top;
@@ -121,9 +121,11 @@
     }
     .audio-box{
         display: inline-block;
-        width: 100px;
-        height: 100px;
+        width: 50px;
+        height: 50px;
         position: relative;
+        vertical-align: bottom;
+        cursor: pointer;
         .time{
             position: absolute;
             height: 14px;
@@ -133,7 +135,37 @@
             margin-top: -7px;
             left: -48px;
         }
+        .audio-loding{
+            position: relative;
+            height: 130%;
+            width: 130%;
+            top: -6px;
+            left: -8px;
+            img{
+                height: 100%;
+                width: 100%;
+            }
+        }
     }
+ul.img-txt{
+    text-align: right;
+    li{
+        border-right: 1px #eaeaea solid;
+        display: inline-block;
+        padding: 0px 5px;
+        cursor: pointer;
+        transition: all .3s
+    }
+    li.active{
+        color: #2db7f5;
+    }
+    li:hover{
+        color: #2db7f5;
+    }
+    li:last-child{
+        border-right: 0;
+    }
+}
 </style>
 <template>
   <div class="chart-box">
@@ -151,48 +183,106 @@
      <div class="chart-win" ref="win" v-bind:class="{'is_mass_chart':isMass}" style="width: 100%;overflow-y: auto;position: relative;">
          <div ref="win1">
              <div v-for="(k, i) in elmetArr" >
+                 <!---------------------------------- 客户消息 ------------------------------------>
                  <div class="content-box"  v-if="k.opercode == 2">
                      <div class="graphic" ><Avatar :src="clientData.customer_wx_portrait" style="margin-left: 5px"/></div>
                      <div class="crate" style="left: 10px">
                          <div style="display: inline-block">
+
+
+                             <!-- 普通文本 -->
                              <span v-if="k.message_type == 1">{{k.text}}</span>
-                             <img  v-if="k.message_type == 2" :src="k.file_url" alt="" style="max-height: 400px;max-width: 360px"  v-on:load="loadFun">
+                             <!-- end普通文本 -->
+
+
+                             <!-- 图片 -->
+                             <img  v-if="k.message_type == 2" :src="k.file_url" alt="" style="max-height: 400px;max-width: 360px;vertical-align: bottom"  v-on:load="loadFun">
+                             <!-- end图片 -->
+
+                             <!-- 视频 -->
                              <Button v-if="k.message_type == 4" type="dashed" @click="mp4Url = 'http://kf.lyfz.net/api/v1/we_chat/Business/getMaterial?company_id=' + k.company_id + '&appid=' + k.appid + '&media_id=' + k.media_id + '&type=2',popup2 = true"><Icon type="play"></Icon>视频文件</Button>
                              <audio  style="width: 200px;height: 100px" ></audio>
-                             <audio v-if="k.message_type == 3" controls>
-                                 <source :src="'http://kf.lyfz.net/api/v1/we_chat/Business/getMaterial?company_id=' + k.company_id + '&appid=' + k.appid + '&media_id=' + k.media_id + '&type=3'">
-                                 您的浏览器不支持 audio 元素。
-                             </audio>
+                             <!-- end视频 -->
+
+                             <!-- 语音 -->
+                             <div v-if="k.message_type == 3" class="audio-box" @click="audioFun('audio' + i, k, i)">
+                                 <!--<div class="audio-state" v-if="k.is_icon">12313212</div>-->
+                                 <div class="audio-loding">
+                                     <img v-if="k.is_icon" src="../../assets/images/3333.gif" alt="">
+                                     <img v-if="k.is_icon == true ? false : true" src="../../assets/images/audio-start.png" alt="">
+                                 </div>
+                                 <audio :ref="'audio' + i" v-if="k.message_type == 3" v-on:loadedmetadata="audioTimeFun(k, 'audio' + i, i)">
+                                     <source  :src="'http://kf.lyfz.net/api/v1/we_chat/Business/getMaterial?company_id=' + k.company_id + '&appid=' + k.appid + '&media_id=' + k.media_id + '&type=3'">
+                                 </audio>
+                                 <div class="time" style="right: -48px;left: inherit">
+                                     <Icon v-if="k.is_state" type="android-arrow-dropright-circle" style="font-size: 20px;vertical-align: bottom;color: #5cadff"></Icon>
+                                     <Icon v-else type="record" style="font-size: 20px;vertical-align: bottom;color: #ed3f14"></Icon>
+                                     <span><span style="font-size: 14px" v-if="k.is_time">{{k.autio_time}}</span>s</span>
+                                 </div>
+                             </div>
+                             <!-- end语音 -->
+
+                             <!-- 图文 -->
+                             <div class="" v-if="k.message_type == 6" v-html=""></div>
+                             <!-- end 图文 -->
                          </div>
                          <i class="arrow arrow_out" style="left: -10px;transform: rotate(90deg);"></i>
                          <i class="arrow arrow_in" style="left: -9px;transform: rotate(90deg);"></i>
                      </div>
                  </div>
+                 <!---------------------------------- end客户消息 ------------------------------------>
+
+
+                 <!---------------------------------- 客服消息 ------------------------------------>
                  <div class="content-box" style="text-align: right" v-if="k.opercode == 1">
                      <div class="crate" style="right: 10px;background-color: #66cc00;">
                          <div style="display: inline-block;">
+                             <!-- 文字 -->
                              <span v-if="k.message_type == 1" style="color: #1a1a1a">{{k.text}}</span>
-                             <img  v-if="k.message_type == 2" :src="k.file_url" alt="" style="max-height: 400px;max-width: 360px">
+                             <!-- end文字 -->
+
+
+                             <!-- 图片 -->
+                             <img  v-if="k.message_type == 2" :src="k.file_url" alt="" style="max-height: 400px;max-width: 360px;vertical-align: bottom">
+                             <!-- end图片 -->
+
+
+                             <!-- 视频 -->
                              <video v-if="k.message_type == 4"  width="320" height="240" controls style="background-color: #fff;">
                                  <source :src="k.file_url" type="video/mp4">
-                                 您的浏览器不支持Video标签。
                              </video>
-                             <div v-if="k.message_type == 3" class="audio-box" @click="audioFun('audio' + i)">
-                                 <div class="time">
-                                     <span><span style="font-size: 14px">5</span>s</span>
-                                     <Icon type="android-arrow-dropright-circle" style="font-size: 20px;vertical-align: bottom;color: #5cadff"></Icon>
-                                     <Icon type="record" style="font-size: 20px;vertical-align: bottom;color: #ed3f14"></Icon>
+                             <!-- end视频 -->
+
+                             <!-- 语音 -->
+                             <div v-if="k.message_type == 3" class="audio-box" @click="audioFun('audio' + i, k, i)">
+                                 <!--<div class="audio-state" v-if="k.is_icon">12313212</div>-->
+                                 <div class="audio-loding">
+                                     <img v-if="k.is_icon" src="../../assets/images/3333.gif" alt="">
+                                     <img v-if="k.is_icon == true ? false : true" src="../../assets/images/audio-start.png" alt="">
                                  </div>
-                                 <audio :ref="'audio' + i" v-if="k.message_type == 3" v-on:loadedmetadata="audioTimeFun(k, 'audio' + i)">
+                                 <div class="time">
+                                     <span><span style="font-size: 14px" v-if="k.is_time">{{k.autio_time}}</span>s</span>
+                                     <Icon v-if="k.is_state" type="android-arrow-dropright-circle" style="font-size: 20px;vertical-align: bottom;color: #5cadff"></Icon>
+                                     <Icon v-else type="record" style="font-size: 20px;vertical-align: bottom;color: #ed3f14"></Icon>
+                                 </div>
+                                 <audio :ref="'audio' + i" v-if="k.message_type == 3" v-on:loadedmetadata="audioTimeFun(k, 'audio' + i, i)">
                                      <source  :src="k.file_url">
                                  </audio>
                              </div>
+                             <!-- end语音 -->
+
+                             <!-- 图文 -->
+                             <div class="" v-if="k.message_type == 6" v-for="s in k.htmlContent" style="background-color: #fff;">
+                                 <div v-html="s.content"></div>
+                             </div>
+                             <!-- end 图文 -->
                          </div>
                          <i class="arrow arrow_out" style="right: -10px;transform: rotate(270deg);border-top-color: #66cc00"></i>
                          <i class="arrow arrow_in" style="right: -9px;transform: rotate(270deg);border-top-color: #66cc00"></i>
                      </div>
                      <div class="graphic" ><Avatar :src="userInfo.avatar_url" style="margin-right: 5px"/></div>
                  </div>
+                 <!---------------------------------- end客服消息 ------------------------------------>
              </div>
          </div>
          <div class="percent" v-if="is_percent">
@@ -210,8 +300,8 @@
      </div>
      <div class="chart-icon">
         <span style="color: #333" title="语音" @click="popup3 = true,replyType = 3"><Icon type="ios-mic"></Icon></span>
-        <span style="color: #ff9933" title="表情"><Icon type="happy-outline"></Icon></span>
-        <span style="color: #333" title="截图"><Icon type="scissors"></Icon></span>
+        <!--<span style="color: #ff9933" title="表情"><Icon type="happy-outline"></Icon></span>-->
+        <!--<span style="color: #333" title="截图"><Icon type="scissors"></Icon></span>-->
          <Upload style="display: inline-block;"  action="http://kf.lyfz.net/api/v1/we_chat/WxOperation/uploadResources"
                   name="file" :data="{resources_type: 1}"
                   :max-size='1024'
@@ -238,8 +328,8 @@
                  :on-success="upMp4Fun">
              <span style="color: #ffcc33" title="视频" @click="replyType = 4"> <Icon type="ios-film-outline"></Icon></span>
          </Upload>
-        <span style="color: #99ccff" title="超链接321"><Icon type="link"></Icon></Icon></span>
-        <span style="color: #996600" title="模板消息"><Icon type="ios-albums-outline"></Icon></span>
+        <!--<span style="color: #99ccff" title="超链接"><Icon type="link"></Icon></Icon></span>-->
+        <span style="color: #996600" title="模板消息" @click="templateFun"><Icon type="ios-albums-outline"></Icon></span>
         <!--<span style="color: #9999cc" title="群聊"><Icon type="android-person-add"></Icon></span>-->
         <!--<span style="color: #cccc99" title="转发"><Icon type="android-share-alt"></Icon></span>-->
         <!--<span style="color: #ff99cc" title="发送满意度"><Icon type="thumbsup"></Icon></span>-->
@@ -260,7 +350,6 @@
       <Modal v-model="popup2" title="提示">
           <video v-if="popup2" width="420" height="320"  controls autoplay style="background-color: #fff;">
               <source :src="mp4Url" type="video/mp4" >
-              您的浏览器不支持Video标签1231。
           </video>
       </Modal>
       <!-- end视频弹窗弹窗 -->
@@ -280,6 +369,50 @@
       </Modal>
       <!-- end音频弹窗 -->
 
+
+      <!-- 模板消息窗口 -->
+      <Modal v-model="popup4" title="提示" width="1000" @on-ok="imgTxtOkFun">
+          <ul class="img-txt">
+              <li data-start="1" v-bind:class="is_img_txt === 'news' ? 'active' : ''" @click="imgTxtFun">图文</li>
+              <!--<li data-start="2" v-bind:class="is_img_txt === 'image' ? 'active' : ''" @click="imgFun">图片</li>-->
+              <!--<li data-start="3">语音</li>-->
+              <!--<li data-start="4">视频</li>-->
+          </ul>
+          <div>
+              <span style="color: #ff3300;padding-top: 10px">请点击其中一条选择</span>
+          </div>
+          <div class="tab-box" style="padding-top: 10px">
+              <div v-if="modal2">
+                  <div>
+                      <Table highlight-row ref="currentRowTable" :columns="columns5" :data="data5" @on-current-change="selImgTxtFun"></Table>
+                  </div>
+                  <div style="text-align: center;padding-top: 10px">
+                      <Page :total="pageData1.count" :page-size="pageData1.rows_num"  @on-change="pageFun1"></Page>
+                  </div>
+              </div>
+
+              <div v-if="modal3">
+                  <div>
+                      <Table highlight-row ref="currentRowTable" :columns="columns6" :data="data6" @on-current-change="selTxtFun" ></Table>
+                  </div>
+                  <div style="text-align: center;padding-top: 10px">
+                      <Page :total="pageData1.count" :page-size="pageData1.rows_num"  @on-change="pageFun1"></Page>
+                  </div>
+              </div>
+          </div>
+      </Modal>
+      <!-- end模板消息窗口 -->
+
+      <!-- 模板详情窗口 -->
+      <Modal v-model="popup5" title="图片" width="750" ok-text="发送" @on-ok="imgTxtOkFun" @on-cancel="imgTxtCancelFun">
+          <div class="details-popup" style="max-height: 700px; overflow: auto;">
+              <div class="row" v-for="k in el">
+                  <div class="title">{{k.title}}</div>
+                  <div v-html="k.content"></div>
+              </div>
+          </div>
+      </Modal>
+      <!-- end模板消息窗口 -->
 
       <!-- 加载状态 -->
       <Spin fix v-if="is_Loading">
@@ -388,6 +521,8 @@
           userInfo: null,
           popup2: false,
           popup3: false,
+          popup4: false,
+          popup5: false,
           animal: 1,
           upFileData: null,
           imgData: '',
@@ -397,7 +532,105 @@
           mp3Data: null,
           mp4Url: '',
           recorder: null,
-          audioData: null
+          audioData: null,
+          audioTimeData: null,
+          pageData1: {
+            count: 0,
+            rows_num: 0,
+            page: 1
+          },
+          is_img_txt: 'news',
+          appid: '',
+          modal2: false,
+          modal3: false,
+          columns5: [
+            {
+              title: '图文id',
+              key: 'media_id'
+            },
+            {
+              title: '素材标题',
+              render: (h, params) => {
+                let arr = params.row.content.news_item.map((k) => {
+                  return h('p', k.title);
+                });
+                return h('div', arr);
+              }
+            },
+            {
+              title: '操作',
+              key: 'action',
+              width: 150,
+              align: 'center',
+              render: (h, params) => {
+                return h('div', [
+                  h('Button', {
+                    props: {
+                      type: 'info',
+                      size: 'small'
+                    },
+                    on: {
+                      click: () => {
+                        this.popup4 = false;
+                        this.popup5 = true;
+                        this.el = params.row.content.news_item;
+                      }
+                    }
+                  }, '详情')
+                ]);
+              }
+            }
+          ],
+          data5: [],
+          columns6: [
+            {
+              type: '图片id',
+              key: 'media_id'
+            },
+            {
+              title: '图片名称',
+              key: 'name'
+            },
+            {
+              title: '素材标题',
+              render: (h, params) => {
+                return h('img', {
+                  attrs: {
+                    src: params.row.url
+                  },
+                  style: {
+                    width: '100px'
+                  }
+                });
+              }
+            },
+            {
+              title: '操作',
+              key: 'action',
+              width: 150,
+              align: 'center',
+              render: (h, params) => {
+                return h('div', [
+                  h('Button', {
+                    props: {
+                      type: 'error',
+                      size: 'small'
+                    },
+                    style: {
+                      marginLeft: '10px'
+                    },
+                    on: {
+                      click: () => {
+                        this.delImgFun(params.row.media_id, params.index);
+                      }
+                    }
+                  }, '删除')
+                ]);
+              }
+            }
+          ],
+          data6: [],
+          el: ''
         };
       },
       components: {
@@ -431,10 +664,13 @@
         getclientData () {
         },
         // 播放音频
-        audioFun (c) {
+        audioFun (c, k, i) {
+          let that = this;
           let el = c;
-          let au = this.$refs[el];
+          let au = that.$refs[el];
           let audio = au[0];
+          // k.is_icon = true;
+          that.$set(k, 'is_icon', true);
           audio.onloadedmetadata = function (res) {
             // console.log(res, 99999);
             // console.log(audio.duration, 3333333);
@@ -442,15 +678,38 @@
           audio.currentTime = 0;
           audio.play();
           audio.onended = function () {
-            console.log('播放完成');
+            // k.is_icon = false;
+            that.$set(k, 'is_icon', false);
+            that.$set(k, 'is_state', true);
+            that.updbFun(k);
           };
         },
         // 获取音频播放时长
-        audioTimeFun (k, e) {
+        audioTimeFun (k, e, i) {
           let el = e;
           let au = this.$refs[el];
           let audio = au[0];
-          console.log(audio.duration, 999222);
+          this.$set(this.elmetArr[i], 'is_time', true);
+          this.$set(this.elmetArr[i], 'autio_time', parseInt(audio.duration));
+          // k.autio_time = audio.duration;
+        },
+        // 素材详情窗口 确定回掉
+        imgTxtOkFun () {
+          if (this.el === '') {
+            this.$Message.warning('请选择发送模板内容');
+            return;
+          }
+          this.subFun();
+        },
+        // 素材详情窗口 取消回掉
+        imgTxtCancelFun () {
+          this.popup4 = true;
+          this.popup5 = false;
+        },
+        // 点击模板方法
+        templateFun () {
+          this.el = '';
+          this.getMaterial();
         },
         // 创建txt文本
         txt (t) {
@@ -460,15 +719,67 @@
             }
           };
         },
-        // 发送信息
-        subFun (e) {
+        // 获取素材/图文/图片
+        getMaterial (t) {
+          this.$Spin.show();
+          this.ajax.getArticleList({
+            data: {
+              page: this.pageData1.page,
+              appid: this.clientData.appid,
+              type: this.is_img_txt
+            },
+            success: (res) => {
+              this.el = '';
+              this.replyType = 6;
+              this.$Spin.hide();
+              this.popup4 = true;
+              if (this.is_img_txt === 'news') {
+                // 如果是图文
+                this.data5 = res.body.data_list;
+                this.modal2 = true;
+              } else if (this.is_img_txt === 'image') {
+                // 如果是图片
+                this.data6 = res.body.data_list;
+                this.modal3 = true;
+              }
+              this.pageData1.count = parseInt(res.body.page_data.count);
+              this.pageData1.rows_num = res.body.page_data.rows_num;
+            },
+            error: (res) => {
+              this.$Message.warning(res.meta.message);
+            }
+          });
+        },
+        imgTxtFun () {
+          this.modal3 = false;
+          this.is_img_txt = 'news';
+          this.pageData1.page = 1;
+          this.getMaterial();
+        },
+        // 获取图片
+        imgFun () {
+          this.modal2 = false;
+          this.is_img_txt = 'image';
+          this.pageData1.page = 1;
+          this.getMaterial();
+        },
+        // 素材分页
+        pageFun1 (v) {
+          this.pageData1.page = v;
+          this.getMaterial();
+        },
+        // 选择素材的回掉方法
+        selImgTxtFun (v) {
+          this.el = v;
+        },
+        // 选择图片的回掉方法
+        selTxtFun (v) {
+          this.el = v;
+        },
+        // 根据不同类型 组合发送数据
+        groupData () {
           let data;
           if (this.replyType === 1) {
-            // 组合普通文字相关数据
-            if (!this.clientData.session_id) {
-              this.$Message.warning('请选择会话客户');
-              return;
-            }
             if (this.txtra === '') {
               this.$Message.warning('请输入内容');
               return;
@@ -480,10 +791,6 @@
             };
           } else if (this.replyType === 2) {
             // 组合图片相关数据
-            if (!this.clientData.session_id) {
-              this.$Message.warning('请选择会话客户');
-              return;
-            }
             data = {
               session_id: this.clientData.session_id,
               message: '',
@@ -506,10 +813,26 @@
               resources_id: this.mp3Data.resources_id,
               type: this.replyType
             };
+          } else if (this.replyType === 6) {
+            data = {
+              session_id: this.clientData.session_id,
+              message: '',
+              media_id: this.el.media_id,
+              type: this.replyType
+            };
+          }
+          return data;
+        },
+        // 发送信息
+        subFun (e) {
+          // 组合普通文字相关数据
+          if (!this.clientData.session_id) {
+            this.$Message.warning('请选择会话客户');
+            return;
           }
           this.is_Loading = true;
           this.ajax.sendMessage({
-            data: data,
+            data: this.groupData(),
             success: (res) => {
               this.is_Loading = false;
               let obj;
@@ -517,69 +840,88 @@
               if (this.replyType === 1) {
                 obj = {
                   add_time: this.getAtTimeFun(),
-                  appid: '',
-                  company_id: '',
+                  appid: this.datalistArr ? this.datalistArr.appid : this.clientData.appid,
+                  company_id: this.datalistArr ? this.datalistArr.company_id : this.clientData.company_id,
                   customer_service_id: 4,
-                  customer_wx_openid: this.datalistArr.customer_wx_openid,
+                  customer_wx_openid: this.datalistArr ? this.datalistArr.customer_wx_openid : this.clientData.customer_wx_openid,
                   message_id: '',
                   message_type: 1,
                   opercode: 1,
-                  session_id: this.clientData.session_id,
+                  session_id: this.datalistArr ? this.clientData.session_id : this.clientData.session_id,
                   text: this.txtra,
-                  uid: this.datalistArr.uid
+                  uid: this.datalistArr ? this.datalistArr.uid : this.clientData.uid
                 };
               } else if (this.replyType === 2) {
                 obj = {
                   add_time: this.getAtTimeFun(),
-                  appid: '',
-                  company_id: '',
+                  appid: this.datalistArr ? this.datalistArr.appid : this.clientData.appid,
+                  company_id: this.datalistArr ? this.datalistArr.company_id : this.clientData.company_id,
                   customer_service_id: 4,
-                  customer_wx_openid: this.datalistArr.customer_wx_openid,
+                  customer_wx_openid: this.datalistArr ? this.datalistArr.customer_wx_openid : this.clientData.customer_wx_openid,
                   message_id: '',
                   message_type: 2,
                   opercode: 1,
-                  file_url: this.imgData.url,
-                  resources_id: this.imgData.resources_id,
-                  session_id: this.clientData.session_id,
+                  file_url: this.imgData.url || '',
+                  resources_id: this.imgData.resources_id || '',
+                  session_id: this.datalistArr ? this.datalistArr.session_id : this.clientData.session_id,
                   text: this.txtra,
-                  uid: this.datalistArr.uid
+                  uid: this.datalistArr ? this.datalistArr.uid : this.clientData.uid
                 };
               } else if (this.replyType === 4) {
                 obj = {
                   add_time: this.getAtTimeFun(),
-                  appid: '',
-                  company_id: '',
+                  appid: this.datalistArr ? this.datalistArr.appid : this.clientData.appid,
+                  company_id: this.datalistArr ? this.datalistArr.company_id : this.clientData.company_id,
                   customer_service_id: 4,
-                  customer_wx_openid: this.datalistArr.customer_wx_openid,
+                  customer_wx_openid: this.datalistArr ? this.datalistArr.customer_wx_openid : this.clientData.customer_wx_openid,
                   message_id: '',
                   message_type: 4,
                   opercode: 1,
-                  file_url: this.mp4Data.url,
-                  resources_id: this.mp4Data.resources_id,
-                  session_id: this.clientData.session_id,
+                  file_url: this.mp4Data.url || '',
+                  resources_id: this.mp4Data.resources_id || '',
+                  session_id: this.datalistArr ? this.datalistArr.session_id : this.clientData.session_id,
                   text: this.txtra,
-                  uid: this.datalistArr.uid
+                  uid: this.datalistArr ? this.datalistArr.uid : this.clientData.uid
                 };
               } else if (this.replyType === 3) {
                 obj = {
                   add_time: this.getAtTimeFun(),
-                  appid: '',
-                  company_id: '',
+                  appid: this.datalistArr ? this.datalistArr.appid : this.clientData.appid,
+                  company_id: this.datalistArr ? this.datalistArr.company_id : this.clientData.company_id,
                   customer_service_id: 4,
-                  customer_wx_openid: this.datalistArr.customer_wx_openid,
+                  customer_wx_openid: this.datalistArr ? this.datalistArr.customer_wx_openid : this.clientData.customer_wx_openid,
                   message_id: '',
                   message_type: 3,
                   opercode: 1,
-                  file_url: this.mp3Data.url,
-                  resources_id: this.mp3Data.resources_id,
-                  session_id: this.clientData.session_id,
+                  file_url: this.mp3Data.url || '',
+                  resources_id: this.mp3Data.resources_id || '',
+                  session_id: this.datalistArr ? this.datalistArr.session_id : this.clientData.session_id,
                   text: this.txtra,
-                  uid: this.datalistArr.uid,
-                  is_state: false,
-                  is_time: false
+                  uid: this.datalistArr ? this.datalistArr.uid : this.clientData.uid,
+                  is_state: true,
+                  is_time: false,
+                  is_icon: false
+                };
+              } else if (this.replyType === 6) {
+                obj = {
+                  add_time: this.getAtTimeFun(),
+                  appid: this.datalistArr ? this.datalistArr.appid : this.clientData.appid,
+                  company_id: this.datalistArr ? this.datalistArr.company_id : this.clientData.company_id,
+                  customer_service_id: 4,
+                  customer_wx_openid: this.datalistArr ? this.datalistArr.customer_wx_openid : this.clientData.customer_wx_openid,
+                  message_id: '',
+                  message_type: 6,
+                  opercode: 1,
+                  file_url: '',
+                  resources_id: '',
+                  session_id: this.datalistArr ? this.datalistArr.session_id : this.clientData.session_id,
+                  text: this.txtra,
+                  uid: this.datalistArr ? this.datalistArr.uid : this.clientData.uid,
+                  htmlContent: this.el.content.news_item
                 };
               }
               this.is_percent = false;
+              this.el = '';
               this.clientData.data.push(obj);
               this.scroFun();
               this.updbFun(obj);
@@ -587,7 +929,6 @@
             },
             error: (res) => {
               this.is_percent = false;
-              this.$Message.warning(res.meta.message);
             }
           });
         },
@@ -608,7 +949,7 @@
               let res = JSON.parse(e.target.response);
               that.mp3Data = res.body;
               that.subFun();
-              console.log(res, 31);
+              console.log(res, 311);
             }
           });
         },
@@ -691,9 +1032,11 @@
       watch: {
         elmetArr: function (v) {
           let arr = v[v.length - 1];
-          if (arr.message_type === 2) {
-          } else {
-            this.scroFun();
+          if (arr) {
+            if (arr.message_type === 2) {
+            } else {
+              this.scroFun();
+            }
           }
         }
       },
@@ -702,7 +1045,9 @@
         Bus.$on('change', (k) => {
           k.data.forEach((k) => {
             if (k.message_type === 3) {
-              // 音频数据 添加 时间显示状态/是否播放状态
+              // 音频数据 添加 时间is_time显示状态/是否is_state播放状态
+              k.autio_time = '';
+              k.is_icon = false;
               if (!k.is_state) {
                 // 如果k 没有is_state 这个属性或属性为falss  就添加
                 Object.assign(k, {'is_state': false});
@@ -719,7 +1064,6 @@
           // this.elmetArr.length = k.data.length + 1;
           // 取到数据最后一个数组， 便于添加数据 取最新相关数据
           this.datalistArr = k.data[k.data.length - 1];
-          // 滚动条自动设置底部
         });
       }
     };

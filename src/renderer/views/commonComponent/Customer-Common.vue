@@ -45,7 +45,7 @@
    .form-box{
       padding: 10px;
       border-bottom: 1px #eaeaea solid;
-      max-height: 400px;
+      max-height: 600px;
       width: 100%;
       overflow-y: scroll;
    }
@@ -78,22 +78,22 @@
       </div>
       <div class="form-box">
          <Form label-position="right" :label-width="80">
-            <FormItem label="粉丝分组：">
-               <Select v-model="WxAutId" style="width:  100%;">
-                  <Option v-for="item in cityList1" :value="item.id" :key="item.id">{{ item.name }}</Option>
-               </Select>
-            </FormItem>
+            <!--<FormItem label="粉丝分组：">-->
+               <!--<Select v-model="WxAutId" style="width:  100%;">-->
+                  <!--<Option v-for="item in cityList1" :value="item.id" :key="item.id">{{ item.name }}</Option>-->
+               <!--</Select>-->
+            <!--</FormItem>-->
             <FormItem label="客户池组：">
-               <Select v-model="wxUserGroupId" style="width:  44%;">
+               <Select v-model="formData.wx_user_group_id" style="width:  44%;">
                   <Option v-for="item in cityList" :value="parseInt(item.wx_user_group_id)" :key="item.wx_user_group_id">{{ item.group_name }}</Option>
                </Select>
                <Button type="dashed" @click="popup2 = true">操作</Button>
             </FormItem>
             <FormItem label="客户生日：" >
-               <DatePicker type="datetime" placeholder="选择时间" style="width:  100%;"></DatePicker>
+               <DatePicker type="datetime" v-model="formData.birthday" placeholder="选择时间" style="width:  100%;"></DatePicker>
             </FormItem>
             <FormItem label="性别：" >
-               <RadioGroup v-model="sex">
+               <RadioGroup v-model="formData.real_sex">
                   <Radio label="1">
                      <span>男</span>
                   </Radio>
@@ -102,16 +102,31 @@
                   </Radio>
                </RadioGroup>
             </FormItem>
-            <FormItem :label="k.label" v-for="(k,i) in formData" :key="i">
-               <Input v-model="k.value" style="width:  100%;"></Input>
+            <FormItem  label="真实姓名：">
+               <Input v-model="formData.real_name" style="width:  100%;"></Input>
+            </FormItem>
+            <FormItem  label="真实电话：">
+               <Input v-model="formData.real_phone" style="width:  100%;"></Input>
+            </FormItem>
+            <FormItem  label="联系地址：">
+               <Input v-model="formData.contact_address" style="width:  100%;"></Input>
+            </FormItem>
+            <FormItem  label="微信号">
+               <Input v-model="formData.wx_number" style="width:  100%;"></Input>
+            </FormItem>
+            <FormItem  label="邮箱">
+               <Input v-model="formData.email" style="width:  100%;"></Input>
+            </FormItem>
+            <FormItem  label="客户电话">
+               <Input v-model="formData.tel" style="width:  100%;"></Input>
             </FormItem>
             <FormItem label="备注">
-               <Input type="textarea" style="width: 100%;"></Input>
+               <Input type="textarea" v-model="formData.desc" style="width: 100%;"></Input>
             </FormItem>
          </Form>
       </div>
       <div class="custom-group-box">
-         <Button type="dashed" class="f-r"  @click="modal1 = true" icon="plus-round">添加标签</Button>
+         <Button type="info" class="f-r"  @click="saveFun" icon="plus-round">保存</Button>
       </div>
 
       <!-- 添加或修改客户池 -->
@@ -149,32 +164,24 @@
     export default {
       data () {
         return {
-          formData: [
-            {
-              label: '公司名称：',
-              value: ''
-            },
-            {
-              label: '客户姓名：',
-              value: ''
-            },
-            {
-              label: '微信号：',
-              value: ''
-            },
-            {
-              label: '邮箱：',
-              value: ''
-            },
-            {
-              label: '手机号码：',
-              value: ''
-            },
-            {
-              label: '微信号码：',
-              value: ''
-            }
-          ],
+          formData: {
+            customer_info_id: '',
+            real_name: '',
+            real_sex: 1,
+            real_phone: '',
+            contact_address: '',
+            is_Loading: false,
+            wx_company_id: '',
+            wx_user_group_id: '',
+            company_id: '',
+            desc: '',
+            birthday: '',
+            wx_number: '',
+            email: '',
+            tel: '',
+            wx_user_group_name: '',
+            wx_company_name: ''
+          },
           cityList: [],
           cityList1: [],
           model1: '',
@@ -288,7 +295,7 @@
             data: {},
             success: (res) => {
               this.cityList = res.body;
-              this.wxUserGroupId = res.body[0].wx_user_group_id;
+              this.wx_user_group_id = res.body[0].wx_user_group_id;
               this.data6 = res.body;
               this.is_Loading = false;
             },
@@ -334,8 +341,49 @@
           });
         },
         // 客户池分组改变方法
-        groupcChangeFun (v) {
-          console.log(v, 23323);
+        saveFun (v) {
+          console.log(this.formData);
+          this.ajax.setCustomerInfo({
+            data: this.formData,
+            success: (res) => {
+              console.log(res, 123);
+            },
+            error: (res) => {
+              this.$Message.warning(res);
+            }
+          });
+        },
+        // 获取客户信息
+        getClientFun () {
+          this.is_Loading = true;
+          this.ajax.getWxCustomerInfo({
+            data: {
+              appid: this.clientData.appid,
+              openid: this.clientData.customer_wx_openid
+            },
+            success: (res) => {
+              this.formData.birthday = res.body.birthday;
+              this.formData.company_id = res.body.company_id;
+              this.formData.desc = res.body.desc;
+              this.formData.uid = res.body.uid;
+              this.formData.real_name = res.body.real_name;
+              this.formData.real_phone = res.body.real_phone;
+              this.formData.wx_company_name = res.body.wx_company_name;
+              this.formData.wx_number = res.body.wx_number;
+              this.formData.email = res.body.email;
+              this.formData.tel = res.body.tel;
+              this.formData.contact_address = res.body.contact_address;
+              this.formData.customer_info_id = res.body.customer_info_id;
+              this.formData.real_sex = res.body.real_sex;
+              this.formData.wx_user_group_id = res.body.wx_user_group_id;
+              this.formData.wx_user_group_name = res.body.wx_user_group_name;
+              this.is_Loading = false;
+            },
+            error: (res) => {
+              this.is_Loading = false;
+              this.$Message.warning(res);
+            }
+          });
         }
       },
       created () {
@@ -345,6 +393,7 @@
         });
         Bus.$on('change', (k) => {
           this.clientData = k;
+          this.getClientFun();
         });
       }
     };

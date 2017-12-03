@@ -235,7 +235,8 @@
           messageData: null,
           arr: null,
           is_tongzhi: true,
-          is_Message: false
+          is_Message: false,
+          is_dialogue_click: true
         };
       },
       mounted () {
@@ -281,6 +282,7 @@
           let that = this;
           let arr = [];
           let db = new DB();
+          that.is_dialogue_click = true;
           that.messageData = k;
           Object.assign(that.messageData, {'data': null});
           // 获取选择客户的相关数据
@@ -328,7 +330,7 @@
                 db.fun = function (res) { // 执行成功回掉函数
                   db.close();
                 };
-                that.data1.push(this.data2[this.clientDataIndex]);
+                that.data1.unshift(this.data2[this.clientDataIndex]);
                 that.data2.splice(this.clientDataIndex, 1);
               } else if (that.is_w_v === 3) {
                 // 删除排队中的数据
@@ -339,7 +341,7 @@
                 db1.fun = function (res) { // 执行成功回掉函数
                   db1.close();
                 };
-                that.data1.push(this.data3[this.clientDataIndex]);
+                that.data1.unshift(this.data3[this.clientDataIndex]);
                 that.data3.splice(this.clientDataIndex, 1);
               }
               that.is_Loading = false;
@@ -433,7 +435,7 @@
             e.style.height = h === 0 ? this.data3.length * 66 + 'px' : 0 + 'px';
           }
         },
-        // 读取等待会话表中的数据
+        // 调用本地数据库 获取客户表的数据
         getWaitingTab () {
           let that = this;
           let db = new DB();
@@ -450,12 +452,33 @@
           db1.tabName = 'visitor'; // 数据表名称
           db1.fun = function (res) { // 执行成功回掉函数
             if (res.length === 0) {
+              that.ajax.getAlreadyAccess({
+                data: {},
+                success: (res) => {
+                  let data = res.body;
+                  that.data1 = data;
+                  that.underwayFun(data[0]);
+                  that.data1Index = 0;
+                  db.type = 'set'; // 执行类型
+                  db.tabName = 'waiting'; // 数据表名称
+                  db.key = data;
+                  db.fun = function (res) { // 执行成功回掉函数
+                    db.close();
+                  };
+                },
+                error: (res) => {
+                  that.Message.warning(res);
+                }
+              });
               that.is_Message = true;
             } else {
               that.is_Message = false;
+              that.data1 = res;
+              // 默认选择 会话客户
+              that.underwayFun(res[0]);
+              that.data1Index = 0;
+              db1.close();
             }
-            that.data1 = res;
-            db1.close();
           };
           // 调用请求客户聊天信息AJAX
           // waiting

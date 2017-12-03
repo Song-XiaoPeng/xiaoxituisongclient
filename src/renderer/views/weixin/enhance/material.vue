@@ -127,7 +127,7 @@
             <div class="details-popup" style="max-height: 700px; overflow: auto;">
                 <div class="row" v-for="k in el">
                     <div class="title">{{k.title}}</div>
-                    <div v-html="k.content">达瓦达瓦</div>
+                    <div v-html="k.content"></div>
                 </div>
             </div>
         </Modal>

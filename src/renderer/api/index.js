@@ -636,4 +636,55 @@ ajax.setUserPortrait = (obj) => {
     console.log(error);
   });
 };
+// 获取会话中列表
+ajax.getAlreadyAccess = (obj) => {
+  util.ajax.get('/api/v1/message/Interaction/getAlreadyAccess', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 获取客户信息
+ajax.getWxCustomerInfo = (obj) => {
+  util.ajax.post('/api/v1/customer/CustomerOperation/getWxCustomerInfo', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 保存客户信息
+ajax.setCustomerInfo = (obj) => {
+  util.ajax.post('/api/v1/customer/CustomerOperation/setCustomerInfo', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
 export default ajax;
