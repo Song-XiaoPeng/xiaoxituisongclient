@@ -108,6 +108,25 @@
   .window-icon:hover {
     color:#ccc;
   }
+
+  .loading-text {
+      display: inline-block; 
+      height: 1em; line-height: 1;
+      vertical-align: -.25em;
+      overflow: hidden;
+  }
+
+  .loading-text::before {
+      display: block;
+      content: '...\A..\A.';
+      white-space: pre-wrap;
+      animation: dot 3s infinite step-start both;
+  }
+
+  @keyframes dot {
+    33% { transform: translateY(-2em); }
+    66% { transform: translateY(-1em); }
+  }
 </style>
 
 <template>
@@ -134,17 +153,18 @@
         </div>
         <Form  :label-width="80" class="form-content">
           <FormItem label="登录账号">
-            <Input v-model="name" type="text" placeholder="请输入手机号" @on-enter="login()"></Input>
+            <Input v-model="name" type="text" placeholder="请输入账号" @on-enter="login()" :disabled="isUploadIng"></Input>
           </FormItem>
           <FormItem label="登录密码">
-            <Input v-model="password" type="password" placeholder="请输入密码" @on-enter="login()"></Input>
+            <Input v-model="password" type="password" placeholder="请输入密码" @on-enter="login()" :disabled="isUploadIng"></Input>
           </FormItem>
           <FormItem>
-            <Button type="primary" @click="login()" :loading="loginLoading">登录</Button>
+            <Button type="primary" @click="login()" :loading="loginLoading" :disabled="isUploadIng">登录</Button>
             <Badge dot :count="isRemindUpload">
-              <Button type="ghost" style="margin-left: 8px" @click="update()">获取最新版本</Button>
+              <Button type="ghost" style="margin-left: 8px" @click="update()" :disabled="isUploadIng">获取最新版本</Button>
             </Badge>
-            <p>当前客户端版本：{{version}}</p>
+            <p v-show="!isUploadIng">当前客户端版本：{{version}}</p>
+            <p v-show="isUploadIng">正在更新应用中请稍等<font class="loading-text">...</font></p>
           </FormItem>
         </Form>
       </div>
@@ -166,7 +186,8 @@
         version: '',
         isOpen: false,
         loginLoading: false,
-        isRemindUpload: 0
+        isRemindUpload: 0,
+        isUploadIng: false
       };
     },
     components: {
@@ -223,12 +244,11 @@
             color: '#19be6b',
             height: 10
           });
+          this.isUploadIng = true;
           this.$Loading.start();
-          this.$Message.warning({content: '正在下载并安装' + meta.version + '版本更新请稍等！'});
         });
 
         updater.on('update-downloaded', () => {
-          this.$Message.destroy();
           this.$Loading.destroy();
 
           this.$Modal.success({
@@ -247,6 +267,7 @@
         updater.on('error', () => {
           this.$Message.error('获取更新镜像源失败');
           this.$Loading.error();
+          this.isUploadIng = false;
         });
 
         updater.checkForUpdates();
@@ -272,6 +293,11 @@
         }
       },
       closeWindow () {
+        if (this.isUploadIng) {
+          this.$Message.warning({content: '正在更新应用请勿关闭窗口'});
+          return;
+        }
+
         this.$electron.ipcRenderer.send('window-all-closed');
       }
     },
