@@ -30,6 +30,7 @@ function createWindow () {
     frame: false,
     minWidth: 1300,
     minHeight: 800,
+    show: false,
     webPreferences: {webSecurity: false}
   });
 
@@ -39,6 +40,10 @@ function createWindow () {
   }
 
   mainWindow.loadURL(winURL);
+
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
+  });
 
   mainWindow.on('closed', () => {
     mainWindow = null;
