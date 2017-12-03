@@ -44,6 +44,18 @@ function createWindow () {
     mainWindow = null;
   });
 }
+
+// 防止重复打开
+const shouldQuit = app.makeSingleInstance((commandLine, workingDirectory) => {
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) mainWindow.restore();
+    mainWindow.focus();
+  }
+});
+if (shouldQuit) {
+  app.quit();
+}
+
 app.on('ready', createWindow);
 
 app.on('window-all-closed', () => {
