@@ -127,6 +127,10 @@
     33% { transform: translateY(-2em); }
     66% { transform: translateY(-1em); }
   }
+
+  .ivu-btn-ghost {
+    color: #fff;
+  }
 </style>
 
 <template>
@@ -163,8 +167,8 @@
             <Badge dot :count="isRemindUpload">
               <Button type="ghost" style="margin-left: 8px" @click="update()" :disabled="isUploadIng">获取最新版本</Button>
             </Badge>
-            <p v-show="!isUploadIng">当前客户端版本：{{version}}</p>
-            <p v-show="isUploadIng">正在更新应用中请稍等<font class="loading-text">...</font></p>
+            <p class="ivu-btn-ghost" v-show="!isUploadIng">当前客户端版本：{{version}}</p>
+            <p class="ivu-btn-ghost" v-show="isUploadIng">正在更新应用中请稍等<font class="loading-text">...</font></p>
           </FormItem>
         </Form>
       </div>
