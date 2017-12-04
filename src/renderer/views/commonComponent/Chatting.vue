@@ -40,7 +40,7 @@
                 .arrow_out {
                     position: absolute;
                     display: inline-block;
-                    top: 15px;
+                    top: 12px;
                     width: 0;
                     height: 0;
                     border-width: 6px;
@@ -53,7 +53,7 @@
                 .arrow_in {
                     position: absolute;
                     display: inline-block;
-                    top: 15px;
+                    top: 12px;
                     width: 0;
                     height: 0;
                     border-width: 6px;
@@ -225,6 +225,13 @@ ul.img-txt{
                              <!-- 图文 -->
                              <div class="" v-if="k.message_type == 6" v-html=""></div>
                              <!-- end 图文 -->
+
+                             <!-- 位置 -->
+                             <div v-if="k.message_type == 5" @click="locationFun(k)" style="cursor: pointer;">
+                                 <div style="padding-bottom: 5px">{{k.map_label}}</div>
+                                 <img :src="'http://apis.map.qq.com/ws/staticmap/v2/?center=' + k.lat + ',' + k.lng + '&zoom=18&size=400*200&maptype=roadmap&markers=color:red|' + k.lat + ',' + k.lng + '&key=TUTBZ-YEPWX-WEN4N-7OZUC-T4MT7-IXFN6'" v-on:load="loadFun"></img>
+                             </div>
+                             <!-- end位置 -->
                          </div>
                          <i class="arrow arrow_out" style="left: -10px;transform: rotate(90deg);"></i>
                          <i class="arrow arrow_in" style="left: -9px;transform: rotate(90deg);"></i>
@@ -426,6 +433,7 @@ ul.img-txt{
     import HZRecorder from './luyin';
     import Bus from '../../assets/eventBus';
     import DB from '../../assets/webDB';
+    const { shell } = require('electron');
     export default {
       data () {
         return {
@@ -1027,6 +1035,10 @@ ul.img-txt{
         },
         loadFun (e) {
           this.scroFun();
+        },
+        // 地图位置
+        locationFun (k) {
+          shell.openExternal('http://apis.map.qq.com/uri/v1/geocoder?coord=' + k.lat + ',' + k.lng + '&referer=myapp');
         }
       },
       watch: {
@@ -1040,8 +1052,12 @@ ul.img-txt{
           }
         }
       },
+      destroyed (s) {
+        Bus.$off();
+      },
       created () {
         this.userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+        // 动态获取传递过来的 会话客户数据
         Bus.$on('change', (k) => {
           k.data.forEach((k) => {
             if (k.message_type === 3) {
@@ -1064,6 +1080,16 @@ ul.img-txt{
           // this.elmetArr.length = k.data.length + 1;
           // 取到数据最后一个数组， 便于添加数据 取最新相关数据
           this.datalistArr = k.data[k.data.length - 1];
+        });
+        // 动态获取快捷回复内容 事件
+        Bus.$on('ShortcutTxtFun', (k) => {
+          this.txtra = k.quick_reply_text;
+        });
+        // 快捷 发送 回复内容 事件
+        Bus.$on('promptlyShortcutTxtFun', (k) => {
+          this.txtra = k.quick_reply_text;
+          this.replyType = 1;
+          this.subFun();
         });
       }
     };

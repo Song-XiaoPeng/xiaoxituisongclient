@@ -687,4 +687,89 @@ ajax.setCustomerInfo = (obj) => {
     console.log(error);
   });
 };
+// 添加快捷回复 内容
+ajax.setQuickReplyText = (obj) => {
+  util.ajax.post('/api/v1/message/Common/setQuickReplyText', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 获取快捷回复列表
+ajax.getQuickReplyList = (obj) => {
+  util.ajax.post('/api/v1/message/Common/getQuickReplyList', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 删除快捷回复 语句
+ajax.delQuickReply = (obj) => {
+  util.ajax.post('/api/v1/message/Common/delQuickReply', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 获取历史聊天信息
+ajax.getHistoryMessage = (obj) => {
+  util.ajax.post('/api/v1/message/Interaction/getHistoryMessage', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 获取客户列表
+ajax.getCustomerList = (obj) => {
+  util.ajax.post('/api/v1/customer/CustomerOperation/getCustomerList', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
 export default ajax;

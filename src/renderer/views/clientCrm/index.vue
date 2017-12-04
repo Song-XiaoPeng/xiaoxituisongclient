@@ -60,7 +60,9 @@
                     <div class="btn-box" style="text-align: right;padding: 0 10px">
                         <Button type="ghost" style="margin-left: 10px" @click="modal2 = true">添加业务提醒</Button>
                         <Button type="ghost" style="margin-left: 10px" @click="massFun">群发激活</Button>
-                        <Button class="f-l" type="ghost" style="" @click="is_screen = true">高级搜索</Button>
+                        <!--<Button class="f-l" type="ghost" style="" @click="is_screen = true">高级搜索</Button>-->
+                        <Input class="f-l" v-model="real_name"  placeholder="客户名称" style="width: 100px"></Input>
+                        <Button class="f-l" type="info" style="margin-left: 2px" @click="getCustomerList">搜索</Button>
                     </div>
                     <div class="table-box">
                         <Table border ref="selection" :columns="columns4" :data="data1"></Table>
@@ -73,6 +75,8 @@
             </div>
             </Col>
         </Row>
+
+        <!-- 添加提醒弹窗 -->
         <Modal v-model="modal2" title="添加提醒" @on-ok="addRemind">
             <Form :label-width="100">
                 <FormItem label="提醒日期：">
@@ -88,7 +92,7 @@
                 </FormItem>
                 <FormItem label="工作人员：">
                     <Select v-model="model1">
-                        <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option><Button type="dashed">设置</Button>
+                        <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option><Button type="dashed" >设置</Button>
                     </Select>
                 </FormItem>
                 <FormItem label="最后完成日期：">
@@ -96,16 +100,67 @@
                 </FormItem>
             </Form>
         </Modal>
+        <!-- end添加提醒 -->
+
+
+        <!-- 群发弹窗 -->
         <Modal v-model="modal3" title="群发" @on-ok="addRemind" :width="800">
             <chart  :isMass="isMass"></chart>
             <div slot="footer">
                 <span class="" style="color: #ff3300">最多同时发送30人，只可用模版消息/或文字消息</span>
             </div>
         </Modal>
+        <!-- end群发弹窗 -->
+
+
+        <!-- 客户详情弹窗 -->
+        <Modal v-model="popup3" title="详情" @on-ok="">
+            <Form  label-position="right" :label-width="100">
+                <FormItem label="客户姓名:">
+                    <span>{{clientData.real_name}}</span>
+                </FormItem>
+                <FormItem label="客户手机:">
+                    <span>{{clientData.real_phone}}</span>
+                </FormItem>
+                <FormItem label="客户微信:">
+                    <span>{{clientData.wx_number}}</span>
+                </FormItem>
+                <FormItem label="客户性别:">
+                    <span>{{clientData.real_sex == 1 ? '男' : clientData.real_sex == 2 ? '女' : '未知'}}</span>
+                </FormItem>
+                <FormItem label="客户联系地址:">
+                    <span>{{clientData.contact_address}}</span>
+                </FormItem>
+                <FormItem label="所属公司名:">
+                    <span>{{clientData.wx_company_name}}</span>
+                </FormItem>
+                <FormItem label="所属分组名:">
+                    <span>{{clientData.wx_user_group_name ? clientData.wx_user_group_name.group_name : ''}}</span>
+                </FormItem>
+                <FormItem label="客户生日:">
+                    <span>{{clientData.birthday}}</span>
+                </FormItem>
+                <FormItem label="客户邮箱:">
+                    <span>{{clientData.email}}</span>
+                </FormItem>
+                <FormItem label="客户电话:">
+                    <span>{{clientData.tel}}</span>
+                </FormItem>
+            </Form>
+        </Modal>
+        <!-- end客户详情弹窗 -->
+
 
         <Modal v-model="is_screen" title="高级搜索" :width="600">
             <screen></screen>
         </Modal>
+
+        <!-- 加载状态 -->
+        <Spin fix v-if="is_Loading">
+            <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
+            <div>请求中....</div>
+        </Spin>
+        <!-- end加载状态 -->
     </div>
 </template>
 <script>
@@ -165,6 +220,9 @@
         model1: '1',
         model2: '1',
         model3: '1',
+        popup3: false,
+        is_Loading: false,
+        clientData: {},
         columns4: [
           {
             type: 'selection',
@@ -173,19 +231,19 @@
           },
           {
             title: '客户姓名',
-            key: 'name'
+            key: 'real_name'
           },
           {
-            title: '产品',
-            key: 'age'
+            title: '手机',
+            key: 'real_phone'
           },
           {
-            title: '微信名称',
-            key: 'address'
+            title: '微信号',
+            key: 'wx_number'
           },
           {
-            title: '公司名称',
-            key: 'address'
+            title: '意向产品',
+            key: 'product_id'
           },
           {
             title: '操作',
@@ -204,6 +262,9 @@
                   },
                   on: {
                     click: () => {
+                      Object.assign(this.clientData, params.row);
+                      // this.clientData = params.row;
+                      this.popup3 = true;
                     }
                   }
                 }, '详情'),
@@ -221,38 +282,15 @@
             }
           }
         ],
-        data1: [
-          {
-            name: 'John Brown',
-            age: 18,
-            address: 'New York No. 1 Lake Park',
-            date: '2016-10-03'
-          },
-          {
-            name: 'Jim Green',
-            age: 24,
-            address: 'London No. 1 Lake Park',
-            date: '2016-10-01'
-          },
-          {
-            name: 'Joe Black',
-            age: 30,
-            address: 'Sydney No. 1 Lake Park',
-            date: '2016-10-02'
-          },
-          {
-            name: 'Jon Snow',
-            age: 26,
-            address: 'Ottawa No. 2 Lake Park',
-            date: '2016-10-04'
-          }
-        ],
+        data1: [],
         modal2: false,
         desc: '',
         modal3: false,
         isMass: false,
         modal_loading: false,
-        is_screen: false
+        is_screen: false,
+        page: 1,
+        real_name: ''
       };
     },
     components: {
@@ -270,10 +308,29 @@
       massFun () {
         this.modal3 = true;
         this.isMass = true;
+      },
+      // 获取客户列表
+      getCustomerList () {
+        this.is_Loading = true;
+        this.ajax.getCustomerList({
+          data: {
+            page: this.page,
+            real_name: this.real_name
+          },
+          success: (res) => {
+            this.data1 = res.body;
+            console.log(this.data1);
+            this.is_Loading = false;
+          },
+          error: (res) => {
+            this.is_Loading = false;
+            this.$Message.warning(res);
+          }
+        });
       }
     },
     created () {
-      console.log(19814);
+      this.getCustomerList();
     }
   };
 </script>

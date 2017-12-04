@@ -40,6 +40,20 @@
                     cursor: pointer;
                     border-bottom: 1px #f7f7f7 dashed;
                     transition: all .3s;
+                    .state-sum{
+                        position: absolute;
+                        left:0;
+                        top:0;
+                        color: #fff;
+                        display: inline-block;
+                        height: 20px;
+                        width: 20px;
+                        border-radius: 50%;
+                        background-color: #ff3300;
+                        text-align: center;
+                        line-height: 20px;
+                        overflow: hidden;
+                    }
                     .picture{
                         width: 50px;
                         width: 50px;
@@ -122,7 +136,8 @@
                    会话中
                </div>
                <ul ref="list1" class="list" :style="'height:' + data1.length * 66 + 'px'">
-                   <li v-for="(k, i) in data1" v-bind:class="data1Index == i ? 'active' : ''" @click.stop="underwayFun(k), data1Index = i">
+                   <li v-for="(k, i) in data1" v-bind:class="k.is_class ? 'active' : ''" @click.stop="underwayFun(k, i)">
+                       <span class="state-sum" v-if="!k.sum == 0">{{k.sum}}</span>
                        <span class="end" title="结束会话" @click="popup2 = true, clientName = k, is_w_v = 1, clientDataIndex = i"><Icon  type="close-circled" style="vertical-align: top"></Icon></span>
                        <div class="picture">
                            <img :src="k.customer_wx_portrait" alt="">
@@ -278,12 +293,17 @@
           this.popup1 = true;
         },
         // 会话中---》点击进入会话
-        underwayFun (k) {
+        underwayFun (k, i) {
           let that = this;
           let arr = [];
           let db = new DB();
           that.is_dialogue_click = true;
           that.messageData = k;
+          that.data1.forEach((k) => {
+            k['is_class'] = false;
+          });
+          that.data1[i]['is_class'] = true;
+          that.data1[i]['sum'] = 0;
           Object.assign(that.messageData, {'data': null});
           // 获取选择客户的相关数据
           db.type = 'get'; // 执行类型
@@ -414,6 +434,16 @@
               // 判断是否当前选择的客户 并添加数据
               if (s.customer_wx_openid === this.messageData.customer_wx_openid) {
                 this.arr.push(s);
+              } else {
+                // 如果收到的不是当前选择的客户， 就把这个客户放在会话列表的第一位
+                this.data1.forEach((s, i) => {
+                  if (s.customer_wx_openid === k) {
+                    s.sum += 1;
+                    let arr = s;
+                    this.data1.splice(i, 1);
+                    this.data1.unshift(arr);
+                  }
+                });
               }
             });
             // Bus.$emit('change', that.messageData);
@@ -452,31 +482,20 @@
           db1.tabName = 'visitor'; // 数据表名称
           db1.fun = function (res) { // 执行成功回掉函数
             if (res.length === 0) {
-              that.ajax.getAlreadyAccess({
-                data: {},
-                success: (res) => {
-                  let data = res.body;
-                  that.data1 = data;
-                  that.underwayFun(data[0]);
-                  that.data1Index = 0;
-                  db.type = 'set'; // 执行类型
-                  db.tabName = 'waiting'; // 数据表名称
-                  db.key = data;
-                  db.fun = function (res) { // 执行成功回掉函数
-                    db.close();
-                  };
-                },
-                error: (res) => {
-                  that.Message.warning(res);
-                }
-              });
+              db1.close();
+              // 如果数据库没有数据 就向服务器请求数据
+              that.getVisitorTab();
               that.is_Message = true;
             } else {
+              res.forEach((k) => {
+                Object.assign(k, {'is_class': false});
+                Object.assign(k, {'sum': 0});
+              });
               that.is_Message = false;
               that.data1 = res;
               // 默认选择 会话客户
-              that.underwayFun(res[0]);
-              that.data1Index = 0;
+              that.underwayFun(res[0], 0);
+              that.data1[0]['is_class'] = true;
               db1.close();
             }
           };
@@ -485,12 +504,39 @@
         },
         // 读取会话表中的人员
         getVisitorTab () {
-          let db = new DB(); // 实例化本地数据库
-          db.addData(
-            // {name: 'visitor', data: res.body}
-          );
-          // waiting
+          let that = this;
+          that.ajax.getAlreadyAccess({
+            data: {},
+            success: (res) => {
+              res.body.forEach((k) => {
+                k['sum'] = 0;
+              });
+              let data = res.body;
+              that.data1 = data;
+              that.underwayFun(data[0], 0);
+              let db2 = new DB();
+              db2.type = 'set'; // 执行类型
+              db2.tabName = 'visitor'; // 数据表名称
+              db2.data = data;
+              db2.fun = function (res) { // 执行成功回掉函数
+                db2.close();
+              };
+            },
+            error: (res) => {
+              that.Message.warning(res);
+            }
+          });
         }
+      },
+      destroyed (s) {
+        let db2 = new DB();
+        db2.type = 'update'; // 执行类型
+        db2.tabName = 'visitor'; // 数据表名称
+        db2.data = this.data1;
+        db2.fun = function (res) { // 执行成功回掉函数
+          db2.close();
+        };
+        Bus.$off();
       },
       created () {
         // 调用本地数据库 获取储存的数据

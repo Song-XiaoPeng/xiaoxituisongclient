@@ -15,6 +15,10 @@
       <div>
           <Table border :columns="columns7" :data="data6"></Table>
       </div>
+
+
+
+      <!-- 添加弹窗 -->
       <Modal v-model="modal1" title="添加带参二维码" >
           <Form  label-position="right" :label-width="100">
               <FormItem label="渠道名称">
@@ -61,6 +65,26 @@
           </Form>
           <Table highlight-row ref="currentRowTable" :columns="columns3" :data="data1"></Table>
       </Modal>
+      <!-- end添加弹窗 -->
+
+
+      <!-- 创建分组弹窗 -->
+      <Modal v-model="modal1" title="添加带参二维码" >
+          <Form  label-position="right" :label-width="100">
+              <FormItem label="渠道名称">
+                  <Input placeholder="请输入"></Input>
+              </FormItem>
+          </Form>
+      </Modal>
+      <!-- end加载状态 -->
+
+
+      <!-- 加载状态 -->
+      <Spin fix v-if="is_Loading">
+          <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
+          <div>请求中....</div>
+      </Spin>
+      <!-- end加载状态 -->
   </div>
 </template>
 <script>
@@ -205,7 +229,8 @@
             address: 'Ottawa No. 2 Lake Park',
             date: '2016-10-04'
           }
-        ]
+        ],
+        is_Loading: false
       };
     },
     mounted () {

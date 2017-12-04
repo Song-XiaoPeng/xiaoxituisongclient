@@ -90,7 +90,7 @@
                <Button type="dashed" @click="popup2 = true">操作</Button>
             </FormItem>
             <FormItem label="客户生日：" >
-               <DatePicker type="datetime" v-model="formData.birthday" placeholder="选择时间" style="width:  100%;"></DatePicker>
+               <DatePicker type="datetime" v-model="formData.birthday" placeholder="选择时间" style="width:  100%;" @on-change="birthdayFun"></DatePicker>
             </FormItem>
             <FormItem label="性别：" >
                <RadioGroup v-model="formData.real_sex">
@@ -305,6 +305,10 @@
             }
           });
         },
+        // 生日选择方法
+        birthdayFun (v) {
+          this.formData.birthday = v;
+        },
         // 删除池组方法
         delCustomerGroup (id, i) {
           this.ajax.delCustomerGroup({
@@ -343,6 +347,8 @@
         // 客户池分组改变方法
         saveFun (v) {
           console.log(this.formData);
+          Object.assign(this.formData, {'appid': this.clientData.appid});
+          Object.assign(this.formData, {'openid': this.clientData.customer_wx_openid});
           this.ajax.setCustomerInfo({
             data: this.formData,
             success: (res) => {
@@ -363,7 +369,7 @@
             },
             success: (res) => {
               this.formData.birthday = res.body.birthday;
-              this.formData.company_id = res.body.company_id;
+              this.formData.company_id = res.body.wx_company_id;
               this.formData.desc = res.body.desc;
               this.formData.uid = res.body.uid;
               this.formData.real_name = res.body.real_name;
@@ -385,6 +391,9 @@
             }
           });
         }
+      },
+      destroyed (s) {
+        Bus.$off();
       },
       created () {
         Bus.$on('WxAuthList', (k) => {

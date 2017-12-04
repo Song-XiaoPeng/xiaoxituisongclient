@@ -36,7 +36,7 @@
           </Col>
           <Col :xs="isAdministrator ? 12 : 12"  :lg="isAdministrator ? 8 : 6">
               <div class="btn" v-bind:class="navState == 3 ? 'active' : ''" @click="selTbeFun(3)">
-                  会话记录
+                  漫游消息
               </div>
           </Col>
           <Col :xs="isAdministrator ? 24 : 12"  :lg="isAdministrator ? 8 : 6">
@@ -46,14 +46,15 @@
           </Col>
       </Row>
       <div>
-         <Common v-if="navState == 1"></Common>
-         <information v-if="navState == 2 && isAdministrator == false"></information>
-         <Record v-if="navState == 3" ></Record>
-         <Remind v-if="navState == 4"></Remind>
+         <Common v-show="navState == 1"></Common>
+         <information v-show="navState == 2 && isAdministrator == false"></information>
+         <Record v-show="navState == 3" ></Record>
+         <Remind v-show="navState == 4"></Remind>
       </div>
   </div>
 </template>
 <script>
+    import Bus from '../../assets/eventBus';
     import Common from './Customer-Common';// 常用术语
     import Information from './Customer-Information';//  客户信息
     import Record from './Customer-Record';// 会话记录
@@ -82,14 +83,24 @@
       },
       watch: {
         isAdministrator: (v) => {
-          console.log(v, 2333);
         }
       },
       methods: {
         selTbeFun (v) {
-          console.log(v);
           this.navState = v;
+          if (v === 3) {
+            // 点击漫游信息时候  触发滚动条方法
+            Bus.$emit('scro');
+          }
         }
+      },
+      destroyed (s) {
+        Bus.$off();
+      },
+      created () {
+        Bus.$on('change', (k) => {
+          this.navState = 1;
+        });
       }
     };
 </script>

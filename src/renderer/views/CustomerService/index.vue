@@ -60,6 +60,9 @@
       },
       mounted () {
       },
+      destroyed (s) {
+        Bus.$off();
+      },
       beforeDestroy () {
       },
       methods: {},
@@ -75,7 +78,7 @@
             this.$Message.warning(res.meta.message);
           }
         });
-        console.log(114);
+        console.log(Bus);
       }
     };
 </script>
