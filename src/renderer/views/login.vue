@@ -213,7 +213,8 @@
         this.ajax.login({
           data: {
             phone_no: this.name,
-            password: md5(this.password)
+            password: md5(this.password),
+            version: this.version
           },
           success: (res) => {
             cookies.set('name', this.name, { expires: 7 });
