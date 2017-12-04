@@ -52,6 +52,7 @@
       "target": "squirrel"
     },
     "squirrelWindows": {
+      "loadingGif": "build/icons/loding.gif",
       "iconUrl": "http://kf.lyfz.net/favicon.ico"
     },
     "linux": {
