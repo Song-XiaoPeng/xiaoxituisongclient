@@ -4,13 +4,31 @@
 
 <template>
   <div class="layout">
+    <div class="window-border">
+      <div class="window-title">
+        <div class="user-portrait" :style="{backgroundImage: 'url(' + userInfo.avatar_url + ')'}"></div>
+        <div class="user-text"><Icon type="briefcase"></Icon> 账号：18316314484</div>
+        <div class="user-text"><Icon type="person"></Icon> 姓名：王涛</div>
+      </div>
+      <div class="window-control">
+        <span class="window-icon">
+          <Icon type="arrow-down-b"></Icon>
+        </span>
+        <span class="window-icon" @click="hideWindow()">
+          <Icon type="minus"></Icon>
+        </span>
+        <span class="window-icon" @click="showWindow()">
+          <Icon type="arrow-expand"></Icon>
+        </span>
+        <span class="window-icon" @click="closeWindow()">
+          <Icon type="close"></Icon>
+        </span>
+      </div>
+    </div>
+
     <Row type="flex">
       <Col span="4" class="layout-menu-left">
         <Menu :active-name="activeName" theme="dark" width="auto" :open-names=openNames @on-select="selectMenu" accordion>
-          <div class="layout-logo-left">
-
-          </div>
-          
           <Submenu :name="key"  v-for="(item, key) in menuList" :key="key">
             <template slot="title">
               <Icon :type="item.iconName"></Icon>
@@ -23,21 +41,6 @@
         </Menu>
       </Col>
       <Col span="20" id="container">
-        <div class="layout-header">
-          <div class="operation">
-            <span style="margin-right: 10px;">
-              工作状态：
-              <Select v-model="customerServiceState" style="width: 100px;">
-                <Option value="1">我在线上</Option>
-                <Option value="2">离开</Option>
-              </Select>
-            </span>
-            <span>
-              <Button type="error" @click="signOut"><Icon type="power"></Icon> 注销登录</Button>
-            </span>
-          </div>
-        </div>
-
         <div class="content-page">
           <router-view></router-view>
         </div>
@@ -59,6 +62,7 @@
         activeName: '0-0',
         openNames: [0],
         isMenuDisplay: false,
+        isOpen: false,
         is_Message: true,
         is_tongzhi: true // 是否离开页面提示通知
       };
@@ -228,6 +232,21 @@
             }
           });
         };
+      },
+      hideWindow () {
+        this.$electron.ipcRenderer.send('hide-window');
+      },
+      showWindow () {
+        if (!this.isOpen) {
+          this.isOpen = true;
+          this.$electron.ipcRenderer.send('show-window');
+        } else {
+          this.isOpen = false;
+          this.$electron.ipcRenderer.send('orignal-window');
+        }
+      },
+      closeWindow () {
+        this.$electron.ipcRenderer.send('window-all-closed');
       }
     },
     created () {

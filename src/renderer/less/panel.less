@@ -1,5 +1,4 @@
 .layout{
-    border: 1px solid #d7dde4;
     background: #f5f7f9;
     position: relative;
 }
@@ -50,8 +49,64 @@
 .content-page {
     padding: 10px;
     position: absolute;
-    top:60px;
+    top: 2px;
     left: 0;
     bottom: 0;
     right: 0;
+}
+
+.window-border {
+    width: 100%;
+    height: 50px;
+    -webkit-app-region: drag;
+    position: relative;
+    background: #39f;
+}
+
+.window-title {
+    position: absolute;
+    left: 0;
+    font-size: 14px;
+    color: #fff;
+    width: 500px;
+    height: 50px;
+}
+
+.window-control {
+    position: absolute;
+    right: 0;
+    width: 160px;
+    height: 50px;
+    line-height: 50px;
+    font-size: 18px;
+    color: #fff;
+    top: 0;
+    right: 0;
+    z-index: 9999;
+}
+
+.window-icon {
+    cursor: pointer;
+    padding: 10px;
+}
+
+.window-icon:hover {
+    color:#ccc;
+}
+
+.user-portrait {
+    width: 50px;
+    height: 50px;
+    background-size: cover;
+    border: 2px solid #39f;
+    display: inline-block;
+}
+
+.user-text {
+    color: #fff;
+    display: inline-block;
+    width: 155px;
+    vertical-align: top;
+    line-height: 53px;
+    font-size: 13px;
 }
