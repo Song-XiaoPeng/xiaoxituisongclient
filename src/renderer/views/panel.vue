@@ -55,8 +55,10 @@
       return {
         customerServiceState: '1',
         menuList: [],
+        userInfo: '',
         activeName: '0-0',
         openNames: [0],
+        isMenuDisplay: false,
         is_Message: true,
         is_tongzhi: true // 是否离开页面提示通知
       };
@@ -84,7 +86,43 @@
       routeSwitchMenu (name) {
         this.menuList = [];
         for (let i = 0; i < menu.length; i++) {
+          this.isMenuDisplay = false;
+
+          if (menu[i].model_id === 1 && this.userInfo.user_type === '3') {
+            continue;
+          }
+
+          if (menu[i].model_id === 19 && this.userInfo.user_type !== '3') {
+            continue;
+          }
+
+          if (this.userInfo.user_type !== '3') {
+            for (let item of this.userInfo.model_list) {
+              if (item === menu[i].model_id) {
+                this.isMenuDisplay = true;
+              }
+            }
+
+            if (this.isMenuDisplay !== true) {
+              continue;
+            }
+          }
+
           for (let c = 0; c < menu[i].son.sonList.length; c++) {
+            this.isMenuDisplay = false;
+
+            if (this.userInfo.user_type !== '3') {
+              for (let item of this.userInfo.model_list) {
+                if (item === menu[i].son.sonList.model_id) {
+                  this.isMenuDisplay = true;
+                }
+              }
+
+              if (this.isMenuDisplay !== true) {
+                continue;
+              }
+            }
+
             if (menu[i].son.sonList[c].route === name) {
               this.activeName = i + '-' + c;
               this.openNames = [i];
@@ -193,6 +231,9 @@
       }
     },
     created () {
+      this.userInfo = JSON.parse(window.sessionStorage.getItem('userInfo'));
+      console.log(this.userInfo);
+
       this.routeSwitchMenu(this.$route.name);
       this.getDialogueList();
       this.getMessage();
