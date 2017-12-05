@@ -45,13 +45,43 @@
    .form-box{
       padding: 10px;
       border-bottom: 1px #eaeaea solid;
-      max-height: 600px;
       width: 100%;
       overflow-y: scroll;
    }
    .custom-group-box{
       padding: 10px;
    }
+   .name-box{
+      position: absolute;
+      width: 100%;
+      background-color: #fff;
+      z-index: 1000;
+      border: 1px #eaeaea solid;
+      box-shadow: 0px 1px 1px 0px #eaeaea;
+      li{
+         cursor: pointer;
+         box-sizing: border-box;
+         padding: 0 10px;
+      }
+      li:hover{
+         background-color: #f7f7f7;
+      }
+   }
+ @media all and (min-height:800px) and (max-height:1000px){
+    .form-box{
+       height: 450px
+    }
+ }
+ @media all and (min-height:1000px) and (max-height:1200px){
+    .form-box{
+       height: 650px
+    }
+ }
+ @media all and (min-height:1201px){
+    .form-box{
+       height: 750px
+    }
+ }
 </style>
 <template>
    <div class="box">
@@ -83,6 +113,11 @@
                   <!--<Option v-for="item in cityList1" :value="item.id" :key="item.id">{{ item.name }}</Option>-->
                <!--</Select>-->
             <!--</FormItem>-->
+            <FormItem label="客户类型：">
+               <Select v-model="formData.customer_type" style="width:  44%;">
+                  <Option v-for="item in clientTypeArr" :value="item.id" :key="item.id">{{ item.label }}</Option>
+               </Select>
+            </FormItem>
             <FormItem label="客户池组：">
                <Select v-model="formData.wx_user_group_id" style="width:  44%;">
                   <Option v-for="item in cityList" :value="parseInt(item.wx_user_group_id)" :key="item.wx_user_group_id">{{ item.group_name }}</Option>
@@ -103,7 +138,13 @@
                </RadioGroup>
             </FormItem>
             <FormItem  label="真实姓名：">
-               <Input v-model="formData.real_name" style="width:  100%;"></Input>
+               <Input v-model="formData.real_name" style="width:  100%;" @on-change="nameSeekFun"></Input>
+               <ul class="name-box" v-if="is_name_show">
+                  <li v-for="(item, i) in nameArr" @click="selNameSeekFun(item)">{{ item.real_name }}</li>
+               </ul>
+               <!--<Select v-model="formData.real_name" filterable @on-query-change="nameSeekFun" @on-change="selNameSeekFun">-->
+                  <!--<Option v-for="(item, i) in nameArr" :value="i" :key="item.value">{{ item.real_name }}</Option>-->
+               <!--</Select>-->
             </FormItem>
             <FormItem  label="真实电话：">
                <Input v-model="formData.real_phone" style="width:  100%;"></Input>
@@ -173,6 +214,7 @@
             is_Loading: false,
             wx_company_id: '',
             wx_user_group_id: '',
+            customer_type: 0,
             company_id: '',
             desc: '',
             birthday: '',
@@ -184,6 +226,25 @@
           },
           cityList: [],
           cityList1: [],
+          clientTypeArr: [
+            {
+              label: '其他',
+              id: 0
+            },
+            {
+              label: '意向客户',
+              id: 1
+            },
+            {
+              label: '订单客户',
+              id: 2
+            },
+            {
+              label: '追销客户',
+              id: 3
+            }
+          ],
+          nameArr: [],
           model1: '',
           addName: '',
           modal1: false,
@@ -246,7 +307,8 @@
           data6: [],
           WxAuthList: null,
           WxAutId: '',
-          clientData: {}
+          clientData: {},
+          is_name_show: false
         };
       },
       mounted () {
@@ -346,13 +408,11 @@
         },
         // 客户池分组改变方法
         saveFun (v) {
-          console.log(this.formData);
           Object.assign(this.formData, {'appid': this.clientData.appid});
           Object.assign(this.formData, {'openid': this.clientData.customer_wx_openid});
           this.ajax.setCustomerInfo({
             data: this.formData,
             success: (res) => {
-              console.log(res, 123);
             },
             error: (res) => {
               this.$Message.warning(res);
@@ -370,8 +430,10 @@
             success: (res) => {
               this.formData.birthday = res.body.birthday;
               this.formData.company_id = res.body.wx_company_id;
+              this.formData.customer_type = res.body.customer_type;
               this.formData.desc = res.body.desc;
               this.formData.uid = res.body.uid;
+              // this.nameArr.push(res.body);
               this.formData.real_name = res.body.real_name;
               this.formData.real_phone = res.body.real_phone;
               this.formData.wx_company_name = res.body.wx_company_name;
@@ -387,9 +449,47 @@
             },
             error: (res) => {
               this.is_Loading = false;
-              this.$Message.warning(res);
+              this.$Message.warning(res.meta.message);
             }
           });
+        },
+        // 模糊搜索客户名称
+        nameSeekFun (v) {
+          this.ajax.searchCustomerInfo({
+            data: {
+              real_name: this.formData.real_name
+            },
+            success: (res) => {
+              if (res.body.length !== 0) {
+                this.nameArr = res.body;
+                this.is_name_show = true;
+              }
+            },
+            error: (res) => {
+              this.$Message.warning(res.meta.message);
+            }
+          });
+        },
+        // 模糊搜索返回的值
+        selNameSeekFun (v) {
+          this.formData.birthday = v.birthday;
+          this.formData.company_id = v.wx_company_id;
+          this.formData.customer_type = v.customer_type;
+          this.formData.desc = v.desc;
+          this.formData.uid = v.uid;
+          // this.nameArr.push(res.body);
+          this.formData.real_name = v.real_name;
+          this.formData.real_phone = v.real_phone;
+          this.formData.wx_company_name = v.wx_company_name;
+          this.formData.wx_number = v.wx_number;
+          this.formData.email = v.email;
+          this.formData.tel = v.tel;
+          this.formData.contact_address = v.contact_address;
+          this.formData.customer_info_id = v.customer_info_id;
+          this.formData.real_sex = v.real_sex;
+          this.formData.wx_user_group_id = v.wx_user_group_id;
+          this.formData.wx_user_group_name = v.wx_user_group_name;
+          this.is_name_show = false;
         }
       },
       destroyed (s) {

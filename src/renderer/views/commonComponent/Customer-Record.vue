@@ -19,7 +19,6 @@
         }
     }
     .chart-win{
-        height: 750px;
         border-bottom: 1px #eaeaea solid;
         background-color: #f2f2f2;
         transition: all .3s;
@@ -164,6 +163,39 @@
         }
         li:last-child{
             border-right: 0;
+        }
+    }
+    @media all and (min-height:800px) and (max-height:1000px){
+        .chart-win{
+            height: 600px;
+        }
+        .chart-txt{
+            top: 560px;
+        }
+        .form-box{
+            height: 400px
+        }
+    }
+    @media all and (min-height:1000px) and (max-height:1200px){
+        .chart-win{
+            height: 820px;
+        }
+        .chart-txt{
+            top: 660px;
+        }
+        .form-box{
+            height: 500px
+        }
+    }
+    @media all and (min-height:1201px){
+        .chart-win{
+            height: 600px;
+        }
+        .chart-txt{
+            top: 700px;
+        }
+        .form-box{
+            height: 600px
         }
     }
 </style>

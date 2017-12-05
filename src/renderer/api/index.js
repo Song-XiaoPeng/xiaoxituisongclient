@@ -772,4 +772,140 @@ ajax.getCustomerList = (obj) => {
     console.log(error);
   });
 };
+// 创建渠道分组
+ajax.addQrcodeGroup = (obj) => {
+  util.ajax.post('/api/v1/extension/Handle/addQrcodeGroup', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 获取创建渠道分组列表
+ajax.getQrcodeGroupList = (obj) => {
+  util.ajax.post('/api/v1/extension/Handle/getQrcodeGroupList', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 删除渠道分组
+ajax.delQrcodeGroup = (obj) => {
+  util.ajax.post('/api/v1/extension/Handle/delQrcodeGroup', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 修改创建渠道分组名
+ajax.editQrcodeGroupName = (obj) => {
+  util.ajax.post('/api/v1/extension/Handle/editQrcodeGroupName', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 添加推广二维码
+ajax.createQrcode = (obj) => {
+  util.ajax.post('/api/v1/extension/Handle/createQrcode', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 获取二维码列表
+ajax.getQrcodList = (obj) => {
+  util.ajax.post('/api/v1/extension/Handle/getQrcodList', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 删除二维码
+ajax.delQrcod = (obj) => {
+  util.ajax.post('/api/v1/extension/Handle/delQrcod', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 模糊搜索客户名称
+ajax.searchCustomerInfo = (obj) => {
+  util.ajax.post('/api/v1/customer/CustomerOperation/searchCustomerInfo', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
 export default ajax;

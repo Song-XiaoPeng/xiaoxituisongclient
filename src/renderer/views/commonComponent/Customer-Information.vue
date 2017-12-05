@@ -10,10 +10,24 @@
     .tab-box{
         margin-top: 10px;
         overflow: auto;
-        max-height: 700px;
         /* border-top: 1px #eaeaea solid; */
         padding-top: 10px;
     }
+@media all and (min-height:800px) and (max-height:1000px){
+    .tab-box{
+        height: 550px
+    }
+}
+@media all and (min-height:1000px) and (max-height:1200px){
+    .tab-box{
+        height: 750px
+    }
+}
+@media all and (min-height:1201px){
+    .tab-box{
+        height: 900px
+    }
+}
 </style>
 <template>
    <div class="info-box">

@@ -10,22 +10,29 @@
         <div class="user-text"><Icon type="briefcase"></Icon> 账号：18316314484</div>
         <div class="user-text"><Icon type="person"></Icon> 姓名：王涛</div>
       </div>
-      <div class="window-control">
-        <span class="window-icon">
+    </div>
+    <div class="window-control">
+      <Dropdown @on-click="signOut">
+        <a href="javascript:void(0)" style="color:#fff">
           <Icon type="arrow-down-b"></Icon>
-        </span>
-        <span class="window-icon" @click="hideWindow()">
+        </a>
+        <DropdownMenu slot="list">
+          <DropdownItem divided style="color: #ff3300;text-align: center;font-size: 22px;"><Icon type="disc" style="margin-right: 10px"></Icon>注销</DropdownItem>
+        </DropdownMenu>
+      </Dropdown>
+        <!--<span class="window-icon">-->
+          <!--<Icon type="arrow-down-b"></Icon>-->
+        <!--</span>-->
+      <span class="window-icon" @click="hideWindow()">
           <Icon type="minus"></Icon>
         </span>
-        <span class="window-icon" @click="showWindow()">
+      <span class="window-icon" @click="showWindow()">
           <Icon type="arrow-expand"></Icon>
         </span>
-        <span class="window-icon" @click="closeWindow()">
+      <span class="window-icon" @click="closeWindow()">
           <Icon type="close"></Icon>
         </span>
-      </div>
     </div>
-
     <Row type="flex">
       <Col span="4" class="layout-menu-left">
         <Menu :active-name="activeName" theme="dark" width="auto" :open-names=openNames @on-select="selectMenu" accordion>
