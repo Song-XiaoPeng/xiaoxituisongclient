@@ -5,11 +5,11 @@
 </style>
 <template>
     <div>
-        <div class="top-box">
-            <span>当前公共号：</span>
-            <Select v-model="appid" style="width:200px" @on-change="selAppidFun">
-                <Option v-for="item in cityList" :value="item.appid" :key="item.appid">{{ item.nick_name }}</Option>
-            </Select>
+        <div class="top-box cl">
+            <!--<span>当前公共号：</span>-->
+            <!--<Select v-model="appid" style="width:200px" @on-change="selAppidFun">-->
+                <!--<Option v-for="item in cityList" :value="item.appid" :key="item.appid">{{ item.nick_name }}</Option>-->
+            <!--</Select>-->
             <Button class="f-r" type="primary" @click="modal1 = true">新增</Button>
         </div>
         <div>
@@ -23,6 +23,11 @@
         <!-- 添加弹窗 -->
         <Modal v-model="modal1" title="添加带参二维码" width="800" @on-ok="createChannelFun">
             <Form  label-position="right" :label-width="100">
+                <FormItem label="公共号">
+                    <Select v-model="appid" style="width:200px" @on-change="selAppidFun">
+                        <Option v-for="item in cityList" :value="item.appid" :key="item.appid">{{ item.nick_name }}</Option>
+                    </Select>
+                </FormItem>
                 <FormItem label="渠道名称">
                     <Input v-model="name" placeholder="请输入"></Input>
                 </FormItem>
@@ -37,7 +42,7 @@
                     <Button type="ghost" @click="popup6 = true, modal1 = false">添加</Button>
                 </FormItem>
                 <FormItem label="客服分组">
-                    <Select  placeholder="Select your city" v-model="customer_service_group_id " style="width: 91%">
+                    <Select  placeholder="Select your city" v-model="customer_service_group_id " style="width: 91%" @on-change="selUserGourpFun">
                         <Option v-for="k in userGroupData" :value="k.user_group_id" :key="k.value">{{k.user_group_name}}</Option>
                     </Select>
                     <!--<span>{{selRowData.user_name}}</span>-->
@@ -306,7 +311,9 @@
         appData: '',
         name: '',
         dey: '',
-        customer_service_group_id: ''
+        customer_service_group_id: '',
+        userName: '',
+        customer_service_id: ''
       };
     },
     mounted () {
@@ -333,12 +340,28 @@
             this.popup4 = false;
           },
           error: (res) => {
-            this.$Message.warning(res);
+            this.$Message.warning(res.meta.message);
           }
         });
       },
       // 创建二维码
       createChannelFun () {
+        if (this.name === '') {
+          this.$Message.warning('名称不能为空');
+          return;
+        }
+        if (this.tabArr.length <= 0) {
+          this.$Message.warning('请添加自动标签');
+          return;
+        }
+        if (this.customer_service_id === '' && this.customer_service_group_id === '') {
+          this.$Message.warning('请选择客户分组或专属客服');
+          return;
+        }
+        if (this.dey === '') {
+          this.$Message.warning('天数不能为空');
+          return;
+        }
         this.ajax.createQrcode({
           data: {
             type: '2',
@@ -347,7 +370,7 @@
             qrcode_group_id: this.qrcode_group_id,
             invalid_day: this.dey,
             label: this.tabArr,
-            customer_service_id: this.selRowData.customer_service_id,
+            customer_service_id: this.customer_service_id,
             customer_service_group_id: this.customer_service_group_id
           },
           success: (res) => {
@@ -370,7 +393,7 @@
             this.qrcode_group_id = res.body[0].qrcode_group_id;
           },
           error: (res) => {
-            this.$Message.warning(res);
+            this.$Message.warning(res.meta.message);
           }
         });
       },
@@ -387,7 +410,7 @@
             this.popup5 = false;
           },
           error: (res) => {
-            this.$Message.warning(res);
+            this.$Message.warning(res.meta.message);
           }
         });
       },
@@ -402,7 +425,7 @@
             this.data2.splice(i, 1);
           },
           error: (res) => {
-            this.$Message.warning(res);
+            this.$Message.warning(res.meta.message);
           }
         });
       },
@@ -476,7 +499,9 @@
       },
       // 客服表格选择单行数据
       selTabRowFun (v) {
-        Object.assign(this.selRowData, v);
+        this.customer_service_group_id = '';
+        this.userName = v.name;
+        this.customer_service_id = v.customer_service_id;
       },
       selAppidFun () {
         this.getUserList();
@@ -516,6 +541,12 @@
             this.$Message.warning(res.meta.message);
           }
         });
+      },
+      selUserGourpFun (v) {
+        if (v !== '') {
+          this.userName = '';
+          this.customer_service_id = '';
+        }
       }
     },
     watch: {

@@ -39,11 +39,35 @@ export default new Router({
         },
         {
           path: 'clientCrm',
-          name: 'clientCrm',
+          name: 'clue',
           meta: {
-            title: '客户管理'
+            title: '线索'
           },
-          component: (resolve) => require(['@/views/clientCrm/index'], resolve)
+          component: (resolve) => require(['@/views/clientCrm/clue'], resolve)
+        },
+        {
+          path: 'intention',
+          name: 'intention',
+          meta: {
+            title: '意向客户'
+          },
+          component: (resolve) => require(['@/views/clientCrm/intention'], resolve)
+        },
+        {
+          path: 'indent',
+          name: 'indent',
+          meta: {
+            title: '订单客户'
+          },
+          component: (resolve) => require(['@/views/clientCrm/indent'], resolve)
+        },
+        {
+          path: 'chase',
+          name: 'chase',
+          meta: {
+            title: '追销客户'
+          },
+          component: (resolve) => require(['@/views/clientCrm/chase'], resolve)
         },
         {
           path: 'remind',

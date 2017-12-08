@@ -318,7 +318,13 @@
             that.messageData.data = arr;
             // that.messageData.data = arr;
             // 调用自定义事件传递数据到 聊天窗口
-            Bus.$emit('change', that.messageData);
+            let obj = {
+              common: true,
+              information: true,
+              record: true,
+              remind: false
+            };
+            Bus.$emit('change', that.messageData, obj);
             db.close();
           };
         },
@@ -417,7 +423,13 @@
                 state: '',
                 uid: ''
               };
-              Bus.$emit('change', this.messageData);
+              let obj = {
+                common: true,
+                information: true,
+                record: true,
+                remind: false
+              };
+              Bus.$emit('change', this.messageData, obj);
               this.is_Loading = false;
               this.clientName = '';
             },
@@ -536,7 +548,6 @@
         db2.fun = function (res) { // 执行成功回掉函数
           db2.close();
         };
-        Bus.$off();
       },
       created () {
         // 调用本地数据库 获取储存的数据

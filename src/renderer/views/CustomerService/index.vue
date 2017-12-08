@@ -61,12 +61,12 @@
       mounted () {
       },
       destroyed (s) {
-        Bus.$off();
       },
       beforeDestroy () {
       },
       methods: {},
       created () {
+        Bus.$off();
         this.ajax.getWxAuthList({
           data: {},
           success: (res) => {
@@ -78,7 +78,6 @@
             this.$Message.warning(res.meta.message);
           }
         });
-        console.log(Bus);
       }
     };
 </script>

@@ -136,7 +136,7 @@
       }
     },
     created () {
-      this.userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+      this.userInfo = JSON.parse(localStorage.getItem('userInfo'));
       console.log(this.userInfo);
       this.getWxAuthList();
     }

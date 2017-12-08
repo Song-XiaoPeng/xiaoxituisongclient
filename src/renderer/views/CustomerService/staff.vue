@@ -57,7 +57,9 @@
                         <th>所属部门</th>
                         <th>员工状态</th>
                         <th>头像</th>
+                        <th>是否客服</th>
                         <th>设置客服</th>
+                        <th>解除硬件绑定</th>
                         <th>在职/离职 操作</th>
                     </tr>
                     </thead>
@@ -88,8 +90,16 @@
                             </Upload>
                         </td>
                         <td>
+                            <span v-if="k.customer_service_list == null">否</span>
+                            <Button v-else type="ghost" size="small" @click="popup8 = true,serviceArr = k.customer_service_list">操作</Button>
+                        </td>
+                        <td>
                             <Button type="ghost" size="small" @click="is_sectionPupop1 = true, selUser = k">设为客服</Button>
                             <Button type="ghost" size="small" @click="is_sectionPupop2 = true, selEdit = k">调部门</Button>
+                        </td>
+                        <td>
+                            <span v-if="k.client_network_mac == null">未绑定</span>
+                            <Button v-else type="ghost" size="small" @click="untieFun(k)">解除</Button>
                         </td>
                         <td>
                             <i-switch v-model="k.is_switch" @on-change="switchFun(k)">
@@ -101,7 +111,7 @@
                     </tbody>
                 </table>
                 <div class="page-centent">
-                    <Page :total="pageCount" @on-change="pageFun"></Page>
+                    <Page :total="pageCount" :page-size="pageSize" @on-change="pageFun"></Page>
                 </div>
             </Card>
             </Col>
@@ -157,6 +167,59 @@
         <!-- end改部门弹窗 -->
 
 
+        <!-- 改部门弹窗 -->
+        <Modal v-model="popup8" title="客服" :width="800" @on-ok="editBranch">
+            <table class="table-copy">
+                <thead>
+                <tr>
+                    <th>客服名称</th>
+                    <th>公共号/小程序名称</th>
+                    <th>客服状态</th>
+                    <th>权限管理</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="(k, index) in serviceArr" :key="index">
+                    <td style="padding: 4px;">
+                        {{k.name}}
+                    </td>
+                    <td style="padding: 4px;">
+                        {{k.app_name}}
+                    </td>
+                    <td>
+                        {{k.state === -1 ? '离线' : k.state === 1 ? '在线' : k.state === 2 ? '离开' : '未知'}}
+                    </td>
+                    <td>
+                        <Button type="ghost" @click="popup11 = true,popup8 = false, selUserData = k">修改权限</Button>
+                    </td>
+                    <td>
+                        <Button type="ghost" @click="popup9 = true, selUserData = k, popup8 = false,serviceName = k.name">修改客服名</Button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </Modal>
+        <!-- end改部门弹窗 -->
+
+
+        <!-- 修改权限弹窗 -->
+        <Modal v-model="popup10" title="选择公共号" :width="500" @on-ok="setServer">
+            <Form  :label-width="120">
+                <Form-item label="客服名称：">
+                    <Input v-model="selUser.user_name" :placeholder="selUser.user_name"></Input>
+                </Form-item>
+                <Form-item label="当前公共号：">
+                    <Select v-model="appid">
+                        <Option v-for="item in cityList" :value="item.appid" :key="item.appid">{{ item.nick_name }}</Option>
+                    </Select>
+                </Form-item>
+            </Form>
+        </Modal>
+        <!-- end修改权限弹窗 -->
+
+
+
         <!-- 添加部门弹窗 -->
         <Modal v-model="is_sectionPupop1" title="选择公共号" :width="500" @on-ok="setServer">
             <Form  :label-width="120">
@@ -173,6 +236,22 @@
         <!-- end添加部门弹窗 -->
 
 
+        <!-- 修改客服名称弹窗 -->
+        <Modal v-model="popup9" title="修改名称" :width="500" @on-ok="editVerviceName">
+            <Form  :label-width="120">
+                <Form-item label="名称：">
+                    <Input v-model="serviceName" placeholder="请输入名称"></Input>
+                </Form-item>
+            </Form>
+        </Modal>
+        <!-- end修改客服名称弹窗 -->
+
+
+        <!-- 权限管理 -->
+        <Modal v-model="popup11" title="权限管理" :width="500" @on-ok="jurisdictionFun">
+            <Tree :data="menuArr" show-checkbox @on-check-change="jurisdiction"></Tree>
+        </Modal>
+        <!-- end权限管理 -->
 
 
         <Spin fix v-if="is_Loading">
@@ -216,7 +295,17 @@
         selUser: '',
         edit_branch_id: '',
         selEdit: null,
-        userInfo: null
+        userInfo: null,
+        popup8: false,
+        serviceArr: [],
+        popup9: false,
+        selUserData: null,
+        serviceName: '',
+        popup10: false,
+        menuArr: [],
+        popup11: false,
+        jurisdictionData: [],
+        pageSize: ''
       };
     },
     components: {
@@ -310,6 +399,7 @@
           success: (res) => {
             this.is_Loading = false;
             this.pageCount = parseInt(res.body.page_data.count);
+            this.pageSize = parseInt(res.body.page_data.rows_num);
             res.body.user_list.forEach((v) => {
               v['is_switch'] = v.user_state === '1';
             });
@@ -328,6 +418,30 @@
       pageFun (v) {
         this.page = v;
         this.getUserList();
+      },
+      // 修改客服名称
+      editVerviceName () {
+        let k = this.selUserData;
+        if (this.serviceName === '') {
+          this.$Message.warning('请输入名称');
+          return;
+        }
+        this.ajax.updateCustomerServiceName({
+          data: {
+            appid: this.appid,
+            uid: k.uid,
+            user_name: this.serviceName
+          },
+          success: () => {
+            this.is_Loading = false;
+            this.getUserList();
+            this.$Message.success('修改成功');
+          },
+          error: (res) => {
+            this.is_Loading = false;
+            this.$Message.warning(res.meta.message);
+          }
+        });
       },
       switchFun (v) {
         this.is_Loading = true;
@@ -370,7 +484,6 @@
       // 设置客服
       setServer () {
         let k = this.selUser;
-        console.log(k);
         this.ajax.setUserCustomerService({
           data: {
             uid: k.uid,
@@ -379,6 +492,7 @@
           },
           success: () => {
             this.is_Loading = false;
+            this.getUserList();
             this.$Message.success('操作成功');
           },
           error: (res) => {
@@ -403,6 +517,7 @@
           }
         });
       },
+      // 修改图像
       upImgFun (d) {
         this.ajax.setUserPortrait({
           data: {
@@ -417,10 +532,82 @@
             this.$Message.warning(res.meta.message);
           }
         });
+      },
+      // 获取权限列表
+      getModelAuthList () {
+        this.ajax.getModelAuthList({
+          data: {},
+          success: (res) => {
+            let arr = res.body;
+            arr.forEach((k, i) => {
+              if (k.superior_id === -1) {
+                Object.assign(k, {'title': k.model_name});
+                Object.assign(k, {'expand': true});
+                this.menuArr.push(k);
+              }
+            });
+            this.menuArr.forEach((s) => {
+              let arr1 = [];
+              arr.forEach((k, i) => {
+                if (k.superior_id === s.model_id) {
+                  Object.assign(k, {'title': k.model_name});
+                  Object.assign(k, {'expand': true});
+                  arr1.push(k);
+                }
+              });
+              Object.assign(s, {'children': arr1});
+            });
+          },
+          error: (res) => {
+            this.$Message.warning(res.meta.message);
+          }
+        });
+      },
+      // 提交权限设置
+      jurisdictionFun () {
+        if (this.jurisdictionData.length === 0) {
+          this.$Message.warning('没有选择任何权限');
+          return;
+        }
+        this.ajax.setUserModelAuth({
+          data: {
+            uid: this.selUserData.uid,
+            model_list: this.jurisdictionData.map((k) => {
+              return k.model_id;
+            })
+          },
+          success: (res) => {
+            this.$Message.success('操作成功');
+          },
+          error: (res) => {
+            this.is_Loading = false;
+            this.$Message.warning(res.meta.message);
+          }
+        });
+      },
+      // 点击权限复选框方法  保存数据
+      jurisdiction (v) {
+        this.jurisdictionData = v;
+      },
+      // 解绑硬件
+      untieFun (k) {
+        this.ajax.relieveUserBind({
+          data: {
+            uid: k.uid
+          },
+          success: (res) => {
+            this.getUserList();
+          },
+          error: (res) => {
+            this.is_Loading = false;
+            this.$Message.warning(res.meta.message);
+          }
+        });
       }
     },
     created () {
-      this.userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+      this.userInfo = JSON.parse(localStorage.getItem('userInfo'));
+      this.getModelAuthList();
       this.ajax.getWxAuthList({
         data: {},
         success: (res) => {

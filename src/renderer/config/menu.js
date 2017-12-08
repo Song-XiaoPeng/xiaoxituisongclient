@@ -6,13 +6,13 @@ let menuData = [
     son: {
       sonTitle: '概况数据',
       sonList: [
-        {
-          model_id: -1,
-          menuTitle: '概况数据',
-          route: 'survey',
-          routeBreadcrumb: ['系统首页', '概况数据'],
-          sonMenu: []
-        }
+        // {
+        // model_id: -1,
+        // menuTitle: '概况数据',
+        // route: 'survey',
+        // routeBreadcrumb: ['系统首页', '概况数据'],
+        // sonMenu: []
+        // }
       ]
     },
     route: 'survey',
@@ -49,42 +49,29 @@ let menuData = [
         {
           model_id: 15,
           menuTitle: '线索',
-          route: 'clientCrm',
+          route: 'clue',
           routeBreadcrumb: ['客户管理', '线索'],
           sonMenu: []
         },
         {
           model_id: 16,
           menuTitle: '意向客户',
-          route: 'clientCrm',
+          route: 'intention',
           routeBreadcrumb: ['管理', '意向客户'],
           sonMenu: []
         },
         {
           model_id: 17,
           menuTitle: '订单客户',
-          route: 'clientCrm',
+          route: 'indent',
           routeBreadcrumb: ['管理', '订单客户'],
           sonMenu: []
-        }
-      ]
-    },
-    route: [],
-    routeBreadcrumb: [],
-    sonMenu: []
-  },
-  {
-    model_id: 3,
-    menuTitle: '跟踪提醒',
-    iconName: 'android-alarm-clock',
-    son: {
-      sonTitle: '跟踪提醒',
-      sonList: [
+        },
         {
-          model_id: 22,
-          menuTitle: '提醒列表',
-          route: 'remind',
-          routeBreadcrumb: ['设置', '店铺信息'],
+          model_id: 19,
+          menuTitle: '追销客户',
+          route: 'chase',
+          routeBreadcrumb: ['管理', '追销客户'],
           sonMenu: []
         }
       ]
@@ -93,6 +80,26 @@ let menuData = [
     routeBreadcrumb: [],
     sonMenu: []
   },
+  // {
+  //   model_id: 3,
+  //   menuTitle: '跟踪提醒',
+  //   iconName: 'android-alarm-clock',
+  //   son: {
+  //     sonTitle: '跟踪提醒',
+  //     sonList: [
+  //       {
+  //         model_id: 22,
+  //         menuTitle: '提醒列表',
+  //         route: 'remind',
+  //         routeBreadcrumb: ['设置', '店铺信息'],
+  //         sonMenu: []
+  //       }
+  //     ]
+  //   },
+  //   route: [],
+  //   routeBreadcrumb: [],
+  //   sonMenu: []
+  // },
   {
     model_id: 4,
     menuTitle: '沟通监控',

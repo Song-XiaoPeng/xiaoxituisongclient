@@ -244,8 +244,8 @@
                                    <div v-if="k.message_type == 3" class="audio-box" @click="audioFun('audio' + i, k, i)">
                                        <!--<div class="audio-state" v-if="k.is_icon">12313212</div>-->
                                        <div class="audio-loding">
-                                           <img v-if="k.is_icon" src="../../assets/images/3333.gif" alt="">
-                                           <img v-if="k.is_icon == true ? false : true" src="../../assets/images/audio-start.png" alt="">
+                                           <img v-if="k.is_icon" src="~@/assets/images/3333.gif" alt="">
+                                           <img v-if="k.is_icon == true ? false : true" src="~@/assets/images/audio-start.png" alt="">
                                        </div>
                                        <audio :ref="'audio' + i" v-if="k.message_type == 3" v-on:loadedmetadata="audioTimeFun(k, 'audio' + i, i)">
                                            <source  :src="'http://kf.lyfz.net/api/v1/we_chat/Business/getMaterial?company_id=' + k.company_id + '&appid=' + k.appid + '&media_id=' + k.media_id + '&type=3'">
@@ -300,8 +300,8 @@
                                    <div v-if="k.message_type == 3" class="audio-box" @click="audioFun('audio' + i, k, i)">
                                        <!--<div class="audio-state" v-if="k.is_icon">12313212</div>-->
                                        <div class="audio-loding">
-                                           <img v-if="k.is_icon" src="../../assets/images/3333.gif" alt="">
-                                           <img v-if="k.is_icon == true ? false : true" src="../../assets/images/audio-start.png" alt="">
+                                           <img v-if="k.is_icon" src="~@/assets/images/3333.gif" alt="">
+                                           <img v-if="k.is_icon == true ? false : true" src="~@/assets/images/audio-start.png" alt="">
                                        </div>
                                        <div class="time">
                                            <span><span style="font-size: 14px" v-if="k.is_time">{{k.autio_time}}</span>s</span>
@@ -356,7 +356,7 @@
    </div>
 </template>
 <script>
-    import Bus from '../../assets/eventBus';
+    import Bus from '../../../assets/eventBus';
     export default {
       data () {
         return {

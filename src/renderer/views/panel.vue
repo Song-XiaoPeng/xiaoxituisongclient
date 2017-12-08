@@ -1,23 +1,70 @@
 <style scoped lang="less">
   @import "../less/panel";
+  .tab-left-box{
+    background-color: #072250;
+    height: 50px;
+    width: 13.89%;
+  }
+  .menu-box{
+    width: 100%;
+    height: 100%;
+    background: url('~@/assets/images/meun-bg.png');
+    background-color: #072250;
+    overflow: hidden;
+    ul{
+      li{
+        box-sizing: border-box;
+        font-size: 15px;
+        color: #b9bcc5;
+        cursor: pointer;
+        .child-menu{
+          height: 0px;
+          overflow: hidden;
+          transition: all .3s;
+          ul{
+            li{
+              color: #b9bcc5;
+              cursor: pointer;
+              box-sizing: border-box;
+              padding: 5px 5px 5px 35px;
+              font-size: 13px;
+            }
+          }
+        }
+        .active{
+          background-color: #0b2e6a !important;
+          color: #fff !important;
+        }
+      }
+    }
+    .menu-wire{
+      width: 80%;
+      margin: 0 auto;
+      height: 1px;
+      margin: 10px auto 10px auto;
+      background-color: #000000;
+      border-bottom: 1px #273f67 solid;
+    }
+  }
+
 </style>
 
 <template>
   <div class="layout">
     <div class="window-border">
-      <div class="window-title">
-        <div class="user-portrait" :style="{backgroundImage: 'url(' + userInfo.avatar_url + ')'}"></div>
-        <div class="user-text"><Icon type="briefcase"></Icon> 账号：18316314484</div>
-        <div class="user-text"><Icon type="person"></Icon> 姓名：王涛</div>
-      </div>
+      <Row>
+        <Col span="3" class="tab-left-box">
+
+        </Col>
+      </Row>
     </div>
     <div class="window-control">
       <Dropdown @on-click="signOut">
         <a href="javascript:void(0)" style="color:#fff">
-          <Icon type="arrow-down-b"></Icon>
+          <Icon type="arrow-down-b" style="color: #818181"></Icon>
         </a>
         <DropdownMenu slot="list">
-          <DropdownItem divided style="color: #ff3300;text-align: center;font-size: 22px;"><Icon type="disc" style="margin-right: 10px"></Icon>注销</DropdownItem>
+          <DropdownItem divided style="color: #ff3300;text-align: center;font-size: 22px;"><Icon type="disc" style="margin-right: 10px;"></Icon>注销</DropdownItem>
         </DropdownMenu>
       </Dropdown>
         <!--<span class="window-icon">-->
@@ -27,27 +74,64 @@
           <Icon type="minus"></Icon>
         </span>
       <span class="window-icon" @click="showWindow()">
-          <Icon type="arrow-expand"></Icon>
+          <Icon type="android-checkbox-outline-blank"></Icon>
         </span>
       <span class="window-icon" @click="closeWindow()">
           <Icon type="close"></Icon>
         </span>
     </div>
     <Row type="flex">
-      <Col span="4" class="layout-menu-left">
-        <Menu :active-name="activeName" theme="dark" width="auto" :open-names=openNames @on-select="selectMenu" accordion>
-          <Submenu :name="key"  v-for="(item, key) in menuList" :key="key">
-            <template slot="title">
-              <Icon :type="item.iconName"></Icon>
-              {{item.menuTitle}}
-            </template>
-            <MenuItem v-for="(c, k) of item.son.sonList" :name="key + '-' + k" :key="k">
-              {{c.menuTitle}}
-            </MenuItem>
-          </Submenu>
-        </Menu>
+      <Col span="3" class="layout-menu-left" style="position: absolute;top: 50px;left: 0;bottom: 0;">
+         <div class="menu-box" style="position: relative">
+
+
+           <div class="window-title">
+             <div class="user-portrait">
+                <div class="img-box">
+                  <img :src="userInfo.avatar_url" alt="">
+                </div>
+             </div>
+             <!--<div class="user-text"><Icon type="briefcase"></Icon> 账号：{{userInfo.phone_no}}</div>-->
+             <div class="user-text">{{userInfo.username}}</div>
+           </div>
+
+           <div class="menu-wire"></div>
+           <!-- 左侧导航 -->
+           <div style="overflow: auto;position: absolute;right: -18px;left: 0;bottom: 0;top: 130px;padding-bottom: 50px;">
+             <ul>
+               <li :ref="'parent-menu' + i" v-for="(k, i) in menuList" @click.stop="parentMenuFun(i, k)">
+                 <div v-bind:class="parent_i == i && child_i === '' ? 'active' : ''" style="padding: 10px">
+                   <span style="margin-left: 10px"><Icon :type="k.iconName"></Icon></span>
+                   <span style="margin-left: 10px">{{k.menuTitle}}</span>
+                   <span class="f-r" style="margin-right: 12%" v-if="k.son.sonList.length != 0"><Icon type="ios-arrow-right"></Icon></span>
+                 </div>
+                 <!-- 左侧子导航 -->
+                 <div class="child-menu" :ref="'child-div' + i" v-if="k.son.sonList.length != 0">
+                   <ul  :ref="'child-menu' + i">
+                     <li v-for="(s, si) in k.son.sonList" v-bind:class="child_i === si && parent_i === i ? 'active' : ''" @click.stop="childMenuFun(s, si, i)">{{s.menuTitle}}</li>
+                   </ul>
+                 </div>
+                 <!-- end左侧子导航 -->
+               </li>
+             </ul>
+           </div>
+         </div>
+         <!-- end左侧导航 -->
+
+
+        <!--<Menu :active-name="activeName" theme="dark" width="auto" :open-names=openNames @on-select="selectMenu" accordion>-->
+          <!--<Submenu :name="key"  v-for="(item, key) in menuList" :key="key">-->
+            <!--<template slot="title">-->
+              <!--<Icon :type="item.iconName"></Icon>-->
+              <!--{{item.menuTitle}}-->
+            <!--</template>-->
+            <!--<MenuItem v-for="(c, k) of item.son.sonList" :name="key + '-' + k" :key="k">-->
+              <!--{{c.menuTitle}}-->
+            <!--</MenuItem>-->
+          <!--</Submenu>-->
+        <!--</Menu>-->
       </Col>
-      <Col span="20" id="container">
+      <Col span="21" id="container" style="right: 0;position: absolute;top: 50px;bottom: 0;">
         <div class="content-page">
           <router-view></router-view>
         </div>
@@ -71,7 +155,9 @@
         isMenuDisplay: false,
         isOpen: false,
         is_Message: true,
-        is_tongzhi: true // 是否离开页面提示通知
+        is_tongzhi: true, // 是否离开页面提示通知,
+        parent_i: '0',
+        child_i: ''
       };
     },
     components: {
@@ -87,11 +173,16 @@
       next();
     },
     mounted () {
+      if (this.userInfo.user_type === '3' || this.userInfo.user_type === 3) {
+      } else {
+        this.getDialogueList();
+        this.getMessage();
+      }
     },
     methods: {
       // 注销事件
       signOut () {
-        sessionStorage.clear('userInfo');
+        localStorage.removeItem('userInfo');
         this.$router.push({name: '/'});
       },
       routeSwitchMenu (name) {
@@ -254,15 +345,34 @@
       },
       closeWindow () {
         this.$electron.ipcRenderer.send('window-all-closed');
+      },
+      // 父菜单方法
+      parentMenuFun (i, k) {
+        // let li = this.$refs['parent-menu' + i];
+        if (k.son.sonList.length <= 0) {
+          this.$router.push({
+            name: k.route
+          });
+          this.child_i = '';
+          this.parent_i = i;
+        } else {
+          let childUl = this.$refs['child-menu' + i];
+          let div = this.$refs['child-div' + i];
+          div[0].style.height = div[0].offsetHeight === 0 ? childUl[0].offsetHeight + 'px' : 0 + 'px';
+        }
+      },
+      // 子菜单方法
+      childMenuFun (k, si, i) {
+        this.$router.push({
+          name: k.route
+        });
+        this.child_i = si;
+        this.parent_i = i;
       }
     },
     created () {
-      this.userInfo = JSON.parse(window.sessionStorage.getItem('userInfo'));
-      console.log(this.userInfo);
-
+      this.userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
       this.routeSwitchMenu(this.$route.name);
-      this.getDialogueList();
-      this.getMessage();
     }
   };
 </script>

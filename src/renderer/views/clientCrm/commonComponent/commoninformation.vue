@@ -52,7 +52,7 @@
           <div class="btn" v-if="is_CRM.common" v-bind:class="navState == 1 ? 'active' : ''" @click="selTbeFun(1)">
               客户信息
           </div>
-          <div class="btn" v-if="is_CRM.information" v-bind:class="navState == 2 ? 'active' : ''" @click="selTbeFun(2)">
+          <div class="btn" v-if="is_CRM.information" v-bind:class="navState == 2 ? 'active' : ''" @click="selTbeFun(3)">
              常用话术
           </div>
           <div class="btn" v-if="is_CRM.record" v-bind:class="navState == 3 ? 'active' : ''" @click="selTbeFun(3)">
@@ -71,7 +71,7 @@
   </div>
 </template>
 <script>
-    import Bus from '../../assets/eventBus';
+    import Bus from '../../../assets/eventBus';
     import Common from './Customer-Common';// 常用术语
     import Information from './Customer-Information';//  客户信息
     import Record from './Customer-Record';// 会话记录
@@ -135,9 +135,6 @@
             i++;
           }
           this.navState = 1;
-        });
-        Bus.$on('is_remind', (k, obj) => {
-          this.is_CRM.remind = obj.remind;
         });
       }
     };

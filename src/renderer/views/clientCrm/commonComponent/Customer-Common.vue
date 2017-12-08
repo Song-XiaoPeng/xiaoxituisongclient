@@ -49,7 +49,7 @@
       overflow-y: scroll;
    }
    .custom-group-box{
-      padding: 5px;
+      padding: 10px;
    }
    .name-box{
       position: absolute;
@@ -85,27 +85,27 @@
 </style>
 <template>
    <div class="box">
-      <div class="client cl">
-         <div class="portrait f-l">
-            <img :src="clientData.customer_wx_portrait" alt="">
-         </div>
-         <div class="txt f-l">
-            <ul>
-               <li><span>微信名称：</span> <span style="color:#999">{{clientData.customer_wx_nickname}}</span> </li>
-               <li><span>来源：</span> <span style="color:#999">{{clientData.app_name}}</span> </li>
-               <!--<li><span>公共平台</span> <span style="color:#999">哇大王</span> </li>-->
-               <li><span>来访次数</span> <span style="color:#999">{{clientData.session_frequency}}</span> </li>
-            </ul>
-         </div>
-         <div class="txt-bot">
-           <span>首次沟通：</span>
-           <span>2017-03-05</span>
-           <span style="color: #2db7f5">张三</span>
-           <span style="margin-left: 10px">最近沟通：</span>
-           <span >2017-03-05</span>
-           <span style="color: #2db7f5">张三</span>
-         </div>
-      </div>
+      <!--<div class="client cl">-->
+         <!--<div class="portrait f-l">-->
+            <!--<img :src="clientData.customer_wx_portrait" alt="">-->
+         <!--</div>-->
+         <!--<div class="txt f-l">-->
+            <!--<ul>-->
+               <!--<li><span>微信名称：</span> <span style="color:#999">{{clientData.customer_wx_nickname}}</span> </li>-->
+               <!--<li><span>来源：</span> <span style="color:#999">{{clientData.app_name}}</span> </li>-->
+               <!--&lt;!&ndash;<li><span>公共平台</span> <span style="color:#999">哇大王</span> </li>&ndash;&gt;-->
+               <!--<li><span>来访次数</span> <span style="color:#999">{{clientData.session_frequency}}</span> </li>-->
+            <!--</ul>-->
+         <!--</div>-->
+         <!--<div class="txt-bot">-->
+           <!--<span>首次沟通：</span>-->
+           <!--<span>2017-03-05</span>-->
+           <!--<span style="color: #2db7f5">张三</span>-->
+           <!--<span style="margin-left: 10px">最近沟通：</span>-->
+           <!--<span >2017-03-05</span>-->
+           <!--<span style="color: #2db7f5">张三</span>-->
+         <!--</div>-->
+      <!--</div>-->
       <div class="form-box">
          <Form label-position="right" :label-width="80">
             <!--<FormItem label="粉丝分组：">-->
@@ -117,6 +117,10 @@
                <Select v-model="formData.customer_type" style="width:  44%;">
                   <Option v-for="item in clientTypeArr" :value="item.id" :key="item.id">{{ item.label }}</Option>
                </Select>
+            </FormItem>
+            <FormItem label="意向产品：">
+               <span>{{selPurposeData.product_name}}</span>
+               <Button type="dashed" @click="popup12 = true">操作</Button>
             </FormItem>
             <FormItem label="客户池组：">
                <Select v-model="formData.wx_user_group_id" style="width:  44%;">
@@ -166,9 +170,11 @@
             </FormItem>
          </Form>
       </div>
-      <div class="custom-group-box cl">
+      <div class="custom-group-box">
          <Button type="info" class="f-r"  @click="saveFun" icon="plus-round">保存</Button>
       </div>
+
+
 
       <!-- 添加或修改客户池 -->
       <Modal v-model="popup1" title="客户池组" @on-ok="addCustomerGroup" :styles="{'z-index': 1000}">
@@ -192,6 +198,31 @@
       <!-- end客户池列表弹窗 -->
 
 
+      <!-- 意向产品 -->
+      <Modal v-model="popup12" title="意向产品" :styles="{'z-index': 100}">
+         <div style="padding: 5px"><Button type="primary" @click="popup13 = true, popup12 = false">添加意向产品</Button><span style="color: #ff3300; margin-left: 10px">点击其中一项即选择</span></div>
+         <div>
+            <Table border :columns="columns8" highlight-row :data="data7" @on-current-change="selPurposeFun"></Table>
+         </div>
+         <div style="text-align: center;padding: 5px">
+            <Page :total="pageData.count" :page-size="pageData.row_sum" @click="pageFun"></Page>
+         </div>
+      </Modal>
+      <!-- end意向产品 -->
+
+
+      <!-- 添加或修改意向产品 -->
+      <Modal v-model="popup13" title="添加意向产品" @on-ok="addPurposeFun" :styles="{'z-index': 1000}">
+         <Form label-position="right" :label-width="100">
+            <FormItem label="意向产品名称：">
+               <Input v-model="purposeName" placeholder="请输入" style="width:  100%;"></Input>
+            </FormItem>
+         </Form>
+      </Modal>
+      <!-- end添加或修改意向产品 -->
+
+
+
       <!-- 请求状态 -->
       <Spin fix v-if="is_Loading">
          <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
@@ -201,7 +232,7 @@
    </div>
 </template>
 <script>
-    import Bus from '../../assets/eventBus';
+    import Bus from '../../../assets/eventBus';
     export default {
       data () {
         return {
@@ -224,6 +255,7 @@
             wx_user_group_name: '',
             wx_company_name: ''
           },
+          purposeName: '',
           cityList: [],
           cityList1: [],
           clientTypeArr: [
@@ -251,6 +283,7 @@
           sex: 1,
           is_pond: '',
           popup1: false,
+          popup13: false,
           popup2: false,
           pondName: '',
           is_Loading: false,
@@ -305,11 +338,70 @@
             }
           ],
           data6: [],
+          columns8: [
+            {
+              title: '意向产品名称',
+              key: 'product_name'
+            },
+            {
+              title: '意向产品id',
+              key: 'product_id'
+            },
+            {
+              title: 'Action',
+              key: 'action',
+              width: 150,
+              align: 'center',
+              render: (h, params) => {
+                return h('div', [
+                  h('Button', {
+                    props: {
+                      type: 'primary',
+                      size: 'small'
+                    },
+                    style: {
+                      marginRight: '5px'
+                    },
+                    on: {
+                      click: () => {
+                        this.is_purpose = 2;
+                        this.purposeName = params.row.product_name;
+                        this.product_id = params.row.product_id;
+                        this.popup13 = true;
+                        this.popup12 = false;
+                      }
+                    }
+                  }, '修改名称'),
+                  h('Button', {
+                    props: {
+                      type: 'error',
+                      size: 'small'
+                    },
+                    on: {
+                      click: () => {
+                        this.delProductFun(params.row, params.index);
+                      }
+                    }
+                  }, '删除')
+                ]);
+              }
+            }
+          ],
+          data7: [],
           WxAuthList: null,
           WxAutId: '',
           clientData: {},
           is_name_show: false,
-          is_CRM: false
+          is_CRM: false,
+          popup12: false,
+          is_purpose: 1,
+          product_id: '',
+          pageData: {
+            count: 1,
+            page: 1,
+            rows_num: 1
+          },
+          selPurposeData: {}
         };
       },
       mounted () {
@@ -409,14 +501,12 @@
         },
         // 客户池分组改变方法
         saveFun (v) {
-          Object.assign(this.formData, {'appid': this.clientData.appid});
-          Object.assign(this.formData, {'openid': this.clientData.customer_wx_openid});
-          this.ajax.setCustomerInfo({
+          // Object.assign(this.formData, {'appid': this.clientData.appid});
+          // Object.assign(this.formData, {'openid': this.clientData.customer_wx_openid});
+          Object.assign(this.formData, {'product_id': this.selPurposeData.product_id});
+          this.ajax.crmUpdate({
             data: this.formData,
             success: (res) => {
-              if (res.body.customer_info_id && res.body.customer_info_id !== null) {
-                Bus.$emit('is_remind', {'remind': true});
-              }
             },
             error: (res) => {
               this.$Message.warning(res.meta.message);
@@ -424,40 +514,29 @@
           });
         },
         // 获取客户信息
-        getClientFun () {
-          this.is_Loading = true;
-          this.ajax.getWxCustomerInfo({
-            data: {
-              appid: this.clientData.appid,
-              openid: this.clientData.customer_wx_openid
-            },
-            success: (res) => {
-              this.formData.birthday = res.body.birthday;
-              this.formData.company_id = res.body.wx_company_id;
-              this.formData.customer_type = res.body.customer_type;
-              this.formData.desc = res.body.desc;
-              this.formData.uid = res.body.uid;
-              // this.nameArr.push(res.body);
-              this.formData.real_name = res.body.real_name;
-              this.formData.real_phone = res.body.real_phone;
-              this.formData.wx_company_name = res.body.wx_company_name;
-              this.formData.wx_number = res.body.wx_number;
-              this.formData.email = res.body.email;
-              this.formData.tel = res.body.tel;
-              this.formData.contact_address = res.body.contact_address;
-              this.formData.customer_info_id = res.body.customer_info_id;
-              this.formData.real_sex = res.body.real_sex;
-              this.formData.wx_user_group_id = res.body.wx_user_group_id;
-              this.formData.wx_user_group_name = res.body.wx_user_group_name;
-              this.is_Loading = false;
-              if (res.body.customer_info_id && res.body.customer_info_id !== null) {
-                Bus.$emit('is_remind', res.body, {'remind': true});
-              }
-            },
-            error: (res) => {
-              this.is_Loading = false;
-              this.$Message.warning(res.meta.message);
-            }
+        getClientFun (res) {
+          this.formData.birthday = res.birthday;
+          this.formData.company_id = res.wx_company_id;
+          this.formData.customer_type = res.customer_type;
+          this.formData.product_name = res.product_name;
+          this.formData.product_id = res.product_id;
+          this.formData.desc = res.desc;
+          this.formData.uid = res.uid;
+          // this.nameArr.push(res.body);
+          this.formData.real_name = res.real_name;
+          this.formData.real_phone = res.real_phone;
+          this.formData.wx_company_name = res.wx_company_name;
+          this.formData.wx_number = res.wx_number;
+          this.formData.email = res.email;
+          this.formData.tel = res.tel;
+          this.formData.contact_address = res.contact_address;
+          this.formData.customer_info_id = res.customer_info_id;
+          this.formData.real_sex = res.real_sex;
+          this.formData.wx_user_group_id = res.wx_user_group_id;
+          this.formData.wx_user_group_name = res.wx_user_group_name;
+          Object.assign(this.selPurposeData, {
+            product_name: res.product_name,
+            product_id: res.product_id
           });
         },
         // 模糊搜索客户名称
@@ -497,6 +576,72 @@
           this.formData.wx_user_group_id = v.wx_user_group_id;
           this.formData.wx_user_group_name = v.wx_user_group_name;
           this.is_name_show = false;
+        },
+        // 添加意向产品
+        addPurposeFun () {
+          if (this.is_purpose === 1) {
+            if (this.purposeName === '') {
+              this.$Message.warning('请输入名称');
+              return;
+            }
+          }
+          this.ajax.addProduct({
+            data: {
+              product_name: this.purposeName,
+              product_id: this.product_id
+            },
+            success: (res) => {
+              this.is_purpose = 1;
+              this.purposeName = '';
+              this.pageData.page = 1;
+              this.getProductList();
+              this.$Message.success('操作成功');
+            },
+            error: (res) => {
+              this.$Message.warning(res.meta.message);
+            }
+          });
+        },
+        // 获取意向产品list
+        getProductList () {
+          this.ajax.getProductList({
+            data: {
+              page: this.pageData.page
+            },
+            success: (res) => {
+              this.data7 = res.body.data_list;
+              this.pageData.count = parseInt(res.body.page_data.count);
+              this.pageData.row_sum = parseInt(res.body.page_data.rows_num);
+            },
+            error: (res) => {
+              this.$Message.warning(res.meta.message);
+            }
+          });
+        },
+        // 删除意向产品
+        delProductFun (k, i) {
+          this.ajax.delProduct({
+            data: {
+              product_id: k.product_id
+            },
+            success: (res) => {
+              this.data7.splice(i, 1);
+              this.$Message.success('操作成功');
+            },
+            error: (res) => {
+              this.$Message.warning(res.meta.message);
+            }
+          });
+        },
+        // 意向产品数据表 选择一项数据
+        selPurposeFun (v) {
+          this.popup12 = false;
+          Object.assign(this.selPurposeData, v);
+        },
+        // 意向产品分页方法
+        pageFun (v) {
+          this.pageData.page = v;
+          this.getProductList();
         }
       },
       destroyed (s) {
@@ -510,8 +655,10 @@
         Bus.$on('change', (k, o) => {
           this.is_CRM = o ? o.is_CRM : false;
           this.clientData = k;
-          this.getClientFun();
+          console.log(k);
+          this.getClientFun(k);
         });
+        this.getProductList();
       }
     };
 </script>

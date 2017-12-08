@@ -1086,10 +1086,10 @@ ul.img-txt{
         }
       },
       destroyed (s) {
-        Bus.$off();
+        // Bus.$off();
       },
       created () {
-        this.userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+        this.userInfo = JSON.parse(localStorage.getItem('userInfo'));
         // 动态获取传递过来的 会话客户数据
         Bus.$on('change', (k) => {
           k.data.forEach((k) => {

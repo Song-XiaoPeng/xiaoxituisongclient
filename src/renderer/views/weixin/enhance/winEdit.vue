@@ -32,7 +32,7 @@
     },
     created () {
       this.appid = this.$route.query.appid;
-      let userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+      let userInfo = JSON.parse(localStorage.getItem('userInfo'));
       this.url = 'http://kf.lyfz.net/wx_edit/?token=' + userInfo.token + '&appid=' + this.appid;
     }
   };

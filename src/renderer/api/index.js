@@ -908,4 +908,259 @@ ajax.searchCustomerInfo = (obj) => {
     console.log(error);
   });
 };
+// 添加业务提醒
+ajax.addRemind = (obj) => {
+  util.ajax.post('/api/v1/message/Remind/addRemind', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 获取授权列表
+ajax.getModelAuthList = (obj) => {
+  util.ajax.get('/api/v1/user/ModelAuth/getModelAuthList', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 获取授权列表
+ajax.getHomeSurvey = (obj) => {
+  util.ajax.get('/api/v1/statistics/Survey/getHomeSurvey', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 设置权限
+ajax.setUserModelAuth = (obj) => {
+  util.ajax.post('/api/v1/user/ModelAuth/setUserModelAuth', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 获取业务提醒数据列表
+ajax.getRemindList = (obj) => {
+  util.ajax.post('/api/v1/message/Remind/getRemindList', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 获取客户排行榜
+ajax.getCustomerServiceRanking = (obj) => {
+  util.ajax.post('/api/v1/statistics/Survey/getCustomerServiceRanking', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 添加意向产品
+ajax.addProduct = (obj) => {
+  util.ajax.post('/api/v1/customer/CustomerOperation/addProduct', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 获取意向产品
+ajax.getProductList = (obj) => {
+  util.ajax.post('/api/v1/customer/CustomerOperation/getProductList', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 删除意向产品
+ajax.delProduct = (obj) => {
+  util.ajax.post('/api/v1/customer/CustomerOperation/delProduct', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 客户管理修改添加客户信息
+ajax.crmUpdate = (obj) => {
+  util.ajax.post('/api/v1/customer/CustomerOperation/crmUpdate', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 设置提醒已完成
+ajax.setComplete = (obj) => {
+  util.ajax.post('/api/v1/message/Remind/setComplete', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 删除提醒
+ajax.delRemind = (obj) => {
+  util.ajax.post('/api/v1/message/Remind/delRemind', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 获取提醒跟踪列表
+ajax.getAllRemindList = (obj) => {
+  util.ajax.post('/api/v1/message/Remind/getAllRemindList', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 修改提醒
+ajax.updateRemindTime = (obj) => {
+  util.ajax.post('/api/v1/message/Remind/updateRemindTime', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 解除硬件绑定
+ajax.relieveUserBind = (obj) => {
+  util.ajax.post('/api/v1/user/UserOperation/relieveUserBind', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
 export default ajax;

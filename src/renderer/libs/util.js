@@ -14,7 +14,7 @@ util.ajax = axios.create({
 
 // axios请求拦截器
 util.ajax.interceptors.request.use(function (config) {
-  config.headers.token = JSON.parse(sessionStorage.getItem('userInfo')) === null ? null : JSON.parse(sessionStorage.getItem('userInfo')).token;
+  config.headers.token = JSON.parse(localStorage.getItem('userInfo')) === null ? null : JSON.parse(localStorage.getItem('userInfo')).token;
   return config;
 }, function (error) {
   return error;

@@ -59,7 +59,7 @@
    </div>
 </template>
 <script>
-    import Bus from '../../assets/eventBus';
+    import Bus from '../../../assets/eventBus';
     export default {
       data () {
         return {

@@ -39,7 +39,7 @@
           background-size: 100% 100%;
       }
     .form{
-        height: 222px;
+        height: 235px;
         width: 400px;
         position: absolute;
         overflow: hidden;
@@ -159,8 +159,9 @@
           <FormItem label="登录账号">
             <Input v-model="name" type="text" placeholder="请输入账号" @on-enter="login()" :disabled="isUploadIng"></Input>
           </FormItem>
-          <FormItem label="登录密码">
+          <FormItem label="登录密码" style="margin-bottom: 0">
             <Input v-model="password" type="password" placeholder="请输入密码" @on-enter="login()" :disabled="isUploadIng"></Input>
+            <Checkbox v-model="rememberObj.single" @on-change="remember"><span style="color: #ff3300">记住密码</span></Checkbox>
           </FormItem>
           <FormItem>
             <Button type="primary" @click="login()" :loading="loginLoading" :disabled="isUploadIng">登录</Button>
@@ -179,9 +180,9 @@
 <script>
   import md5 from 'js-md5';
   import cookies from 'js-cookie';
+  import os from 'os';
   import { remote } from 'electron';
   let updater = remote.require('electron-simple-updater');
-
   export default {
     name: 'login',
     data () {
@@ -192,7 +193,13 @@
         isOpen: false,
         loginLoading: false,
         isRemindUpload: 0,
-        isUploadIng: false
+        isUploadIng: false,
+        single: '',
+        rememberObj: {
+          single: '',
+          pass: null
+        },
+        md5Pass: ''
       };
     },
     components: {
@@ -200,27 +207,51 @@
     methods: {
       login () {
         let reg = /^1[34578]\d{9}$/;
+        let p;
+        // 获取计算机网卡信息
+        let mac = os.networkInterfaces();
+        let macStr = [];
+        let str;
+        for (let k in mac) {
+          mac[k].forEach((s) => {
+            macStr.push(s.mac);
+          });
+        }
+        str = macStr.join();
+        if (this.rememberObj.single === true) {
+          if (this.rememberObj.pass !== null) {
+            p = this.rememberObj.pass;
+          } else {
+            p = md5(this.password);
+          }
+        } else {
+          if (this.password === '') {
+            this.$Message.warning('密码不能为空');
+            return;
+          }
+          p = md5(this.password);
+        }
         if (this.name === '' && reg.test(this.name) === false) {
           this.$Message.warning('手机号不能为空或手机号错误');
           return;
-        } else if (this.password === '') {
-          this.$Message.warning('密码不能为空');
-          return;
         }
-
         this.loginLoading = true;
-
         this.ajax.login({
           data: {
             phone_no: this.name,
-            password: md5(this.password),
-            version: this.version
+            password: p,
+            version: this.version,
+            client_network_mac: md5(str)
           },
           success: (res) => {
             cookies.set('name', this.name, { expires: 7 });
             this.loginLoading = false;
             res.body.token = res.body.login_token;
-            sessionStorage.setItem('userInfo', JSON.stringify(res.body));
+            if (this.rememberObj.single === true) {
+              this.rememberObj.pass = p;
+              localStorage.setItem('remember', JSON.stringify(this.rememberObj));
+            }
+            localStorage.setItem('userInfo', JSON.stringify(res.body));
             this.$router.push({name: 'survey'});
           },
           error: (res) => {
@@ -281,7 +312,6 @@
       },
       checkUpload () {
         updater.on('update-available', (meta) => {
-          console.log(meta);
           this.isRemindUpload = 1;
         });
 
@@ -306,6 +336,16 @@
         }
 
         this.$electron.ipcRenderer.send('window-all-closed');
+      },
+      // 记住密码
+      remember (v) {
+        if (v) {
+          this.rememberObj.single = true;
+          localStorage.setItem('remember', JSON.stringify(this.rememberObj));
+        } else {
+          this.password = '';
+          localStorage.removeItem('remember');
+        }
       }
     },
     created () {
@@ -318,6 +358,14 @@
       }
 
       this.checkUpload();
+      // 获取是否记住密码
+      let r = JSON.parse(localStorage.getItem('remember'));
+      if (r !== null && r.single) {
+        Object.assign(this.rememberObj, r);
+        if (r.pass !== null) {
+          this.password = r.pass;
+        }
+      }
     }
   };
 </script>
