@@ -305,7 +305,7 @@
         menuArr: [],
         popup11: false,
         jurisdictionData: [],
-        pageSize: ''
+        pageSize: 0
       };
     },
     components: {
