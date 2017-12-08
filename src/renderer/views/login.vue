@@ -291,7 +291,9 @@
           this.isPromptUpload = true;
 
           this.uploadDesc.splice(0, this.uploadDesc.length);
-          for (let item of meta.readme) {
+
+          let readme = JSON.parse(meta.readme);
+          for (let item of readme) {
             this.uploadDesc.push(item);
           }
         });
