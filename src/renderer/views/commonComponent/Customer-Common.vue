@@ -69,7 +69,7 @@
    }
  @media all and (min-height:800px) and (max-height:1000px){
     .form-box{
-       height: 450px
+       height: 420px
     }
  }
  @media all and (min-height:1000px) and (max-height:1200px){
