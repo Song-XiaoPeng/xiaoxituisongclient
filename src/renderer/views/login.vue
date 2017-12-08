@@ -190,7 +190,7 @@
       >
       <div class="upload-desc">
         <p>更新说明：</p>
-        <p v-for="item of uploadDesc" :key="item">{{item}}</p>
+        <p v-for="(item, index) of uploadDesc" :key="item">{{index}}.{{item}}</p>
       </div>
     </Modal>
   </div>
