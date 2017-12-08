@@ -131,6 +131,12 @@
   .ivu-btn-ghost {
     color: #fff;
   }
+
+  .upload-desc {
+    width: 100%;
+    height: 200px;
+    overflow: auto;
+  }
 </style>
 
 <template>
@@ -174,6 +180,19 @@
         </Form>
       </div>
     </div>
+
+    <Modal
+      v-model="isPromptUpload"
+      :title="updateTitle"
+      @on-ok="startUpload"
+      ok-text="开始更新应用"
+      cancel-text="暂不更新"
+      >
+      <div class="upload-desc">
+        <p>更新说明：</p>
+        <p v-for="item of uploadDesc" :key="item">{{item}}</p>
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -189,6 +208,9 @@
       return {
         password: '',
         name: '',
+        updateTitle: '',
+        isPromptUpload: false,
+        uploadDesc: [],
         version: '',
         isOpen: false,
         loginLoading: false,
@@ -260,17 +282,18 @@
           }
         });
       },
+      startUpload () {
+        updater.downloadUpdate();
+      },
       update () {
         updater.on('update-available', (meta) => {
-          this.$Modal.confirm({
-            title: '更新提醒',
-            content: '检测到新版本' + meta.version,
-            onOk: () => {
-              updater.downloadUpdate();
-            },
-            okText: '开始更新应用',
-            cancelText: '暂不更新'
-          });
+          this.updateTitle = '检测到新版本' + meta.version;
+          this.isPromptUpload = true;
+
+          this.uploadDesc.splice(0, this.uploadDesc.length);
+          for (let item of meta.readme) {
+            this.uploadDesc.push(item);
+          }
         });
 
         updater.on('update-not-available', () => {
