@@ -500,6 +500,7 @@
           // 如果是客服 切换tab
           if (isKf === 'kf') {
             this.is_tab = 'name3';
+            obj.type = 'click';
           }
         } else if (this.menu.length < 3) {
           // 如果菜单小于3个，并且菜单为初始添加的时候，就添加新菜单
@@ -580,6 +581,7 @@
           // 切换 客服tab
           if (isKf === 'kf') {
             this.is_tab = 'name3';
+            obj.type = 'click';
           }
         }
       },
@@ -789,10 +791,10 @@
       selTabFun (k) {
         if (this.menu_child_i === null) {
           // 菜单 添加所选type 类型
-          this.menu[this.menu_i]['type'] = this.is_tab === 'name2' ? 'view' : this.is_tab === 'name1' ? '' : 'click';
+          this.menu[this.menu_i]['type'] = this.is_tab === 'name2' ? 'view' : this.is_tab === 'name1' ? '' : this.is_tab === 'name3' ? 'click' : 'click';
         } else if (this.menu_child_i !== null) {
           // 子菜单 添加所选type 类型
-          this.menu[this.menu_i].child_menu[this.menu_child_i]['type'] = this.is_tab === 'name2' ? 'view' : this.is_tab === 'name1' ? '' : 'click';
+          this.menu[this.menu_i].child_menu[this.menu_child_i]['type'] = this.is_tab === 'name2' ? 'view' : this.is_tab === 'name1' ? '' : this.is_tab === 'name3' ? 'click' : 'click';
         }
       },
       // 选择客服人员
@@ -934,6 +936,7 @@
       // 组合数据
       combination () {
         let arr = [];
+        console.log(this.menu);
         for (let i = 0; i < this.menu.length; i++) {
           // 首选筛选设置的菜单
           if (this.menu[i].is_menu_btn !== true) {

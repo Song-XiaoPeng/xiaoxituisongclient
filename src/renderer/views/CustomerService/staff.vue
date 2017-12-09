@@ -91,7 +91,7 @@
                         </td>
                         <td>
                             <span v-if="k.customer_service_list == null">否</span>
-                            <Button v-else type="ghost" size="small" @click="popup8 = true,serviceArr = k.customer_service_list">操作</Button>
+                            <Button v-else type="ghost" size="small" @click="popup8 = true,serviceArr = k.customer_service_list, changeUserData = k">操作</Button>
                         </td>
                         <td>
                             <Button type="ghost" size="small" @click="is_sectionPupop1 = true, selUser = k">设为客服</Button>
@@ -191,7 +191,7 @@
                         {{k.state === -1 ? '离线' : k.state === 1 ? '在线' : k.state === 2 ? '离开' : '未知'}}
                     </td>
                     <td>
-                        <Button type="ghost" @click="popup11 = true,popup8 = false, selUserData = k">修改权限</Button>
+                        <Button type="ghost" @click="changePermission(k)">修改权限</Button>
                     </td>
                     <td>
                         <Button type="ghost" @click="popup9 = true, selUserData = k, popup8 = false,serviceName = k.name">修改客服名</Button>
@@ -248,8 +248,8 @@
 
 
         <!-- 权限管理 -->
-        <Modal v-model="popup11" title="权限管理" :width="500" @on-ok="jurisdictionFun">
-            <Tree :data="menuArr" show-checkbox @on-check-change="jurisdiction"></Tree>
+        <Modal v-model="popup11" title="权限管理" :width="500" @on-ok="jurisdictionFun" @on-cancel="menuArr1 = []">
+            <Tree :data="menuArr1" show-checkbox @on-check-change="jurisdiction"></Tree>
         </Modal>
         <!-- end权限管理 -->
 
@@ -305,7 +305,9 @@
         menuArr: [],
         popup11: false,
         jurisdictionData: [],
-        pageSize: 0
+        pageSize: 0,
+        changeUserData: null,
+        menuArr1: []
       };
     },
     components: {
@@ -389,6 +391,34 @@
           }
         });
       },
+      // 修改权限
+      changePermission (k) {
+        let arr = this.menuArr;
+        console.log(arr);
+        arr.forEach((k) => {
+          this.changeUserData.model_list.forEach((s) => {
+            if (k.model_id === s) {
+              Object.assign(k, {expand: true});
+            } else {
+              Object.assign(k, {checked: false});
+            }
+          });
+          k.children.forEach((z) => {
+            this.changeUserData.model_list.forEach((b) => {
+              if (z.model_id === b) {
+                Object.assign(z, {checked: true});
+              } else {
+                Object.assign(z, {checked: false});
+              }
+            });
+          });
+        });
+        this.menuArr1 = arr;
+        this.popup11 = true;
+        this.popup8 = false;
+        this.selUserData = k;
+      },
+      // 数据列表
       getUserList () {
         this.is_Loading = true;
         this.ajax.getUserList({
@@ -542,7 +572,7 @@
             arr.forEach((k, i) => {
               if (k.superior_id === -1) {
                 Object.assign(k, {'title': k.model_name});
-                Object.assign(k, {'expand': true});
+                Object.assign(k, {'expand': false});
                 this.menuArr.push(k);
               }
             });
@@ -551,7 +581,7 @@
               arr.forEach((k, i) => {
                 if (k.superior_id === s.model_id) {
                   Object.assign(k, {'title': k.model_name});
-                  Object.assign(k, {'expand': true});
+                  Object.assign(k, {'selected': false});
                   arr1.push(k);
                 }
               });
@@ -577,6 +607,7 @@
             })
           },
           success: (res) => {
+            this.menuArr1 = [];
             this.$Message.success('操作成功');
           },
           error: (res) => {

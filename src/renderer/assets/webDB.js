@@ -4,16 +4,30 @@
 // 暂时性  数据库
 // 数据库类
 class IndexedDB{
-  constructor(tabName, type, key, fun ,storeName, data, version){
+  userInfo () {
+    let user = JSON.parse(localStorage.getItem('userInfo'));
+    if (user) {
+      this.createDB(user.uid, user.uid)
+      return false;
+    } else {
+      this.userInfo();
+    }
+    console.log(user, '数据库获取userInfo')
+  }
+  constructor(tabName, type, key, fun ,storeName, data, version, userInfo){
     this.storeName = storeName;
-    const indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
-    const request = indexedDB.open('mysql', version);
     this.db = null;
     this.tabName = tabName;
     this.type = type;
     this.fun = fun;
     this.key = key;
     this.data = data;
+    this.userInfo = this.userInfo()
+  }
+  // 创建数据库并创建数据表
+  createDB (uid, version) {
+    const indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+    const request = indexedDB.open(uid + 'mysql', version);
     request.onsuccess = e => {
       this.db = e.target.result;
       if(this.type == 'get'){

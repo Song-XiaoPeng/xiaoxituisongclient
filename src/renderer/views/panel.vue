@@ -16,6 +16,7 @@
         box-sizing: border-box;
         font-size: 15px;
         color: #b9bcc5;
+        font-weight: bold;
         cursor: pointer;
         .child-menu{
           height: 0px;
@@ -26,8 +27,9 @@
               color: #b9bcc5;
               cursor: pointer;
               box-sizing: border-box;
-              padding: 5px 5px 5px 35px;
+              padding: 5px 5px 5px 22%;
               font-size: 13px;
+              font-weight: 500;
             }
           }
         }
@@ -264,12 +266,12 @@
             db.fun = function (res) { // 执行成功回掉函数
             };
             // 更新/添加 排队数据表
-            let db1 = new DB();
-            db1.type = 'update'; // 执行类型
-            db1.tabName = 'queue_up'; // 数据表名称
-            db1.data = res.body.queue_up;
-            db1.fun = function (res) { // 执行成功回掉函数
-            };
+            // let db1 = new DB();
+            // db1.type = 'update'; // 执行类型
+            // db1.tabName = 'queue_up'; // 数据表名称
+            // db1.data = res.body.queue_up;
+            // db1.fun = function (res) { // 执行成功回掉函数
+            // };
             // 会话中的客户数据
             // res.body.contacting_session['data'] = [];
             // res.body.pending_access_session['data'] = [];

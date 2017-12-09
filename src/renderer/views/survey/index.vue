@@ -295,7 +295,6 @@
             Object.assign(this.onlineServiceData, res.body);
             this.is_onlineService_show = true;
             this.is_Loading = false;
-            console.log(this.onlineServiceData, 131234);
           },
           error: (res) => {
             this.is_Loading = false;
