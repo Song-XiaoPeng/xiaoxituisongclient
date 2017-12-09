@@ -33,6 +33,19 @@ ajax.section = (obj) => {
     console.log(error);
   });
 };
+// 账号注销
+ajax.accountCancellation = (obj) => {
+  util.ajax.get('/api/v1/user/UserOperation/accountCancellation').then(function (response) {
+    if (response.data.meta.code === 200) {
+      obj.success(response.data);
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
 // 获取部门列表
 ajax.getSection = (obj) => {
   util.ajax.get('/api/v1/user/UserOperation/getUserGroup', obj.data).then(function (response) {

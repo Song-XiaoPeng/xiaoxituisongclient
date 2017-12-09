@@ -101,7 +101,7 @@
            <!-- 左侧导航 -->
            <div style="overflow: auto;position: absolute;right: -18px;left: 0;bottom: 0;top: 130px;padding-bottom: 50px;">
              <ul>
-               <li :ref="'parent-menu' + i" v-for="(k, i) in menuList" @click.stop="parentMenuFun(i, k)">
+               <li :ref="'parent-menu' + i" v-for="(k, i) in menuList" @click.stop="parentMenuFun(i, k)" :key="i">
                  <div v-bind:class="parent_i == i && child_i === '' ? 'active' : ''" style="padding: 10px">
                    <span style="margin-left: 10px"><Icon :type="k.iconName"></Icon></span>
                    <span style="margin-left: 10px">{{k.menuTitle}}</span>
@@ -110,7 +110,7 @@
                  <!-- 左侧子导航 -->
                  <div class="child-menu" :ref="'child-div' + i" v-if="k.son.sonList.length != 0">
                    <ul  :ref="'child-menu' + i">
-                     <li v-for="(s, si) in k.son.sonList" v-bind:class="child_i === si && parent_i === i ? 'active' : ''" @click.stop="childMenuFun(s, si, i)">{{s.menuTitle}}</li>
+                     <li v-for="(s, si) in k.son.sonList" v-bind:class="child_i === si && parent_i === i ? 'active' : ''" @click.stop="childMenuFun(s, si, i)" :key="si">{{s.menuTitle}}</li>
                    </ul>
                  </div>
                  <!-- end左侧子导航 -->
@@ -346,7 +346,22 @@
         }
       },
       closeWindow () {
-        this.$electron.ipcRenderer.send('window-all-closed');
+        this.$Modal.confirm({
+          title: '系统提醒',
+          content: '确定关闭应用？',
+          okText: '确定',
+          cancelText: '取消',
+          onOk: () => {
+            this.ajax.accountCancellation({
+              success: () => {
+                this.$electron.ipcRenderer.send('window-all-closed');
+              },
+              error: (res) => {
+                this.$Message.warning(res.meta.message);
+              }
+            });
+          }
+        });
       },
       // 父菜单方法
       parentMenuFun (i, k) {
