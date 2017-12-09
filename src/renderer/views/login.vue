@@ -266,7 +266,6 @@
             client_network_mac: md5(str)
           },
           success: (res) => {
-            cookies.set('name', this.name, { expires: 7 });
             this.loginLoading = false;
             res.body.token = res.body.login_token;
             if (this.rememberObj.single === true) {
@@ -381,6 +380,9 @@
       if (name !== '') {
         this.name = name;
       }
+
+      let userInfo = JSON.parse(localStorage.getItem('userInfo'));
+      this.name = userInfo.phone_no;
 
       this.checkUpload();
       // 获取是否记住密码
