@@ -269,6 +269,7 @@
           },
           success: (res) => {
             this.loginLoading = false;
+            localStorage.setItem('name', this.name);
             res.body.token = res.body.login_token;
             if (this.rememberObj.single === true) {
               this.rememberObj.pass = p;
@@ -383,8 +384,7 @@
         this.name = name;
       }
 
-      let userInfo = JSON.parse(localStorage.getItem('userInfo'));
-      this.name = userInfo.phone_no;
+      this.name = localStorage.getItem('name');
 
       this.checkUpload();
       // 获取是否记住密码
