@@ -10,3 +10,6 @@ src/renderer/assets/shortcut-capture.js
 src/renderer/views/commonComponent/mp3.js
 src/renderer/views/commonComponent/mp3.html
 src/renderer/views/commonComponent/worker-realtime.js
+static/window/js/main.js
+static/window/js/email.js
+static/window/js/shortcut-capture.js

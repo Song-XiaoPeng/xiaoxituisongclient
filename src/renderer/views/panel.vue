@@ -146,6 +146,7 @@
   import menu from '../config/menu';
   import Bus from '../assets/eventBus';
   import DB from '../assets/webDB';
+  import axios from 'axios';
   export default {
     data () {
       return {
@@ -185,6 +186,9 @@
       // 注销事件
       signOut () {
         localStorage.removeItem('userInfo');
+        var CancelToken = axios.CancelToken;
+        var source = CancelToken.source();
+        source.cancel();
         this.$router.push({name: '/'});
       },
       routeSwitchMenu (name) {

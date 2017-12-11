@@ -248,8 +248,8 @@
 
 
         <!-- 权限管理 -->
-        <Modal v-model="popup11" title="权限管理" :width="500" @on-ok="jurisdictionFun" @on-cancel="menuArr1 = []">
-            <Tree :data="menuArr1" show-checkbox @on-check-change="jurisdiction"></Tree>
+        <Modal v-model="popup11" title="权限管理" :width="500" @on-ok="jurisdictionFun" @on-cancel="cancelJurisdictionFun">
+            <Tree :data="menuArr" show-checkbox @on-check-change="jurisdiction"></Tree>
         </Modal>
         <!-- end权限管理 -->
 
@@ -393,14 +393,12 @@
       },
       // 修改权限
       changePermission (k) {
-        let arr = this.menuArr;
-        console.log(arr);
-        arr.forEach((k) => {
+        this.menuArr.forEach((k) => {
           this.changeUserData.model_list.forEach((s) => {
             if (k.model_id === s) {
               Object.assign(k, {expand: true});
             } else {
-              Object.assign(k, {checked: false});
+              // Object.assign(k, {checked: false});
             }
           });
           k.children.forEach((z) => {
@@ -408,15 +406,23 @@
               if (z.model_id === b) {
                 Object.assign(z, {checked: true});
               } else {
-                Object.assign(z, {checked: false});
+                // Object.assign(z, {checked: false});
               }
             });
           });
         });
-        this.menuArr1 = arr;
+        // this.menuArr1 = arr;
         this.popup11 = true;
         this.popup8 = false;
         this.selUserData = k;
+      },
+      cancelJurisdictionFun () {
+        this.menuArr.forEach((k) => {
+          Object.assign(k, {expand: false});
+          k.children.forEach((z) => {
+            Object.assign(z, {checked: false});
+          });
+        });
       },
       // 数据列表
       getUserList () {
@@ -581,7 +587,7 @@
               arr.forEach((k, i) => {
                 if (k.superior_id === s.model_id) {
                   Object.assign(k, {'title': k.model_name});
-                  Object.assign(k, {'selected': false});
+                  Object.assign(k, {'checked': false});
                   arr1.push(k);
                 }
               });
@@ -615,6 +621,7 @@
             this.$Message.warning(res.meta.message);
           }
         });
+        this.cancelJurisdictionFun();
       },
       // 点击权限复选框方法  保存数据
       jurisdiction (v) {

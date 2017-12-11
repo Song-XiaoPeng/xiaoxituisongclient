@@ -199,8 +199,10 @@
 <script>
   import md5 from 'js-md5';
   import cookies from 'js-cookie';
+  import fs from 'fs';
   import os from 'os';
-  import { remote } from 'electron';
+  import path from 'path';
+  import { remote, desktopCapturer, screen, shell } from 'electron';
   let updater = remote.require('electron-simple-updater');
   export default {
     name: 'login',
@@ -392,6 +394,37 @@
         if (r.pass !== null) {
           this.password = r.pass;
         }
+      }
+      this.$electron.ipcRenderer.on('shortcut-capture', (e, m) => {
+        // screenshotMsg.textContent = '正在采集屏幕...';
+        const thumbSize = determineScreenShotSize();
+        let options = { types: ['screen'], thumbnailSize: thumbSize };
+
+        desktopCapturer.getSources(options, function (error, sources) {
+          if (error) return console.log(error);
+
+          sources.forEach(function (source) {
+            if (source.name === 'Entire screen' || source.name === 'Screen 1') {
+              const screenshotPath = path.join(os.tmpdir(), 'screenshot.png');
+              fs.writeFile(screenshotPath, source.thumbnail.toPng(), function (error) {
+                if (error) return console.log(error);
+                shell.openExternal('file://' + screenshotPath);
+                const message = `截图保存到: ${screenshotPath}`;
+                console.log(message);
+                // screenshotMsg.textContent = message;
+              });
+            }
+          });
+        });
+        // e.sender.send('shortcut-capture');
+      });
+      function determineScreenShotSize () {
+        const screenSize = screen.getPrimaryDisplay().workAreaSize;
+        const maxDimension = Math.max(screenSize.width, screenSize.height);
+        return {
+          width: maxDimension * window.devicePixelRatio,
+          height: maxDimension * window.devicePixelRatio
+        };
       }
     }
   };
