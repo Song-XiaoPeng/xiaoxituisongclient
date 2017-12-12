@@ -166,7 +166,7 @@
             <Input v-model="name" type="text" placeholder="请输入账号" @on-enter="login()" :disabled="isUploadIng"></Input>
           </FormItem>
           <FormItem label="登录密码" style="margin-bottom: 0">
-            <Input v-model="password" type="password" placeholder="请输入密码" @on-enter="login()" :disabled="isUploadIng"></Input>
+            <Input v-model="password" type="password" placeholder="请输入密码" @on-enter="login()" :disabled="isUploadIng" @on-keydown="passClearFun"></Input>
             <Checkbox v-model="rememberObj.single" @on-change="remember"><span style="color: #ff3300">记住密码</span></Checkbox>
           </FormItem>
           <FormItem>
@@ -241,10 +241,16 @@
         }
         str = macStr.join();
         if (this.rememberObj.single === true) {
-          if (this.rememberObj.pass !== null) {
+          console.log(this.rememberObj.pass);
+          if (this.rememberObj.pass !== null && this.rememberObj.pass !== '') {
             p = this.rememberObj.pass;
           } else {
-            p = md5(this.password);
+            if (this.password === '') {
+              this.$Message.warning('密码不能为空');
+              return;
+            } else {
+              p = md5(this.password);
+            }
           }
         } else {
           if (this.password === '') {
@@ -370,6 +376,14 @@
         } else {
           this.password = '';
           localStorage.removeItem('remember');
+        }
+      },
+      // 键盘事件
+      passClearFun (e) {
+        if (e.keyCode === 8) {
+          e.target.value = '';
+          this.password = '';
+          this.rememberObj.pass = '';
         }
       }
     },

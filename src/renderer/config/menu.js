@@ -140,21 +140,21 @@ let menuData = [
           route: 'fans',
           routeBreadcrumb: [],
           sonMenu: []
-        },
-        {
-          model_id: 8,
-          menuTitle: '工作质量分析',
-          route: 'workload',
-          routeBreadcrumb: [],
-          sonMenu: []
-        },
-        {
-          model_id: 9,
-          menuTitle: '质量分析',
-          route: 'quality',
-          routeBreadcrumb: [],
-          sonMenu: []
         }
+        // {
+        //   model_id: 8,
+        //   menuTitle: '工作质量分析',
+        //   route: 'workload',
+        //   routeBreadcrumb: [],
+        //   sonMenu: []
+        // },
+        // {
+        //   model_id: 9,
+        //   menuTitle: '质量分析',
+        //   route: 'quality',
+        //   routeBreadcrumb: [],
+        //   sonMenu: []
+        // }
       ]
     },
     route: [],

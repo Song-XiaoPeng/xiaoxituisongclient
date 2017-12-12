@@ -9,6 +9,7 @@
       border-bottom: 1px #eaeaea solid;
       transition: all .3s;
       cursor: pointer;
+      background-color: #ecf0f4;
   }
   .active{
       background-color: #3399ff;
@@ -38,12 +39,12 @@
                     position: relative;
                     padding: 5px;
                     cursor: pointer;
-                    border-bottom: 1px #f7f7f7 dashed;
+                    border-bottom: 1px #fff dashed;
                     transition: all .3s;
                     .state-sum{
                         position: absolute;
-                        left:0;
-                        top:0;
+                        left: 40px;
+                        top: 4px;
                         color: #fff;
                         display: inline-block;
                         height: 20px;
@@ -55,16 +56,21 @@
                         overflow: hidden;
                     }
                     .picture{
-                        width: 50px;
-                        width: 50px;
+                        width: 56px;
+                        border-radius: 50%;
+                        overflow: hidden;
+                        height: 56px;
+                        border: 1px #eaeaea solid;
+                        padding: 2px;
                         img{
                             height: 100%;
                             width: 100%;
+                            border-radius: 50%;
                         }
                     }
                     .txt{
                         position: absolute;
-                        left: 60px;
+                        left: 65px;
                         top: 5px;
                         right: 5px;
                         bottom: 5px;
@@ -109,7 +115,7 @@
                 }
                 li.active{
                     border-right:3px #3399ff solid;
-                    background-color: #fff;
+                    background-color: #fafafa;
                 }
             }
         }
@@ -118,20 +124,20 @@
 <template>
    <div>
        <Row>
-           <Col :xs="24"  :lg="12">
+           <Col :xs="24"  :lg="24">
              <div class="btn active">
                访客
              </div>
            </Col>
-           <Col :xs="24"  :lg="12">
-              <div class="btn">
-                 团队
-              </div>
-           </Col>
+           <!--<Col :xs="24"  :lg="12">-->
+              <!--<div class="btn">-->
+                 <!--团队-->
+              <!--</div>-->
+           <!--</Col>-->
        </Row>
        <div class="person">
            <div class="list-box">
-               <div class="tle" @click="telFun('list1')" style="border-bottom: 1px #fff solid">
+               <div class="tle" @click="telFun('list1')" style="border-bottom: 1px #d7dde4 solid;background-color: #fff">
                    <Icon type="arrow-right-b"></Icon>
                    会话中
                </div>
@@ -150,7 +156,7 @@
                </ul>
            </div>
            <div class="list-box" style="border-bottom: 1px #fff solid">
-               <div class="tle" @click.stop="telFun('list2')">
+               <div class="tle" @click.stop="telFun('list2')" style="border-bottom: 1px #d7dde4 solid;background-color: #fff;">
                    <Icon type="arrow-right-b"></Icon>
                    等待中
                </div>
@@ -168,7 +174,7 @@
                </ul>
            </div>
            <div class="list-box">
-               <div class="tle" @click.stop="telFun('list3')">
+               <div class="tle" @click.stop="telFun('list3')" style="border-bottom: 1px #d7dde4 solid;background-color: #fff;">
                    <Icon type="arrow-right-b"></Icon>
                    排队中
                </div>
@@ -184,10 +190,6 @@
                    </li>
                </ul>
            </div>
-           <!--<Tree :data="data1" @on-select-change="underwayFun"></Tree>-->
-           <!--<Tree :data="data2" @on-select-change="waitingFun"></Tree>-->
-           <!--<Tree :data="data3"></Tree>-->
-           <!--<Tree :data="data4"></Tree>-->
        </div>
 
        <!-- 接入会话弹窗 -->

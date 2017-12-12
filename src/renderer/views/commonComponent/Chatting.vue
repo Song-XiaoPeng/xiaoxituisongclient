@@ -21,7 +21,6 @@
 }
     .chart-win{
         // height: 600px;
-        border-bottom: 1px #eaeaea solid;
         background-color: #f2f2f2;
         .content-box{
             text-align: left;margin: 10px 0;
@@ -32,9 +31,9 @@
             .crate{
                 display: inline-block;
                 position: relative;
-                background-color: #fff;
+                background-color: #6ca9f2;
                 padding: 5px;
-                border-radius: 8px;
+                border-radius: 4px;
                 max-width: 70%;
                 vertical-align: top;
                 .arrow_out {
@@ -47,7 +46,7 @@
                     border-style: dashed;
                     border-color: transparent;
                     border-bottom-width: 0;
-                    border-top-color: #fff;
+                    border-top-color: #6ca9f2;
                     border-top-style: solid;
                 }
                 .arrow_in {
@@ -60,7 +59,7 @@
                     border-style: dashed;
                     border-color: transparent;
                     border-bottom-width: 0;
-                    border-top-color: #fff;
+                    border-top-color: #6ca9f2;
                     border-top-style: solid;
                 }
             }
@@ -73,16 +72,16 @@
         height: 60px;
         overflow: hidden;
         line-height: 60px;
-        border-bottom: 1px #eaeaea solid;
+        background-color: #fafafa;
         span{
-          font-size: 30px;
-          padding:0 8px;
+          font-size: 28px;
+          padding:0 10px;
           cursor: pointer;
           border-radius: 2px;
-          color: #999;
+          color: #9e9e9e;
         }
         span:hover{
-          background-color: #f7f7f7;
+          background-color: #f1f1f1;
         }
 
     }
@@ -202,7 +201,7 @@ ul.img-txt{
 </style>
 <template>
   <div class="chart-box">
-     <div class="user-top" v-if="isMass ? false : true">
+     <div class="user-top" v-if="isMass ? false : true" style="background-color: #e7f1fd;">
          <Avatar :src="clientData.customer_wx_portrait" style="margin-left: 5px"/>
          <span class="name">{{clientData.customer_wx_nickname}}</span>
          <span class="txt">来访：{{clientData.session_frequency}}次</span>
@@ -213,7 +212,7 @@ ul.img-txt{
          </span>
 
      </div>
-     <div class="chart-win" ref="win" v-bind:class="{'is_mass_chart':isMass}" style="width: 100%;overflow-y: auto;position: relative;">
+     <div class="chart-win" ref="win" v-bind:class="{'is_mass_chart':isMass}" style="width: 100%;overflow-y: auto;position: relative;background: #fff;">
          <div ref="win1">
              <div v-for="(k, i) in elmetArr" >
                  <!---------------------------------- 客户消息 ------------------------------------>
@@ -224,7 +223,7 @@ ul.img-txt{
 
 
                              <!-- 普通文本 -->
-                             <span v-if="k.message_type == 1">{{k.text}}</span>
+                             <span v-if="k.message_type == 1" style="color: #fff">{{k.text}}</span>
                              <!-- end普通文本 -->
 
 
@@ -268,7 +267,7 @@ ul.img-txt{
 
 
                          </div>
-                         <i class="arrow arrow_out" style="left: -10px;transform: rotate(90deg);"></i>
+                         <i class="arrow arrow_out" style="left: -9px;transform: rotate(90deg);"></i>
                          <i class="arrow arrow_in" style="left: -9px;transform: rotate(90deg);"></i>
                      </div>
                  </div>
@@ -277,10 +276,10 @@ ul.img-txt{
 
                  <!---------------------------------- 客服消息 ------------------------------------>
                  <div class="content-box" style="text-align: right" v-if="k.opercode == 1">
-                     <div class="crate" style="right: 10px;background-color: #66cc00;">
+                     <div class="crate" style="right: 10px;background-color: #e7e8ea;">
                          <div style="display: inline-block;">
                              <!-- 文字 -->
-                             <span v-if="k.message_type == 1" style="color: #1a1a1a">{{k.text}}</span>
+                             <span v-if="k.message_type == 1" style="color: #3e3e3e">{{k.text}}</span>
                              <!-- end文字 -->
 
 
@@ -325,8 +324,8 @@ ul.img-txt{
                              </div>
                              <!-- end文件 -->
                          </div>
-                         <i class="arrow arrow_out" style="right: -10px;transform: rotate(270deg);border-top-color: #66cc00"></i>
-                         <i class="arrow arrow_in" style="right: -9px;transform: rotate(270deg);border-top-color: #66cc00"></i>
+                         <i class="arrow arrow_out" style="right: -9px;transform: rotate(270deg);border-top-color: #e7e8ea"></i>
+                         <i class="arrow arrow_in" style="right: -9px;transform: rotate(270deg);border-top-color: #e7e8ea"></i>
                      </div>
                      <div class="graphic" ><Avatar :src="userInfo.avatar_url" style="margin-right: 5px"/></div>
                  </div>
@@ -347,7 +346,7 @@ ul.img-txt{
          </div>
      </div>
      <div class="chart-icon">
-        <span style="color: #333" title="语音" @click="popup3 = true,replyType = 3"><Icon type="ios-mic"></Icon></span>
+        <span title="语音" @click="popup3 = true,replyType = 3"><Icon type="ios-mic"></Icon></span>
         <!--<span style="color: #ff9933" title="表情"><Icon type="happy-outline"></Icon></span>-->
         <!--<span style="color: #333" title="截图"><Icon type="scissors"></Icon></span>-->
          <Upload style="display: inline-block;"  action="http://kf.lyfz.net/api/v1/we_chat/WxOperation/uploadResources"
@@ -361,7 +360,7 @@ ul.img-txt{
                   :on-format-error="handleFormatError"
                   :on-exceeded-size="handleMaxSize"
                   :on-success="upImgFun">
-             <span style="color: #ffcc33" title="图片" @click="replyType = 2"><Icon type="image"></Icon></span>
+             <span  title="图片" @click="replyType = 2"><Icon type="image"></Icon></span>
          </Upload>
          <Upload style="display: inline-block;"  action="http://kf.lyfz.net/api/v1/we_chat/WxOperation/uploadResources"
                  name="file" :data="{resources_type: 1}"
@@ -374,7 +373,7 @@ ul.img-txt{
                  :on-format-error="handleFormatError"
                  :on-exceeded-size="handleMaxSize"
                  :on-success="upMp4Fun">
-             <span style="color: #ffcc33" title="视频" @click="replyType = 4"> <Icon type="ios-film-outline"></Icon></span>
+             <span  title="视频" @click="replyType = 4"> <Icon type="ios-film-outline"></Icon></span>
          </Upload>
          <Upload style="display: inline-block;"  action="http://kf.lyfz.net/api/v1/we_chat/WxOperation/uploadResources"
                  name="file" :data="{resources_type: 1}"
@@ -387,10 +386,10 @@ ul.img-txt{
                  :on-format-error="handleFormatError"
                  :on-exceeded-size="handleMaxSize"
                  :on-success="upfileFun">
-             <span style="color: #ffcc33" title="文件" @click="replyType = 8"> <Icon type="folder"></Icon></span>
+             <span title="文件" @click="replyType = 8"> <Icon type="folder"></Icon></span>
          </Upload>
         <!--<span style="color: #99ccff" title="超链接"><Icon type="link"></Icon></Icon></span>-->
-        <span style="color: #996600" title="模板消息" @click="templateFun"><Icon type="ios-albums-outline"></Icon></span>
+        <span  title="模板消息" @click="templateFun"><Icon type="ios-albums-outline"></Icon></span>
         <!--<span style="color: #9999cc" title="群聊"><Icon type="android-person-add"></Icon></span>-->
         <!--<span style="color: #cccc99" title="转发"><Icon type="android-share-alt"></Icon></span>-->
         <!--<span style="color: #ff99cc" title="发送满意度"><Icon type="thumbsup"></Icon></span>-->
@@ -398,11 +397,11 @@ ul.img-txt{
         <!--<span style="color: #333399" title="退出"><Icon type="log-out"></Icon></span>-->
      </div>
      <div class="chart-txt" v-bind:class="{'is_mass_chart-txt':isMass}">
-         <textarea v-model="txtra"  class="txt" @click="replyType = 1" v-on:paste="pasteFun" @on-enter="subFun"></textarea>
+         <textarea v-model="txtra"  class="txt" @click="replyType = 1" v-on:paste="pasteFun" @keyup.13="keyFun"></textarea>
          <!--<input class="txt"  @keyup.enter="subFun" style="opacity: 0; position: absolute; z-index: 10;width: 98%;height: 95%;" @focus="ipt">-->
          <!--<textarea ref="txtra" class="txt" @blur="focusState = false" v-focus="focusState" style="position: absolute;z-index: 1;width: 98%;height: 95%;"></textarea>-->
          <div class="btm" style="z-index: 100">
-             <Button class="f-r" type="primary" size="small" @click="subFun">发送</Button>
+             <Button  class="f-r"  type="ghost" @click="subFun">发送</Button>
          </div>
      </div>
 
@@ -738,6 +737,10 @@ ul.img-txt{
       methods: {
         // 获取会话客户相关数据
         getclientData () {
+        },
+        // 键盘事件
+        keyFun (e) {
+          // console.log(e);
         },
         // 播放音频
         audioFun (c, k, i) {
