@@ -313,7 +313,6 @@
     components: {
     },
     watch: {
-
     },
     methods: {
       addsection () {
@@ -602,16 +601,23 @@
       },
       // 提交权限设置
       jurisdictionFun () {
-        if (this.jurisdictionData.length === 0) {
-          this.$Message.warning('没有选择任何权限');
-          return;
-        }
+        let arr = [];
+        this.menuArr.forEach((k) => {
+          let q = 0;
+          k.children.forEach((s) => {
+            if (s.checked) {
+              if (q === 0) {
+                arr.push(k.model_id);
+              }
+              q++;
+              arr.push(s.model_id);
+            }
+          });
+        });
         this.ajax.setUserModelAuth({
           data: {
             uid: this.selUserData.uid,
-            model_list: this.jurisdictionData.map((k) => {
-              return k.model_id;
-            })
+            model_list: arr
           },
           success: (res) => {
             this.menuArr1 = [];
@@ -626,7 +632,7 @@
       },
       // 点击权限复选框方法  保存数据
       jurisdiction (v) {
-        this.jurisdictionData = v;
+        // this.jurisdictionData = v;
       },
       // 解绑硬件
       untieFun (k) {
