@@ -2,6 +2,8 @@
 
 import { app, BrowserWindow, ipcMain, globalShortcut, screen } from 'electron';
 import updater from 'electron-simple-updater';
+import url from 'url';
+const path = require('path');
 if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\');
 }
@@ -103,28 +105,44 @@ ipcMain.on('shortcut-capture', () => {
 // 创建透明窗口
 function screenShotFun (source) {
   let $win;
-  var size = screen.getPrimaryDisplay().workAreaSize;
-  $win = new BrowserWindow({ width: size.width, height: size.height });
-  // const { display } = source;
-  // const $win = new BrowserWindow({
-  //   center: true,
-  //   height: 800,
-  //   useContentSize: true,
-  //   resizable: true,
-  //   width: 1300,
-  //   autoHideMenuBar: true,
-  //   frame: false,
-  //   minWidth: 1300,
-  //   minHeight: 800,
-  //   show: false,
-  //   webPreferences: {webSecurity: false}
-  // });
-  console.log(`file://${__dirname}/window/shortcut-capture.html`);
-  $win.loadURL(`file://${__dirname}/window/shortcut-capture.html`);
-  // $win.show();
+  let display = screen.getPrimaryDisplay();
+  console.log(display, 13212);
+  $win = new BrowserWindow({
+    width: display.workAreaSize.width,
+    height: display.workAreaSize.height,
+    x: display.bounds.x,
+    y: display.bounds.y
+    // frame: false,
+    // show: false
+    // transparent: true,
+    // resizable: false,
+    // alwaysOnTop: true,
+    // fullscreen: true,
+    // skipTaskbar: true,
+    // closable: true,
+    // minimizable: false,
+    // maximizable: false
+  });
+  $win.on('close', function () { $win = null; });
+  $win.loadURL(url.format({
+    pathname: path.join(__dirname, './window/shortcut-capture.html'),
+    protocol: 'file:',
+    slashes: true
+  }));
+  // $win.loadURL(`file://${__dirname}/window/shortcut-capture.html`);
+  $win.show();
   // $win.on('closed', () => {
   //   mainWindow = null;
   // });
+  // 只能通过cancel-shortcut-capture的方式关闭窗口
+  $win.on('close', e => {
+    e.preventDefault();
+  });
+  $win.webContents.on('dom-ready', () => {
+    $win.webContents.executeJavaScript(`window.source = ${JSON.stringify(display)}`);
+    $win.webContents.send('dom-ready');
+    $win.focus();
+  });
 };
 function closeWindow () {
   while ($windows.length) {

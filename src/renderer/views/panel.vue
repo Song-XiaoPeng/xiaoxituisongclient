@@ -185,7 +185,7 @@
     methods: {
       // 注销事件
       signOut () {
-        localStorage.removeItem('userInfo');
+        // localStorage.removeItem('userInfo');
         var CancelToken = axios.CancelToken;
         var source = CancelToken.source();
         source.cancel();
@@ -390,6 +390,9 @@
         this.child_i = si;
         this.parent_i = i;
       }
+    },
+    destroyed (s) {
+      Bus.$off();
     },
     created () {
       this.userInfo = JSON.parse(window.localStorage.getItem('userInfo'));

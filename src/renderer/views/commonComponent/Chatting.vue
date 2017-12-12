@@ -265,6 +265,8 @@ ul.img-txt{
                                  <img :src="'http://apis.map.qq.com/ws/staticmap/v2/?center=' + k.lat + ',' + k.lng + '&zoom=18&size=400*200&maptype=roadmap&markers=color:red|' + k.lat + ',' + k.lng + '&key=TUTBZ-YEPWX-WEN4N-7OZUC-T4MT7-IXFN6'" v-on:load="loadFun"></img>
                              </div>
                              <!-- end位置 -->
+
+
                          </div>
                          <i class="arrow arrow_out" style="left: -10px;transform: rotate(90deg);"></i>
                          <i class="arrow arrow_in" style="left: -9px;transform: rotate(90deg);"></i>
@@ -316,6 +318,12 @@ ul.img-txt{
                                  <div v-html="s.content"></div>
                              </div>
                              <!-- end 图文 -->
+
+                             <!-- 文件 -->
+                             <div v-if="k.message_type == 8"  style="cursor: pointer;">
+                                 <Icon type="folder">{{k.file_name}}</Icon>
+                             </div>
+                             <!-- end文件 -->
                          </div>
                          <i class="arrow arrow_out" style="right: -10px;transform: rotate(270deg);border-top-color: #66cc00"></i>
                          <i class="arrow arrow_in" style="right: -9px;transform: rotate(270deg);border-top-color: #66cc00"></i>
@@ -368,6 +376,19 @@ ul.img-txt{
                  :on-success="upMp4Fun">
              <span style="color: #ffcc33" title="视频" @click="replyType = 4"> <Icon type="ios-film-outline"></Icon></span>
          </Upload>
+         <Upload style="display: inline-block;"  action="http://kf.lyfz.net/api/v1/we_chat/WxOperation/uploadResources"
+                 name="file" :data="{resources_type: 1}"
+                 :max-size='20480'
+                 :format="['zip','doc','pdf','rar','ppt','excel','xls','xlsx']"
+                 :show-upload-list="false"
+                 :before-upload="handleBeforeUpload"
+                 :headers="{token: userInfo.token}"
+                 :on-progress="upLodingFun"
+                 :on-format-error="handleFormatError"
+                 :on-exceeded-size="handleMaxSize"
+                 :on-success="upfileFun">
+             <span style="color: #ffcc33" title="文件" @click="replyType = 8"> <Icon type="folder"></Icon></span>
+         </Upload>
         <!--<span style="color: #99ccff" title="超链接"><Icon type="link"></Icon></Icon></span>-->
         <span style="color: #996600" title="模板消息" @click="templateFun"><Icon type="ios-albums-outline"></Icon></span>
         <!--<span style="color: #9999cc" title="群聊"><Icon type="android-person-add"></Icon></span>-->
@@ -377,7 +398,7 @@ ul.img-txt{
         <!--<span style="color: #333399" title="退出"><Icon type="log-out"></Icon></span>-->
      </div>
      <div class="chart-txt" v-bind:class="{'is_mass_chart-txt':isMass}">
-         <textarea v-model="txtra"  class="txt" @click="replyType = 1"></textarea>
+         <textarea v-model="txtra"  class="txt" @click="replyType = 1" v-on:paste="pasteFun" @on-enter="subFun"></textarea>
          <!--<input class="txt"  @keyup.enter="subFun" style="opacity: 0; position: absolute; z-index: 10;width: 98%;height: 95%;" @focus="ipt">-->
          <!--<textarea ref="txtra" class="txt" @blur="focusState = false" v-focus="focusState" style="position: absolute;z-index: 1;width: 98%;height: 95%;"></textarea>-->
          <div class="btm" style="z-index: 100">
@@ -453,6 +474,17 @@ ul.img-txt{
           </div>
       </Modal>
       <!-- end模板消息窗口 -->
+
+
+      <!-- 截图窗口看窗口 -->
+      <Modal v-model="popup6" title="图片" width="750" ok-text="发送" @on-ok="pasteUpImgFun">
+          <div class="details-popup" style="max-height: 700px; overflow: auto;">
+              <img :src=pasteImgUrl alt="">
+          </div>
+      </Modal>
+      <!-- end截图窗口看窗口 -->
+
+
 
       <!-- 加载状态 -->
       <Spin fix v-if="is_Loading">
@@ -671,7 +703,10 @@ ul.img-txt{
             }
           ],
           data6: [],
-          el: ''
+          el: '',
+          pasteImgUrl: '',
+          popup6: false,
+          fileData: null
         };
       },
       components: {
@@ -861,6 +896,13 @@ ul.img-txt{
               media_id: this.el.media_id,
               type: this.replyType
             };
+          } else if (this.replyType === 8) {
+            data = {
+              session_id: this.clientData.session_id,
+              message: '',
+              resources_id: this.fileData.resources_id,
+              type: this.replyType
+            };
           }
           return data;
         },
@@ -960,6 +1002,23 @@ ul.img-txt{
                   uid: this.datalistArr ? this.datalistArr.uid : this.clientData.uid,
                   htmlContent: this.el.content.news_item
                 };
+              } else if (this.replyType === 8) {
+                obj = {
+                  add_time: this.getAtTimeFun(),
+                  appid: this.datalistArr ? this.datalistArr.appid : this.clientData.appid,
+                  company_id: this.datalistArr ? this.datalistArr.company_id : this.clientData.company_id,
+                  customer_service_id: 4,
+                  customer_wx_openid: this.datalistArr ? this.datalistArr.customer_wx_openid : this.clientData.customer_wx_openid,
+                  message_id: '',
+                  message_type: 8,
+                  opercode: 1,
+                  file_url: this.fileData.url,
+                  file_name: this.upFileData.name,
+                  resources_id: '',
+                  session_id: this.datalistArr ? this.datalistArr.session_id : this.clientData.session_id,
+                  text: this.txtra,
+                  uid: this.datalistArr ? this.datalistArr.uid : this.clientData.uid
+                };
               }
               this.is_percent = false;
               this.el = '';
@@ -970,6 +1029,8 @@ ul.img-txt{
             },
             error: (res) => {
               this.is_percent = false;
+              this.is_Loading = false;
+              this.$Message.warning(res.meta.message);
             }
           });
         },
@@ -1040,15 +1101,20 @@ ul.img-txt{
           this.mp4Data = e.body;
           this.subFun();
         },
+        upfileFun (e) {
+          console.log(e, 123123);
+          this.fileData = e.body;
+          this.subFun();
+        },
         // 上传中的方法
         upLodingFun (e) {
           this.up_state = parseInt(e.percent);
-          console.log(e, 123789789213);
         },
         // 上传之前
         handleBeforeUpload (e) {
           this.is_percent = true;
           this.upFileData = e;
+          console.log(e);
         },
         handleFormatError (file) {
           this.is_percent = false;
@@ -1072,6 +1138,65 @@ ul.img-txt{
         // 地图位置
         locationFun (k) {
           shell.openExternal('http://apis.map.qq.com/uri/v1/geocoder?coord=' + k.lat + ',' + k.lng + '&referer=myapp');
+        },
+        // 粘贴事件
+        pasteFun (e) {
+          // 添加到事件对象中的访问系统剪贴板的接口
+          let clipboardData = e.clipboardData;
+          let i = 0;
+          let items;
+          let item;
+          let types;
+          if (clipboardData) {
+            items = clipboardData.items;
+            if (!items) {
+              return;
+            }
+            item = items[0];
+            // 保存在剪贴板中的数据类型
+            types = clipboardData.types || [];
+            for (; i < types.length; i++) {
+              if (types[i] === 'Files') {
+                item = items[i];
+                break;
+              }
+            }
+            // 判断是否为图片数据
+            if (item && item.kind === 'file' && item.type.match(/^image\//i)) {
+              this.imgReader(item);
+            }
+          }
+        },
+        imgReader (item) {
+          let blob = item.getAsFile();
+          let reader = new FileReader();
+          // 读取文件后将其显示在网页中
+          reader.onload = (e) => {
+            var img = new Image();
+            img.src = e.target.result;
+            this.pasteImgUrl = e.target.result;
+            this.popup6 = true;
+            // document.body.appendChild(img);
+          };
+          // 读取文件
+          reader.readAsDataURL(blob);
+          this.upFileData = blob;
+        },
+        // 上传截图片
+        pasteUpImgFun () {
+          let date = new Date().getTime();
+          let suffix = this.upFileData.type.slice(this.upFileData.type.lastIndexOf('/') + 1);
+          var fd = new FormData();
+          fd.append('file', this.upFileData, date + '.' + suffix);
+          var xhr = new XMLHttpRequest();
+          let that = this;
+          xhr.addEventListener('load', function (e) {
+            that.replyType = 2;
+            that.upImgFun(JSON.parse(e.target.responseText));
+          }, false);
+          xhr.open('POST', 'http://kf.lyfz.net/api/v1/we_chat/WxOperation/uploadResources');
+          xhr.setRequestHeader('token', this.userInfo.token);
+          xhr.send(fd);
         }
       },
       watch: {

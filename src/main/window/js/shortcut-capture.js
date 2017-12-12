@@ -12,6 +12,7 @@ class Injector {
     // 只要loading结束
     // 不论页面加载是否成功都会执行
     ipcRenderer.on('dom-ready', () => {
+      console.log(1223213);
       this.injectJs()
     })
   }
@@ -151,6 +152,7 @@ class Injector {
 
   cancel () {
     window.addEventListener('keydown', e => {
+      console.log(11223);
       if (e.keyCode === 27) {
         this.drawImage({ x: 0, y: 0 }, { x: 0, y: 0 })
         ipcRenderer.send('cancel-shortcut-capture')

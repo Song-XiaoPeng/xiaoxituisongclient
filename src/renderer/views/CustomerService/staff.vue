@@ -393,8 +393,9 @@
       },
       // 修改权限
       changePermission (k) {
+        let arr = this.changeUserData.model_list ? this.changeUserData.model_list : [];
         this.menuArr.forEach((k) => {
-          this.changeUserData.model_list.forEach((s) => {
+          arr.forEach((s) => {
             if (k.model_id === s) {
               Object.assign(k, {expand: true});
             } else {
@@ -402,7 +403,7 @@
             }
           });
           k.children.forEach((z) => {
-            this.changeUserData.model_list.forEach((b) => {
+            arr.forEach((b) => {
               if (z.model_id === b) {
                 Object.assign(z, {checked: true});
               } else {

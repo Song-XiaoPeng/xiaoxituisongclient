@@ -24,7 +24,7 @@ util.ajax.interceptors.request.use(function (config) {
 util.ajax.interceptors.response.use(function (response) {
   if (response.data.meta.code === 6001) {
     window.localStorage.removeItem('userInfo');
-    window.location.href = 'http://' + window.location.host;
+    window.location.href = process.env.NODE_ENV === 'development' ? `http://` + window.location.host : `file://${__dirname}/index.html`;
   }
   return response;
 }, function (error) {
