@@ -39,7 +39,7 @@
                     position: relative;
                     padding: 5px;
                     cursor: pointer;
-                    border-bottom: 1px #fff dashed;
+                    border-bottom: 1px #f7f7f7 dashed;
                     transition: all .3s;
                     .state-sum{
                         position: absolute;
@@ -263,30 +263,32 @@
       methods: {
         // 请求会话列表数据
         getDialogueList (res) {
-          res.body.queue_up.forEach((k) => {
-            // 排队列表
-            if (this.data3.length === 0) {
-              this.data3.push(k);
-            } else {
-              this.data3.forEach((s) => {
-                if (k.customer_wx_openid !== s.customer_wx_openid) {
-                  this.data3.push(k);
-                }
-              });
-            }
-          });
-          // 等待列表
-          res.body.waiting.forEach((k) => {
-            if (this.data2.length === 0) {
-              this.data2.push(k);
-            } else {
-              this.data2.forEach((s) => {
-                if (k.customer_wx_openid !== s.customer_wx_openid) {
-                  this.data2.push(k);
-                }
-              });
-            }
-          });
+          if (res) {
+            res.queue_up.forEach((k) => {
+              // 排队列表
+              if (this.data3.length === 0) {
+                this.data3.push(k);
+              } else {
+                this.data3.forEach((s) => {
+                  if (k.customer_wx_openid !== s.customer_wx_openid) {
+                    this.data3.push(k);
+                  }
+                });
+              }
+            });
+            // 等待列表
+            res.waiting.forEach((k) => {
+              if (this.data2.length === 0) {
+                this.data2.push(k);
+              } else {
+                this.data2.forEach((s) => {
+                  if (k.customer_wx_openid !== s.customer_wx_openid) {
+                    this.data2.push(k);
+                  }
+                });
+              }
+            });
+          };
         },
         // 等待中---》点击加入会话列表
         waitingFun (k) {
@@ -443,8 +445,9 @@
         },
         // 获取正在会话列表中客户会话数据
         getMessage (res) {
-          for (let k in res.body) {
-            res.body[k].forEach((s) => {
+          console.log(res);
+          for (let k in res) {
+            res[k].forEach((s) => {
               // 判断是否当前选择的客户 并添加数据
               if (s.customer_wx_openid === this.messageData.customer_wx_openid) {
                 this.arr.push(s);
@@ -537,7 +540,7 @@
               };
             },
             error: (res) => {
-              that.Message.warning(res);
+              that.Message.warning(res.meta.message);
             }
           });
         }
@@ -555,6 +558,7 @@
         // 调用本地数据库 获取储存的数据
         this.getWaitingTab();
         Bus.$on('conversationList', (k) => {
+          console.log(9999);
           this.getDialogueList(k);
         });
         Bus.$on('MessageList', (k) => {

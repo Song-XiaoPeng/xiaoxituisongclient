@@ -206,7 +206,7 @@
         <Modal v-model="modal2" title="添加提醒" @on-ok="addRemind">
             <Form :label-width="100">
                 <FormItem label="提醒日期：">
-                    <DatePicker type="date" placeholder="Select date" style="width: 100%" @on-change="dateFun"></DatePicker>
+                    <DatePicker type="date" placeholder="选择日期" style="width: 100%" @on-change="dateFun"></DatePicker>
                 </FormItem>
                 <!--<FormItem label="提醒条目：">-->
                 <!--<Select v-model="model1">-->
@@ -392,34 +392,41 @@
             key: 'action',
             align: 'center',
             render: (h, params) => {
-              return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'primary',
-                    size: 'small'
-                  },
-                  style: {
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      Object.assign(this.clientData, params.row);
-                      // this.clientData = params.row;
-                      this.popup3 = true;
-                    }
+              let arr = [];
+              let del = h('Button', {
+                props: {
+                  type: 'error',
+                  size: 'small'
+                },
+                on: {
+                  click: () => {
+                    this.$Message.warning('删除功能玩命开发中。。。。');
                   }
-                }, '详情'),
-                h('Button', {
-                  props: {
-                    type: 'error',
-                    size: 'small'
-                  },
-                  on: {
-                    click: () => {
-                    }
+                }
+              }, '删除');
+              let dateils = h('Button', {
+                props: {
+                  type: 'primary',
+                  size: 'small'
+                },
+                style: {
+                  marginRight: '5px'
+                },
+                on: {
+                  click: () => {
+                    // Object.assign(this.clientData, params.row);
+                    // this.clientData = params.row;
+                    // this.popup3 = true;
                   }
-                }, '删除')
-              ]);
+                }
+              }, '详情');
+              if (this.userInfo.user_type === '3') {
+                arr.push(dateils);
+                arr.push(del);
+              } else {
+                arr.push(dateils);
+              }
+              return h('div', arr);
             }
           }
         ],
@@ -455,35 +462,41 @@
             key: 'action',
             align: 'center',
             render: (h, params) => {
-              return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'primary',
-                    size: 'small'
-                  },
-                  style: {
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      Object.assign(this.clientData, params.row);
-                      // this.clientData = params.row;
-                      this.popup3 = true;
-                    }
+              let arr = [];
+              let del = h('Button', {
+                props: {
+                  type: 'error',
+                  size: 'small'
+                },
+                on: {
+                  click: () => {
+                    this.delContactFun(params.row, params.index);
                   }
-                }, '详情'),
-                h('Button', {
-                  props: {
-                    type: 'error',
-                    size: 'small'
-                  },
-                  on: {
-                    click: () => {
-                      this.delContactFun(params.row, params.index);
-                    }
+                }
+              }, '删除');
+              let dateils = h('Button', {
+                props: {
+                  type: 'primary',
+                  size: 'small'
+                },
+                style: {
+                  marginRight: '5px'
+                },
+                on: {
+                  click: () => {
+                    Object.assign(this.clientData, params.row);
+                    // this.clientData = params.row;
+                    this.popup3 = true;
                   }
-                }, '删除')
-              ]);
+                }
+              }, '详情');
+              if (this.userInfo.user_type === '3') {
+                arr.push(dateils);
+                arr.push(del);
+              } else {
+                arr.push(dateils);
+              }
+              return h('div', arr);
             }
           }
         ],

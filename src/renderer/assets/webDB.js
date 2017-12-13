@@ -239,7 +239,6 @@ class IndexedDB{
     const transaction = this.db.transaction(tabName, 'readwrite');
     const objectStore = transaction.objectStore(tabName);
     for (var i in data) {
-      console.log(data[i])
       var request = objectStore.add(data[i]);
       request.onsuccess = function(event) {
         var result = event.target.result;

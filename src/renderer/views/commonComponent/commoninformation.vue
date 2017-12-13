@@ -1,27 +1,26 @@
 <style scoped lang="less">
     .right-box{
         display: -webkit-box;
+        background-color: #ecf0f4;
     }
     .btn{
-        height: 37px;
+        height: 40px;
         text-align: center;
-        line-height: 37px;
+        line-height: 40px;
         font-size: 16px;
-        color: #1a1a1a;
+        color: #333333;
         border-bottom: 1px #eaeaea solid;
-        transition: all .3s;
+        transition: all .5s;
         cursor: pointer;
         box-sizing: border-box;
-        border-right: 1px #eaeaea solid;
+        border-right: 1px #d7dde4 solid;
         -webkit-box-flex: 1;
     }
     .active{
-        background-color: #3399ff;
-        color: #fff;
+        border-bottom: 3px #3399ff solid;
     }
     .btn:hover{
-        background-color: #2db7f5;
-        color: #fff;
+        color: #2db7f5;
     }
 </style>
 <template>

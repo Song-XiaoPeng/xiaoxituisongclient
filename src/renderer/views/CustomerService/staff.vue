@@ -602,7 +602,13 @@
       // 提交权限设置
       jurisdictionFun () {
         let arr = [];
+        console.log(this.menuArr);
         this.menuArr.forEach((k) => {
+          if (k.model_id === 1) {
+            if (k.checked) {
+              arr.push(1);
+            }
+          }
           let q = 0;
           k.children.forEach((s) => {
             if (s.checked) {

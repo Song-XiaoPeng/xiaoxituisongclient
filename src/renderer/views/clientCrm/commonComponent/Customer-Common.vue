@@ -118,7 +118,7 @@
                   <Option v-for="item in clientTypeArr" :value="item.id" :key="item.id">{{ item.label }}</Option>
                </Select>
             </FormItem>
-            <FormItem label="意向产品：">
+            <FormItem label="产品：">
                <span>{{selPurposeData.product_name}}</span>
                <Button type="dashed" @click="popup12 = true">操作</Button>
             </FormItem>
@@ -141,7 +141,7 @@
                   </Radio>
                </RadioGroup>
             </FormItem>
-            <FormItem  label="真实姓名：">
+            <FormItem  label="姓名：">
                <Input v-model="formData.real_name" style="width:  100%;" @on-change="nameSeekFun"></Input>
                <ul class="name-box" v-if="is_name_show">
                   <li v-for="(item, i) in nameArr" @click="selNameSeekFun(item)">{{ item.real_name }}</li>
@@ -150,7 +150,7 @@
                   <!--<Option v-for="(item, i) in nameArr" :value="i" :key="item.value">{{ item.real_name }}</Option>-->
                <!--</Select>-->
             </FormItem>
-            <FormItem  label="真实电话：">
+            <FormItem  label="手机：">
                <Input v-model="formData.real_phone" style="width:  100%;"></Input>
             </FormItem>
             <FormItem  label="联系地址：">
@@ -655,7 +655,6 @@
         Bus.$on('change', (k, o) => {
           this.is_CRM = o ? o.is_CRM : false;
           this.clientData = k;
-          console.log(k);
           this.getClientFun(k);
         });
         this.getProductList();

@@ -137,7 +137,7 @@
                   </Radio>
                </RadioGroup>
             </FormItem>
-            <FormItem  label="真实姓名：">
+            <FormItem  label="姓名：">
                <Input v-model="formData.real_name" style="width:  100%;" @on-change="nameSeekFun"></Input>
                <ul class="name-box" v-if="is_name_show">
                   <li v-for="(item, i) in nameArr" @click="selNameSeekFun(item)">{{ item.real_name }}</li>
@@ -146,7 +146,7 @@
                   <!--<Option v-for="(item, i) in nameArr" :value="i" :key="item.value">{{ item.real_name }}</Option>-->
                <!--</Select>-->
             </FormItem>
-            <FormItem  label="真实电话：">
+            <FormItem  label="手机：">
                <Input v-model="formData.real_phone" style="width:  100%;"></Input>
             </FormItem>
             <FormItem  label="联系地址：">

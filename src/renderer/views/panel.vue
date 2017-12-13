@@ -160,7 +160,12 @@
         is_Message: true,
         is_tongzhi: true, // 是否离开页面提示通知,
         parent_i: '0',
-        child_i: ''
+        child_i: '',
+        ws: null,
+        ws_intval: '',
+        ws_send_intval: '',
+        timeout: 10000, // 60ms
+        timeoutObj: null
       };
     },
     components: {
@@ -178,8 +183,8 @@
     mounted () {
       if (this.userInfo.user_type === '3' || this.userInfo.user_type === 3) {
       } else {
-        this.getDialogueList();
-        this.getMessage();
+        // this.getDialogueList();
+        // this.getMessage();
       }
     },
     methods: {
@@ -190,6 +195,7 @@
         var source = CancelToken.source();
         source.cancel();
         this.$router.push({name: '/'});
+        this.socketCloseFun();
       },
       routeSwitchMenu (name) {
         this.menuList = [];
@@ -257,38 +263,30 @@
         }
       },
       // 请求会话列表数据
-      getDialogueList () {
-        this.ajax.getSessionList({
-          data: {},
-          success: (res) => {
-            Bus.$emit('conversationList', res);
-            // 更新/添加 等待数据表
-            let db = new DB();
-            db.type = 'update'; // 执行类型
-            db.tabName = 'waiting'; // 数据表名称
-            db.data = res.body.waiting;
-            db.fun = function (res) { // 执行成功回掉函数
-            };
-            // 更新/添加 排队数据表
-            // let db1 = new DB();
-            // db1.type = 'update'; // 执行类型
-            // db1.tabName = 'queue_up'; // 数据表名称
-            // db1.data = res.body.queue_up;
-            // db1.fun = function (res) { // 执行成功回掉函数
-            // };
-            // 会话中的客户数据
-            // res.body.contacting_session['data'] = [];
-            // res.body.pending_access_session['data'] = [];
-            // 等待中的客户数据
-            this.getDialogueList();
-          },
-          error: (res) => {
-            this.getDialogueList();
-          }
-        });
+      getDialogueList (res) {
+        Bus.$emit('conversationList', res);
+        console.log(111);
+        // 更新/添加 等待数据表
+        let db = new DB();
+        db.type = 'update'; // 执行类型
+        db.tabName = 'waiting'; // 数据表名称
+        db.data = res.waiting;
+        db.fun = function (res) { // 执行成功回掉函数
+        };
+        // 更新/添加 排队数据表
+        // let db1 = new DB();
+        // db1.type = 'update'; // 执行类型
+        // db1.tabName = 'queue_up'; // 数据表名称
+        // db1.data = res.body.queue_up;
+        // db1.fun = function (res) { // 执行成功回掉函数
+        // };
+        // 会话中的客户数据
+        // res.body.contacting_session['data'] = [];
+        // res.body.pending_access_session['data'] = [];
+        // 等待中的客户数据
       },
       // 获取正在会话列表中客户会话数据
-      getMessage () {
+      getMessage (d) {
         let that = this;
         // 读取会话数据表中的数据
         let db1 = new DB();
@@ -298,43 +296,31 @@
           db1.close();
           let user = res;
           that.is_Message = false;
-          that.ajax.getMessage({
-            data: {
-              // openid_list: arr
-            },
-            success: (res) => {
-              for (let k in res.body) {
-                // that.messageData.data = that.arr;
-                // 调用自定义事件 发送信息到组件 聊天窗口
-                // 添加数据到本地数据库
-                user.forEach((s) => {
-                  if (s.customer_wx_openid === k) {
-                    if (that.is_tongzhi) {
-                      that.$Notice.warning({
-                        title: '收到一条（' + s.customer_wx_nickname + '）的消息',
-                        duration: 2
-                      });
-                    }
-                  }
-                });
-                let db = new DB();
-                db.type = 'set';
-                db.tabName = 'message';
-                db.data = res.body[k];
-                db.fun = function (res) {
-                  console.log('DB---》添加数据成功');
-                  db.close();
-                };
+          for (let k in d) {
+            // that.messageData.data = that.arr;
+            // 调用自定义事件 发送信息到组件 聊天窗口
+            // 添加数据到本地数据库
+            user.forEach((s) => {
+              if (s.customer_wx_openid === k) {
+                if (that.is_tongzhi) {
+                  that.$Notice.warning({
+                    title: '收到一条（' + s.customer_wx_nickname + '）的消息',
+                    duration: 2
+                  });
+                }
               }
-              // Bus.$emit('change', that.messageData);
-              that.getMessage();
-              Bus.$emit('MessageList', res);
-            },
-            error: (res) => {
-              that.getMessage();
-              // that.$Message.warning(res.meta.message);
-            }
-          });
+            });
+            let db = new DB();
+            db.type = 'set';
+            db.tabName = 'message';
+            db.data = d[k];
+            db.fun = function (res) {
+              console.log('DB---》添加数据成功');
+              db.close();
+            };
+          }
+          // Bus.$emit('change', that.messageData);
+          Bus.$emit('MessageList', d);
         };
       },
       hideWindow () {
@@ -389,6 +375,64 @@
         });
         this.child_i = si;
         this.parent_i = i;
+      },
+      // socket 报错方法
+      socketErrFun (e) {
+        throw new Error(e);
+      },
+      // socketClose 关闭
+      socketCloseFun () {
+        this.ws.close();
+      },
+      // WebSocket链接
+      WebSocketFun () {
+        this.ws = new WebSocket('ws://kf.lyfz.net:8282');
+        let obj = {
+          token: this.userInfo.token,
+          uid: this.userInfo.uid,
+          type: 'auth',
+          client: 'pc'
+        };
+        this.ws.onopen = () => {
+          this.start();
+          this.ws.send(JSON.stringify(obj));
+        };
+        this.ws.onmessage = (e) => {
+          // this.reset();
+          let data = JSON.parse(e.data);
+          if (data.body.type === 'session') {
+            this.getDialogueList(data.body.sk_data);
+          } else if (data.body.type === 'message') {
+            this.getMessage(data.body.sk_data);
+          }
+        };
+        this.ws.onerror = (e) => {
+          // this.heartCheck.reset();
+          // this.$Message.warning('网络不稳定或服务器断开，60秒后为您重连。。。');
+          this.socketErrFun(e);
+        };
+        this.ws.onclose = () => {
+          // heartCheck.start();
+          clearTimeout(this.ws_intval);
+          this.ws_intval = setInterval(() => {
+            this.WebSocketFun();
+          }, 60000);
+          this.$Message.warning('网络不稳定或服务器断开，60秒后为您重连。。。');
+        };
+      },
+      reset () {
+        clearTimeout(this.timeoutObj);
+        this.start();
+      },
+      start () {
+        clearTimeout(this.timeoutObj);
+        let obj = {
+          type: 'ping',
+          client: 'pc'
+        };
+        this.timeoutObj = setInterval(() => {
+          this.ws.send(JSON.stringify(obj));
+        }, this.timeout);
       }
     },
     destroyed (s) {
@@ -397,6 +441,8 @@
     created () {
       this.userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
       this.routeSwitchMenu(this.$route.name);
+      this.WebSocketFun();
+      // 心跳重连机制
     }
   };
 </script>
