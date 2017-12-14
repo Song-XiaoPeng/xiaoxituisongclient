@@ -6,7 +6,7 @@
     <Card>
       <Tabs v-model="tabsVal" value="1">
         <div slot="extra" v-show="tabsVal == '3'">
-          <Button type="primary" size="small">新建分组</Button>
+          <Button type="primary" size="small" @click="addConversationRule = true">新建分组</Button>
           <Button type="primary" size="small">新建内容</Button>
         </div>
         <TabPane label="客资领取回收规则" name="1">
@@ -103,12 +103,23 @@
         <TabPane label="标签设置" name="4">标签设置</TabPane>
       </Tabs>
     </Card>
+
+    <Modal
+      v-model="addConversationRule"
+      title="新建企业话术分组">
+      <Form :label-width="80">
+        <FormItem label="分组名称">
+          <Input placeholder="请输入分组名称"></Input>
+        </FormItem>
+      </Form>
+    </Modal>
   </div>
 </template>
 <script>
   export default {
     data () {
       return {
+        addConversationRule: false,
         tabsVal: '1',
         formItem: {
           input: '',
