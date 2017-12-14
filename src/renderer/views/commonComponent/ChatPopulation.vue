@@ -284,6 +284,7 @@
               if (this.lineUpObj[k.session_id]) {
                 Object.assign(this.lineUpObj[k.session_id], k);
               } else {
+                console.log('排队通知');
                 this.lineUpObj[k.session_id] = k;
                 this.inform(k.customer_wx_nickname, k.customer_wx_portrait);
               }
@@ -600,10 +601,9 @@
             while (c.charAt(0) === ' ') c = c.substring(1);
             if (c.indexOf(name) !== -1) {
               str = c.substring(name.length, c.length);
-              return str;
             }
           }
-          let arr = JSON.parse(str) || [];
+          let arr = JSON.parse(str);
           // let arr = JSON.parse(sessionStorage.getItem('dialogueArr')) || [];
           arr.forEach((k) => {
             this.lineUpObj[k.session_id] = k;
