@@ -273,7 +273,7 @@
           });
           setTimeout(() => {
             notification.close();
-          }, 6000);
+          }, 10000);
         },
         // 请求会话列表数据
         getDialogueList (res) {

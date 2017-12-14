@@ -298,7 +298,7 @@
                     });
                     setTimeout(() => {
                       notification.close();
-                    }, 6000);
+                    }, 10000);
                   }
                   // that.$Notice.warning({
                   // title: '收到一条（' + s.customer_wx_nickname + '）的消息',
