@@ -253,7 +253,8 @@
           arr: null,
           is_tongzhi: true,
           is_Message: false,
-          is_dialogue_click: true
+          is_dialogue_click: true,
+          lineUpObj: {}
         };
       },
       mounted () {
@@ -266,15 +267,25 @@
           if (res) {
             res.queue_up.forEach((k) => {
               // 排队列表
-              if (this.data3.length === 0) {
-                this.data3.push(k);
+              if (this.lineUpObj[k.session_id]) {
+                Object.assign(this.lineUpObj[k.session_id], k);
+                console.log('覆盖');
               } else {
-                this.data3.forEach((s) => {
-                  if (k.customer_wx_openid !== s.customer_wx_openid) {
-                    this.data3.push(k);
-                  }
+                this.lineUpObj[k.session_id] = k;
+                console.log(k);
+                console.log('新增');
+                let mynotify = new Notification('提示', {
+                  body: '您计划于今天下午4点召开全体会议，请准时参加',
+                  icon: 'http://q4.qlogo.cn/g?b=qq&k=icUjVAN5Ja7BCDQ1ICl8Svw&s=40',
+                  tag: 1
                 });
+                mynotify.onshow = () => {
+                  setTimeout(() => {
+                    mynotify.close();
+                  }, 3000);
+                };
               }
+              // this.data3.push(k);
             });
             // 等待列表
             res.waiting.forEach((k) => {
@@ -558,7 +569,6 @@
         // 调用本地数据库 获取储存的数据
         this.getWaitingTab();
         Bus.$on('conversationList', (k) => {
-          console.log(9999);
           this.getDialogueList(k);
         });
         Bus.$on('MessageList', (k) => {

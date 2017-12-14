@@ -241,7 +241,6 @@
         }
         str = macStr.join();
         if (this.rememberObj.single === true) {
-          console.log(this.rememberObj.pass);
           if (this.rememberObj.pass !== null && this.rememberObj.pass !== '') {
             p = this.rememberObj.pass;
           } else {

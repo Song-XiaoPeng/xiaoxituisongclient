@@ -142,16 +142,17 @@
             </Form>
         </Modal>
 
+
+
         <!-- 添加部门弹窗 -->
-        <Modal v-model="is_sectionPupop" title="添加部门" :width="500" @on-ok="setServer()">
+        <Modal v-model="is_sectionPupop" title="添加部门" :width="500" @on-ok="addgroup()">
             <Form  :label-width="120">
                 <Form-item label="部门名称：">
-                    <Input v-model="section" placeholder="请输入名称"></Input>
+                    <Input v-model="groupName" placeholder="请输入名称"></Input>
                 </Form-item>
             </Form>
         </Modal>
         <!-- end添加部门弹窗 -->
-
 
 
         <!-- 改部门弹窗 -->
@@ -269,6 +270,7 @@
         popupBol: false,
         isNewUserGroup: false,
         is_sectionPupop: false,
+        groupName: '',
         section: '',
         formInline: null,
         formItem: {
@@ -343,9 +345,16 @@
           data: {},
           success: (res) => {
             this.is_Loading = false;
-            // this.sectionId = res.body[0].user_group_id;
-            this.userGroupData = res.body;
-            // this.getUserList();
+            let arr = [{
+              company_id: '',
+              data: null,
+              desc: null,
+              extra: null,
+              user_group_id: '-1',
+              user_group_name: '全部'
+            }].concat(res.body);
+            this.userGroupData = arr;
+            this.sectionId = '-1';
           },
           error: (res) => {
             this.is_Loading = false;
@@ -359,8 +368,8 @@
           this.$Message.warning('客服名称不能为空');
           return;
         }
-        if (this.formItem.roleSel === '') {
-          this.$Message.warning('请选择部门');
+        if (this.formItem.roleSel === '' || this.formItem.roleSel === '-1') {
+          this.$Message.warning('请选择一个部门');
           return;
         }
         if (this.formItem.tel === '' && reg.test(this.name) === false) {
@@ -429,7 +438,7 @@
         this.is_Loading = true;
         this.ajax.getUserList({
           data: {
-            user_group_id: this.sectionId,
+            user_group_id: this.sectionId === '-1' ? '' : this.sectionId,
             page: this.page
           },
           success: (res) => {
@@ -497,7 +506,7 @@
         });
       },
       delFun () {
-        if (this.sectionId === '') {
+        if (this.sectionId === '' || this.sectionId === '-1') {
           this.$Message.warning('请选择部门');
           return;
         }
@@ -520,7 +529,7 @@
       // 设置客服
       setServer () {
         let k = this.selUser;
-        this.ajax.setUserCustomerService({
+        this.ajax.addUserGroup({
           data: {
             uid: k.uid,
             appid: this.appid,
@@ -539,6 +548,9 @@
       },
       // 改部门
       editBranch () {
+        if (this.edit_branch_id === '' || this.edit_branch_id === '-1') {
+          this.$Message.warning('未选择部门或不能指定全部');
+        }
         this.ajax.setUserGroup({
           data: {
             set_uid: this.selEdit.uid,
@@ -602,7 +614,6 @@
       // 提交权限设置
       jurisdictionFun () {
         let arr = [];
-        console.log(this.menuArr);
         this.menuArr.forEach((k) => {
           if (k.model_id === 1) {
             if (k.checked) {
@@ -651,6 +662,22 @@
           },
           error: (res) => {
             this.is_Loading = false;
+            this.$Message.warning(res.meta.message);
+          }
+        });
+      },
+      // 添加部门
+      addgroup () {
+        this.ajax.section({
+          data: {
+            user_group_name: this.groupName
+          },
+          success: () => {
+            this.getSection();
+            this.$Message.success('操作成功');
+            this.groupName = '';
+          },
+          error: (res) => {
             this.$Message.warning(res.meta.message);
           }
         });

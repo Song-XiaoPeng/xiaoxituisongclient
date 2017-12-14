@@ -1176,4 +1176,21 @@ ajax.relieveUserBind = (obj) => {
     console.log(error);
   });
 };
+// 获取线索客户列表
+ajax.getClueCustomer = (obj) => {
+  util.ajax.post('/api/v1/customer/CustomerOperation/getClueCustomer', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
 export default ajax;

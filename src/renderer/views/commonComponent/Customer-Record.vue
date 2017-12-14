@@ -227,7 +227,7 @@
 
 
                                    <!-- 普通文本 -->
-                                   <span v-if="k.message_type == 1">{{k.text}}</span>
+                                   <pre v-if="k.message_type == 1" v-text="k.text" style="text-align: left; margin: 0; color: #3e3e3e;"></pre>
                                    <!-- end普通文本 -->
 
 
@@ -281,7 +281,7 @@
                            <div class="crate" style="right: 10px;background-color: #66cc00;">
                                <div style="display: inline-block;">
                                    <!-- 文字 -->
-                                   <span v-if="k.message_type == 1" style="color: #1a1a1a">{{k.text}}</span>
+                                   <pre v-if="k.message_type == 1" style="text-align: left; margin: 0; color: #3e3e3e;">{{k.text}}</pre>
                                    <!-- end文字 -->
 
 

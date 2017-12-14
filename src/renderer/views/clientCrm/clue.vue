@@ -1,6 +1,5 @@
 <style scoped lang="less">
     #index{
-        height: 90%;
     }
     .box,.personnel,.chart,.information{
         height: 100%;
@@ -122,7 +121,7 @@
 
 
                             <!-- 我的客户 -->
-                            <TabPane label="我的客户" name="name1">
+                            <TabPane label="线索客户" name="name1">
                                 <div class="btn-box cl" style="text-align: right;padding:10px">
                                     <!--<Button type="ghost" style="margin-left: 10px" @click="modal2 = true">添加业务提醒</Button>-->
                                     <!--<Button type="ghost" style="margin-left: 10px" @click="massFun">群发激活</Button>-->
@@ -141,52 +140,52 @@
 
 
                             <!-- 其他人 -->
-                            <TabPane  label="其他人" name="name2">
-                                <div class="btn-box cl" style="text-align: right;padding:10px">
-                                    <!--<Button type="ghost" style="margin-left: 10px" @click="modal2 = true">添加业务提醒</Button>-->
-                                    <!--<Button type="ghost" style="margin-left: 10px" @click="massFun">群发激活</Button>-->
-                                    <!--<Button class="f-l" type="ghost" style="" @click="is_screen = true">高级搜索</Button>-->
-                                    <Input class="f-l" v-model="real_name"  placeholder="客户名称" style="width: 100px"></Input>
-                                    <Button class="f-l" type="info" style="margin-left: 2px" @click="getCustomerList('seek')">搜索</Button>
-                                </div>
-                                <div class="table-box">
-                                    <Table border ref="selection" highlight-row :columns="columns4" :data="data1" @on-current-change="selTableFun"></Table>
-                                </div>
-                                <div style="text-align: center;padding: 5px">
-                                    <Page :total="pageData.count" :page-size="pageData.row_sum" @click="pageFun"></Page>
-                                </div>
-                            </TabPane>
+                            <!--<TabPane  label="其他人" name="name2">-->
+                                <!--<div class="btn-box cl" style="text-align: right;padding:10px">-->
+                                    <!--&lt;!&ndash;<Button type="ghost" style="margin-left: 10px" @click="modal2 = true">添加业务提醒</Button>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<Button type="ghost" style="margin-left: 10px" @click="massFun">群发激活</Button>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<Button class="f-l" type="ghost" style="" @click="is_screen = true">高级搜索</Button>&ndash;&gt;-->
+                                    <!--<Input class="f-l" v-model="real_name"  placeholder="客户名称" style="width: 100px"></Input>-->
+                                    <!--<Button class="f-l" type="info" style="margin-left: 2px" @click="getCustomerList('seek')">搜索</Button>-->
+                                <!--</div>-->
+                                <!--<div class="table-box">-->
+                                    <!--<Table border ref="selection" highlight-row :columns="columns4" :data="data1" @on-current-change="selTableFun"></Table>-->
+                                <!--</div>-->
+                                <!--<div style="text-align: center;padding: 5px">-->
+                                    <!--<Page :total="pageData.count" :page-size="pageData.row_sum" @click="pageFun"></Page>-->
+                                <!--</div>-->
+                            <!--</TabPane>-->
                             <!-- end其他人 -->
 
 
 
 
                             <!-- end跟踪提醒 -->
-                            <TabPane  label="跟踪提醒" name="name3">
-                                <div class="time-box">
-                                    <ul class="cl">
-                                        <li class="" v-bind:class="time_type == 1 ? 'active' : ''" @click="selContactFun(1)">今日需联系</li>
-                                        <li class="" v-bind:class="time_type == 2 ? 'active' : ''" @click="selContactFun(2)">昨日需联系</li>
-                                        <li class="" v-bind:class="time_type == 3 ? 'active' : ''" @click="selContactFun(3)">本周需联系</li>
-                                        <li class="" v-bind:class="time_type == 4 ? 'active' : ''" @click="selContactFun(4)">本月需联系</li>
-                                        <li class="" v-bind:class="time_type == 5 ? 'active' : ''" @click="selContactFun(5)">超时需联系</li>
-                                        <li class="" v-bind:class="time_type == 6 ? 'active' : ''" @click="selContactFun(6)">已完成</li>
-                                    </ul>
-                                </div>
-                                <div class="btn-box cl" style="text-align: right;padding:10px">
-                                    <!--<Button type="ghost" style="margin-left: 10px" @click="modal2 = true">添加业务提醒</Button>-->
-                                    <!--<Button type="ghost" style="margin-left: 10px" @click="massFun">群发激活</Button>-->
-                                    <!--<Button class="f-l" type="ghost" style="" @click="is_screen = true">高级搜索</Button>-->
-                                    <Input class="f-l" v-model="real_name"  placeholder="客户名称" style="width: 100px"></Input>
-                                    <Button class="f-l" type="info" style="margin-left: 2px" @click="getTailList('seek')">搜索</Button>
-                                </div>
-                                <div class="table-box">
-                                    <Table border ref="selection" highlight-row :columns="columns5" :data="data2"></Table>
-                                </div>
-                                <div style="text-align: center;padding: 5px">
-                                    <Page :total="pageData.count" :page-size="pageData.row_sum" @click="pageFun"></Page>
-                                </div>
-                            </TabPane>
+                            <!--<TabPane  label="跟踪提醒" name="name3">-->
+                                <!--<div class="time-box">-->
+                                    <!--<ul class="cl">-->
+                                        <!--<li class="" v-bind:class="time_type == 1 ? 'active' : ''" @click="selContactFun(1)">今日需联系</li>-->
+                                        <!--<li class="" v-bind:class="time_type == 2 ? 'active' : ''" @click="selContactFun(2)">昨日需联系</li>-->
+                                        <!--<li class="" v-bind:class="time_type == 3 ? 'active' : ''" @click="selContactFun(3)">本周需联系</li>-->
+                                        <!--<li class="" v-bind:class="time_type == 4 ? 'active' : ''" @click="selContactFun(4)">本月需联系</li>-->
+                                        <!--<li class="" v-bind:class="time_type == 5 ? 'active' : ''" @click="selContactFun(5)">超时需联系</li>-->
+                                        <!--<li class="" v-bind:class="time_type == 6 ? 'active' : ''" @click="selContactFun(6)">已完成</li>-->
+                                    <!--</ul>-->
+                                <!--</div>-->
+                                <!--<div class="btn-box cl" style="text-align: right;padding:10px">-->
+                                    <!--&lt;!&ndash;<Button type="ghost" style="margin-left: 10px" @click="modal2 = true">添加业务提醒</Button>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<Button type="ghost" style="margin-left: 10px" @click="massFun">群发激活</Button>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<Button class="f-l" type="ghost" style="" @click="is_screen = true">高级搜索</Button>&ndash;&gt;-->
+                                    <!--<Input class="f-l" v-model="real_name"  placeholder="客户名称" style="width: 100px"></Input>-->
+                                    <!--<Button class="f-l" type="info" style="margin-left: 2px" @click="getTailList('seek')">搜索</Button>-->
+                                <!--</div>-->
+                                <!--<div class="table-box">-->
+                                    <!--<Table border ref="selection" highlight-row :columns="columns5" :data="data2"></Table>-->
+                                <!--</div>-->
+                                <!--<div style="text-align: center;padding: 5px">-->
+                                    <!--<Page :total="pageData.count" :page-size="pageData.row_sum" @click="pageFun"></Page>-->
+                                <!--</div>-->
+                            <!--</TabPane>-->
                             <!-- 跟踪提醒 -->
 
 
@@ -357,76 +356,43 @@
             align: 'center'
           },
           {
-            title: '客户姓名',
-            key: 'real_name'
+            title: '微信用户昵称',
+            key: 'nickname'
           },
           {
-            title: '手机',
-            key: 'real_phone'
-          },
-          {
-            title: '微信号',
-            key: 'wx_number'
-          },
-          {
-            title: '添加业务提醒',
-            render: (h, params) => {
-              return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'ghost',
-                    size: 'small'
-                  },
-                  on: {
-                    click: () => {
-                      this.selUserData = params.row;
-                      this.modal2 = true;
-                    }
-                  }
-                }, '添加业务提醒')
-              ]);
+            title: '微信图像',
+            render: (h, p) => {
+              return h('img', {
+                style: {
+                  width: '50px',
+                  height: '50px'
+                },
+                attrs: {
+                  src: p.row.portrait
+                }
+              });
             }
           },
           {
-            title: '操作',
-            key: 'action',
-            align: 'center',
-            render: (h, params) => {
-              let arr = [];
-              let del = h('Button', {
-                props: {
-                  type: 'error',
-                  size: 'small'
-                },
-                on: {
-                  click: () => {
-                    this.$Message.warning('删除功能玩命开发中。。。。');
-                  }
-                }
-              }, '删除');
-              let dateils = h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    // Object.assign(this.clientData, params.row);
-                    // this.clientData = params.row;
-                    // this.popup3 = true;
-                  }
-                }
-              }, '详情');
-              if (this.userInfo.user_type === '3') {
-                arr.push(dateils);
-                arr.push(del);
-              } else {
-                arr.push(dateils);
-              }
-              return h('div', arr);
+            title: '性别',
+            render: (h, p) => {
+              return h('span', p.row.gender === 1 ? '男' : p.row.gender === 2 ? '女' : '未知');
+            }
+          },
+          {
+            title: '所在城市',
+            render: (h, p) => {
+              return h('span', p.row.province + ',' + p.row.city);
+            }
+          },
+          {
+            title: '关注时间',
+            key: 'subscribe_time'
+          },
+          {
+            title: '备注',
+            render: (h, p) => {
+              return h('span', p.row.desc === '' ? '暂无备注' : p.row.desc);
             }
           }
         ],
@@ -514,7 +480,7 @@
           rows_num: 0,
           page: 1
         },
-        tabName: 'name2',
+        tabName: 'name1',
         is_seek: false,
         selUserData: null,
         txta: '',
@@ -578,12 +544,12 @@
           }
         }
         this.is_Loading = true;
-        this.ajax.getCustomerList({
+        this.ajax.getClueCustomer({
           data: {
             page: this.pageData1.page,
-            real_name: this.real_name,
-            type: 0,
-            ascription: this.tabName === 'name1' ? 1 : 2
+            real_name: this.real_name
+            // type: 0,
+            // ascription: this.tabName === 'name1' ? 1 : 2
           },
           success: (res) => {
             this.data1 = res.body.data_list;
@@ -616,16 +582,16 @@
       // 数据表格选择方法
       selTableFun (v) {
         // obj  用于标识客户管理页面
-        let obj = {
-          common: true,
-          information: false,
-          record: false,
-          remind: true
-        };
-        Bus.$emit('change', v, obj);
-        this.is_show_chartEl = true;
-        this.is_show_informationEl = true;
-        this.is_left_show = true;
+        // let obj = {
+        //   common: true,
+        //   information: false,
+        //   record: false,
+        //   remind: true
+        // };
+        // Bus.$emit('change', v, obj);
+        // this.is_show_chartEl = true;
+        // this.is_show_informationEl = true;
+        // this.is_left_show = true;
       },
       // 右边内容显示隐藏动态效果
       isRightShowFun () {

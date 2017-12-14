@@ -125,7 +125,7 @@
                <Button type="dashed" @click="popup2 = true">操作</Button>
             </FormItem>
             <FormItem label="客户生日：" >
-               <DatePicker type="datetime" v-model="formData.birthday" placeholder="选择时间" style="width:  100%;" @on-change="birthdayFun"></DatePicker>
+               <DatePicker type="date" v-model="formData.birthday" placeholder="选择时间" style="width:  100%;" @on-change="birthdayFun"></DatePicker>
             </FormItem>
             <FormItem label="性别：" >
                <RadioGroup v-model="formData.real_sex">
@@ -138,13 +138,10 @@
                </RadioGroup>
             </FormItem>
             <FormItem  label="姓名：">
-               <Input v-model="formData.real_name" style="width:  100%;" @on-change="nameSeekFun"></Input>
+               <Input v-model="formData.real_name" style="width:  100%;" @on-change="nameSeekFun" @on-blur="is_name_show = false"></Input>
                <ul class="name-box" v-if="is_name_show">
                   <li v-for="(item, i) in nameArr" @click="selNameSeekFun(item)">{{ item.real_name }}</li>
                </ul>
-               <!--<Select v-model="formData.real_name" filterable @on-query-change="nameSeekFun" @on-change="selNameSeekFun">-->
-                  <!--<Option v-for="(item, i) in nameArr" :value="i" :key="item.value">{{ item.real_name }}</Option>-->
-               <!--</Select>-->
             </FormItem>
             <FormItem  label="手机：">
                <Input v-model="formData.real_phone" style="width:  100%;"></Input>

@@ -261,6 +261,10 @@
             render: (h, p) => {
               return h('span', p.row.add_time === null ? '未同步基本信息' : p.row.add_time);
             }
+          },
+          {
+            title: '粉丝来源',
+            key: 'source_qrcode_name'
           }
         ],
         data6: [],

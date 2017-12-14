@@ -6,7 +6,7 @@
 <template>
   <div>
       <div class="top-box cl">
-          <Button class="f-r" type="primary" @click="modal1 = true">新增</Button>
+          <Button class="f-r" type="primary" @click="modal1 = true, qrcode_id = '', name = '', qrcode_group_id = '', tabArr = [], customer_service_group_id = '', qrcode_id = '', userName = '', customer_service_id = ''">新增</Button>
       </div>
       <div>
           <Table border :columns="columns7" :data="data6"></Table>
@@ -28,7 +28,7 @@
                   <Input v-model="name" placeholder="请输入"></Input>
               </FormItem>
               <FormItem label="渠道分组">
-                  <Select  placeholder="Select your city" v-model="qrcode_group_id" style="width: 91%">
+                  <Select  placeholder="请选择" v-model="qrcode_group_id" style="width: 91%">
                       <Option v-for="k in data2" :value="k.qrcode_group_id" :key="k.value">{{k.qrcode_group_name}}</Option>
                   </Select>
                   <Button type="ghost" @click="modal1 = false,popup3 = true">操作</Button>
@@ -37,20 +37,53 @@
                   <Tag closable color="green" v-for="(k, i) in tabArr" :key="k" @on-close="handleClose2(i)">{{k}}</Tag>
                   <Button type="ghost" @click="popup6 = true, modal1 = false">添加</Button>
               </FormItem>
-              <FormItem label="客服分组">
+              <FormItem label="接待类型">
+                  <RadioGroup v-model="selRader" @on-change="radioFun">
+                      <Radio value="1" label="1">客服客服</Radio>
+                      <Radio value="2" label="2">指定分组</Radio>
+                      <Radio value="3" label="3">无</Radio>
+                  </RadioGroup>
+              </FormItem>
+              <FormItem label="客服分组" v-if="selRader == 2">
                   <Select  placeholder="Select your city" v-model="customer_service_group_id " style="width: 91%" @on-change="selUserGourpFun">
                       <Option v-for="k in userGroupData" :value="k.user_group_id" :key="k.value">{{k.user_group_name}}</Option>
                   </Select>
                   <!--<span>{{selRowData.user_name}}</span>-->
                   <!--<Button type="ghost" @click="popup7 = true, modal1 = false">添加</Button>-->
               </FormItem>
-              <FormItem label="专属客服">
+              <FormItem label="专属客服" v-if="selRader == 1">
                   <span v-if="userName == '' ? false : true">{{userName}}</span>
                   <Button type="ghost" @click="popup7 = true, modal1 = false">添加</Button> <span style="color: #ff3300">注意：专属客服或客服分组只能选其一</span>
               </FormItem>
-              <!--<FormItem label="有效天数">-->
-                  <!--<Input placeholder="请输入" v-model="dey"></Input>-->
-              <!--</FormItem>-->
+              <FormItem label="扫码回复">
+                  <RadioGroup v-model="selRader2" @on-change="radioFun1">
+                      <Radio value="1" label="1">文字</Radio>
+                      <Radio value="2" label="2">模板消息</Radio>
+                      <Radio value="3" label="3">图片</Radio>
+                      <Radio value="-1" label="-1">不回复</Radio>
+                  </RadioGroup>
+              </FormItem>
+              <FormItem label="回复内容"  v-if="selRader2 == 1">
+                  <Input type="textarea" v-model="reply_text" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入"></Input>
+              </FormItem>
+              <FormItem label="模板消息"  v-if="selRader2 == 2">
+                  <span v-if="txtImgData">{{txtImgData.media_id}}</span>
+                  <Button type="ghost" @click="imgTxtFun">模板消息</Button>
+              </FormItem>
+              <FormItem label="图片"  v-if="selRader2 == 3">
+                  <span v-if="ImgData">
+                      <img :src="ImgData.url" alt="" style="height: 100px;width: 100px">
+                  </span>
+                  <Upload style="display: inline-block;"  action="http://kf.lyfz.net/api/v1/we_chat/WxOperation/uploadResources"
+                          name="file" :data="{resources_type: 1}"
+                          :max-size='1024'
+                          :format="['jpg','jpeg','png','gif']"
+                          :show-upload-list="false"
+                          :headers="{token: userInfo.token}"
+                          :on-success="upImgFun">
+                      <Button type="ghost" ><Icon type="image"></Icon>图片</Button>
+                  </Upload>
+              </FormItem>
               <!--<FormItem label="扫码关注回复">-->
                   <!--<RadioGroup v-model="animal">-->
                       <!--<Radio label="不回复"></Radio>-->
@@ -123,7 +156,55 @@
           </div>
       </Modal>
       <!-- end客服弹窗 -->
-      
+
+
+
+      <!-- 图文详情 -->
+      <Modal v-model="modal2" title="图文详情" width="800" @on-cancel="modal1 = true, modal2 = false" @on-ok="modal2 = false, modal1 = true">
+          <div style="max-height: 700px; overflow: auto">
+              <Table highlight-row ref="currentRowTable" :columns="columns8" :data="data8" @on-current-change="selImgTxtFun"></Table>
+          </div>
+          <div style="text-align: center;padding: 10px">
+              <Page :total="pageData2.count" :page-size="pageData2.rows_num"  @on-change="pageFun2"></Page>
+          </div>
+
+          <!-- 加载状态 -->
+          <Spin fix v-if="is_Loading1">
+              <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
+              <div>请求中...</div>
+          </Spin>
+          <!-- end加载状态 -->
+      </Modal>
+      <!-- end图文详情 -->
+
+
+      <!-- 图文片-->
+      <Modal v-model="modal3" title="图片" width="800" @on-cancel="modal1 = true, modal3 = false" @on-ok="modal3 = false, modal1 = true">
+          <div style="max-height: 700px; overflow: auto">
+              <Table highlight-row ref="currentRowTable" :columns="columns9" :data="data9" @on-current-change="selTxtFun" ></Table>
+          </div>
+          <div style="text-align: center;padding: 10px">
+              <Page :total="pageData2.count" :page-size="pageData2.rows_num"  @on-change="pageFun2"></Page>
+          </div>
+
+          <!-- 加载状态 -->
+          <Spin fix v-if="is_Loading1">
+              <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
+              <div>请求中...</div>
+          </Spin>
+          <!-- end加载状态 -->
+      </Modal>
+      <!-- end图片 -->
+
+
+      <!-- 图文详情-->
+      <Modal v-model="modal4" title="图片" width="800" @on-cancel="modal1 = true" @on-ok="modal1 = true">
+          <div style="max-width: 800px;max-height: 600px;overflow: auto">
+              <div v-for="k in txtImgDataContent" v-html="k.content"></div>
+          </div>
+      </Modal>
+      <!-- end图片 -->
+
 
       <!-- 加载状态 -->
       <Spin fix v-if="is_Loading">
@@ -137,7 +218,92 @@
   export default {
     data () {
       return {
+        is_Loading1: false,
+        columns8: [
+          {
+            title: '图文id',
+            key: 'media_id'
+          },
+          {
+            title: '素材标题',
+            render: (h, params) => {
+              let arr = params.row.content.news_item.map((k) => {
+                return h('p', k.title);
+              });
+              return h('div', arr);
+            }
+          },
+          {
+            title: '操作',
+            render: (h, p) => {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'primary',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      console.log(p.row);
+                      this.txtImgData = p.row;
+                      this.txtImgDataContent = p.row.content.news_item;
+                      this.modal4 = true;
+                      this.modal2 = false;
+                    }
+                  }
+                }, '详情')
+              ]);
+            }
+          }
+        ],
+        userInfo: null,
+        data8: [],
+        columns9: [
+          {
+            type: '图片id',
+            key: 'media_id'
+          },
+          {
+            title: '图片名称',
+            key: 'name'
+          },
+          {
+            title: '素材标题',
+            render: (h, params) => {
+              return h('img', {
+                attrs: {
+                  src: params.row.url
+                },
+                style: {
+                  width: '100px'
+                }
+              });
+            }
+          }
+        ],
+        data9: [],
+        pageData1: {
+          count: 0,
+          rows_num: 0,
+          page: 1
+        },
+        pageData2: {
+          count: 0,
+          rows_num: 0,
+          page: 1
+        },
+        txtImgData: null,
+        ImgData: null,
+        txtImgDataContent: null,
+        modal2: false,
+        modal4: false,
+        is_img_txt: '',
+        modal3: false,
         cityList: [],
+        selRader2: '1',
         model1: '',
         popup8: false,
         codeUrl: '',
@@ -157,10 +323,6 @@
           {
             title: '二维码创建时间',
             key: 'create_time'
-          },
-          {
-            title: '二维码失效时间',
-            key: 'invalid_time'
           },
           {
             title: '二维码',
@@ -185,7 +347,7 @@
             }
           },
           {
-            title: 'Action',
+            title: '操作',
             key: 'action',
             width: 150,
             align: 'center',
@@ -193,8 +355,45 @@
               return h('div', [
                 h('Button', {
                   props: {
+                    type: 'warning',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.data3.forEach((s) => {
+                        if (s.customer_service_id === params.row.customer_service_id) {
+                          this.userName = s.name;
+                        }
+                      });
+                      this.appid = params.row.appid;
+                      this.name = params.row.activity_name;
+                      this.qrcode_group_id = params.row.qrcode_group_id;
+                      this.tabArr = params.row.label;
+                      this.customer_service_id = params.row.customer_service_id;
+                      this.customer_service_group_id = params.row.customer_service_group_id;
+                      this.qrcode_id = params.row.qrcode_id;
+                      this.reception_type = params.row.reception_type;
+                      this.selRader = params.row.reception_type;
+                      this.selRader2 = params.row.reply_type;
+                      this.reply_text = params.row.reply_text;
+                      this.media_id = params.row.media_id;
+                      this.resources_id = params.row.resources_id;
+                      this.txtImgData = {'media_id': params.row.media_id};
+                      this.ImgData = {'url': params.row.file_url, 'media_id': params.row.resources_id};
+                      this.modal1 = true;
+                    }
+                  }
+                }, '修改'),
+                h('Button', {
+                  props: {
                     type: 'error',
                     size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px'
                   },
                   on: {
                     click: () => {
@@ -206,6 +405,7 @@
             }
           }
         ],
+        selRader: '1',
         data6: [],
         modal1: false,
         animal: '不回复',
@@ -297,11 +497,6 @@
           count: 1,
           rows_num: 1
         },
-        pageData1: {
-          page: 1,
-          count: 1,
-          rows_num: 1
-        },
         selRowData: {},
         appid: '',
         appData: '',
@@ -310,7 +505,13 @@
         customer_service_group_id: '',
         is_service: false,
         userName: '',
-        customer_service_id: ''
+        customer_service_id: '',
+        qrcode_id: '',
+        reception_type: '1',
+        reply_type: '1',
+        reply_text: '',
+        media_id: '',
+        resources_id: ''
       };
     },
     mounted () {
@@ -318,6 +519,109 @@
     beforeDestroy () {
     },
     methods: {
+      // 上传图片
+      upImgFun (v) {
+        this.ImgData = v.body;
+        this.resources_id = v.body.resources_id;
+      },
+      // 素材分页
+      pageFun2 (v) {
+        this.pageData2.page = v;
+        this.getMaterial();
+      },
+      // 选择素材
+      selImgTxtFun (v) {
+        this.media_id = v.media_id;
+        this.resources_id = '';
+        this.txtImgData = v;
+        this.modal2 = false;
+        this.modal1 = true;
+      },
+      // 选择图片
+      selTxtFun (v) {
+        this.media_id = '';
+        this.resources_id = v.media_id;
+        this.ImgData = v;
+        this.modal3 = false;
+        this.modal1 = true;
+      },
+      // 获取素材/图文/图片
+      getMaterial (t) {
+        this.is_Loading1 = true;
+        this.is_Loading = true;
+        this.ajax.getArticleList({
+          data: {
+            page: this.pageData2.page,
+            appid: this.appid,
+            type: this.is_img_txt
+          },
+          success: (res) => {
+            this.is_Loading1 = false;
+            this.is_Loading = false;
+            if (this.is_img_txt === 'news') {
+              // 如果是图文
+              this.data8 = res.body.data_list;
+              this.modal2 = true;
+            } else if (this.is_img_txt === 'image') {
+              // 如果是图片
+              this.data9 = res.body.data_list;
+              this.modal3 = true;
+            }
+            this.pageData2.count = parseInt(res.body.page_data.count);
+            this.pageData2.rows_num = res.body.page_data.rows_num;
+          },
+          error: (res) => {
+            this.is_Loading1 = false;
+            this.is_Loading = false;
+            this.$Message.warning(res.meta.message);
+          }
+        });
+      },
+      // 获取图文素材
+      imgTxtFun () {
+        this.is_img_txt = 'news';
+        this.pageData1.page = 1;
+        this.getMaterial();
+        this.modal1 = false;
+      },
+      // 获取图片
+      imgFun () {
+        this.is_img_txt = 'image';
+        this.pageData1.page = 1;
+        this.getMaterial();
+        this.modal1 = false;
+      },
+      // 接待类型
+      radioFun (v) {
+        if (v === '1') {
+          this.reception_type = '1';
+          this.customer_service_group_id = '';
+        } else if (v === '2') {
+          this.reception_type = '2';
+          this.customer_service_id = '';
+        } else if (v === '3') {
+          this.reception_type = '3';
+          this.customer_service_id = '';
+          this.customer_service_group_id = '';
+        }
+      },
+      // 回复类型
+      radioFun1 (v) {
+        if (v === '1') {
+          this.selRader2 = '1';
+          this.reply_type = '1';
+        } else if (v === '2') {
+          this.selRader2 = '2';
+          this.reply_type = '2';
+        } else if (v === '3') {
+          this.selRader2 = '3';
+          this.reply_type = '3';
+        } else if (v === '-1') {
+          this.selRader2 = '-1';
+          this.reply_type = '-1';
+        }
+        console.log(213121231);
+      },
       // 创建渠道分组
       createChannelNameFun () {
         if (this.channelName === '') {
@@ -351,24 +655,80 @@
           this.$Message.warning('请添加自动标签');
           return;
         }
-        if (this.customer_service_id === '' && this.customer_service_group_id === '') {
-          this.$Message.warning('请选择客户分组或专属客服');
-          return;
+        if (this.selRader === '1') {
+          if (this.customer_service_id === '') {
+            this.$Message.warning('请选择专属客服');
+            return;
+          }
+        }
+        if (this.selRader === '2') {
+          if (this.customer_service_group_id === '') {
+            this.$Message.warning('请选择客服分组');
+            return;
+          }
+        }
+        if (this.selRader === '3') {
+          this.customer_service_id = '';
+          this.customer_service_group_id = '';
+        }
+        let obj = {
+          type: '1',
+          appid: this.appid,
+          qrcode_id: this.qrcode_id,
+          activity_name: this.name,
+          qrcode_group_id: this.qrcode_group_id,
+          invalid_day: this.dey,
+          label: this.tabArr,
+          customer_service_id: this.customer_service_id,
+          customer_service_group_id: this.customer_service_group_id,
+          reception_type: this.reception_type,
+          reply_type: this.reply_type
+        };
+        if (this.reply_type === '1') {
+          if (this.reply_text === '') {
+            this.$Message.warning('请输入回复内容');
+            return;
+          }
+          Object.assign(obj, {'reply_text': this.reply_text});
+          Object.assign(obj, {'media_id': ''});
+          Object.assign(obj, {'resources_id': ''});
+        }
+        if (this.reply_type === '2') {
+          if (this.media_id === '') {
+            this.$Message.warning('请选择模板消息');
+            return;
+          }
+          Object.assign(obj, {'reply_text': ''});
+          Object.assign(obj, {'media_id': this.media_id});
+          Object.assign(obj, {'resources_id': ''});
+        }
+        if (this.reply_type === '3') {
+          if (this.resources_id === '') {
+            this.$Message.warning('请选择图片');
+            return;
+          }
+          Object.assign(obj, {'reply_text': ''});
+          Object.assign(obj, {'media_id': ''});
+          Object.assign(obj, {'resources_id': this.resources_id});
+        }
+        if (this.reply_type === '-1') {
+          Object.assign(obj, {'reply_text': ''});
+          Object.assign(obj, {'media_id': ''});
+          Object.assign(obj, {'resources_id': ''});
         }
         this.ajax.createQrcode({
-          data: {
-            type: '1',
-            appid: this.appid,
-            activity_name: this.name,
-            qrcode_group_id: this.qrcode_group_id,
-            invalid_day: this.dey,
-            label: this.tabArr,
-            customer_service_id: this.customer_service_id,
-            customer_service_group_id: this.customer_service_group_id
-          },
+          data: obj,
           success: (res) => {
             this.pageData1.page = 1;
             this.getQrcodList();
+            this.qrcode_id = '';
+            this.name = '';
+            this.qrcode_group_id = '';
+            this.tabArr = '';
+            this.customer_service_group_id = '';
+            this.customer_service_id = '';
+            this.qrcode_id = '';
+            console.log(11231);
           },
           error: (res) => {
             this.$Message.warning(res.meta.message);
@@ -555,6 +915,7 @@
       }
     },
     created () {
+      this.userInfo = JSON.parse(localStorage.getItem('userInfo'));
       this.geteChannelGroupListFun();
       this.getSection();
       this.getQrcodList();

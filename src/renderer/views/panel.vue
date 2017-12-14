@@ -165,7 +165,9 @@
         ws_intval: '',
         ws_send_intval: '',
         timeout: 10000, // 60ms
-        timeoutObj: null
+        timeoutObj: null,
+        is_ws_off: false,
+        is_ws_initiative_off: false
       };
     },
     components: {
@@ -195,6 +197,7 @@
         var source = CancelToken.source();
         source.cancel();
         this.$router.push({name: '/'});
+        this.is_ws_initiative_off = true;
         this.socketCloseFun();
       },
       routeSwitchMenu (name) {
@@ -265,7 +268,6 @@
       // 请求会话列表数据
       getDialogueList (res) {
         Bus.$emit('conversationList', res);
-        console.log(111);
         // 更新/添加 等待数据表
         let db = new DB();
         db.type = 'update'; // 执行类型
@@ -382,7 +384,9 @@
       },
       // socketClose 关闭
       socketCloseFun () {
-        this.ws.close();
+        if (this.is_ws_off) {
+          this.ws.close();
+        }
       },
       // WebSocket链接
       WebSocketFun () {
@@ -394,6 +398,7 @@
           client: 'pc'
         };
         this.ws.onopen = () => {
+          this.is_ws_off = true;
           this.start();
           this.ws.send(JSON.stringify(obj));
         };
@@ -413,11 +418,14 @@
         };
         this.ws.onclose = () => {
           // heartCheck.start();
+          this.is_ws_off = false;
           clearTimeout(this.ws_intval);
-          this.ws_intval = setInterval(() => {
-            this.WebSocketFun();
-          }, 60000);
-          this.$Message.warning('网络不稳定或服务器断开，60秒后为您重连。。。');
+          if (!this.is_ws_initiative_off) {
+            this.ws_intval = setInterval(() => {
+              this.WebSocketFun();
+            }, 60000);
+            this.$Message.warning('网络不稳定或服务器断开，60秒后为您重连。。。');
+          }
         };
       },
       reset () {
@@ -431,7 +439,10 @@
           client: 'pc'
         };
         this.timeoutObj = setInterval(() => {
-          this.ws.send(JSON.stringify(obj));
+          if (this.is_ws_off) {
+            console.log('检测');
+            this.ws.send(JSON.stringify(obj));
+          }
         }, this.timeout);
       }
     },
@@ -441,7 +452,9 @@
     created () {
       this.userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
       this.routeSwitchMenu(this.$route.name);
-      this.WebSocketFun();
+      if (this.userInfo.user_type !== '3') {
+        this.WebSocketFun();
+      }
       // 心跳重连机制
     }
   };

@@ -198,6 +198,24 @@ ul.img-txt{
         height: 600px
     }
 }
+.textrea{
+    /* top: 0; */
+    /* left: 0; */
+    /* width: 100%; */
+    /* height: 100%; */
+    box-sizing: border-box;
+    padding: 2px;
+    line-height: normal;
+    /* font-size: .27rem; */
+    color: #464545;
+    text-align: left;
+    resize: none;
+    overflow: hidden;
+    &::-webkit-input-placeholder {
+    text-align: left;
+    color: #999;
+    }
+}
 </style>
 <template>
   <div class="chart-box">
@@ -223,7 +241,8 @@ ul.img-txt{
 
 
                              <!-- 普通文本 -->
-                             <span v-if="k.message_type == 1" style="color: #fff">{{k.text}}</span>
+                             <pre v-if="k.message_type == 1" v-text="k.text" style="text-align: left;margin: 0; color: #fff;"></pre>
+                             <!--<span v-if="k.message_type == 1" style="color: #fff">{{k.text}}</span>-->
                              <!-- end普通文本 -->
 
 
@@ -277,9 +296,12 @@ ul.img-txt{
                  <!---------------------------------- 客服消息 ------------------------------------>
                  <div class="content-box" style="text-align: right" v-if="k.opercode == 1">
                      <div class="crate" style="right: 10px;background-color: #e7e8ea;">
-                         <div style="display: inline-block;">
+                         <div class="crate-box" style="display: inline-block;">
                              <!-- 文字 -->
-                             <span v-if="k.message_type == 1" style="color: #3e3e3e">{{k.text}}</span>
+                             <!--<span v-if="k.message_type == 1" style="color: #3e3e3e">{{k.text}}</span>-->
+                             <!--<textarea ref="txtre" class="textrea" v-if="k.message_type == 1" v-model="k.text"></textarea>-->
+                             <pre v-if="k.message_type == 1" v-text="k.text" style="text-align: left; margin: 0; color: #3e3e3e;"></pre>
+                             <!--<div v-if="k.message_type == 1" v-text="k.text" style="white-space: pre"></div>-->
                              <!-- end文字 -->
 
 
@@ -397,7 +419,7 @@ ul.img-txt{
         <!--<span style="color: #333399" title="退出"><Icon type="log-out"></Icon></span>-->
      </div>
      <div class="chart-txt" v-bind:class="{'is_mass_chart-txt':isMass}">
-         <textarea v-model="txtra"  class="txt" @click="replyType = 1" v-on:paste="pasteFun" @keyup.13="keyFun"></textarea>
+         <textarea v-model="txtra"  class="txt" @click="replyType = 1" v-on:paste="pasteFun" @keyup="keyFun"></textarea>
          <!--<input class="txt"  @keyup.enter="subFun" style="opacity: 0; position: absolute; z-index: 10;width: 98%;height: 95%;" @focus="ipt">-->
          <!--<textarea ref="txtra" class="txt" @blur="focusState = false" v-focus="focusState" style="position: absolute;z-index: 1;width: 98%;height: 95%;"></textarea>-->
          <div class="btm" style="z-index: 100">
@@ -705,7 +727,8 @@ ul.img-txt{
           el: '',
           pasteImgUrl: '',
           popup6: false,
-          fileData: null
+          fileData: null,
+          is_key: true
         };
       },
       components: {
@@ -740,7 +763,21 @@ ul.img-txt{
         },
         // 键盘事件
         keyFun (e) {
-          // console.log(e);
+          this.is_key = false;
+          if (e.keyCode === 13 && e.ctrlKey) {
+            console.log(e, 'wadwadwad');
+            this.txtra += '\r\n';
+          } else if (e.keyCode === 13) {
+            this.subFun();
+          }
+          e.preventDefault();
+        },
+        // 设置文本域高度
+        txtHeightFun (i) {
+          console.log(111);
+          let el = 'txt' + i;
+          let txt = this.$refs[el];
+          console.log(txt, i, 123);
         },
         // 播放音频
         audioFun (c, k, i) {
@@ -1200,7 +1237,16 @@ ul.img-txt{
           xhr.open('POST', 'http://kf.lyfz.net/api/v1/we_chat/WxOperation/uploadResources');
           xhr.setRequestHeader('token', this.userInfo.token);
           xhr.send(fd);
+        },
+        // 文本显示控制文本域样式
+        txtraFun () {
         }
+      },
+      updated () {
+        // if (this.is_key) {
+        // let win = this.$refs;
+        // console.log(win.txtre);
+        // }
       },
       watch: {
         elmetArr: function (v) {
@@ -1215,6 +1261,7 @@ ul.img-txt{
       },
       destroyed (s) {
         // Bus.$off();
+        // win1
       },
       created () {
         this.userInfo = JSON.parse(localStorage.getItem('userInfo'));
