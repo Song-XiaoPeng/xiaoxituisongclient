@@ -151,7 +151,8 @@
         timeout: 10000, // 60ms
         timeoutObj: null,
         is_ws_off: false,
-        is_ws_initiative_off: false
+        is_ws_initiative_off: false,
+        is_win: true
       };
     },
     components: {
@@ -284,11 +285,20 @@
             user.forEach((s) => {
               if (s.customer_wx_openid === k) {
                 if (that.is_tongzhi) {
-                  console.log(that.$route.path);
-                  that.$Notice.warning({
-                    title: '收到一条（' + s.customer_wx_nickname + '）的消息',
-                    duration: 2
-                  });
+                  if (that.$route.path !== '/panel/CustomerService' || !that.is_win) {
+                    Notification.requestPermission();
+                    let notification = new Notification('提示', {
+                      body: '你有一位新客户' + s.customer_wx_nickname,
+                      icon: s.customer_wx_portrait
+                    });
+                    setTimeout(() => {
+                      notification.close();
+                    }, 6000);
+                  }
+                  // that.$Notice.warning({
+                  // title: '收到一条（' + s.customer_wx_nickname + '）的消息',
+                  // duration: 2
+                  // });
                 }
               }
             });
@@ -436,13 +446,13 @@
         this.WebSocketFun();
       }
       this.$electron.ipcRenderer.on('mini', () => {
-        console.log('最小6');
+        this.is_win = false;
       });
       this.$electron.ipcRenderer.on('restore', () => {
-        console.log('归为75');
+        this.is_win = true;
       });
       this.$electron.ipcRenderer.on('max', () => {
-        console.log('最大化132123');
+        this.is_win = true;
       });
     }
   };
