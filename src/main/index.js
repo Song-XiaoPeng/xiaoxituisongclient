@@ -1,6 +1,6 @@
 'use strict';
 
-import { app, BrowserWindow, ipcMain, globalShortcut, screen } from 'electron';
+import { app, BrowserWindow, ipcMain, globalShortcut, screen, Notification } from 'electron';
 import updater from 'electron-simple-updater';
 import url from 'url';
 const path = require('path');
@@ -89,6 +89,18 @@ ipcMain.on('show-window', () => {
 // 还原
 ipcMain.on('orignal-window', () => {
   mainWindow.unmaximize();
+});
+// 通知
+ipcMain.on('asynchronous-message', (event, arg) => {
+  setInterval(() => {
+    app.setAppUserModelId('appid');
+    let nt = new Notification({
+      title: 'dwadwad',
+      body: '11238977987213'
+    });
+    console.log(arg, nt);
+    nt.show();
+  }, 5000);
 });
 const $windows = [];
 // 注册全局快捷键
