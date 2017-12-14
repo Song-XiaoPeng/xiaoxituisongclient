@@ -3,7 +3,8 @@
   .tab-left-box{
     background-color: #072250;
     height: 50px;
-    width: 13.89%;
+    width: 200px;
+    max-width: 200px;
   }
   .menu-box{
     width: 100%;
@@ -48,7 +49,6 @@
       border-bottom: 1px #273f67 solid;
     }
   }
-
 </style>
 
 <template>
@@ -83,23 +83,20 @@
         </span>
     </div>
     <Row type="flex">
-      <Col span="3" class="layout-menu-left" style="position: absolute;top: 50px;left: 0;bottom: 0;">
-         <div class="menu-box" style="position: relative">
-
-
+      <Col span="3" class="layout-menu-left" style="z-index:999; position:relative; float:left; width:200px; margin-right:-200px;">
+         <div class="menu-box" style="position:relative;">
            <div class="window-title">
              <div class="user-portrait">
                 <div class="img-box">
                   <img :src="userInfo.avatar_url" alt="">
                 </div>
              </div>
-             <!--<div class="user-text"><Icon type="briefcase"></Icon> 账号：{{userInfo.phone_no}}</div>-->
              <div class="user-text">{{userInfo.username}}</div>
            </div>
 
            <div class="menu-wire"></div>
            <!-- 左侧导航 -->
-           <div style="overflow: auto;position: absolute;right: -18px;left: 0;bottom: 0;top: 130px;padding-bottom: 50px;">
+           <div style="overflow:auto; position:absolute; right:-18px; left:0; bottom:0; top:130px; padding-bottom:50px;">
              <ul>
                <li :ref="'parent-menu' + i" v-for="(k, i) in menuList" @click.stop="parentMenuFun(i, k)" :key="i">
                  <div v-bind:class="parent_i == i && child_i === '' ? 'active' : ''" style="padding: 10px">
@@ -119,22 +116,9 @@
            </div>
          </div>
          <!-- end左侧导航 -->
-
-
-        <!--<Menu :active-name="activeName" theme="dark" width="auto" :open-names=openNames @on-select="selectMenu" accordion>-->
-          <!--<Submenu :name="key"  v-for="(item, key) in menuList" :key="key">-->
-            <!--<template slot="title">-->
-              <!--<Icon :type="item.iconName"></Icon>-->
-              <!--{{item.menuTitle}}-->
-            <!--</template>-->
-            <!--<MenuItem v-for="(c, k) of item.son.sonList" :name="key + '-' + k" :key="k">-->
-              <!--{{c.menuTitle}}-->
-            <!--</MenuItem>-->
-          <!--</Submenu>-->
-        <!--</Menu>-->
       </Col>
-      <Col span="21" id="container" style="right: 0;position: absolute;top: 50px;bottom: 0;">
-        <div class="content-page">
+      <Col span="21" id="container" style="float:right; width:100%; right:-15px;">
+        <div class="content-page" style="margin-left:185px;">
           <router-view></router-view>
         </div>
       </Col>
