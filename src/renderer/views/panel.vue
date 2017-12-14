@@ -293,7 +293,7 @@
                   if (that.$route.path !== '/panel/CustomerService' || !that.is_win) {
                     Notification.requestPermission();
                     let notification = new Notification('提示', {
-                      body: '你有一位新客户' + s.customer_wx_nickname,
+                      body: '收到' + s.customer_wx_nickname + '的信息',
                       icon: s.customer_wx_portrait
                     });
                     setTimeout(() => {
