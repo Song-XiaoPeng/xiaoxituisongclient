@@ -61,14 +61,21 @@
       </Row>
     </div>
     <div class="window-control">
-      <Dropdown @on-click="signOut">
+      <Dropdown trigger="click" @on-click="signOut">
         <a href="javascript:void(0)" style="color:#fff">
           <Icon type="arrow-down-b" style="color: #818181"></Icon>
         </a>
-        <DropdownMenu slot="list">
-          <DropdownItem divided style="color: #ff3300;text-align: center;font-size: 22px;"><Icon type="disc" style="margin-right: 10px;"></Icon>注销</DropdownItem>
+        <DropdownMenu slot="list" style="text-align:center; font-size:22px;">
+          <DropdownItem>快捷操作</DropdownItem>
+          <DropdownItem divided>
+            <Icon type="refresh" style="margin-right: 10px;"></Icon>切换状态
+          </DropdownItem>
+           <DropdownItem>
+            <Icon type="disc" style="margin-right: 10px;"></Icon>注销退出
+          </DropdownItem>
         </DropdownMenu>
       </Dropdown>
+      
       <span class="window-icon" @click="hideWindow()">
         <Icon type="minus"></Icon>
       </span>
