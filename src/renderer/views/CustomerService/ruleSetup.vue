@@ -100,7 +100,17 @@
           </div>
         </TabPane>
 
-        <TabPane label="标签设置" name="4">标签设置</TabPane>
+        <TabPane label="标签设置" name="4">
+          <Form :label-width="80">
+            <FormItem label="操作">
+              <Button type="primary">新建分组</Button>
+              <Button type="primary">新建内容</Button>
+            </FormItem>
+            <FormItem label="详细">
+              <Table :columns="replyTableColumns" :data="replyTableData"></Table>
+            </FormItem>
+          </Form>
+        </TabPane>
       </Tabs>
     </Card>
 
