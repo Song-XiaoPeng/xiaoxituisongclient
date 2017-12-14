@@ -209,10 +209,6 @@
             continue;
           }
 
-          if (menu[i].model_id === 19 && this.userInfo.user_type !== '3') {
-            continue;
-          }
-
           if (this.userInfo.user_type !== '3' && menu[i].model_id !== -1) {
             for (let item of this.userInfo.model_list) {
               if (item === menu[i].model_id) {

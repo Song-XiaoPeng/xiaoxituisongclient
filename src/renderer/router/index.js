@@ -166,6 +166,14 @@ export default new Router({
           component: (resolve) => require(['@/views/weixin/yard'], resolve)
         },
         {
+          path: 'ruleSetup',
+          name: 'ruleSetup',
+          meta: {
+            title: '系统设置'
+          },
+          component: (resolve) => require(['@/views/CustomerService/ruleSetup'], resolve)
+        },
+        {
           path: 'Mass',
           name: 'Mass',
           meta: {

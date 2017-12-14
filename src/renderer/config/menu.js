@@ -214,8 +214,15 @@ let menuData = [
     menuTitle: '系统设置',
     iconName: 'gear-b',
     son: {
-      sonTitle: '子账号管理',
+      sonTitle: '系统设置',
       sonList: [
+        {
+          model_id: 25,
+          menuTitle: '规则设置',
+          route: 'ruleSetup',
+          routeBreadcrumb: [],
+          sonMenu: []
+        },
         {
           model_id: 20,
           menuTitle: '子账号管理',

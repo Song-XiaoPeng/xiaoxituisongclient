@@ -26,7 +26,10 @@ html,body,#app,.layout,.ivu-row-flex{
     font-size: 12px;
 }
 
-
+.page-centent {
+    margin-top: 15px;
+    text-align: center;
+}
 
 /*清除浮动的影响*/
 .cl:after{
@@ -52,11 +55,13 @@ html,body,#app,.layout,.ivu-row-flex{
 .demo-spin-icon-load{
     animation: ani-demo-spin 1s linear infinite;
 }
+
 @keyframes ani-demo-spin {
     from { transform: rotate(0deg);}
     50%  { transform: rotate(180deg);}
     to   { transform: rotate(360deg);}
 }
+
 .demo-spin-col{
     height: 100px;
     position: relative;
