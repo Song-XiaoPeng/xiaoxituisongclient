@@ -80,11 +80,12 @@
                 <Option v-for="item in cityList" :value="item.appid" :key="item.appid">{{ item.nick_name }}</Option>
             </Select>
         </div>
-        <Tabs value="name1" @on-click="tabFun">
+        <Tabs value="name1" v-model="tabVal" @on-click="tabFun">
+            <div style="padding:10px;" slot="extra">
+              <Button type="info" slot="extra" class="f-r" @click="modal4 = true" size="small" v-show="tabVal == 'name1'">新建分组</Button>
+              <Button type="info" class="f-r" @click="modal6 = true" v-show="tabVal == 'name2'" size="small">创建同步任务</Button>
+            </div>
             <TabPane label="全部粉丝" name="name1">
-                <div class="cl" style="padding: 10px">
-                    <Button type="info" class="f-r" @click="modal4 = true" >新建分组</Button>
-                </div>
                 <div class="tab cl">
                     <div class="f-l l">
                         <Table border :columns="columns7" :data="data6" @on-selection-change="selWxUser" ></Table>
@@ -97,7 +98,7 @@
                         <div class="title">所有分组</div>
                         <div class="list">
                             <ul>
-                                <li v-for="k in data7">
+                                <li v-for="(k, index) in data7" :key="index">
                                     {{k.name}}({{k.count}})
                                     <span  color="group_del" style="float: right" title="删除当前组" @click="delGroupFun(k)">
                                         <Icon type="trash-a"></Icon>
@@ -113,9 +114,6 @@
                 </div>
             </TabPane>
             <TabPane label="同步粉丝" name="name2">
-                <div class="cl" style="padding: 10px">
-                    <Button type="info" class="f-r" @click="modal6 = true">创建同步任务</Button>
-                </div>
                 <div style="padding:0 10px;">
                     <table class="table-copy">
                         <thead>
@@ -129,7 +127,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr v-for="k in data8">
+                        <tr v-for="(k, index) in data8" :key="index">
                             <td style="padding: 4px;">
                                 {{k.app_name}}
                             </td>
@@ -209,6 +207,7 @@
   export default {
     data () {
       return {
+        tabVal: 'name1',
         cityList: [],
         model1: '',
         is_Loading: false,
