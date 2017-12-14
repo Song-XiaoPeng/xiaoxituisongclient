@@ -146,7 +146,7 @@
         <Icon type="minus"></Icon>
       </span>
       <span class="window-icon" @click="showWindow()">
-        <Icon type="arrow-expand"></Icon>
+        <Icon type="android-checkbox-outline-blank"></Icon>
       </span>
       <span class="window-icon" @click="closeWindow()">
         <Icon type="close"></Icon>
