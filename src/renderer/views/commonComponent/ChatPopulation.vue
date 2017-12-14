@@ -254,7 +254,8 @@
           is_tongzhi: true,
           is_Message: false,
           is_dialogue_click: true,
-          lineUpObj: {}
+          lineUpObj: {},
+          mynotify: null
         };
       },
       mounted () {
@@ -262,32 +263,35 @@
       beforeDestroy () {
       },
       methods: {
+        // 通知
+        inform (name) {
+          // this.$electron.ipcRenderer.send('asynchronous-message', 'ping');
+          Notification.requestPermission();
+          let notification = new Notification('提示', {
+            body: '你有一位新客户' + name
+          });
+          setTimeout(() => {
+            notification.close();
+          }, 3000);
+        },
         // 请求会话列表数据
         getDialogueList (res) {
           if (res) {
+            this.data3.length = 0;
             res.queue_up.forEach((k) => {
               // 排队列表
               if (this.lineUpObj[k.session_id]) {
                 Object.assign(this.lineUpObj[k.session_id], k);
-                console.log('覆盖');
               } else {
                 this.lineUpObj[k.session_id] = k;
-                console.log(k);
-                console.log('新增');
-                let mynotify = new Notification('提示', {
-                  body: '您计划于今天下午4点召开全体会议，请准时参加',
-                  icon: 'http://q4.qlogo.cn/g?b=qq&k=icUjVAN5Ja7BCDQ1ICl8Svw&s=40',
-                  tag: 1
-                });
-                mynotify.onshow = () => {
-                  setTimeout(() => {
-                    mynotify.close();
-                  }, 3000);
-                };
+                this.inform(k.customer_wx_nickname);
               }
               // this.data3.push(k);
             });
             // 等待列表
+            for (let k in this.lineUpObj) {
+              this.data3.push(this.lineUpObj[k]);
+            }
             res.waiting.forEach((k) => {
               if (this.data2.length === 0) {
                 this.data2.push(k);
@@ -456,7 +460,6 @@
         },
         // 获取正在会话列表中客户会话数据
         getMessage (res) {
-          console.log(res);
           for (let k in res) {
             res[k].forEach((s) => {
               // 判断是否当前选择的客户 并添加数据
@@ -567,6 +570,7 @@
       },
       created () {
         // 调用本地数据库 获取储存的数据
+        // Notification.requestPermission();
         this.getWaitingTab();
         Bus.$on('conversationList', (k) => {
           this.getDialogueList(k);
