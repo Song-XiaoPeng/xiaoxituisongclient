@@ -69,18 +69,15 @@
           <DropdownItem divided style="color: #ff3300;text-align: center;font-size: 22px;"><Icon type="disc" style="margin-right: 10px;"></Icon>注销</DropdownItem>
         </DropdownMenu>
       </Dropdown>
-        <!--<span class="window-icon">-->
-          <!--<Icon type="arrow-down-b"></Icon>-->
-        <!--</span>-->
       <span class="window-icon" @click="hideWindow()">
-          <Icon type="minus"></Icon>
-        </span>
+        <Icon type="minus"></Icon>
+      </span>
       <span class="window-icon" @click="showWindow()">
-          <Icon type="android-checkbox-outline-blank"></Icon>
-        </span>
+        <Icon type="android-checkbox-outline-blank"></Icon>
+      </span>
       <span class="window-icon" @click="closeWindow()">
-          <Icon type="close"></Icon>
-        </span>
+        <Icon type="close"></Icon>
+      </span>
     </div>
     <Row type="flex">
       <Col span="3" class="layout-menu-left" style="z-index:999; position:relative; float:left; width:200px; margin-right:-200px;">
