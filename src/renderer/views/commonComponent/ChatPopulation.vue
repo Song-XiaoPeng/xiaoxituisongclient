@@ -595,7 +595,7 @@
         getLossDialogueFun () {
           let name = 'dialogueArr=';
           let ca = document.cookie.split(';');
-          let str;
+          let str = '[]';
           for (let i = 0; i < ca.length; i++) {
             let c = ca[i];
             while (c.charAt(0) === ' ') c = c.substring(1);
