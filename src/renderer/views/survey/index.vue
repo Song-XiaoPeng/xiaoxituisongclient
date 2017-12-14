@@ -243,7 +243,39 @@
             key: 'effective'
           },
           {
-            title: '发出消息总数',
+            title: '会话率',
+            key: 'effective_percentage'
+          },
+          {
+            title: '无效会话',
+            key: 'invalid_session'
+          },
+          {
+            title: '会话遗漏',
+            key: 'session_missing'
+          },
+          {
+            title: '手动会话',
+            key: 'own_session'
+          },
+          {
+            title: '自动会话',
+            key: 'auto_session'
+          },
+          {
+            title: '发起会话',
+            key: 'active_session'
+          },
+          {
+            title: '采集客咨',
+            key: 'collection'
+          },
+          {
+            title: '采客咨率',
+            key: 'collection_percentage'
+          },
+          {
+            title: '消息总数',
             key: 'send_message_total'
           }
         ],
