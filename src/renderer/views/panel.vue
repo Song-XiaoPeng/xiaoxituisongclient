@@ -55,26 +55,26 @@
   <div class="layout">
     <div class="window-border">
       <Row>
-        <Col span="3" class="tab-left-box">
-
-        </Col>
+        <Col span="3" class="tab-left-box"></Col>
       </Row>
     </div>
     <div class="window-control">
-      <Dropdown trigger="click" @on-click="signOut">
-        <a href="javascript:void(0)" style="color:#fff">
-          <Icon type="arrow-down-b" style="color: #818181"></Icon>
-        </a>
-        <DropdownMenu slot="list" style="text-align:center; font-size:22px;">
-          <DropdownItem>快捷操作</DropdownItem>
-          <DropdownItem divided>
-            <Icon type="refresh" style="margin-right: 10px;"></Icon>切换状态
-          </DropdownItem>
-           <DropdownItem>
-            <Icon type="disc" style="margin-right: 10px;"></Icon>注销退出
-          </DropdownItem>
-        </DropdownMenu>
-      </Dropdown>
+      <span class="window-icon">
+        <Dropdown trigger="click" @on-click="signOut">
+          <a href="javascript:void(0)" style="color:#fff">
+            <Icon type="wrench" style="color: #818181"></Icon>
+          </a>
+          <DropdownMenu slot="list" style="text-align:center; font-size:22px;">
+            <DropdownItem>快捷操作</DropdownItem>
+            <DropdownItem divided>
+              <Icon type="refresh" style="margin-right: 10px;"></Icon>切换状态
+            </DropdownItem>
+            <DropdownItem>
+              <Icon type="disc" style="margin-right: 10px;"></Icon>注销退出
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+      </span>
       
       <span class="window-icon" @click="hideWindow()">
         <Icon type="minus"></Icon>
@@ -124,6 +124,7 @@
       <Col span="21" id="container" style="float:right; width:100%; right:-15px;">
         <div class="content-page" style="margin-left:185px;">
           <router-view></router-view>
+          <div style="width:100%; height:60px;"></div>
         </div>
       </Col>
     </Row>
