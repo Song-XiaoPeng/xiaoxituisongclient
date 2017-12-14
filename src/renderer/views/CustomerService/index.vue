@@ -27,7 +27,7 @@
   <div id="index">
       <Row class="box">
           <Col span="4" class="box">
-             <div class="personnel" style="background-color: #fafafa">
+             <div class="personnel" style="background-color: #fafafa; position: relative">
                <personnel></personnel>
              </div>
           </Col>

@@ -122,7 +122,7 @@
     }
 </style>
 <template>
-   <div>
+   <div style="height: 100%;overflow: auto;">
        <Row>
            <Col :xs="24"  :lg="24">
              <div class="btn active">
@@ -179,7 +179,7 @@
                    排队中
                </div>
                <ul ref="list3" class="list" :style="'height:' + data3.length * 66 + 'px'">
-                   <li v-for="(k, i) in data3" @click.stop="popup1 = true,clientName = k.customer_wx_nickname,clientData = k,clientDataIndex = i, is_w_v = 3">
+                   <li v-for="(k, i) in data3" @click.stop="addDialogueFun(k, i)">
                        <div class="picture">
                            <img :src="k.customer_wx_portrait" alt="">
                        </div>
@@ -264,15 +264,16 @@
       },
       methods: {
         // 通知
-        inform (name) {
+        inform (name, url) {
           // this.$electron.ipcRenderer.send('asynchronous-message', 'ping');
           Notification.requestPermission();
           let notification = new Notification('提示', {
-            body: '你有一位新客户' + name
+            body: '你有一位新客户' + name,
+            icon: url
           });
           setTimeout(() => {
             notification.close();
-          }, 3000);
+          }, 6000);
         },
         // 请求会话列表数据
         getDialogueList (res) {
@@ -284,13 +285,17 @@
                 Object.assign(this.lineUpObj[k.session_id], k);
               } else {
                 this.lineUpObj[k.session_id] = k;
-                this.inform(k.customer_wx_nickname);
+                this.inform(k.customer_wx_nickname, k.customer_wx_portrait);
               }
               // this.data3.push(k);
             });
             // 等待列表
             for (let k in this.lineUpObj) {
               this.data3.push(this.lineUpObj[k]);
+            }
+            // 储存数据到本地...
+            if (this.data3.length !== res.queue_up.length) {
+              this.setLossDialogueFun();
             }
             res.waiting.forEach((k) => {
               if (this.data2.length === 0) {
@@ -557,6 +562,46 @@
               that.Message.warning(res.meta.message);
             }
           });
+        },
+        // 排队 接入会话
+        addDialogueFun (k, i) {
+          let that = this;
+          that.clientName = k.customer_wx_nickname;
+          that.clientData = k;
+          that.clientDataIndex = i;
+          that.is_w_v = 3;
+          that.ajax.accessQueuingSession({
+            data: {
+              session_id: k.session_id
+            },
+            success: () => {
+              delete this.lineUpObj[k.session_id];
+              that.data3.splice(i, 1);
+              that.setLossDialogueFun();
+              let db2 = new DB();
+              db2.type = 'update'; // 执行类型
+              db2.tabName = 'visitor'; // 数据表名称
+              db2.data = [k];
+              db2.fun = function (res) { // 执行成功回掉函数
+                db2.close();
+                that.getWaitingTab();
+              };
+            },
+            error: (res) => {
+              that.$Message.warning(res.meta.message);
+            }
+          });
+        },
+        // 获取缓存 等待排队客户数据
+        getLossDialogueFun () {
+          let arr = JSON.parse(sessionStorage.getItem('dialogueArr')) || [];
+          arr.forEach((k) => {
+            this.lineUpObj[k.session_id] = k;
+          });
+        },
+        setLossDialogueFun () {
+          let dialogueArr = this.data3;
+          sessionStorage.setItem('dialogueArr', JSON.stringify(dialogueArr));
         }
       },
       destroyed (s) {
@@ -572,6 +617,7 @@
         // 调用本地数据库 获取储存的数据
         // Notification.requestPermission();
         this.getWaitingTab();
+        this.getLossDialogueFun();
         Bus.$on('conversationList', (k) => {
           this.getDialogueList(k);
         });

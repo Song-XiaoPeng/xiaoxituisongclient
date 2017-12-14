@@ -148,7 +148,8 @@
         timeout: 10000, // 60ms
         timeoutObj: null,
         is_ws_off: false,
-        is_ws_initiative_off: false
+        is_ws_initiative_off: false,
+        is_win: true
       };
     },
     components: {
@@ -173,7 +174,6 @@
     methods: {
       // 注销事件
       signOut () {
-        // localStorage.removeItem('userInfo');
         var CancelToken = axios.CancelToken;
         var source = CancelToken.source();
         source.cancel();
@@ -282,10 +282,20 @@
             user.forEach((s) => {
               if (s.customer_wx_openid === k) {
                 if (that.is_tongzhi) {
-                  that.$Notice.warning({
-                    title: '收到一条（' + s.customer_wx_nickname + '）的消息',
-                    duration: 2
-                  });
+                  if (that.$route.path !== '/panel/CustomerService' || !that.is_win) {
+                    Notification.requestPermission();
+                    let notification = new Notification('提示', {
+                      body: '你有一位新客户' + s.customer_wx_nickname,
+                      icon: s.customer_wx_portrait
+                    });
+                    setTimeout(() => {
+                      notification.close();
+                    }, 6000);
+                  }
+                  // that.$Notice.warning({
+                  // title: '收到一条（' + s.customer_wx_nickname + '）的消息',
+                  // duration: 2
+                  // });
                 }
               }
             });
@@ -432,7 +442,15 @@
       if (this.userInfo.user_type !== '3') {
         this.WebSocketFun();
       }
-      // 心跳重连机制
+      this.$electron.ipcRenderer.on('mini', () => {
+        this.is_win = false;
+      });
+      this.$electron.ipcRenderer.on('restore', () => {
+        this.is_win = true;
+      });
+      this.$electron.ipcRenderer.on('max', () => {
+        this.is_win = true;
+      });
     }
   };
 </script>
