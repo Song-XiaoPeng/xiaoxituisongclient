@@ -191,7 +191,7 @@
         </div>
       </div>
       <div style="padding: 10px 15px">
-        <Table border :columns="columns1" :data="data1"></Table>
+        <Table border :columns="columns1" stripe :data="data1"></Table>
       </div>
     </div>
     
@@ -322,7 +322,7 @@
         popup1: false,
         customSelDateData: null,
         chartData: {
-          columns: ['总咨询量', '有效咨询', '无效咨询', '咨询遗漏', '采集客资'],
+          columns: ['日期', '总咨询量', '有效咨询', '无效咨询', '咨询遗漏', '采集客资'],
           rows: [
             { '总咨询量': 1523, '日期': '8:00', '有效咨询': 1523, '无效咨询': 1523, '采集客资': 1764 },
             { '总咨询量': 1223, '日期': '9:00', '有效咨询': 1223, '无效咨询': 4312, '采集客资': 3314 },
