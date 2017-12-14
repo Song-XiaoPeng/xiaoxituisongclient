@@ -294,9 +294,7 @@
               this.data3.push(this.lineUpObj[k]);
             }
             // 储存数据到本地...
-            if (this.data3.length !== res.queue_up.length) {
-              this.setLossDialogueFun();
-            }
+            this.setLossDialogueFun();
             res.waiting.forEach((k) => {
               if (this.data2.length === 0) {
                 this.data2.push(k);
@@ -594,14 +592,27 @@
         },
         // 获取缓存 等待排队客户数据
         getLossDialogueFun () {
-          let arr = JSON.parse(sessionStorage.getItem('dialogueArr')) || [];
+          let name = 'dialogueArr=';
+          let ca = document.cookie.split(';');
+          let str;
+          for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) === ' ') c = c.substring(1);
+            if (c.indexOf(name) !== -1) {
+              str = c.substring(name.length, c.length);
+              return str;
+            }
+          }
+          let arr = JSON.parse(str) || [];
+          // let arr = JSON.parse(sessionStorage.getItem('dialogueArr')) || [];
           arr.forEach((k) => {
             this.lineUpObj[k.session_id] = k;
           });
         },
         setLossDialogueFun () {
           let dialogueArr = this.data3;
-          sessionStorage.setItem('dialogueArr', JSON.stringify(dialogueArr));
+          document.cookie = 'dialogueArr=' + JSON.stringify(dialogueArr);
+          // sessionStorage.setItem('dialogueArr', JSON.stringify(dialogueArr));
         }
       },
       destroyed (s) {
