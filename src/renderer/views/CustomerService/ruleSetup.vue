@@ -7,7 +7,7 @@
       <Tabs v-model="tabsVal" value="1">
         <div slot="extra" v-show="tabsVal == '3'">
           <Button type="primary" size="small" @click="addConversationRule = true">新建分组</Button>
-          <Button type="primary" size="small">新建内容</Button>
+          <Button type="primary" size="small" @click="addConversationContent = true">新建内容</Button>
         </div>
         <TabPane label="客资领取回收规则" name="1">
           <Row>
@@ -107,7 +107,7 @@
               <Button type="primary">新建内容</Button>
             </FormItem>
             <FormItem label="详细">
-              <Table :columns="replyTableColumns" :data="replyTableData"></Table>
+              <Table :columns="labelTableColumns" :data="labelTableData"></Table>
             </FormItem>
           </Form>
         </TabPane>
@@ -123,12 +123,26 @@
         </FormItem>
       </Form>
     </Modal>
+
+    <Modal
+      v-model="addConversationContent"
+      title="新建话术内容">
+      <Form :label-width="80">
+        <FormItem label="标题">
+          <Input placeholder="请输入标题	"></Input>
+        </FormItem>
+        <FormItem label="	内容">
+          <Input placeholder="请输入内容	" type="textarea"></Input>
+        </FormItem>
+      </Form>
+    </Modal>
   </div>
 </template>
 <script>
   export default {
     data () {
       return {
+        addConversationContent: false,
         addConversationRule: false,
         tabsVal: '1',
         formItem: {
@@ -216,16 +230,74 @@
             useCount: '75'
           },
           {
-            group: '第二分组',
+            group: '第三分组',
             title: '问候语',
             content: '您好女士需要帮助吗？',
             useCount: '92'
           },
           {
-            group: '第二分组',
+            group: '第三分组',
             title: '问候语',
             content: '您好女士需要帮助吗？',
             useCount: '12'
+          }
+        ],
+        labelTableColumns: [
+          {
+            title: '标签分组',
+            key: 'group',
+            width: 100
+          },
+          {
+            title: '标签内容',
+            key: 'content'
+          },
+          {
+            title: '操作',
+            key: 'operation',
+            width: 150,
+            render: (h, params) => {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'primary',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.receivables(params.index);
+                    }
+                  }
+                }, '编辑'),
+                h('Button', {
+                  props: {
+                    type: 'error',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.cancelOrder(params.index);
+                    }
+                  }
+                }, '删除')
+              ]);
+            }
+          }
+        ],
+        labelTableData: [
+          {
+            group: '意向产品',
+            content: '铂金版ERP-30、经典版ERP-30'
+          },
+          {
+            group: '客户行业',
+            content: '铂金版ERP-32、经典版ERP-12、扫客通-12'
           }
         ]
       };
