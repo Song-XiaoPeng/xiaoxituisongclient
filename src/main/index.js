@@ -16,10 +16,10 @@ function createWindow () {
     height: 800,
     useContentSize: true,
     resizable: true,
-    width: 1300,
+    width: 1400,
     autoHideMenuBar: true,
     frame: false,
-    minWidth: 1300,
+    minWidth: 1400,
     minHeight: 800,
     show: false,
     webPreferences: {webSecurity: false}
