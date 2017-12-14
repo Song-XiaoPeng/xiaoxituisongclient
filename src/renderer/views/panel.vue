@@ -192,7 +192,6 @@
     methods: {
       // 注销事件
       signOut () {
-        // localStorage.removeItem('userInfo');
         var CancelToken = axios.CancelToken;
         var source = CancelToken.source();
         source.cancel();
@@ -301,6 +300,7 @@
             user.forEach((s) => {
               if (s.customer_wx_openid === k) {
                 if (that.is_tongzhi) {
+                  console.log(that.$route.path);
                   that.$Notice.warning({
                     title: '收到一条（' + s.customer_wx_nickname + '）的消息',
                     duration: 2
@@ -451,7 +451,15 @@
       if (this.userInfo.user_type !== '3') {
         this.WebSocketFun();
       }
-      // 心跳重连机制
+      this.$electron.ipcRenderer.on('mini', () => {
+        console.log('最小6');
+      });
+      this.$electron.ipcRenderer.on('restore', () => {
+        console.log('归为75');
+      });
+      this.$electron.ipcRenderer.on('max', () => {
+        console.log('最大化132123');
+      });
     }
   };
 </script>

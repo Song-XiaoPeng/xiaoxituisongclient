@@ -1,6 +1,6 @@
 'use strict';
 
-import { app, BrowserWindow, ipcMain, globalShortcut, screen, Notification } from 'electron';
+import { app, BrowserWindow, ipcMain, globalShortcut, screen } from 'electron';
 import updater from 'electron-simple-updater';
 import url from 'url';
 const path = require('path');
@@ -39,6 +39,15 @@ function createWindow () {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+  mainWindow.on('minimize', (e) => {
+    mainWindow.webContents.send('mini');
+  });
+  mainWindow.on('restore', (e) => {
+    mainWindow.webContents.send('restore');
+  });
+  mainWindow.on('maximize', (e) => {
+    mainWindow.webContents.send('max');
+  });
 }
 
 // 防止重复打开
@@ -73,6 +82,7 @@ app.on('activate', () => {
 
 // 退出
 ipcMain.on('window-all-closed', () => {
+  // window.localStorage.
   app.quit();
 });
 
@@ -89,18 +99,6 @@ ipcMain.on('show-window', () => {
 // 还原
 ipcMain.on('orignal-window', () => {
   mainWindow.unmaximize();
-});
-// 通知
-ipcMain.on('asynchronous-message', (event, arg) => {
-  setInterval(() => {
-    app.setAppUserModelId('appid');
-    let nt = new Notification({
-      title: 'dwadwad',
-      body: '11238977987213'
-    });
-    console.log(arg, nt);
-    nt.show();
-  }, 5000);
 });
 const $windows = [];
 // 注册全局快捷键

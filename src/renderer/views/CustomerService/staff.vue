@@ -205,7 +205,7 @@
 
 
         <!-- 修改权限弹窗 -->
-        <Modal v-model="popup10" title="选择公共号" :width="500" @on-ok="setServer">
+        <Modal v-model="popup10" title="选择公共号" :width="500" @on-ok="setGroupFun">
             <Form  :label-width="120">
                 <Form-item label="客服名称：">
                     <Input v-model="selUser.user_name" :placeholder="selUser.user_name"></Input>
@@ -227,11 +227,11 @@
                 <Form-item label="客服名称：">
                     <Input v-model="selUser.user_name" :placeholder="selUser.user_name"></Input>
                 </Form-item>
-                <Form-item label="当前公共号：">
-                    <Select v-model="appid">
-                        <Option v-for="item in cityList" :value="item.appid" :key="item.appid">{{ item.nick_name }}</Option>
-                    </Select>
-                </Form-item>
+                <!--<Form-item label="当前公共号：">-->
+                    <!--<Select v-model="appid">-->
+                        <!--<Option v-for="item in cityList" :value="item.appid" :key="item.appid">{{ item.nick_name }}</Option>-->
+                    <!--</Select>-->
+                <!--</Form-item>-->
             </Form>
         </Modal>
         <!-- end添加部门弹窗 -->
@@ -526,8 +526,27 @@
           }
         });
       },
-      // 设置客服
+      // 设为客服
       setServer () {
+        let k = this.selUser;
+        this.ajax.setUserCustomerService({
+          data: {
+            uid: k.uid,
+            user_name: k.user_name
+          },
+          success: () => {
+            this.is_Loading = false;
+            this.getUserList();
+            this.$Message.success('操作成功');
+          },
+          error: (res) => {
+            this.is_Loading = false;
+            this.$Message.warning(res.meta.message);
+          }
+        });
+      },
+      // 添加部门
+      setGroupFun () {
         let k = this.selUser;
         this.ajax.addUserGroup({
           data: {
