@@ -215,6 +215,7 @@
 </template>
 <script>
     import Bus from '../../assets/eventBus';
+    // import store from '../../store/index';
     // DB数据库 name: '' 表名称
     // tab_type: 'visitor (会话人员表)' / 'message (会话数据表)'
     import DB from '../../assets/webDB';
@@ -593,17 +594,18 @@
         },
         // 获取缓存 等待排队客户数据
         getLossDialogueFun (s) {
-          let str = s || '[]';
-          let arr = JSON.parse(str);
+          let arr = this.global.dialogueArr;
+          // let arr = store.state.arr;
+          // let arr = str;
           // let arr = JSON.parse(sessionStorage.getItem('dialogueArr')) || [];
-          console.log(arr);
           arr.forEach((k) => {
             this.lineUpObj[k.session_id] = k;
           });
         },
         setLossDialogueFun () {
           let dialogueArr = this.data3;
-          this.$electron.ipcRenderer.send('setCookie', JSON.stringify(dialogueArr));
+          this.global.dialogueArr = dialogueArr;
+          // this.$electron.ipcRenderer.send('setCookie', JSON.stringify(dialogueArr));
         }
       },
       destroyed (s) {
@@ -618,6 +620,7 @@
       created () {
         // 调用本地数据库 获取储存的数据
         // Notification.requestPermission();
+        console.log(this.global.dialogueArr, 123178978923);
         this.getWaitingTab();
         this.getLossDialogueFun();
         Bus.$on('conversationList', (k) => {
@@ -626,10 +629,11 @@
         Bus.$on('MessageList', (k) => {
           this.getMessage(k);
         });
-        this.$electron.ipcRenderer.send('getCookie');
-        this.$electron.ipcRenderer.on('getLossDialogueFun', (e, s) => {
-          this.getLossDialogueFun(s[0].value);
-        });
+        // store.state['dialogueArr'] = '132123123';
+        // this.$electron.ipcRenderer.send('getCookie');
+        // this.$electron.ipcRenderer.on('getLossDialogueFun', (e, s) => {
+        // this.getLossDialogueFun(s[0].value);
+        // });
       }
     };
 </script>

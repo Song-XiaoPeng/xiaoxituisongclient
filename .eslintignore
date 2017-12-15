@@ -5,7 +5,7 @@ src/renderer/config/address.js
 src/renderer/views/commonComponent/luyin.js
 src/renderer/assets/eventBus.js
 src/renderer/assets/webDB.js
-src/renderer/assets/myDB.js
+src/renderer/assets/global.js
 src/renderer/assets/shortcut-capture.js
 src/renderer/views/commonComponent/mp3.js
 src/renderer/views/commonComponent/mp3.html
