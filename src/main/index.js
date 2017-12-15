@@ -48,7 +48,6 @@ function createWindow () {
   mainWindow.on('maximize', (e) => {
     mainWindow.webContents.send('max');
   });
-  // let ses = mainWindow.webContents.session;
   // 设置cookie
   ipcMain.on('setCookie', (e, str) => {
     session.defaultSession.cookies.set({ url: winURL, name: 'dialogueArr', value: str }, (e, c) => {
@@ -56,7 +55,7 @@ function createWindow () {
   });
   // 获取cookie
   ipcMain.on('getCookie', () => {
-    session.defaultSession.cookies.get({name: 'dialogueArr'}, (e, c) => {
+    session.defaultSession.cookies.get({url: winURL, name: 'dialogueArr'}, (e, c) => {
       mainWindow.webContents.send('getLossDialogueFun', c);
     });
   });
