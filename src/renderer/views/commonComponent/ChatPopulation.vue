@@ -285,7 +285,7 @@
               if (this.lineUpObj[k.session_id]) {
                 Object.assign(this.lineUpObj[k.session_id], k);
               } else {
-                console.log('排队通知');
+                // console.log('排队通知');
                 this.lineUpObj[k.session_id] = k;
                 this.inform(k.customer_wx_nickname, k.customer_wx_portrait);
               }
@@ -620,7 +620,6 @@
       created () {
         // 调用本地数据库 获取储存的数据
         // Notification.requestPermission();
-        console.log(this.global.dialogueArr, 123178978923);
         this.getWaitingTab();
         this.getLossDialogueFun();
         Bus.$on('conversationList', (k) => {

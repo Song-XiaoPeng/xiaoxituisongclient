@@ -157,7 +157,9 @@
         timeoutObj: null,
         is_ws_off: false,
         is_ws_initiative_off: false,
-        is_win: true
+        is_win: true,
+        data3: [],
+        lineUpObj: {}
       };
     },
     components: {
@@ -383,6 +385,18 @@
           this.ws.close();
         }
       },
+      // 通知
+      inform (name, url) {
+        // this.$electron.ipcRenderer.send('asynchronous-message', 'ping');
+        Notification.requestPermission();
+        let notification = new Notification('提示', {
+          body: '你有一位新客户' + name,
+          icon: url
+        });
+        setTimeout(() => {
+          notification.close();
+        }, 10000);
+      },
       // WebSocket链接
       WebSocketFun () {
         this.ws = new WebSocket('ws://kf.lyfz.net:8282');
@@ -402,8 +416,22 @@
           let data = JSON.parse(e.data);
           if (data.body.type === 'session') {
             this.getDialogueList(data.body.sk_data);
+            data.body.sk_data.queue_up.forEach((k) => {
+              if (this.lineUpObj[k.session_id]) {
+                Object.assign(this.lineUpObj[k.session_id], k);
+              } else {
+                console.log('排队通知');
+                this.lineUpObj[k.session_id] = k;
+                this.inform(k.customer_wx_nickname, k.customer_wx_portrait);
+              }
+            });
+            // 等待列表
+            for (let k in this.lineUpObj) {
+              this.data3.push(this.lineUpObj[k]);
+            }
           } else if (data.body.type === 'message') {
             this.getMessage(data.body.sk_data);
+            // 检测排队客户信息， 判断是否是新进客户
           }
         };
         this.ws.onerror = (e) => {
@@ -439,6 +467,21 @@
             this.ws.send(JSON.stringify(obj));
           }
         }, this.timeout);
+      },
+      // 获取缓存 等待排队客户数据
+      getLossDialogueFun (s) {
+        let arr = this.global.dialogueArr;
+        // let arr = store.state.arr;
+        // let arr = str;
+        // let arr = JSON.parse(sessionStorage.getItem('dialogueArr')) || [];
+        arr.forEach((k) => {
+          this.lineUpObj[k.session_id] = k;
+        });
+      },
+      setLossDialogueFun () {
+        let dialogueArr = this.data3;
+        this.global.dialogueArr = dialogueArr;
+        // this.$electron.ipcRenderer.send('setCookie', JSON.stringify(dialogueArr));
       }
     },
     destroyed (s) {
@@ -447,6 +490,7 @@
     created () {
       this.userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
       this.routeSwitchMenu(this.$route.name);
+      this.getLossDialogueFun();
       if (this.userInfo.user_type !== '3') {
         this.WebSocketFun();
       }
