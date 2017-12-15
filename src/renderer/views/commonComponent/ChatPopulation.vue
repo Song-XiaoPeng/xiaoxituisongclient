@@ -592,27 +592,18 @@
           });
         },
         // 获取缓存 等待排队客户数据
-        getLossDialogueFun () {
-          let name = 'dialogueArr=';
-          let ca = document.cookie.split(';');
-          let str = '[]';
-          for (let i = 0; i < ca.length; i++) {
-            let c = ca[i];
-            while (c.charAt(0) === ' ') c = c.substring(1);
-            if (c.indexOf(name) !== -1) {
-              str = c.substring(name.length, c.length);
-            }
-          }
+        getLossDialogueFun (s) {
+          let str = s || '[]';
           let arr = JSON.parse(str);
           // let arr = JSON.parse(sessionStorage.getItem('dialogueArr')) || [];
+          console.log(arr);
           arr.forEach((k) => {
             this.lineUpObj[k.session_id] = k;
           });
         },
         setLossDialogueFun () {
           let dialogueArr = this.data3;
-          document.cookie = 'dialogueArr=' + JSON.stringify(dialogueArr);
-          // sessionStorage.setItem('dialogueArr', JSON.stringify(dialogueArr));
+          this.$electron.ipcRenderer.send('setCookie', JSON.stringify(dialogueArr));
         }
       },
       destroyed (s) {
@@ -634,6 +625,10 @@
         });
         Bus.$on('MessageList', (k) => {
           this.getMessage(k);
+        });
+        this.$electron.ipcRenderer.send('getCookie');
+        this.$electron.ipcRenderer.on('getLossDialogueFun', (e, s) => {
+          this.getLossDialogueFun(s[0].value);
         });
       }
     };
