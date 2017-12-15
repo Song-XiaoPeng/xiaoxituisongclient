@@ -79,10 +79,36 @@
             }
         }
     }
+    .top-box{
+        height: 60px;
+        border-bottom: 1px #d1d6dc solid;
+        ul{
+            li{
+                float: left;
+                height: 100%;
+                padding: 0 15px;
+                color: #3e3e3e;
+                font-size: 16px;
+                line-height: 60px;
+                cursor: pointer;
+            }
+            li.active{
+                background-color: #7cb6fd;
+                color: #fff;
+            }
+        }
+    }
 </style>
 <template>
     <div id="index">
         <Row class="box">
+            <div class="top-box">
+                <ul class="cl">
+                    <li v-bind:class="ascription == '' ? 'active' : ''" @click="ascriptionFun('')">全部</li>
+                    <li v-bind:class="ascription == '1' ? 'active' : ''" @click="ascriptionFun('1')">我的客户</li>
+                    <li v-bind:class="ascription == '2' ? 'active' : ''" @click="ascriptionFun('2')">下属客户</li>
+                </ul>
+            </div>
             <div ref="chartEl" v-bind:class="is_show_chartEl ? 'chart1' : ''" class="chart f-l">
                  <span  class="is_left_show" v-if="is_left_show && !is_show_chartEl" @click="isLefttShowFun">
                     <Icon type="android-funnel"></Icon>
@@ -133,7 +159,25 @@
                                     <Table border ref="selection" highlight-row :columns="columns4" :data="data1" @on-current-change="selTableFun"></Table>
                                 </div>
                                 <div style="text-align: center;padding: 5px">
-                                    <Page :total="pageData.count" :page-size="pageData.row_sum" @click="pageFun"></Page>
+                                    <Page :total="pageData.count" :page-size="pageData.row_sum" @on-change="pageFun"></Page>
+                                </div>
+                            </TabPane>
+
+
+
+                            <TabPane label="线索池客户" name="name2">
+                                <div class="btn-box cl" style="text-align: right;padding:10px">
+                                    <!--<Button type="ghost" style="margin-left: 10px" @click="modal2 = true">添加业务提醒</Button>-->
+                                    <!--<Button type="ghost" style="margin-left: 10px" @click="massFun">群发激活</Button>-->
+                                    <!--<Button class="f-l" type="ghost" style="" @click="is_screen = true">高级搜索</Button>-->
+                                    <Input class="f-l" v-model="real_name"  placeholder="客户名称" style="width: 100px"></Input>
+                                    <Button class="f-l" type="info" style="margin-left: 2px" @click="getCustomerList('seek')">搜索</Button>
+                                </div>
+                                <div class="table-box">
+                                    <Table border ref="selection" highlight-row :columns="columns5" :data="data2" @on-current-change="selTableFun"></Table>
+                                </div>
+                                <div style="text-align: center;padding: 5px">
+                                    <Page :total="pageData.count" :page-size="pageData.row_sum" @on-change="pageFun"></Page>
                                 </div>
                             </TabPane>
                             <!-- end我的客户 -->
@@ -201,31 +245,7 @@
                 </div>
         </Row>
 
-        <!-- 添加提醒弹窗 -->
-        <Modal v-model="modal2" title="添加提醒" @on-ok="addRemind">
-            <Form :label-width="100">
-                <FormItem label="提醒日期：">
-                    <DatePicker type="date" placeholder="选择日期" style="width: 100%" @on-change="dateFun"></DatePicker>
-                </FormItem>
-                <!--<FormItem label="提醒条目：">-->
-                    <!--<Select v-model="model1">-->
-                        <!--<Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option><Button type="dashed">设置</Button>-->
-                    <!--</Select>-->
-                <!--</FormItem>-->
-                <FormItem label="具体内容：">
-                    <Input v-model="txta" type="textarea" :autosize="{minRows: 2}" placeholder="请输入..."></Input>
-                </FormItem>
-                <!--<FormItem label="工作人员：">-->
-                    <!--<Select v-model="model1">-->
-                        <!--<Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option><Button type="dashed" >设置</Button>-->
-                    <!--</Select>-->
-                <!--</FormItem>-->
-                <!--<FormItem label="最后完成日期：">-->
-                    <!--<DatePicker type="date" placeholder="Select date" style="width: 100%"></DatePicker>-->
-                <!--</FormItem>-->
-            </Form>
-        </Modal>
-        <!-- end添加提醒 -->
+
 
 
         <!-- 群发弹窗 -->
@@ -404,65 +424,43 @@
             align: 'center'
           },
           {
-            title: '客户姓名',
-            key: 'real_name'
+            title: '微信用户昵称',
+            key: 'nickname'
           },
           {
-            title: '手机',
-            key: 'real_phone'
-          },
-          {
-            title: '产品',
-            key: 'product_name'
-          },
-          {
-            title: '提醒内容',
-            key: 'remind_content'
-          },
-          {
-            title: '完成内容',
-            key: 'complete_content'
-          },
-          {
-            title: '操作',
-            key: 'action',
-            align: 'center',
-            render: (h, params) => {
-              let arr = [];
-              let del = h('Button', {
-                props: {
-                  type: 'error',
-                  size: 'small'
-                },
-                on: {
-                  click: () => {
-                    this.delContactFun(params.row, params.index);
-                  }
-                }
-              }, '删除');
-              let dateils = h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
+            title: '微信图像',
+            render: (h, p) => {
+              return h('img', {
                 style: {
-                  marginRight: '5px'
+                  width: '50px',
+                  height: '50px'
                 },
-                on: {
-                  click: () => {
-                    Object.assign(this.clientData, params.row);
-                    // this.clientData = params.row;
-                    this.popup3 = true;
-                  }
+                attrs: {
+                  src: p.row.portrait
                 }
-              }, '详情');
-              if (this.userInfo.user_type === '3') {
-                arr.push(dateils);
-                arr.push(del);
-              } else {
-                arr.push(dateils);
-              }
-              return h('div', arr);
+              });
+            }
+          },
+          {
+            title: '性别',
+            render: (h, p) => {
+              return h('span', p.row.gender === 1 ? '男' : p.row.gender === 2 ? '女' : '未知');
+            }
+          },
+          {
+            title: '所在城市',
+            render: (h, p) => {
+              return h('span', p.row.province + ',' + p.row.city);
+            }
+          },
+          {
+            title: '关注时间',
+            key: 'subscribe_time'
+          },
+          {
+            title: '备注',
+            render: (h, p) => {
+              return h('span', p.row.desc === '' ? '暂无备注' : p.row.desc);
             }
           }
         ],
@@ -494,7 +492,8 @@
           count: 1,
           page: 1,
           rows_num: 1
-        }
+        },
+        ascription: ''
       };
     },
     components: {
@@ -508,29 +507,13 @@
     beforeDestroy () {
     },
     methods: {
-      // 添加业务提醒
-      addRemind () {
-        this.is_Loading = true;
-        this.ajax.addRemind({
-          data: {
-            remind_content: this.txta,
-            customer_info_id: this.selUserData.customer_info_id,
-            remind_time: this.RemindDate,
-            remind_uid: this.userInfo.uid
-          },
-          success: (res) => {
-            // 如果添加成功 通知业务提醒组件更新数据
-            if (this.selUserData.customer_info_id && this.selUserData.customer_info_id !== '') {
-              Bus.$emit('remind', this.selUserData);
-            }
-            this.is_Loading = false;
-          },
-          error: (res) => {
-            this.is_Loading = false;
-            this.$Message.warning(res.meta.message);
-          }
-        });
+      // 全部/我的客户/下属客户
+      ascriptionFun (t) {
+        console.log(1231);
+        this.ascription = t;
+        this.getCustomerList();
       },
+      // 添加业务提醒
       massFun () {
         this.modal3 = true;
         this.isMass = true;
@@ -546,13 +529,19 @@
         this.is_Loading = true;
         this.ajax.getClueCustomer({
           data: {
-            page: this.pageData1.page,
-            real_name: this.real_name
-            // type: 0,
-            // ascription: this.tabName === 'name1' ? 1 : 2
+            page: this.pageData.page,
+            real_name: this.real_name,
+            type: this.tabName === 'name1' ? 1 : 2,
+            ascription: this.ascription
           },
           success: (res) => {
-            this.data1 = res.body.data_list;
+            if (this.tabName === 'name1') {
+              this.data1 = res.body.data_list;
+            } else if (this.tabName === 'name2') {
+              this.data2 = res.body.data_list;
+            }
+            this.pageData.count = res.body.page_data.count;
+            this.pageData.rows_num = res.body.page_data.rows_num;
             this.is_Loading = false;
           },
           error: (res) => {
@@ -563,12 +552,12 @@
       },
       // tab切换客户
       selTabFun (v) {
-        if (v === 'name3') {
+        if (v === 'name1') {
           this.tabName = v;
           this.isRightShowFun();
           this.is_left_show = false;
           this.getTailList();
-        } else {
+        } else if (v === 'name2') {
           this.tabName = v;
           this.isRightShowFun();
           this.is_left_show = false;

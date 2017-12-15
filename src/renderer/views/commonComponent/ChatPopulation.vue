@@ -280,23 +280,8 @@
         getDialogueList (res) {
           if (res) {
             this.data3.length = 0;
-            res.queue_up.forEach((k) => {
-              // 排队列表
-              if (this.lineUpObj[k.session_id]) {
-                Object.assign(this.lineUpObj[k.session_id], k);
-              } else {
-                // console.log('排队通知');
-                this.lineUpObj[k.session_id] = k;
-                this.inform(k.customer_wx_nickname, k.customer_wx_portrait);
-              }
-              // this.data3.push(k);
-            });
             // 等待列表
-            for (let k in this.lineUpObj) {
-              this.data3.push(this.lineUpObj[k]);
-            }
-            // 储存数据到本地...
-            this.setLossDialogueFun();
+            this.data3 = res.queue_up;
             res.waiting.forEach((k) => {
               if (this.data2.length === 0) {
                 this.data2.push(k);
@@ -577,7 +562,6 @@
             success: () => {
               delete this.lineUpObj[k.session_id];
               that.data3.splice(i, 1);
-              that.setLossDialogueFun();
               let db2 = new DB();
               db2.type = 'update'; // 执行类型
               db2.tabName = 'visitor'; // 数据表名称
@@ -621,7 +605,7 @@
         // 调用本地数据库 获取储存的数据
         // Notification.requestPermission();
         this.getWaitingTab();
-        this.getLossDialogueFun();
+        // this.getLossDialogueFun();
         Bus.$on('conversationList', (k) => {
           this.getDialogueList(k);
         });

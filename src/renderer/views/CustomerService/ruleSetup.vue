@@ -9,6 +9,11 @@
           <Button type="primary" size="small" @click="addConversationRule = true">新建分组</Button>
           <Button type="primary" size="small" @click="addConversationContent = true">新建内容</Button>
         </div>
+
+
+
+
+
         <TabPane label="客资领取回收规则" name="1">
           <Row>
             <Col span="14">
@@ -67,6 +72,8 @@
           </Row>
         </TabPane>
 
+
+
         <TabPane label="会话规则" name="2">
           <Form :model="formItem" :label-width="120">
             <Row>
@@ -92,6 +99,9 @@
           </Form>
         </TabPane>
 
+
+
+
         <TabPane label="企业常用话术" name="3">
           <Table :columns="replyTableColumns" :data="replyTableData"></Table>
 
@@ -100,10 +110,13 @@
           </div>
         </TabPane>
 
+
+
+
         <TabPane label="标签设置" name="4">
           <Form :label-width="80">
             <FormItem label="操作">
-              <Button type="primary">新建分组</Button>
+              <Button type="primary" @click="popup1 = true">新建分组</Button>
               <Button type="primary">新建内容</Button>
             </FormItem>
             <FormItem label="详细">
@@ -111,22 +124,31 @@
             </FormItem>
           </Form>
         </TabPane>
+
+
+
+
+
       </Tabs>
     </Card>
+
+
+
 
     <Modal
       v-model="addConversationRule"
       title="新建企业话术分组">
       <Form :label-width="80">
         <FormItem label="分组名称">
-          <Input placeholder="请输入分组名称"></Input>
+          <Input  placeholder="请输入分组名称"></Input>
         </FormItem>
       </Form>
     </Modal>
 
-    <Modal
-      v-model="addConversationContent"
-      title="新建话术内容">
+
+
+
+    <Modal v-model="addConversationContent" title="新建话术内容">
       <Form :label-width="80">
         <FormItem label="标题">
           <Input placeholder="请输入标题	"></Input>
@@ -136,6 +158,24 @@
         </FormItem>
       </Form>
     </Modal>
+
+
+    <!-- 添加标签组 弹窗-->
+    <Modal v-model="popup1" title="标签组">
+      <Form :label-width="80">
+        <FormItem label="分组名称">
+          <Input v-model="labelGroupName" placeholder="请输入分组名称"></Input>
+        </FormItem>
+      </Form>
+    </Modal>
+    <!-- end添加标签组 弹窗-->
+
+    <!-- 加载状态 -->
+    <Spin fix v-if="is_Loading">
+      <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
+      <div>请求中....</div>
+    </Spin>
+    <!-- end加载状态 -->
   </div>
 </template>
 <script>
@@ -299,14 +339,33 @@
             group: '客户行业',
             content: '铂金版ERP-32、经典版ERP-12、扫客通-12'
           }
-        ]
+        ],
+        is_Loading: false,
+        popup1: false,
+        labelGroupName: ''
       };
     },
     components: {
     },
     mounted () {
     },
-    methods: {},
+    methods: {
+      // 添加修改标签分组
+      updateLabelGroup () {
+        this.is_Loading = true;
+        this.ajax.updateLabelGroup({
+          data: {},
+          success: (res) => {
+            this.is_Loading = false;
+            this.$Message.warning('操作成');
+          },
+          error: (res) => {
+            this.is_Loading = false;
+            this.$Message.warning(res.meta.message);
+          }
+        });
+      }
+    },
     created () {
     }
   };

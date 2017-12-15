@@ -626,6 +626,7 @@
             },
             success: (res) => {
               this.data7.splice(i, 1);
+              this.selPurposeData = {};
               this.$Message.success('操作成功');
             },
             error: (res) => {

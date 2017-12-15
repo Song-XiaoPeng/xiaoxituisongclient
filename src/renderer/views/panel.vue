@@ -159,7 +159,8 @@
         is_ws_initiative_off: false,
         is_win: true,
         data3: [],
-        lineUpObj: {}
+        lineUpObj: {},
+        lineTime: null
       };
     },
     components: {
@@ -409,40 +410,43 @@
         this.ws.onopen = () => {
           this.is_ws_off = true;
           this.start();
+          this.lineUp();
           this.ws.send(JSON.stringify(obj));
         };
         this.ws.onmessage = (e) => {
           // this.reset();
+          this.getLossDialogueFun();
           let data = JSON.parse(e.data);
           if (data.body.type === 'session') {
+            // 如果是排队数据
             this.getDialogueList(data.body.sk_data);
             data.body.sk_data.queue_up.forEach((k) => {
               if (this.lineUpObj[k.session_id]) {
                 Object.assign(this.lineUpObj[k.session_id], k);
               } else {
-                console.log('排队通知');
                 this.lineUpObj[k.session_id] = k;
                 this.inform(k.customer_wx_nickname, k.customer_wx_portrait);
               }
             });
-            // 等待列表
-            for (let k in this.lineUpObj) {
-              this.data3.push(this.lineUpObj[k]);
-            }
+            this.data3 = data.body.sk_data.queue_up;
+            this.setLossDialogueFun();
           } else if (data.body.type === 'message') {
+            // 如果是会话信息数据
             this.getMessage(data.body.sk_data);
-            // 检测排队客户信息， 判断是否是新进客户
           }
         };
         this.ws.onerror = (e) => {
           // this.heartCheck.reset();
           // this.$Message.warning('网络不稳定或服务器断开，60秒后为您重连。。。');
+          clearTimeout(this.ws_intval);
+          clearInterval(this.lineTime);
           this.socketErrFun(e);
         };
         this.ws.onclose = () => {
           // heartCheck.start();
           this.is_ws_off = false;
           clearTimeout(this.ws_intval);
+          clearInterval(this.lineTime);
           if (!this.is_ws_initiative_off) {
             this.ws_intval = setInterval(() => {
               this.WebSocketFun();
@@ -463,10 +467,21 @@
         };
         this.timeoutObj = setInterval(() => {
           if (this.is_ws_off) {
-            console.log('检测');
             this.ws.send(JSON.stringify(obj));
           }
         }, this.timeout);
+      },
+      // 通知后台 获取排队数据
+      lineUp () {
+        clearInterval(this.lineTime);
+        let obj = {
+          type: 'get_lineup_session',
+          client: 'pc',
+          uid: this.userInfo.uid
+        };
+        this.lineTime = setInterval(() => {
+          this.ws.send(JSON.stringify(obj));
+        }, 2000);
       },
       // 获取缓存 等待排队客户数据
       getLossDialogueFun (s) {
@@ -479,7 +494,7 @@
         });
       },
       setLossDialogueFun () {
-        let dialogueArr = this.data3;
+        let dialogueArr = Array.from(new Set(this.data3));
         this.global.dialogueArr = dialogueArr;
         // this.$electron.ipcRenderer.send('setCookie', JSON.stringify(dialogueArr));
       }
@@ -490,7 +505,7 @@
     created () {
       this.userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
       this.routeSwitchMenu(this.$route.name);
-      this.getLossDialogueFun();
+      // this.getLossDialogueFun();
       if (this.userInfo.user_type !== '3') {
         this.WebSocketFun();
       }

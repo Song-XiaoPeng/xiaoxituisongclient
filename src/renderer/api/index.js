@@ -1210,4 +1210,72 @@ ajax.accessQueuingSession = (obj) => {
     console.log(error);
   });
 };
+// 获取标签列表
+ajax.getLabelList = (obj) => {
+  util.ajax.post('/api/v1/setting/Rule/getLabelList', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 设置微信用户标签
+ajax.setWxUserLabel = (obj) => {
+  util.ajax.post('/api/v1/we_chat/WxOperation/setWxUserLabel', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 获取会话微信用户基本信息
+ajax.getWxUserInfo = (obj) => {
+  util.ajax.post('/api/v1/message/Common/getWxUserInfo', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 添加标签分组
+ajax.updateLabelGroup = (obj) => {
+  util.ajax.post('/api/v1/setting/Rule/updateLabelGroup', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
 export default ajax;
