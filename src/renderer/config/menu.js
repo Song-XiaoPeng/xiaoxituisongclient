@@ -225,7 +225,7 @@ let menuData = [
         },
         {
           model_id: 20,
-          menuTitle: '子账号管理',
+          menuTitle: '权限管理',
           route: 'staff',
           routeBreadcrumb: [],
           sonMenu: []
