@@ -1,207 +1,222 @@
 <style scoped lang="less">
-   .title{
-     .btn{
-         font-weight: 100;
-         padding: 0px 5px;
-         border-right: 1px #eaeaea solid;
-         float: right;
-         font-size: 12px;
-         color: #1a1a1a;
-         cursor: pointer;
-         transition: all .2s;
-     }
-       .btn:hover{
-           color: #2db7f5;
-       }
-
-   }
+  .tab-top{
+    background-color: #ecf0f4;
+    height: 60px;
+    border-top: 10px #F5F7F9 solid;
+    .ranking{
+      border-left: 2px #74b2fe solid;
+      height: 25px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
+      color: #74b2fe;
+      line-height: 22px;
+      display: inline-block;
+      margin: 12px;
+      padding: 0px 8px;
+    }
+    .date-sel-box{
+      ul{
+        li{
+          height: 50px;
+          line-height: 50px;
+          color: #666666;
+          font-size: 16px;
+          padding: 0 15px;
+          cursor: pointer;
+        }
+        li.active{
+          background-color: #74b2fe;
+          color: #fff;
+        }
+      }
+    }
+  }
 </style>
 <template>
-    <div id="index">
-        <Card style="width:100%">
-            <p slot="title" class="title">
-                <span class="btn">本月</span>
-                <span class="btn">本周</span>
-                <span class="btn">昨日</span>
-                <span class="btn" >今日</span>
-            </p>
-            <div>
-                <span>来源：</span>
-                <Select v-model="model1" style="width:200px">
-                    <Option v-for="item in cityLis1" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                </Select>
-                <span>员工：</span>
-                <Select v-model="model2" style="width:200px">
-                    <Option v-for="item in cityLis2" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                </Select>
-                <span>会话方式：</span>
-                <Select v-model="model3" style="width:200px">
-                    <Option v-for="item in cityLis3" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                </Select>
-            </div>
-            <div style="height: 450px">
-                <!--<IEcharts :option="pie1" :resizable="true" :loading="loading"  @ready="onReady" @click="onClick"></IEcharts>-->
-            </div>
-        </Card>
-        <Card style="width:100%;margin-top: 10px">
-            <p slot="title" class="title">
-                <span>详情</span>
-            </p>
-            <div >
-                <Table :columns="columns1" :data="data1"></Table>
-            </div>
-        </Card>
+  <div id="index">
+    <div class="table-box">
+      <div class="tab-top">
+        <div class="ranking">
+          粉丝量分析
+        </div>
+        <div class="f-r date-sel-box"></div>
+      </div>
+      <div style="padding:10px 15px; margin-bottom: 10px;">
+        <ve-bar :data="chartData" :legend-visible="false"></ve-bar>
+      </div>
     </div>
+
+    <div class="table-box">
+      <div class="tab-top">
+        <div class="ranking">
+          客服排名
+        </div>
+      </div>
+      <div style="padding: 10px 15px">
+        <Table border :columns="tableColumns" stripe :data="tableData"></Table>
+      </div>
+    </div>
+  </div>
 </template>
 <script>
-  //  import IEcharts from 'vue-echarts-v3/src/full.vue';
-  //  import 'echarts/lib/chart/pie';
+  import VeBar from 'v-charts/lib/bar';
+
   export default {
     data () {
       return {
-        pie1: {
-          color: ['#3398DB'],
-          tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-              type: 'shadow'
-            }
+        tableColumns: [
+          {
+            title: '客服',
+            key: 'name',
+            align: 'center'
           },
-          grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
-            containLabel: true
+          {
+            title: '会话数',
+            key: 'session_total',
+            align: 'center'
           },
-          xAxis: {
-            type: 'value',
-            boundaryGap: [0, 0.01]
+          {
+            title: '手动接入会话',
+            key: 'first_session',
+            align: 'center'
           },
-          yAxis: {
-            type: 'category',
-            data: ['巴西', '印尼', '美国', '印度', '中国', '世界人口(万)', '你打听', '你打听', '你打听', '你打听', '你打听', '你打听', '你打听']
+          {
+            title: '自动分配会话',
+            key: 'auth_session',
+            align: 'center'
           },
-          series: [
-            {
-              name: '直接访问',
-              type: 'bar',
-              barWidth: '60%',
-              data: [10, 52, 200, 334, 390, 330, 220, 220, 220, 220, 220, 220, 220]
-            }
+          {
+            title: '主动发起会话',
+            key: 'active_count',
+            align: 'center'
+          },
+          {
+            title: '客户回应',
+            key: 'respond_count',
+            align: 'center'
+          },
+          {
+            title: '发出消息数',
+            key: 'send_count',
+            align: 'center'
+          },
+          {
+            title: '接收消息数',
+            key: 'message_count',
+            align: 'center'
+          },
+          {
+            title: '在线时长',
+            key: 'time',
+            align: 'center'
+          }
+        ],
+        tableData: [
+          {
+            name: '张三',
+            session_total: '300',
+            first_session: '231',
+            auth_session: '113',
+            active_count: '231',
+            respond_count: '152',
+            send_count: '612',
+            message_count: '117',
+            time: '237小时'
+          },
+          {
+            name: '张丽',
+            session_total: '213',
+            first_session: '152',
+            auth_session: '211',
+            active_count: '612',
+            respond_count: '152',
+            send_count: '117',
+            message_count: '612',
+            time: '212小时'
+          },
+          {
+            name: '曾仪',
+            session_total: '423',
+            first_session: '117',
+            auth_session: '612',
+            active_count: '321',
+            respond_count: '152',
+            send_count: '212',
+            message_count: '117',
+            time: '310小时'
+          },
+          {
+            name: '黄飞',
+            session_total: '137',
+            first_session: '131',
+            auth_session: '213',
+            active_count: '431',
+            respond_count: '352',
+            send_count: '412',
+            message_count: '117',
+            time: '291小时'
+          },
+          {
+            name: 'hf2',
+            session_total: '421',
+            first_session: '331',
+            auth_session: '413',
+            active_count: '131',
+            respond_count: '352',
+            send_count: '212',
+            message_count: '317',
+            time: '311小时'
+          },
+          {
+            name: '李海慧',
+            session_total: '233',
+            first_session: '131',
+            auth_session: '213',
+            active_count: '231',
+            respond_count: '352',
+            send_count: '112',
+            message_count: '217',
+            time: '131小时'
+          },
+          {
+            name: '燕子',
+            session_total: '275',
+            first_session: '231',
+            auth_session: '113',
+            active_count: '231',
+            respond_count: '152',
+            send_count: '612',
+            message_count: '317',
+            time: '122小时'
+          }
+        ],
+        chartData: {
+          columns: ['姓名', '粉丝数量'],
+          rows: [
+            { '姓名': '张三', '粉丝数量': 1523 },
+            { '姓名': '张丽', '粉丝数量': 1223 },
+            { '姓名': '曾仪', '粉丝数量': 1593 },
+            { '姓名': '黄飞', '粉丝数量': 3321 },
+            { '姓名': 'hf2', '粉丝数量': 2231 },
+            { '姓名': '李海慧', '粉丝数量': 4212 },
+            { '姓名': '燕子', '粉丝数量': 3766 }
           ]
         },
-        loading: false,
-        columns1: [
-          {
-            title: '时间',
-            key: 'name1'
-          },
-          {
-            title: '访问量',
-            key: 'name2'
-          },
-          {
-            title: '首次访问',
-            key: 'name3'
-          },
-          {
-            title: '粉丝分组',
-            key: 'name4'
-          }
-        ],
-        data1: [
-          {
-            name1: '8点',
-            name2: '100',
-            name3: '20',
-            name4: '10'
-
-          }
-        ],
-        cityLis1: [
-          {
-            value: 'New York',
-            label: 'New York'
-          },
-          {
-            value: 'London',
-            label: 'London'
-          },
-          {
-            value: 'Sydney',
-            label: 'Sydney'
-          },
-          {
-            value: 'Ottawa',
-            label: 'Ottawa'
-          },
-          {
-            value: 'Paris',
-            label: 'Paris'
-          },
-          {
-            value: 'Canberra',
-            label: 'Canberra'
-          }
-        ],
-        cityLis2: [
-          {
-            value: 'New York',
-            label: '你DATe'
-          },
-          {
-            value: 'London',
-            label: '张大爷'
-          }
-        ],
-        cityLis3: [
-          {
-            value: '1',
-            label: '会话数'
-          },
-          {
-            value: '2',
-            label: '手动接入会话'
-          },
-          {
-            value: '3',
-            label: '自动分配会话'
-          },
-          {
-            value: '4',
-            label: '主动发起会话'
-          },
-          {
-            value: '5',
-            label: '客户回应'
-          },
-          {
-            value: '6',
-            label: '发出消息数'
-          },
-          {
-            value: '7',
-            label: '接收消息数在线时长'
-          }
-        ],
-        model1: '',
-        model2: '',
-        model3: ''
+        chartSettings: {
+          metrics: ['姓名', '粉丝数量'],
+          dimension: ['姓名']
+        }
       };
     },
     components: {
-      // IEcharts
+      VeBar
     },
     mounted () {
     },
     beforeDestroy () {
     },
     methods: {
-      onReady () {
-      },
-      onClick () {
-        console.log(13444);
-      }
     },
     created () {
     }
