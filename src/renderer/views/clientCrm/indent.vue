@@ -80,55 +80,109 @@
             }
         }
     }
+    .top-box{
+        height: 60px;
+        border-bottom: 1px #d1d6dc solid;
+        ul{
+            li{
+                float: left;
+                height: 100%;
+                padding: 0 15px;
+                color: #3e3e3e;
+                font-size: 16px;
+                line-height: 60px;
+                cursor: pointer;
+            }
+            li.active{
+                background-color: #7cb6fd;
+                color: #fff;
+            }
+        }
+    }
+    .filtrate-box{
+        height: 60px;
+        background-color: #fefefe;
+        .my-box{
+            float: left;
+            li{
+                float: left;
+                padding: 0 5px;
+                height: 60px;
+                line-height: 60px;
+                color: #848484;
+                font-size: 14px;
+                cursor: pointer;
+            }
+            li.active{
+                color: #3399ff;
+            }
+        }
+    }
+    .title-box{
+        height: 60px;
+        background-color: #ecf0f4;
+        .txt-box{
+            height: 60px;
+            line-height: 60px;
+            color: #7cb6fd;
+            font-size: 14px;
+            margin-left: 15px;
+        }
+    }
 </style>
 <template>
     <div id="index">
         <Row class="box">
+            <div class="top-box">
+                <ul class="cl">
+                    <li v-bind:class="tabName == 'name1' ? 'active' : ''"  @click="selTabFun('name1')">订单客户</li>
+                    <li v-bind:class="tabName == 'name2' ? 'active' : ''"  @click="hintFun()">回访提醒</li>
+                </ul>
+            </div>
+            <div class="filtrate-box">
+                <ul class="my-box cl">
+                    <li v-bind:class="ascription == '' ?  'active' : ''" @click="ascriptionFun('')">全部</li>
+                    <li v-bind:class="ascription == '1' ?  'active' : ''" @click="ascriptionFun('1')">我的客户</li>
+                    <li v-bind:class="ascription == '2' ?  'active' : ''" @click="ascriptionFun('2')">下属客户</li>
+                </ul>
+                <ul class="my-box cl" style="margin: 0 20px">
+                    <li @click="hintFun">总订单数(<span style="color: #efc27c">47985</span>)</li>
+                    <li @click="hintFun">今日订单(<span style="color: #efc27c">45</span>)</li>
+                    <li @click="hintFun">待回访(<span style="color: #efc27c">13</span>)</li>
+                </ul>
+                <ul class="my-box cl">
+                    <li @click="hintFun">今日需联系</li>
+                    <li @click="hintFun">明日需联系</li>
+                    <li @click="hintFun">本周需沟通</li>
+                    <li @click="hintFun">本月需沟通</li>
+                </ul>
+            </div>
             <div ref="chartEl" v-bind:class="is_show_chartEl ? 'chart1' : ''" class="chart f-l">
                  <span  class="is_left_show" v-if="is_left_show && !is_show_chartEl" @click="isLefttShowFun">
                     <Icon type="android-funnel"></Icon>
                  </span>
-                <!--<div class="sel cl">-->
-                <!--<Col  :md="12" :lg="8">-->
-                <!--<Form :label-width="80">-->
-                <!--<FormItem label="客户：" style="height: 20px">-->
-                <!--<Select v-model="model1" >-->
-                <!--<Option v-for="item in cityList1" :value="item.value" :key="item.value">{{ item.label }}</Option>-->
-                <!--</Select>-->
-                <!--</FormItem>-->
-                <!--</Form>-->
-                <!--</Col>-->
-                <!--<Col  :md="12" :lg="8">-->
-                <!--<Form :label-width="80">-->
-                <!--<FormItem label="会话：" style="height: 20px">-->
-                <!--<Select v-model="model2" >-->
-                <!--<Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>-->
-                <!--</Select>-->
-                <!--</FormItem>-->
-                <!--</Form>-->
-                <!--</Col>-->
-                <!--<Col  :md="24" :lg="8">-->
-                <!--<Form :label-width="80">-->
-                <!--<FormItem label="未联系：" style="height: 20px" >-->
-                <!--<Select v-model="model3">-->
-                <!--<Option v-for="item in cityList2" :value="item.value" :key="item.value">{{ item.label }}</Option>-->
-                <!--</Select>-->
-                <!--</FormItem>-->
-                <!--</Form>-->
-                <!--</Col>-->
-                <!--</div>-->
                 <div>
-                    <Tabs v-model="tabName" @on-click="selTabFun">
+
 
 
                         <!-- 我的客户 -->
-                        <TabPane label="我的客户" name="name1">
+
+                        <div v-if="tabName == 'name1'" class="">
                             <div class="btn-box cl" style="text-align: right;padding:10px">
                                 <!--<Button type="ghost" style="margin-left: 10px" @click="modal2 = true">添加业务提醒</Button>-->
                                 <!--<Button type="ghost" style="margin-left: 10px" @click="massFun">群发激活</Button>-->
                                 <!--<Button class="f-l" type="ghost" style="" @click="is_screen = true">高级搜索</Button>-->
-                                <Input class="f-l" v-model="real_name"  placeholder="客户名称" style="width: 100px"></Input>
+                                <Input class="f-l" v-model="real_name"  placeholder="客户名称" style="width: 200px"></Input>
                                 <Button class="f-l" type="info" style="margin-left: 2px" @click="getCustomerList('seek')">搜索</Button>
+                                <Button class="f-l"  style="margin-left: 10px" type="ghost" @click="hintFun">高级搜索<Icon type="arrow-up-b"></Icon></Button>
+                                <Button class="f-r"  style="margin-left: 10px" type="info"  @click="hintFun">添加业务提醒</Button>
+                                <Button class="f-r"  style="margin-left: 10px" type="warning"  @click="hintFun">群发激活</Button>
+                            </div>
+                            <div class="title-box cl">
+                                <div class="f-l txt-box">订单</div>
+                                <div class="f-r">
+                                    <Button type="ghost" @click="hintFun" style="margin: 15px">设置标题</Button>
+                                </div>
                             </div>
                             <div class="table-box">
                                 <Table border ref="selection" highlight-row :columns="columns4" :data="data1" @on-current-change="selTableFun"></Table>
@@ -136,12 +190,12 @@
                             <div style="text-align: center;padding: 5px">
                                 <Page :total="pageData.count" :page-size="pageData.rows_num" @click="pageFun"></Page>
                             </div>
-                        </TabPane>
+                        </div>
                         <!-- end我的客户 -->
 
 
                         <!-- 其他人 -->
-                        <TabPane  label="其他人" name="name2">
+                        <div v-if="tabName == 'name2'" class="">
                             <div class="btn-box cl" style="text-align: right;padding:10px">
                                 <!--<Button type="ghost" style="margin-left: 10px" @click="modal2 = true">添加业务提醒</Button>-->
                                 <!--<Button type="ghost" style="margin-left: 10px" @click="massFun">群发激活</Button>-->
@@ -155,42 +209,10 @@
                             <div style="text-align: center;padding: 5px">
                                 <Page :total="pageData.count" :page-size="pageData.rows_num" @click="pageFun"></Page>
                             </div>
-                        </TabPane>
+                        </div>
                         <!-- end其他人 -->
 
 
-
-
-                        <!-- end跟踪提醒 -->
-                        <TabPane  label="跟踪提醒" name="name3">
-                            <div class="time-box">
-                                <ul class="cl">
-                                    <li class="" v-bind:class="time_type == 1 ? 'active' : ''" @click="selContactFun(1)">今日需联系</li>
-                                    <li class="" v-bind:class="time_type == 2 ? 'active' : ''" @click="selContactFun(2)">昨日需联系</li>
-                                    <li class="" v-bind:class="time_type == 3 ? 'active' : ''" @click="selContactFun(3)">本周需联系</li>
-                                    <li class="" v-bind:class="time_type == 4 ? 'active' : ''" @click="selContactFun(4)">本月需联系</li>
-                                    <li class="" v-bind:class="time_type == 5 ? 'active' : ''" @click="selContactFun(5)">超时需联系</li>
-                                    <li class="" v-bind:class="time_type == 6 ? 'active' : ''" @click="selContactFun(6)">已完成</li>
-                                </ul>
-                            </div>
-                            <div class="btn-box cl" style="text-align: right;padding:10px">
-                                <!--<Button type="ghost" style="margin-left: 10px" @click="modal2 = true">添加业务提醒</Button>-->
-                                <!--<Button type="ghost" style="margin-left: 10px" @click="massFun">群发激活</Button>-->
-                                <!--<Button class="f-l" type="ghost" style="" @click="is_screen = true">高级搜索</Button>-->
-                                <Input class="f-l" v-model="real_name"  placeholder="客户名称" style="width: 100px"></Input>
-                                <Button class="f-l" type="info" style="margin-left: 2px" @click="getTailList('seek')">搜索</Button>
-                            </div>
-                            <div class="table-box">
-                                <Table border ref="selection" highlight-row :columns="columns5" :data="data2"></Table>
-                            </div>
-                            <div style="text-align: center;padding: 5px">
-                                <Page :total="pageData.count" :page-size="pageData.rows_num" @click="pageFun"></Page>
-                            </div>
-                        </TabPane>
-                        <!-- 跟踪提醒 -->
-
-
-                    </Tabs>
                 </div>
 
             </div>
@@ -514,7 +536,7 @@
           rows_num: 0,
           page: 1
         },
-        tabName: 'name2',
+        tabName: 'name1',
         is_seek: false,
         selUserData: null,
         txta: '',
@@ -528,7 +550,8 @@
           count: 1,
           page: 1,
           rows_num: 1
-        }
+        },
+        ascription: ''
       };
     },
     components: {
@@ -542,6 +565,18 @@
     beforeDestroy () {
     },
     methods: {
+      // 待开发提示
+      hintFun () {
+        // this.$Message.warning('玩命开发中。。。');
+      },
+      // 全部/我的客户/下属客户
+      ascriptionFun (t) {
+        this.ascription = t;
+        this.is_left_show = false;
+        this.is_show_chartEl = false;
+        this.is_show_informationEl = false;
+        this.getCustomerList();
+      },
       // 添加业务提醒
       addRemind () {
         this.is_Loading = true;
@@ -583,7 +618,7 @@
             page: this.pageData1.page,
             real_name: this.real_name,
             type: 2,
-            ascription: this.tabName === 'name1' ? 1 : 2
+            ascription: this.ascription
           },
           success: (res) => {
             this.data1 = res.body.data_list;

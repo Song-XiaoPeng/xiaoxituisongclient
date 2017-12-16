@@ -107,7 +107,24 @@
          <!--</div>-->
       <!--</div>-->
       <div class="form-box">
-         <Form label-position="right" :label-width="80">
+         <Form v-if="is_clue" label-position="right" :label-width="100">
+            <FormItem label="客户姓名：">
+               <span>{{clientData.nickname}}</span>
+            </FormItem>
+            <FormItem label="二维码来源：">
+               <span>{{clientData.source_qrcode_name}}</span>
+            </FormItem>
+            <FormItem label="所在地区：">
+               <span>{{clientData.country}}，{{clientData.province}}，{{clientData.city}}</span>
+            </FormItem>
+            <FormItem label="性别：">
+               <span v-if="clientData.gender == '1'">男</span>
+               <span v-if="clientData.gender == '2'">女</span>
+               <span v-if="clientData.gender == '3'">未知</span>
+            </FormItem>
+         </Form>
+
+         <Form v-else label-position="right" :label-width="80">
             <!--<FormItem label="粉丝分组：">-->
                <!--<Select v-model="WxAutId" style="width:  100%;">-->
                   <!--<Option v-for="item in cityList1" :value="item.id" :key="item.id">{{ item.name }}</Option>-->
@@ -142,13 +159,10 @@
                </RadioGroup>
             </FormItem>
             <FormItem  label="姓名：">
-               <Input v-model="formData.real_name" style="width:  100%;" @on-change="nameSeekFun"></Input>
+               <Input v-model="formData.real_name" style="width:  100%;" @on-change="nameSeekFun" @on-blur="blurFun"></Input>
                <ul class="name-box" v-if="is_name_show">
                   <li v-for="(item, i) in nameArr" @click="selNameSeekFun(item)">{{ item.real_name }}</li>
                </ul>
-               <!--<Select v-model="formData.real_name" filterable @on-query-change="nameSeekFun" @on-change="selNameSeekFun">-->
-                  <!--<Option v-for="(item, i) in nameArr" :value="i" :key="item.value">{{ item.real_name }}</Option>-->
-               <!--</Select>-->
             </FormItem>
             <FormItem  label="手机：">
                <Input v-model="formData.real_phone" style="width:  100%;"></Input>
@@ -170,7 +184,7 @@
             </FormItem>
          </Form>
       </div>
-      <div class="custom-group-box">
+      <div class="custom-group-box" v-if="!is_clue">
          <Button type="info" class="f-r"  @click="saveFun" icon="plus-round">保存</Button>
       </div>
 
@@ -401,7 +415,9 @@
             page: 1,
             rows_num: 1
           },
-          selPurposeData: {}
+          selPurposeData: {},
+          is_clue: false,
+          is_ajax_clue: false
         };
       },
       mounted () {
@@ -412,6 +428,12 @@
       watch: {
       },
       methods: {
+        // 姓名失去焦点延迟方法
+        blurFun () {
+          setTimeout(() => {
+            this.is_name_show = false;
+          }, 300);
+        },
         ok () {
         },
         // 添加/修改 池组
@@ -501,17 +523,30 @@
         },
         // 客户池分组改变方法
         saveFun (v) {
-          // Object.assign(this.formData, {'appid': this.clientData.appid});
-          // Object.assign(this.formData, {'openid': this.clientData.customer_wx_openid});
           Object.assign(this.formData, {'product_id': this.selPurposeData.product_id});
-          this.ajax.crmUpdate({
-            data: this.formData,
-            success: (res) => {
-            },
-            error: (res) => {
-              this.$Message.warning(res.meta.message);
-            }
-          });
+          if (this.is_ajax_clue) {
+            Object.assign(this.formData, {'appid': this.clientData.appid});
+            Object.assign(this.formData, {'openid': this.clientData.openid});
+            this.ajax.setCustomerInfo({
+              data: this.formData,
+              success: (res) => {
+                this.$Message.success('操作成功');
+              },
+              error: (res) => {
+                this.$Message.warning(res.meta.message);
+              }
+            });
+          } else {
+            this.ajax.crmUpdate({
+              data: this.formData,
+              success: (res) => {
+                this.$Message.success('操作成功');
+              },
+              error: (res) => {
+                this.$Message.warning(res.meta.message);
+              }
+            });
+          }
         },
         // 获取客户信息
         getClientFun (res) {
@@ -654,9 +689,20 @@
           this.getWxGroup();
         });
         Bus.$on('change', (k, o) => {
+          if (o.type === 'clue') {
+            this.is_clue = true;
+          } else {
+            this.is_clue = false;
+          }
+          if (o.ajax_type === 'clue') {
+            this.is_ajax_clue = true;
+          } else {
+            this.is_ajax_clue = false;
+          }
           this.is_CRM = o ? o.is_CRM : false;
           this.clientData = k;
-          this.getClientFun(k);
+          let obj = k.customer_info ? k.customer_info : k;
+          this.getClientFun(obj);
         });
         this.getProductList();
       }

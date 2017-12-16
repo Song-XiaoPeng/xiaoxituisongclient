@@ -177,7 +177,7 @@
                </RadioGroup>
             </FormItem>
             <FormItem style="border-bottom: 0px;"  label="姓名：">
-               <Input v-model="formData.real_name" style="width:  100%;" @on-change="nameSeekFun" @on-blur="is_name_show = false"></Input>
+               <Input v-model="formData.real_name" style="width:  100%;" @on-change="nameSeekFun" @on-blur="blurFun"></Input>
                <ul class="name-box" v-if="is_name_show">
                   <li v-for="(item, i) in nameArr" @click="selNameSeekFun(item)">{{ item.real_name }}</li>
                </ul>
@@ -480,6 +480,12 @@
       watch: {
       },
       methods: {
+        // 姓名失去焦点延迟方法
+        blurFun () {
+          setTimeout(() => {
+            this.is_name_show = false;
+          }, 300);
+        },
         // 选择标签列表 中的数据
         selLabelFun (v) {
           this.selLabelData = v;
