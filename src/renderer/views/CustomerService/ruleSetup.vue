@@ -360,7 +360,7 @@
           },
           success: (res) => {
             this.is_Loading = false;
-            this.$Message.warning('操作成');
+            this.$Message.success('操作成功');
           },
           error: (res) => {
             this.is_Loading = false;

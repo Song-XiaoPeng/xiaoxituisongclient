@@ -551,17 +551,13 @@
       },
       // tab切换客户
       selTabFun (v) {
-        if (v === 'name1') {
-          this.tabName = v;
-          this.isRightShowFun();
-          this.is_left_show = false;
-          this.getTailList();
-        } else if (v === 'name2') {
-          this.tabName = v;
-          this.isRightShowFun();
-          this.is_left_show = false;
-          this.getCustomerList();
-        }
+        this.pageData.page = 1;
+        this.pageData.rows_num = 1;
+        this.pageData.count = 1;
+        this.tabName = v;
+        this.is_left_show = false;
+        console.log(231320);
+        this.getCustomerList();
       },
       // 时间选择
       dateFun (v) {
@@ -653,11 +649,7 @@
       // 分页
       pageFun (v) {
         this.pageData.page = v;
-        if (this.tabName === 'name3') {
-          this.getTailList();
-        } else {
-          this.getCustomerList();
-        }
+        this.getCustomerList();
       }
     },
     created () {
