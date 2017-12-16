@@ -59,7 +59,7 @@
             </Col>
           </Row>
 
-          <Table border :columns="staffColumns" :data="staffData"></Table>
+          <Table border :columns="staffColumns" :data="staffData" stripe></Table>
 
           <div class="page-centent">
             <Page :total="100"></Page>
@@ -93,7 +93,7 @@
             </Col>
           </Row>
 
-          <Table border :columns="staffColumns" :data="staffQuitData"></Table>
+          <Table border :columns="staffColumns" :data="staffQuitData" stripe></Table>
 
           <div class="page-centent">
             <Page :total="4"></Page>
