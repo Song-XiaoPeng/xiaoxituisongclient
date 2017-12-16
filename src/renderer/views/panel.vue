@@ -507,7 +507,7 @@
       this.userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
       this.routeSwitchMenu(this.$route.name);
       // this.getLossDialogueFun();
-      if (this.userInfo.user_type !== '3') {
+      if (this.userInfo.user_type !== '3' && this.userInfo.user_type !== 3) {
         this.WebSocketFun();
       }
       this.$electron.ipcRenderer.on('mini', () => {

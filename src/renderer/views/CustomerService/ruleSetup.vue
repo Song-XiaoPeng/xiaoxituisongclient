@@ -116,16 +116,14 @@
         <TabPane label="标签设置" name="4">
           <Form :label-width="80">
             <FormItem label="操作">
-              <Button type="primary" @click="popup1 = true">新建分组</Button>
-              <Button type="primary">新建内容</Button>
+              <Button type="primary" @click="popup3 = true">分组管理</Button>
+              <Button type="primary" @click="popup2 = true">新建标签</Button>
             </FormItem>
             <FormItem label="详细">
               <Table :columns="labelTableColumns" :data="labelTableData"></Table>
             </FormItem>
           </Form>
         </TabPane>
-
-
 
 
 
@@ -170,6 +168,36 @@
     </Modal>
     <!-- end添加标签组 弹窗-->
 
+
+    <!-- 添加标签/内容 弹窗-->
+    <Modal v-model="popup2" title="标签内容" @on-ok="setLabel">
+      <Form :label-width="80">
+        <FormItem label="分组">
+          <Select v-model="group_id" style="width:200px">
+            <Option v-for="item in cityList" :value="item.label_group_id" :key="item.label_group_id">{{ item.group_name }}</Option>
+          </Select>
+        </FormItem>
+      </Form>
+      <Form :label-width="80">
+        <FormItem label="标签内容">
+          <Input v-model="labelGroupContent" placeholder="请输入"></Input>
+        </FormItem>
+      </Form>
+    </Modal>
+    <!-- end添加标签/内容 弹窗-->
+
+
+    <!-- 分组操作 弹窗-->
+    <Modal v-model="popup3" title="标签分组">
+      <div style="margin-bottom: 5px;"><Button type="primary" @click="popup1 = true">新建分组</Button></div>
+      <div>
+        <Table :columns="GroupColumns" :data="cityList"></Table>
+      </div>
+    </Modal>
+    <!-- edn分组操作 弹窗-->
+
+
+
     <!-- 加载状态 -->
     <Spin fix v-if="is_Loading">
       <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
@@ -182,9 +210,11 @@
   export default {
     data () {
       return {
+        popup3: false,
         addConversationContent: false,
         addConversationRule: false,
         tabsVal: '1',
+        popup2: false,
         formItem: {
           input: '',
           select: '',
@@ -285,12 +315,12 @@
         labelTableColumns: [
           {
             title: '标签分组',
-            key: 'group',
+            key: 'group_name',
             width: 100
           },
           {
             title: '标签内容',
-            key: 'content'
+            key: 'label_name'
           },
           {
             title: '操作',
@@ -308,7 +338,11 @@
                   },
                   on: {
                     click: () => {
-                      this.receivables(params.index);
+                      this.group_id = params.row.label_group_id;
+                      this.label_id = params.row.label_id;
+                      this.labelGroupContent = params.row.label_name;
+                      this.popup2 = true;
+                      this.is_group_label = true;
                     }
                   }
                 }, '编辑'),
@@ -322,7 +356,8 @@
                   },
                   on: {
                     click: () => {
-                      this.cancelOrder(params.index);
+                      this.label_id = params.row.label_id;
+                      this.delLabel();
                     }
                   }
                 }, '删除')
@@ -330,19 +365,62 @@
             }
           }
         ],
-        labelTableData: [
+        GroupColumns: [
           {
-            group: '意向产品',
-            content: '铂金版ERP-30、经典版ERP-30'
+            title: '分组名',
+            key: 'group_name'
           },
           {
-            group: '客户行业',
-            content: '铂金版ERP-32、经典版ERP-12、扫客通-12'
+            title: '操作',
+            key: 'operation',
+            render: (h, params) => {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'primary',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.popup3 = false;
+                      this.group_id = params.row.label_group_id;
+                      this.labelGroupName = params.row.group_name;
+                      this.popup1 = true;
+                    }
+                  }
+                }, '修改'),
+                h('Button', {
+                  props: {
+                    type: 'error',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.group_id = params.row.label_group_id;
+                      this.delGroupFun(params.index);
+                    }
+                  }
+                }, '删除')
+              ]);
+            }
           }
         ],
+        labelTableData: [],
         is_Loading: false,
         popup1: false,
-        labelGroupName: ''
+        labelGroupName: '',
+        LabelGroupListData: [],
+        group_id: '',
+        cityList: [],
+        labelGroupContent: '',
+        label_id: '',
+        is_group_label: false
       };
     },
     components: {
@@ -350,15 +428,82 @@
     mounted () {
     },
     methods: {
+      // 获取标签分组列表
+      getLabelGroupListFun () {
+        this.ajax.getLabelGroup({
+          data: {},
+          success: (res) => {
+            this.cityList = res.body;
+            this.is_Loading = false;
+          },
+          error: (res) => {
+            this.is_Loading = false;
+            this.$Message.warning(res.meta.message);
+          }
+        });
+      },
+      // 获取标签列表
+      getLabelListFun () {
+        this.ajax.getLabelList({
+          data: {},
+          success: (res) => {
+            this.labelTableData = res.body;
+            this.is_Loading = false;
+          },
+          error: (res) => {
+            this.is_Loading = false;
+            this.$Message.warning(res.meta.message);
+          }
+        });
+      },
+      // 设置公众号标签
+      setLabel () {
+        if (this.is_group_label) {
+          this.editLabelFun();
+          return;
+        };
+        if (this.group_id === '') {
+          this.$Message.warning('请选择分组');
+          return;
+        }
+        if (this.labelGroupContent === '') {
+          this.$Message.warning('请输入名称');
+          return;
+        }
+        this.is_Loading = true;
+        this.ajax.setLabel({
+          data: {
+            label_group_id: this.group_id,
+            label_name: this.labelGroupContent
+          },
+          success: (res) => {
+            this.getLabelListFun();
+            this.is_Loading = false;
+            this.is_group_label = false;
+            this.$Message.success('操作成功');
+          },
+          error: (res) => {
+            this.is_Loading = false;
+            this.$Message.warning(res.meta.message);
+          }
+        });
+      },
       // 添加修改标签分组
       updateLabelGroup () {
+        if (this.labelGroupName === '') {
+          this.$Message.warning('请输入名称');
+          return;
+        }
         this.is_Loading = true;
         this.ajax.updateLabelGroup({
           data: {
-            label_group_id: '',
+            label_group_id: this.group_id,
             group_name: this.labelGroupName
           },
           success: (res) => {
+            this.getLabelGroupListFun();
+            this.group_id = '';
+            this.labelGroupName = '';
             this.is_Loading = false;
             this.$Message.success('操作成功');
           },
@@ -367,9 +512,65 @@
             this.$Message.warning(res.meta.message);
           }
         });
+      },
+      // 删除分组
+      delGroupFun () {
+        this.is_Loading = true;
+        this.ajax.delLabelGroup({
+          data: {
+            label_group_id: this.group_id
+          },
+          success: (res) => {
+            this.getLabelGroupListFun();
+            this.is_Loading = false;
+            this.group_id = '';
+          },
+          error: (res) => {
+            this.is_Loading = false;
+            this.$Message.waiting(res.meta.message);
+          }
+        });
+      },
+      // 删除标签
+      delLabel () {
+        this.ajax.delLabel({
+          data: {
+            label_id: this.label_id
+          },
+          success: (res) => {
+            this.getLabelListFun();
+            this.label_id = '';
+            this.$Message.success('操作成功');
+          },
+          error: (res) => {
+            this.$Message.waiting(res.meta.message);
+          }
+        });
+      },
+      // 修改标签
+      editLabelFun () {
+        this.ajax.updateLabel({
+          data: {
+            label_group_id: this.group_id,
+            label_name: this.labelGroupContent,
+            label_id: this.label_id
+          },
+          success: (res) => {
+            this.getLabelListFun();
+            this.group_id = '';
+            this.label_id = '';
+            this.labelGroupContent = '';
+            this.is_group_label = false;
+          },
+          error: (res) => {
+            this.$Message.waiting(res.meta);
+          }
+        });
       }
     },
     created () {
+      this.getLabelListFun();
+      this.getLabelGroupListFun();
     }
   };
 </script>

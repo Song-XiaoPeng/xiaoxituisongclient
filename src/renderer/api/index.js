@@ -1212,7 +1212,7 @@ ajax.accessQueuingSession = (obj) => {
 };
 // 获取标签列表
 ajax.getLabelList = (obj) => {
-  util.ajax.post('/api/v1/setting/Rule/getLabelList', obj.data).then(function (response) {
+  util.ajax.get('/api/v1/setting/Rule/getLabelList', obj.data).then(function (response) {
     if (response.data) {
       if (response.data.meta.code === 200) {
         obj.success(response.data);
@@ -1264,6 +1264,91 @@ ajax.getWxUserInfo = (obj) => {
 // 添加标签分组
 ajax.updateLabelGroup = (obj) => {
   util.ajax.post('/api/v1/setting/Rule/updateLabelGroup', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 添加标签/内容
+ajax.setLabel = (obj) => {
+  util.ajax.post('/api/v1/setting/Rule/setLabel', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 获取所有标签分组
+ajax.getLabelGroup = (obj) => {
+  util.ajax.get('/api/v1/setting/Rule/getLabelGroup', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 删除标签分组
+ajax.delLabelGroup = (obj) => {
+  util.ajax.post('/api/v1/setting/Rule/delLabelGroup', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 删除标签
+ajax.delLabel = (obj) => {
+  util.ajax.post('/api/v1/setting/Rule/delLabel', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 修改标签
+ajax.updateLabel = (obj) => {
+  util.ajax.post('/api/v1/setting/Rule/updateLabel', obj.data).then(function (response) {
     if (response.data) {
       if (response.data.meta.code === 200) {
         obj.success(response.data);

@@ -134,7 +134,7 @@
                                 <Table border ref="selection" highlight-row :columns="columns4" :data="data1" @on-current-change="selTableFun"></Table>
                             </div>
                             <div style="text-align: center;padding: 5px">
-                                <Page :total="pageData.count" :page-size="pageData.row_sum" @click="pageFun"></Page>
+                                <Page :total="pageData.count" :page-size="pageData.rows_num" @click="pageFun"></Page>
                             </div>
                         </TabPane>
                         <!-- end我的客户 -->
@@ -153,7 +153,7 @@
                                 <Table border ref="selection" highlight-row :columns="columns4" :data="data1" @on-current-change="selTableFun"></Table>
                             </div>
                             <div style="text-align: center;padding: 5px">
-                                <Page :total="pageData.count" :page-size="pageData.row_sum" @click="pageFun"></Page>
+                                <Page :total="pageData.count" :page-size="pageData.rows_num" @click="pageFun"></Page>
                             </div>
                         </TabPane>
                         <!-- end其他人 -->
@@ -184,7 +184,7 @@
                                 <Table border ref="selection" highlight-row :columns="columns5" :data="data2"></Table>
                             </div>
                             <div style="text-align: center;padding: 5px">
-                                <Page :total="pageData.count" :page-size="pageData.row_sum" @click="pageFun"></Page>
+                                <Page :total="pageData.count" :page-size="pageData.rows_num" @click="pageFun"></Page>
                             </div>
                         </TabPane>
                         <!-- 跟踪提醒 -->
@@ -663,7 +663,7 @@
             });
             this.data2 = res.body.data_list;
             this.pageData.count = parseInt(res.body.page_data.count);
-            this.pageData.row_sum = parseInt(res.body.page_data.rows_num);
+            this.pageData.rows_num = parseInt(res.body.page_data.rows_num);
             this.real_name = '';
             this.is_Loading = false;
           },

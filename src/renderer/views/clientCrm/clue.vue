@@ -159,7 +159,7 @@
                                     <Table border ref="selection" highlight-row :columns="columns4" :data="data1" @on-current-change="selTableFun"></Table>
                                 </div>
                                 <div style="text-align: center;padding: 5px">
-                                    <Page :total="pageData.count" :page-size="pageData.row_sum" @on-change="pageFun"></Page>
+                                    <Page :total="pageData.count" :page-size="pageData.rows_num" @on-change="pageFun"></Page>
                                 </div>
                             </TabPane>
 
@@ -177,7 +177,7 @@
                                     <Table border ref="selection" highlight-row :columns="columns5" :data="data2" @on-current-change="selTableFun"></Table>
                                 </div>
                                 <div style="text-align: center;padding: 5px">
-                                    <Page :total="pageData.count" :page-size="pageData.row_sum" @on-change="pageFun"></Page>
+                                    <Page :total="pageData.count" :page-size="pageData.rows_num" @on-change="pageFun"></Page>
                                 </div>
                             </TabPane>
                             <!-- end我的客户 -->
@@ -489,9 +489,9 @@
         userInfo: null,
         time_type: 1,
         pageData: {
-          count: 1,
+          count: 0,
           page: 1,
-          rows_num: 1
+          rows_num: 0
         },
         ascription: ''
       };
@@ -539,8 +539,9 @@
             } else if (this.tabName === 'name2') {
               this.data2 = res.body.data_list;
             }
-            this.pageData.count = res.body.page_data.count;
-            this.pageData.rows_num = res.body.page_data.rows_num;
+            this.pageData.count = parseInt(res.body.page_data.count);
+            this.pageData.rows_num = parseInt(res.body.page_data.rows_num);
+            console.log(this.pageData, 123123);
             this.is_Loading = false;
           },
           error: (res) => {
