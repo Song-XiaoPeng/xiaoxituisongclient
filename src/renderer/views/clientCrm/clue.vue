@@ -147,7 +147,7 @@
 
 
                             <!-- 我的客户 -->
-                            <TabPane label="线索客户" name="name1">
+                            <TabPane label="线索池客户" name="name1">
                                 <div class="btn-box cl" style="text-align: right;padding:10px">
                                     <!--<Button type="ghost" style="margin-left: 10px" @click="modal2 = true">添加业务提醒</Button>-->
                                     <!--<Button type="ghost" style="margin-left: 10px" @click="massFun">群发激活</Button>-->
@@ -165,7 +165,7 @@
 
 
 
-                            <TabPane label="线索池客户" name="name2">
+                            <TabPane label="线索客户" name="name2">
                                 <div class="btn-box cl" style="text-align: right;padding:10px">
                                     <!--<Button type="ghost" style="margin-left: 10px" @click="modal2 = true">添加业务提醒</Button>-->
                                     <!--<Button type="ghost" style="margin-left: 10px" @click="massFun">群发激活</Button>-->
@@ -509,7 +509,6 @@
     methods: {
       // 全部/我的客户/下属客户
       ascriptionFun (t) {
-        console.log(1231);
         this.ascription = t;
         this.getCustomerList();
       },

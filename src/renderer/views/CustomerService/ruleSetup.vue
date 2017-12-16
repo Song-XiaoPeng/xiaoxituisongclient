@@ -161,7 +161,7 @@
 
 
     <!-- 添加标签组 弹窗-->
-    <Modal v-model="popup1" title="标签组">
+    <Modal v-model="popup1" title="标签组" @on-ok="updateLabelGroup">
       <Form :label-width="80">
         <FormItem label="分组名称">
           <Input v-model="labelGroupName" placeholder="请输入分组名称"></Input>
@@ -354,7 +354,10 @@
       updateLabelGroup () {
         this.is_Loading = true;
         this.ajax.updateLabelGroup({
-          data: {},
+          data: {
+            label_group_id: '',
+            group_name: this.labelGroupName
+          },
           success: (res) => {
             this.is_Loading = false;
             this.$Message.warning('操作成');
