@@ -241,7 +241,7 @@ ul.img-txt{
 
 
                              <!-- 普通文本 -->
-                             <pre v-if="k.message_type == 1" v-text="k.text" style="text-align: left;margin: 0; color: #fff;"></pre>
+                             <pre v-if="k.message_type == 1" v-text="k.text" style="text-align: left;margin: 0; color: #fff;white-space: pre-wrap;word-wrap: break-word;max-width: 400px;"></pre>
                              <!--<span v-if="k.message_type == 1" style="color: #fff">{{k.text}}</span>-->
                              <!-- end普通文本 -->
 
@@ -278,9 +278,9 @@ ul.img-txt{
                              <!-- end 图文 -->
 
                              <!-- 位置 -->
-                             <div v-if="k.message_type == 5" @click="locationFun(k)" style="cursor: pointer;">
+                             <div v-if="k.message_type == 5 || k.message_type == -5" @click="locationFun(k)" style="cursor: pointer;">
                                  <div style="padding-bottom: 5px">{{k.map_label}}</div>
-                                 <img :src="'http://apis.map.qq.com/ws/staticmap/v2/?center=' + k.lat + ',' + k.lng + '&zoom=18&size=400*200&maptype=roadmap&markers=color:red|' + k.lat + ',' + k.lng + '&key=TUTBZ-YEPWX-WEN4N-7OZUC-T4MT7-IXFN6'" v-on:load="loadFun"></img>
+                                 <img :src="'http://apis.map.qq.com/ws/staticmap/v2/?center=' + k.lat + ',' + k.lng + '&zoom=18&size=350*200&maptype=roadmap&markers=color:red|' + k.lat + ',' + k.lng + '&key=TUTBZ-YEPWX-WEN4N-7OZUC-T4MT7-IXFN6'" v-on:load="loadFun"></img>
                              </div>
                              <!-- end位置 -->
 
@@ -298,10 +298,7 @@ ul.img-txt{
                      <div class="crate" style="right: 10px;background-color: #e7e8ea;">
                          <div class="crate-box" style="display: inline-block;">
                              <!-- 文字 -->
-                             <!--<span v-if="k.message_type == 1" style="color: #3e3e3e">{{k.text}}</span>-->
-                             <!--<textarea ref="txtre" class="textrea" v-if="k.message_type == 1" v-model="k.text"></textarea>-->
-                             <pre v-if="k.message_type == 1" v-text="k.text" style="text-align: left; margin: 0; color: #3e3e3e;"></pre>
-                             <!--<div v-if="k.message_type == 1" v-text="k.text" style="white-space: pre"></div>-->
+                             <pre v-if="k.message_type == 1" v-text="k.text" style="text-align: left; margin: 0; color: #3e3e3e;white-space: pre-wrap;word-wrap: break-word;max-width: 400px;"></pre>
                              <!-- end文字 -->
 
 
@@ -772,13 +769,6 @@ ul.img-txt{
           }
           e.preventDefault();
         },
-        // 设置文本域高度
-        txtHeightFun (i) {
-          console.log(111);
-          let el = 'txt' + i;
-          let txt = this.$refs[el];
-          console.log(txt, i, 123);
-        },
         // 播放音频
         audioFun (c, k, i) {
           let that = this;
@@ -1177,7 +1167,7 @@ ul.img-txt{
         },
         // 地图位置
         locationFun (k) {
-          shell.openExternal('http://apis.map.qq.com/uri/v1/geocoder?coord=' + k.lat + ',' + k.lng + '&referer=myapp');
+          shell.openExternal('http://apis.map.qq.com/uri/v1/geocoder?coord=' + k.lat + ',' + k.lng + '&coord_type=1&referer=wyim');
         },
         // 粘贴事件
         pasteFun (e) {
@@ -1266,7 +1256,7 @@ ul.img-txt{
       created () {
         this.userInfo = JSON.parse(localStorage.getItem('userInfo'));
         // 动态获取传递过来的 会话客户数据
-        Bus.$on('change', (k) => {
+        Bus.$on('change', (k, d, user) => {
           k.data.forEach((k) => {
             if (k.message_type === 3) {
               // 音频数据 添加 时间is_time显示状态/是否is_state播放状态
@@ -1283,6 +1273,18 @@ ul.img-txt{
             }
           });
           this.elmetArr.length = 0;
+          // 如果传过来客户聊天数据为空 就添加轨迹地图
+          if (k.data.length === 0) {
+            k.data.push({
+              message_type: -5,
+              map_label: '客户当前位置',
+              lat: user.body.user_info.lat,
+              opercode: 2,
+              lng: user.body.user_info.lng,
+              precision: user.body.user_info.precision
+            });
+          }
+          console.log(k.data, 2132123);
           this.elmetArr = k.data;
           this.clientData = k;
           // this.elmetArr.length = k.data.length + 1;
@@ -1299,6 +1301,7 @@ ul.img-txt{
           this.replyType = 1;
           this.subFun();
         });
+        // 如果客户
       }
     };
 </script>

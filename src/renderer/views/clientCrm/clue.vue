@@ -556,7 +556,6 @@
         this.pageData.count = 1;
         this.tabName = v;
         this.is_left_show = false;
-        console.log(231320);
         this.getCustomerList();
       },
       // 时间选择
