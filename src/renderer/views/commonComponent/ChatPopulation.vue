@@ -333,9 +333,31 @@
               record: true,
               remind: false
             };
-            Bus.$emit('change', that.messageData, obj);
+            if (arr.length === 0) {
+              that.getWxUserInfo(that.messageData);
+            } else {
+              Bus.$emit('change', that.messageData, obj);
+            }
             db.close();
           };
+        },
+        // 获取微信用户基本信息
+        getWxUserInfo (d, obj) {
+          this.ajax.getWxUserInfo({
+            data: {
+              appid: d.appid,
+              openid: d.customer_wx_openid
+            },
+            success: (res) => {
+              this.userData = res.body;
+              this.is_Loading = false;
+              Bus.$emit('change', this.messageData, obj, res);
+            },
+            error: (res) => {
+              this.is_Loading = false;
+              this.$Message.waiting(res.meta.message);
+            }
+          });
         },
         // 确定加入会话
         underwayPopupFun () {

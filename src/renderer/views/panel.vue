@@ -404,6 +404,7 @@
         let obj = {
           token: this.userInfo.token,
           uid: this.userInfo.uid,
+          company_id: this.userInfo.company_id,
           type: 'auth',
           client: 'pc'
         };
