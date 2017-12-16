@@ -1167,7 +1167,7 @@ ul.img-txt{
         },
         // 地图位置
         locationFun (k) {
-          shell.openExternal('http://apis.map.qq.com/uri/v1/geocoder?coord=' + k.lat + ',' + k.lng + '&coord_type=1&referer=网鱼客服系统');
+          shell.openExternal('http://apis.map.qq.com/uri/v1/geocoder?coord=' + k.lat + ',' + k.lng + '&coord_type=1&referer=wyim');
         },
         // 粘贴事件
         pasteFun (e) {
