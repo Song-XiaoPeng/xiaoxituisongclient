@@ -198,6 +198,14 @@ export default new Router({
           component: (resolve) => require(['@/views/CustomerService/staff'], resolve)
         },
         {
+          path: 'framework',
+          name: 'framework',
+          meta: {
+            title: '组织架构'
+          },
+          component: (resolve) => require(['@/views/CustomerService/framework'], resolve)
+        },
+        {
           path: 'winEdit',
           name: 'winEdit',
           meta: {

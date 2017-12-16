@@ -229,6 +229,13 @@ let menuData = [
           route: 'staff',
           routeBreadcrumb: [],
           sonMenu: []
+        },
+        {
+          model_id: 26,
+          menuTitle: '组织架构',
+          route: 'framework',
+          routeBreadcrumb: [],
+          sonMenu: []
         }
       ]
     },
