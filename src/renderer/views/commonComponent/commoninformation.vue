@@ -62,10 +62,10 @@
           </div>
       </div>
       <div>
-         <Common v-show="navState == 1"></Common>
-         <information v-show="navState == 2 && isAdministrator == false"></information>
-         <Record v-show="navState == 3" ></Record>
-         <Remind v-show="navState == 4"></Remind>
+         <Common v-show="navState == 1 && is_CRM.common"></Common>
+         <information v-show="navState == 2 && isAdministrator == false && is_CRM.information"></information>
+         <Record v-show="navState == 3 && is_CRM.record" ></Record>
+         <Remind v-show="navState == 4 && is_CRM.remind"></Remind>
       </div>
   </div>
 </template>

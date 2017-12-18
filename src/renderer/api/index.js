@@ -1363,4 +1363,21 @@ ajax.updateLabel = (obj) => {
     console.log(error);
   });
 };
+// 客户管理---线索 ---接入会话
+ajax.createWxUserSession = (obj) => {
+  util.ajax.post('/api/v1/message/Common/createWxUserSession', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
 export default ajax;

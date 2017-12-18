@@ -651,22 +651,18 @@
           this.$Message.warning('名称不能为空');
           return;
         }
-        if (this.tabArr.length <= 0) {
-          this.$Message.warning('请添加自动标签');
-          return;
-        }
-        if (this.selRader === '1') {
-          if (this.customer_service_id === '') {
-            this.$Message.warning('请选择专属客服');
-            return;
-          }
-        }
-        if (this.selRader === '2') {
-          if (this.customer_service_group_id === '') {
-            this.$Message.warning('请选择客服分组');
-            return;
-          }
-        }
+        // if (this.selRader === '1') {
+        // if (this.customer_service_id === '') {
+        // this.$Message.warning('请选择专属客服');
+        // return;
+        // }
+        // }
+        // if (this.selRader === '2') {
+        // if (this.customer_service_group_id === '') {
+        // this.$Message.warning('请选择客服分组');
+        // return;
+        // }
+        // }
         if (this.selRader === '3') {
           this.customer_service_id = '';
           this.customer_service_group_id = '';

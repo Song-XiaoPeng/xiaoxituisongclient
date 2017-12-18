@@ -28,12 +28,20 @@
                 cursor: pointer;
                 transition: all .3s;
                 background-color: #ebf7ff;
+                .icon-rotate{
+                    position: relative;
+                    transform: rotate(0deg);
+                    transition: all .6s;
+                }
+                .icon-active{
+                    transform: rotate(90deg);
+                }
             }
             .tle:hover{
                 color: #3399ff;
             }
             .list{
-                transition: all .3s;
+                transition: all .6s;
                 overflow: hidden;
                 li{
                     position: relative;
@@ -138,10 +146,10 @@
        <div class="person">
            <div class="list-box">
                <div class="tle" @click="telFun('list1')" style="border-bottom: 1px #d7dde4 solid;background-color: #fff">
-                   <Icon type="arrow-right-b"></Icon>
+                   <Icon class="icon-rotate" v-bind:class="icon_rotate.icon1 == '1' ? 'icon-active' : ''" type="arrow-right-b"></Icon>
                    会话中
                </div>
-               <ul ref="list1" class="list" :style="'height:' + data1.length * 66 + 'px'">
+               <ul ref="list1" class="list" :style="'height:' + data1.length * 67 + 'px'">
                    <li v-for="(k, i) in data1" v-bind:class="k.is_class ? 'active' : ''" @click.stop="underwayFun(k, i)">
                        <span class="state-sum" v-if="!k.sum == 0">{{k.sum}}</span>
                        <span class="end" title="结束会话" @click="popup2 = true, clientName = k, is_w_v = 1, clientDataIndex = i"><Icon  type="close-circled" style="vertical-align: top"></Icon></span>
@@ -157,10 +165,10 @@
            </div>
            <div class="list-box" style="border-bottom: 1px #fff solid">
                <div class="tle" @click.stop="telFun('list2')" style="border-bottom: 1px #d7dde4 solid;background-color: #fff;">
-                   <Icon type="arrow-right-b"></Icon>
+                   <Icon class="icon-rotate" v-bind:class="icon_rotate.icon2 == '1' ? 'icon-active' : ''" type="arrow-right-b"></Icon>
                    等待中
                </div>
-               <ul ref="list2" class="list" :style="'height:' + data2.length * 66 + 'px'">
+               <ul ref="list2" class="list" :style="'height:' + data2.length * 67 + 'px'">
                    <li v-for="(k, i) in data2" @click.stop="popup1 = true,clientName = k.customer_wx_nickname,clientData = k,clientDataIndex = i, is_w_v = 2">
                        <span class="end" title="结束会话" @click.stop="popup2 = true, clientName = k, is_w_v = 2, clientDataIndex = i"><Icon  type="close-circled" style="vertical-align: top"></Icon></span>
                        <div class="picture">
@@ -175,10 +183,10 @@
            </div>
            <div class="list-box">
                <div class="tle" @click.stop="telFun('list3')" style="border-bottom: 1px #d7dde4 solid;background-color: #fff;">
-                   <Icon type="arrow-right-b"></Icon>
+                   <Icon class="icon-rotate" v-bind:class="icon_rotate.icon3 == '1' ? 'icon-active' : ''" type="arrow-right-b"></Icon>
                    排队中
                </div>
-               <ul ref="list3" class="list" :style="'height:' + data3.length * 66 + 'px'">
+               <ul ref="list3" class="list" :style="'height:' + data3.length * 67 + 'px'">
                    <li v-for="(k, i) in data3" @click.stop="addDialogueFun(k, i)">
                        <div class="picture">
                            <img :src="k.customer_wx_portrait" alt="">
@@ -215,6 +223,7 @@
 </template>
 <script>
     import Bus from '../../assets/eventBus';
+    import sort from '../../assets/sortObj';
     // import store from '../../store/index';
     // DB数据库 name: '' 表名称
     // tab_type: 'visitor (会话人员表)' / 'message (会话数据表)'
@@ -245,7 +254,7 @@
           popup1: false,
           popup2: false,
           clientName: '',
-          clientData: null,
+          clientData: {},
           clientDataIndex: null,
           is_w_v: null,
           is_Loading: false,
@@ -256,7 +265,13 @@
           is_Message: false,
           is_dialogue_click: true,
           lineUpObj: {},
-          mynotify: null
+          mynotify: null,
+          icon_rotate: {
+            icon1: '1',
+            icon2: '1',
+            icon3: '1'
+          },
+          clueData: null
         };
       },
       mounted () {
@@ -283,16 +298,32 @@
             // 等待列表
             this.data3 = res.queue_up;
             res.waiting.forEach((k) => {
-              if (this.data2.length === 0) {
-                this.data2.push(k);
-              } else {
-                this.data2.forEach((s) => {
-                  if (k.customer_wx_openid !== s.customer_wx_openid) {
-                    this.data2.push(k);
-                  }
-                });
-              }
+              this.data2.push(k);
             });
+            // 去重
+            let arr = [];
+            let json = {};
+            this.data2.forEach((k) => {
+              json[k.customer_wx_openid] = k;
+            });
+            for (let k in json) {
+              arr.push(json[k]);
+            }
+            this.data2 = arr;
+            // 检测是否 线索页面接入客服
+            let sess = this.clueData.data.body ? this.clueData.data.body.session_id : '';
+            if (sess !== '') {
+              this.data2.forEach((k) => {
+                if (k.session_id === sess) {
+                  // Object.assign(k, {'is_class': false});
+                  this.clientData = k;
+                  this.is_w_v = 2;
+                  this.clientDataIndex = 0;
+                  this.underwayPopupFun();
+                  this.clueData.data.body = null;
+                }
+              });
+            }
           };
         },
         // 等待中---》点击加入会话列表
@@ -331,10 +362,11 @@
               common: true,
               information: true,
               record: true,
-              remind: false
+              remind: false,
+              type: 'mess'
             };
             if (arr.length === 0) {
-              that.getWxUserInfo(that.messageData);
+              that.getWxUserInfo(that.messageData, obj);
             } else {
               Bus.$emit('change', that.messageData, obj);
             }
@@ -373,6 +405,7 @@
               let db2 = new DB();
               db2.type = 'update'; // 执行类型
               db2.tabName = 'visitor'; // 数据表名称
+              Object.assign(k, {'is_class': false});
               db2.data = [k];
               db2.fun = function (res) { // 执行成功回掉函数
                 db2.close();
@@ -384,9 +417,10 @@
                 db.type = 'remove'; // 执行类型
                 db.tabName = 'waiting'; // 数据表名称
                 db.key = k.customer_wx_openid;
-                db.fun = function (res) { // 执行成功回掉函数
+                db.fun = function (res) { // 执行成功回掉函数 1531
                   db.close();
                 };
+                console.log(this.data2[this.clientDataIndex]);
                 that.data1.unshift(this.data2[this.clientDataIndex]);
                 that.data2.splice(this.clientDataIndex, 1);
               } else if (that.is_w_v === 3) {
@@ -395,7 +429,7 @@
                 db1.type = 'remove'; // 执行类型
                 db1.tabName = 'queue_up'; // 数据表名称
                 db1.key = k.customer_wx_openid;
-                db1.fun = function (res) { // 执行成功回掉函数
+                db1.fun = function (res) { // 执行成功回掉函数 5445546
                   db1.close();
                 };
                 that.data1.unshift(this.data3[this.clientDataIndex]);
@@ -455,12 +489,13 @@
                 uid: ''
               };
               let obj = {
-                common: true,
-                information: true,
-                record: true,
-                remind: false
+                common: false,
+                information: false,
+                record: false,
+                remind: false,
+                type: 'close'
               };
-              Bus.$emit('change', this.messageData, obj);
+              Bus.$emit('change', this.messageData, obj, {});
               this.is_Loading = false;
               this.clientName = '';
             },
@@ -497,15 +532,18 @@
           if (t === 'list1') {
             let e = this.$refs.list1;
             let h = e.offsetHeight;
-            e.style.height = h === 0 ? this.data1.length * 66 + 'px' : 0 + 'px';
+            e.style.height = h === 0 ? this.data1.length * 67 + 'px' : 0 + 'px';
+            this.icon_rotate.icon1 = h === 0 ? '1' : '2';
           } else if (t === 'list2') {
             let e = this.$refs.list2;
             let h = e.offsetHeight;
-            e.style.height = h === 0 ? this.data2.length * 66 + 'px' : 0 + 'px';
+            e.style.height = h === 0 ? this.data2.length * 67 + 'px' : 0 + 'px';
+            this.icon_rotate.icon2 = h === 0 ? '1' : '2';
           } else if (t === 'list3') {
             let e = this.$refs.list3;
             let h = e.offsetHeight;
-            e.style.height = h === 0 ? this.data3.length * 66 + 'px' : 0 + 'px';
+            e.style.height = h === 0 ? this.data3.length * 67 + 'px' : 0 + 'px';
+            this.icon_rotate.icon3 = h === 0 ? '1' : '2';
           }
         },
         // 调用本地数据库 获取客户表的数据
@@ -537,8 +575,10 @@
               that.is_Message = false;
               that.data1 = res;
               // 默认选择 会话客户
-              that.underwayFun(res[0], 0);
+              let arr = sort.sortFun(res, 'add_time');
+              arr.reverse();
               that.data1[0]['is_class'] = true;
+              that.underwayFun(res[0], 0);
               db1.close();
             }
           };
@@ -624,6 +664,7 @@
         };
       },
       created () {
+        this.clueData = this.$route.query;
         // 调用本地数据库 获取储存的数据
         // Notification.requestPermission();
         this.getWaitingTab();

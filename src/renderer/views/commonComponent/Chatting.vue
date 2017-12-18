@@ -127,12 +127,12 @@
         cursor: pointer;
         .time{
             position: absolute;
-            height: 14px;
-            width: 34px;
+            height: 22px;
+            width: 70px;
             display: inline-block;
             top: 50%;
             margin-top: -7px;
-            left: -48px;
+            left: -80px;
         }
         .audio-loding{
             position: relative;
@@ -260,15 +260,15 @@ ul.img-txt{
                                  <!--<div class="audio-state" v-if="k.is_icon">12313212</div>-->
                                  <div class="audio-loding">
                                      <img v-if="k.is_icon" src="../../assets/images/3333.gif" alt="">
-                                     <img v-if="k.is_icon == true ? false : true" src="../../assets/images/audio-start.png" alt="">
+                                     <!--<img v-if="k.is_icon == true ? false : true" src="../../assets/images/audio-start.png" alt="">-->
                                  </div>
                                  <audio :ref="'audio' + i" v-if="k.message_type == 3" v-on:loadedmetadata="audioTimeFun(k, 'audio' + i, i)">
                                      <source  :src="'http://kf.lyfz.net/api/v1/we_chat/Business/getMaterial?company_id=' + k.company_id + '&appid=' + k.appid + '&media_id=' + k.media_id + '&type=3'">
                                  </audio>
-                                 <div class="time" style="right: -48px;left: inherit">
+                                 <div class="time" style="right: -80px;left: inherit">
                                      <Icon v-if="k.is_state" type="android-arrow-dropright-circle" style="font-size: 20px;vertical-align: bottom;color: #5cadff"></Icon>
                                      <Icon v-else type="record" style="font-size: 20px;vertical-align: bottom;color: #ed3f14"></Icon>
-                                     <span><span style="font-size: 14px" v-if="k.is_time">{{k.autio_time}}</span>s</span>
+                                     <span><span style="font-size: 14px" v-if="k.is_time">{{k.autio_time + 's'}}</span></span>
                                  </div>
                              </div>
                              <!-- end语音 -->
@@ -321,7 +321,7 @@ ul.img-txt{
                                      <img v-if="k.is_icon == true ? false : true" src="../../assets/images/audio-start.png" alt="">
                                  </div>
                                  <div class="time">
-                                     <span><span style="font-size: 14px" v-if="k.is_time">{{k.autio_time}}</span>s</span>
+                                     <span><span style="font-size: 14px" v-if="k.is_time">{{k.autio_time + 's'}}</span></span>
                                      <Icon v-if="k.is_state" type="android-arrow-dropright-circle" style="font-size: 20px;vertical-align: bottom;color: #5cadff"></Icon>
                                      <Icon v-else type="record" style="font-size: 20px;vertical-align: bottom;color: #ed3f14"></Icon>
                                  </div>
@@ -762,7 +762,6 @@ ul.img-txt{
         keyFun (e) {
           this.is_key = false;
           if (e.keyCode === 13 && e.ctrlKey) {
-            console.log(e, 'wadwadwad');
             this.txtra += '\r\n';
           } else if (e.keyCode === 13) {
             this.subFun();
@@ -787,7 +786,7 @@ ul.img-txt{
             // k.is_icon = false;
             that.$set(k, 'is_icon', false);
             that.$set(k, 'is_state', true);
-            that.updbFun(k);
+            // that.updbFun1(k);
           };
         },
         // 获取音频播放时长
@@ -796,7 +795,7 @@ ul.img-txt{
           let au = this.$refs[el];
           let audio = au[0];
           this.$set(this.elmetArr[i], 'is_time', true);
-          this.$set(this.elmetArr[i], 'autio_time', parseInt(audio.duration));
+          this.$set(this.elmetArr[i], 'autio_time', parseInt(audio.duration || 0));
           // k.autio_time = audio.duration;
         },
         // 素材详情窗口 确定回掉
@@ -1081,7 +1080,6 @@ ul.img-txt{
               let res = JSON.parse(e.target.response);
               that.mp3Data = res.body;
               that.subFun();
-              console.log(res, 311);
             }
           });
         },
@@ -1099,6 +1097,18 @@ ul.img-txt{
           db.data = [obj];
           db.fun = function (res) {
             console.log('DB---》添加数据成功');
+            db.close();
+          };
+        },
+        // 音频数据跟新
+        updbFun1 (obj) {
+          console.log(obj);
+          let db = new DB();
+          db.type = 'update';
+          db.tabName = 'message';
+          db.data = [obj];
+          db.fun = function (res) {
+            console.log('DB--》音频数据更新成功');
             db.close();
           };
         },
@@ -1132,7 +1142,6 @@ ul.img-txt{
           this.subFun();
         },
         upfileFun (e) {
-          console.log(e, 123123);
           this.fileData = e.body;
           this.subFun();
         },
@@ -1144,7 +1153,6 @@ ul.img-txt{
         handleBeforeUpload (e) {
           this.is_percent = true;
           this.upFileData = e;
-          console.log(e);
         },
         handleFormatError (file) {
           this.is_percent = false;
@@ -1274,7 +1282,7 @@ ul.img-txt{
           });
           this.elmetArr.length = 0;
           // 如果传过来客户聊天数据为空 就添加轨迹地图
-          if (k.data.length === 0) {
+          if (k.data.length === 0 && d.type === 'mess') {
             k.data.push({
               message_type: -5,
               map_label: '客户当前位置',
@@ -1284,7 +1292,6 @@ ul.img-txt{
               precision: user.body.user_info.precision
             });
           }
-          console.log(k.data, 2132123);
           this.elmetArr = k.data;
           this.clientData = k;
           // this.elmetArr.length = k.data.length + 1;

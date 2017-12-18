@@ -389,6 +389,10 @@
             password: md5(this.formItem.password)
           },
           success: () => {
+            this.formItem.name = '';
+            this.formItem.roleSel = '';
+            this.formItem.tel = '';
+            this.formItem.password = '';
             this.is_Loading = false;
             this.$Message.success('添加成功！');
             this.getUserList();

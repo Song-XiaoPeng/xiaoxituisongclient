@@ -593,7 +593,6 @@
       // 待开发提示
       hintFun () {
         // this.$Message.warning('玩命开发中。。。。');
-        console.log(1223132);
       },
       // 全部/我的客户/下属客户
       ascriptionFun (t) {

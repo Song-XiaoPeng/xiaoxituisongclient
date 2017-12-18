@@ -306,7 +306,6 @@
         } else if (v === 'name2') {
           this.getTaskList();
         }
-        console.log(v);
       },
       // 获取粉丝列表
       getFansFun () {

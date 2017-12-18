@@ -141,9 +141,9 @@
             </div>
             <div class="filtrate-box">
                 <ul class="my-box cl">
-                    <li v-bind:class="ascription == '' ?  'active' : ''" @click="ascriptionFun('')">全部</li>
-                    <li v-bind:class="ascription == '1' ?  'active' : ''" @click="ascriptionFun('1')">我的客户</li>
-                    <li v-bind:class="ascription == '2' ?  'active' : ''" @click="ascriptionFun('2')">下属客户</li>
+                    <li v-if="tabName === 'name1'" v-bind:class="ascription == '3' ?  'active' : ''" @click="ascriptionFun('3')">全部</li>
+                    <li v-if="tabName === 'name1'" v-bind:class="ascription == '1' ?  'active' : ''" @click="ascriptionFun('1')">我的客户</li>
+                    <li v-if="tabName === 'name1'" v-bind:class="ascription == '2' ?  'active' : ''" @click="ascriptionFun('2')">下属客户</li>
                 </ul>
                 <ul class="my-box cl" style="margin: 0 20px">
                     <li @click="hintFun">总线索(<span style="color: #efc27c">47985</span>)</li>
@@ -204,7 +204,7 @@
                                         </div>
                                     </div>
                                     <div class="table-box">
-                                        <Table border ref="selection" highlight-row :columns="columns5" :data="data2" @on-current-change="selTableFun"></Table>
+                                        <Table border ref="selection" highlight-row :columns="columns5" :data="data2"></Table>
                                     </div>
                                     <div style="text-align: center;padding: 5px">
                                         <Page :total="pageData.count" :page-size="pageData.rows_num" @on-change="pageFun"></Page>
@@ -384,13 +384,21 @@
         clientData: {},
         columns4: [
           {
-            type: 'selection',
-            width: 60,
-            align: 'center'
-          },
-          {
             title: '微信用户昵称',
-            key: 'nickname'
+            render: (h, p) => {
+              return h('div', [
+                h('span', {
+                  style: {
+                    cursor: 'pointer'
+                  },
+                  on: {
+                    click: () => {
+                      this.jionUpFun(p.row);
+                    }
+                  }
+                }, p.row.nickname)
+              ]);
+            }
           },
           {
             title: '微信图像',
@@ -405,6 +413,10 @@
                 }
               });
             }
+          },
+          {
+            title: '来源',
+            key: 'app_name'
           },
           {
             title: '性别',
@@ -426,19 +438,50 @@
             title: '备注',
             render: (h, p) => {
               return h('span', p.row.desc === '' ? '暂无备注' : p.row.desc);
+            }
+          },
+          {
+            title: '操作',
+            render: (h, p) => {
+              return h('Button', {
+                props: {
+                  type: 'primary',
+                  size: 'small'
+                },
+                style: {
+                  marginRight: '5px'
+                },
+                on: {
+                  click: () => {
+                    this.selTableFun(p.row);
+                  }
+                }
+              }, '详情');
             }
           }
         ],
         data1: [],
         columns5: [
           {
-            type: 'selection',
-            width: 60,
-            align: 'center'
+            title: '微信用户昵称',
+            render: (h, p) => {
+              return h('div', [
+                h('span', {
+                  style: {
+                    cursor: 'pointer'
+                  },
+                  on: {
+                    click: () => {
+                      this.jionUpFun(p.row);
+                    }
+                  }
+                }, p.row.nickname)
+              ]);
+            }
           },
           {
-            title: '微信用户昵称',
-            key: 'nickname'
+            title: '来源',
+            key: 'app_name'
           },
           {
             title: '微信图像',
@@ -474,6 +517,25 @@
             title: '备注',
             render: (h, p) => {
               return h('span', p.row.desc === '' ? '暂无备注' : p.row.desc);
+            }
+          },
+          {
+            title: '操作',
+            render: (h, p) => {
+              return h('Button', {
+                props: {
+                  type: 'primary',
+                  size: 'small'
+                },
+                style: {
+                  marginRight: '5px'
+                },
+                on: {
+                  click: () => {
+                    this.selTableFun(p.row);
+                  }
+                }
+              }, '详情');
             }
           }
         ],
@@ -506,7 +568,7 @@
           page: 1,
           rows_num: 0
         },
-        ascription: ''
+        ascription: '3'
       };
     },
     components: {
@@ -520,6 +582,40 @@
     beforeDestroy () {
     },
     methods: {
+      // 接入
+      jionUpFun (k) {
+        this.is_Loading = true;
+        this.ajax.createWxUserSession({
+          data: {
+            openid: k.openid,
+            appid: k.appid
+          },
+          success: (res) => {
+            this.is_Loading = false;
+            this.$Spin.show({
+              render: (h) => {
+                return h('div', [
+                  h('div', '正在创建链接。。。')
+                ]);
+              }
+            });
+            setTimeout(() => {
+              this.$Spin.hide();
+              this.$router.push({
+                name: 'ServeIndex',
+                query: {
+                  type: 'clue',
+                  data: res
+                }
+              });
+            }, 3000);
+          },
+          error: (res) => {
+            this.is_Loading = false;
+            this.$Message.warning(res.meta.message);
+          }
+        });
+      },
       // 待开发提示
       hintFun () {
         // this.$Message.warning('玩命开发中。。。。');
@@ -550,7 +646,7 @@
           data: {
             page: this.pageData.page,
             real_name: this.real_name,
-            type: this.tabName === 'name1' ? 1 : 2,
+            type: this.tabName === 'name1' ? 2 : 1,
             ascription: this.ascription
           },
           success: (res) => {
@@ -571,6 +667,9 @@
       },
       // tab切换客户
       selTabFun (v) {
+        if (v === 'name2') {
+          this.ascription = '';
+        }
         this.pageData.page = 1;
         this.pageData.rows_num = 1;
         this.pageData.count = 1;
@@ -593,7 +692,7 @@
           information: false,
           record: false,
           remind: false,
-          type: this.tabName === 'name1' ? 'clue' : '',
+          type: this.tabName === 'name1' ? '' : '',
           ajax_type: 'clue'
         };
         Bus.$emit('change', v, obj);

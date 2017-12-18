@@ -100,26 +100,26 @@ let menuData = [
   //   routeBreadcrumb: [],
   //   sonMenu: []
   // },
-  // {
-  //   model_id: 4,
-  //   menuTitle: '沟通监控',
-  //   iconName: 'ios-videocam',
-  //   son: {
-  //     sonTitle: '沟通监控',
-  //     sonList: [
-  //       {
-  //         model_id: 21,
-  //         menuTitle: '客服交流监控',
-  //         route: 'monitoring',
-  //         routeBreadcrumb: [],
-  //         sonMenu: []
-  //       }
-  //     ]
-  //   },
-  //   route: [],
-  //   routeBreadcrumb: [],
-  //   sonMenu: []
-  // },
+  {
+    model_id: 4,
+    menuTitle: '沟通监控',
+    iconName: 'ios-videocam',
+    son: {
+      sonTitle: '沟通监控',
+      sonList: [
+        {
+          model_id: 21,
+          menuTitle: '客服交流监控',
+          route: 'monitoring',
+          routeBreadcrumb: [],
+          sonMenu: []
+        }
+      ]
+    },
+    route: [],
+    routeBreadcrumb: [],
+    sonMenu: []
+  },
   {
     model_id: 5,
     menuTitle: '数据分析',

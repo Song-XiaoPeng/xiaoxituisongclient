@@ -1,4 +1,11 @@
 <style scoped lang="less">
+    .title-box{
+        background-color: #e6f1fe;
+        padding: 16px;
+        .r{
+
+        }
+    }
     .title{
         .btn{
             font-weight: 100;
@@ -13,7 +20,6 @@
         .btn:hover{
             color: #2db7f5;
         }
-
     }
     .count-box{
         height: 100px;
@@ -50,26 +56,77 @@
         height:  100% !important;
         width: 100% !important;
     }
+    .table-copy {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    .table-copy, td, th{
+        border:1px solid #e9eaec;
+        text-align: center;
+        height: 40px;
+    }
+
+    .table-copy th{
+        background-color: #e6f1fe;
+    }
+
+    .table-copy tr:nth-child(even){
+        background: #f8f8f9;
+    }
+
+    .table-copy tr:hover{
+        background: #ebf7ff;
+    }
 </style>
 <template>
     <div id="index">
-        <Card style="width:100%">
-            <p slot="title" class="title">
-                <span>图文转发分享分析</span>
-            </p>
-            <div class="cl" style="overflow: hidden">
-                <div class="f-r">
-                    <span>自定义时间：</span>
-                    <DatePicker type="daterange" v-model="time" :options="options2" placement="bottom-end" placeholder="请选择" style="width: 200px" @on-change="selTimeFun"></DatePicker>
-                </div>
-                <div class="top-box f-l">
-                    <span>当前公共号：</span>
-                    <Select v-model="appid" style="width:200px" @on-change="selAppidFun">
-                        <Option v-for="item in cityList" :value="item.appid" :key="item.appid">{{ item.nick_name }}</Option>
-                    </Select>
+        <Card style="width:100%" :padding="0">
+            <div class="title-box cl">
+                <span style="font-size: 16px; color: #74b2fe;position: relative;top: 3px;">访问量</span>
+                <div class="f-r r">
+                    <div class="sel-box f-r">
+                        <Select v-model="appid" style="width:200px" @on-change="selAppidFun">
+                            <Option v-for="item in cityList" :value="item.appid" :key="item.appid">{{ item.nick_name }}</Option>
+                        </Select>
+                    </div>
+                    <div class="sel-box f-r" >
+                        <Select style="width:200px">
+                            <Option v-for="(k, i) in share" :value="i" :key="i">{{k}}</Option>
+                        </Select>
+                    </div>
+                    <div class="sel-box f-r">
+                        <!--<Select  style="width:200px" @on-change="selDeyFun">-->
+                            <!--<Option  :value="1" >今日</Option>-->
+                            <!--<Option  :value="2" >昨日</Option>-->
+                            <!--<Option  :value="7" >本周</Option>-->
+                            <!--<Option  :value="30" >本月</Option>-->
+                        <!--</Select>-->
+                        <DatePicker type="daterange" v-model="time" :options="options2" placement="bottom-end" placeholder="请选择" style="width: 200px" @on-change="selTimeFun"></DatePicker>
+                    </div>
                 </div>
             </div>
-            <div style="height: 450px">
+            <div class="cl" style="overflow: hidden;padding: 16px">
+                <table class="table-copy">
+                    <thead>
+                    <tr>
+                        <th>访问总量</th>
+                        <th>首次访问</th>
+                        <th>粉丝分组1</th>
+                        <th>粉丝分组2</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>21583</td>
+                        <td>2364</td>
+                        <td>fwkbfw</td>
+                        <td>dnwajdjkw</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div style="height: 450px;padding: 16px;">
                 <div class="" style="color:#ff0033;text-align: right">单次统计，只限间隔不能超过7天</div>
                 <ve-line :data="chartData"></ve-line>
             </div>
@@ -176,12 +233,34 @@
     beforeDestroy () {
     },
     methods: {
+      // 选择天数获取数据
+      selDeyFun (v) {
+        let end = new Date();
+        let start = new Date();
+        if (v === 1) {
+          start.setTime(start.getTime() - 3600 * 1000 * 24 * 1);
+        } else if (v === 2) {
+          start.setTime(start.getTime() - 3600 * 1000 * 24 * 2);
+        } else if (v === 7) {
+          start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+        } else if (v === 30) {
+          start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+        }
+        let y = start.getFullYear();
+        let m = start.getMonth() + 1;
+        let d = start.getDate();
+        let yy = end.getFullYear();
+        let mm = end.getMonth() + 1;
+        let dd = end.getDate();
+        this.start_date = y + '-' + m + '-' + d;
+        this.end_date = yy + '-' + mm + '-' + dd;
+        this.getUserSummary();
+      },
       createChart () {
       },
       onReady () {
       },
       onClick () {
-        console.log(1398778851);
       },
       // 获取 数据列表
       getUserSummary () {
@@ -212,7 +291,6 @@
             });
             this.data1 = res.body;
             this.chartData.rows = arr;
-            console.log(this.chartData.rows);
           },
           error: (res) => {
             this.is_Loading = false;
@@ -264,7 +342,6 @@
           let s1 = day1.getFullYear() + '-' + (day1.getMonth() + 1) + '-' + day1.getDate();
           this.start_date = s1;
           this.end_date = y + '-' + m + '-' + (d - 1);
-          this.getUserSummary();
           this.getUserCumulate();
         },
         error: (res) => {
