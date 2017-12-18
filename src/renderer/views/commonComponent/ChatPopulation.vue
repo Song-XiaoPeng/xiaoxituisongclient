@@ -311,7 +311,7 @@
             }
             this.data2 = arr;
             // 检测是否 线索页面接入客服
-            let sess = this.clueData.data.body ? this.clueData.data.body.session_id : '';
+            let sess = (typeof this.clueData.data === 'object') ? this.clueData.data.body.session_id : '';
             if (sess !== '') {
               this.data2.forEach((k) => {
                 if (k.session_id === sess) {
@@ -320,7 +320,7 @@
                   this.is_w_v = 2;
                   this.clientDataIndex = 0;
                   this.underwayPopupFun();
-                  this.clueData.data.body = null;
+                  this.clueData.data.body = '';
                 }
               });
             }
