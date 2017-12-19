@@ -669,6 +669,8 @@
       selTabFun (v) {
         if (v === 'name2') {
           this.ascription = '';
+        } else if (v === 'name1') {
+          this.ascription = '3';
         }
         this.pageData.page = 1;
         this.pageData.rows_num = 1;

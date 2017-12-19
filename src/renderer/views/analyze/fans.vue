@@ -16,30 +16,30 @@
 
    }
    .count-box{
-       height: 100px;
        padding: 10px 0;
        overflow: hidden;
        .count-card{
-           height: 70px;
-           width: 200px;
+           height: 95px;
+           width: 260px;
            margin: 5px;
-           float: left;
            box-shadow: 3px 3px 5px 1px #999;
            border-radius: 6px;
            box-sizing: border-box;
-           padding: 10px 0;
-           background-color: #3399cc;
-           >div{
-               display: inline-block;
-               width: 50%;
-               height: 100%;
-               float: left;
-               line-height: 50px;
-               text-align: center;
-               color: #EAEAEA;
-           }
+           overflow: hidden;
+           float: left;
            >div:first-child{
-               border-right: 1px #ffffff solid;
+               height: 40px;
+               text-align: center;
+               line-height: 40px;
+               color: #fff;
+           }
+           >div:last-child{
+               height: 55px;
+               text-align: center;
+               line-height: 55px;
+               font-size: 16px;
+               font-weight: bold;
+               color: #666;
            }
        }
        .ivu-tabs-nav{
@@ -50,40 +50,60 @@
         height:  100% !important;
         width: 100% !important;
     }
+    .tel-box{
+        height: 60px;
+        background-color: #ecf0f4;
+        .txt{
+            display: inline-block;
+            height: 60px;
+            margin-left: 15px;
+            line-height: 60px;
+            color: #74b2fe;
+        }
+    }
 </style>
 <template>
     <div id="index">
-        <Card style="width:100%">
-            <p slot="title" class="title">
-                <span>访问总览</span>
-            </p>
-            <div class="count-box">
+        <Card style="width:100%" :padding="0">
+            <div class="tel-box">
+                <span class="txt">粉丝数量分析</span>
+                <div class="f-r" style="margin: 13px; ">
+                    <Select v-model="appid" style="width:200px" @on-change="selAppidFun">
+                        <Option v-for="item in cityList" :value="item.appid" :key="item.appid">{{ item.nick_name }}</Option>
+                    </Select>
+                </div>
+                <div class="f-r" style="margin: 13px;">
+                    <DatePicker type="daterange" v-model="time" :options="options2" placement="bottom-end" placeholder="请选择" style="width: 200px" @on-change="selTimeFun"></DatePicker>
+                </div>
+
+            </div>
+            <div class="count-box cl">
                 <div class="count-card">
-                    <div>
+                    <div style="background-color: #83bafc">
                         新关注
                     </div>
                     <div>
                        {{increase}}
                     </div>
                 </div>
-                <div class="count-card" style="background-color: #ff9966">
-                    <div>
+                <div class="count-card" >
+                    <div style="background-color: #78e4c6">
                       取消关注
                     </div>
                     <div>
                         {{cancel}}
                     </div>
                 </div>
-                <div class="count-card" style="background-color: #666699">
-                    <div>
+                <div class="count-card" >
+                    <div style="background-color: #efbc6c">
                         净增长
                     </div>
                     <div>
                        {{clean}}
                     </div>
                 </div>
-                <div class="count-card" style="background-color: #cc6699">
-                    <div>
+                <div class="count-card">
+                    <div  style="background-color: #d1adfa">
                         当前粉丝总数
                     </div>
                     <div>
@@ -91,26 +111,19 @@
                     </div>
                 </div>
             </div>
-            <div class="cl" style="text-align: right">
-                <div class="f-l" style="text-align: left;">
-                    <span>当前公共号：</span>
-                    <Select v-model="appid" style="width:200px" @on-change="selAppidFun">
-                        <Option v-for="item in cityList" :value="item.appid" :key="item.appid">{{ item.nick_name }}</Option>
-                    </Select>
-                </div>
-                <span>自定义时间：</span>
-                <DatePicker type="daterange" v-model="time" :options="options2" placement="bottom-end" placeholder="请选择" style="width: 200px" @on-change="selTimeFun"></DatePicker>
+            <div class="" style="height: 15px;background-color: #f4f4f4"></div>
+            <div class="tel-box">
+                <span class="txt">趋势图</span>
             </div>
-            <div style="height: 450px">
-                <div class="" style="color:#ff0033;text-align: right">单次统计，只限间隔不能超过7天</div>
+            <div style="height: 450px;padding: 15px">
                 <ve-line :data="chartData"></ve-line>
             </div>
         </Card>
-        <Card style="width:100%;margin-top: 10px">
-            <p slot="title" class="title">
-                <span>详情</span>
-            </p>
-            <div >
+        <Card :padding="0">
+            <div class="tel-box">
+                <span class="txt">详情</span>
+            </div>
+            <div style="padding: 15px">
                 <Table :columns="columns1" :data="data1"></Table>
             </div>
         </Card>

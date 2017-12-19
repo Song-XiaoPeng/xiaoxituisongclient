@@ -38,6 +38,12 @@ class IndexedDB{
         this.remove(this.tabName, this.fun, this.key);
       } else if(this.type === 'update'){
         this.update(this.tabName, this.data, this.fun, this.key)
+      } else if (this.type == 'removeMess') {
+        // 清空聊天记录
+        this.data.forEach((k, i) => {
+          this.key = i;
+          this.remove(this.tabName, this.fun, this.key);
+        });
       }
     };
     request.onupgradeneeded = e => {

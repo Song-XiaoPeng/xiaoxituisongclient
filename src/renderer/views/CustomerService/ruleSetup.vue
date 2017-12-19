@@ -75,11 +75,11 @@
 
 
         <TabPane label="会话规则" name="2">
-          <Form :model="formItem" :label-width="120">
+          <Form :model="ruleFrom" :label-width="120">
             <Row>
               <Col span="10">
                 <FormItem label="无所属咨询分配规则">
-                  <Select v-model="formItem.select">
+                  <Select v-model="ruleFrom.select">
                     <Option value="beijing">平均分配</Option>
                     <Option value="shanghai">抢单模式</Option>
                   </Select>
@@ -89,12 +89,12 @@
             <Row>
               <Col span="10">
                 <FormItem label="超时会话">
-                  <Input v-model="formItem.input" placeholder="请输入超时分钟数"></Input>
+                  <Input v-model="ruleFrom.input" placeholder="请输入超时分钟数"></Input>
                 </FormItem>
               </Col>
             </Row>
             <FormItem>
-              <Button type="primary">保存</Button>
+              <Button type="primary" @click="addRuleFun">保存</Button>
             </FormItem>
           </Form>
         </TabPane>
@@ -215,6 +215,10 @@
         addConversationRule: false,
         tabsVal: '1',
         popup2: false,
+        ruleFrom: {
+          select: '',
+          input: ''
+        },
         formItem: {
           input: '',
           select: '',
@@ -428,6 +432,30 @@
     mounted () {
     },
     methods: {
+      // 保存会话规则
+      addRuleFun () {
+        if (this.ruleFrom.select === '') {
+          this.$Message.warning('请选择分配规则');
+          return;
+        }
+        if (this.ruleFrom.input === '') {
+          this.$Message.warning('请输入超时分钟');
+          return;
+        }
+        this.ajax.setSessionRule({
+          data: {
+            rule_type: this.ruleFrom.select === 'beijing' ? '1' : '2',
+            overtime: this.ruleFrom.input
+          },
+          success: (res) => {
+            this.$Message.success('设置成功');
+          },
+          error: (res) => {
+            this.$Message.warning(res.meta.message);
+          }
+        });
+        console.log(this.ruleFrom);
+      },
       // 获取标签分组列表
       getLabelGroupListFun () {
         this.ajax.getLabelGroup({
