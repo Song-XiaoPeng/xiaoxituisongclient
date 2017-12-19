@@ -647,6 +647,8 @@
           },
           success: (res) => {
             this.data1 = res.body.data_list;
+            this.pageData.count = parseInt(res.body.page_data.count);
+            this.pageData.rows_num = parseInt(res.body.page_data.rows_num);
             this.is_Loading = false;
           },
           error: (res) => {

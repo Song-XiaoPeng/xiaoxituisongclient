@@ -50,12 +50,39 @@
    .form-box{
       padding: 10px;
       border-bottom: 1px #eaeaea solid;
-      width: 100%;
+      width: 98%;
       overflow-y: scroll;
-      position: relative;
+      top: 167px;
+      left: 0px;
+      position: absolute;
+      /* margin-bottom: 45px; */
+      /* height: 57%; */
+      right: -29px;
+      bottom: 40px;
+      transition: all .5s;
+      opacity: 1;
    }
+ .is-label-btn{
+    position: absolute;
+    bottom: 5px;
+    text-align: center;
+    width: 100%;
+ }
    .custom-group-box{
-      padding: 5px;
+      padding: 10px;
+      border-bottom: 1px #eaeaea solid;
+      width: 98%;
+      overflow-y: scroll;
+      top: 167px;
+      left: 0px;
+      position: absolute;
+      /* margin-bottom: 45px; */
+      /* height: 57%; */
+      right: -29px;
+      bottom: 40px;
+      transition: all .5s;
+      opacity: 0;
+      display: none;
    }
    .name-box{
       position: absolute;
@@ -101,21 +128,21 @@
          }
       }
    }
- @media all and (min-height:800px) and (max-height:1000px){
-    .form-box{
-       height: 220px
-    }
- }
- @media all and (min-height:1000px) and (max-height:1200px){
-    .form-box{
-       height: 450px
-    }
- }
- @media all and (min-height:1201px){
-    .form-box{
-       height: 550px
-    }
- }
+ /*@media all and (min-height:800px) and (max-height:1000px){*/
+    /*.form-box{*/
+       /*height: 220px*/
+    /*}*/
+ /*}*/
+ /*@media all and (min-height:1000px) and (max-height:1200px){*/
+    /*.form-box{*/
+       /*height: 450px*/
+    /*}*/
+ /*}*/
+ /*@media all and (min-height:1201px){*/
+    /*.form-box{*/
+       /*height: 550px*/
+    /*}*/
+ /*}*/
 </style>
 <template>
    <div class="box">
@@ -139,9 +166,8 @@
            <!--<span >2017-03-05</span>-->
            <!--<span style="color: #2db7f5">张三</span>-->
          <!--</div>-->
-         <Button type="info" class="f-r form-btn"  @click="saveFun" icon="plus-round">保存</Button>
       </div>
-      <div class="form-box">
+      <div class="form-box" ref="client">
          <Form label-position="right" :label-width="80" style="border-bottom: 0">
             <!--<FormItem label="粉丝分组：">-->
                <!--<Select v-model="WxAutId" style="width:  100%;">-->
@@ -200,9 +226,13 @@
             <FormItem style="border-bottom: 0px;" label="备注">
                <Input type="textarea" v-model="formData.desc" style="width: 100%;"></Input>
             </FormItem>
+            <FormItem style="border-bottom: 0px;" label="">
+               <Button type="info" @click="saveFun" icon="plus-round">保存</Button>
+            </FormItem>
          </Form>
+
       </div>
-      <div class="custom-group-box cl">
+      <div class="custom-group-box cl" ref="label">
          <div class="" style="text-align: right">
             <Button type="info" size="small" @click="popup14 = true">添加标签</Button>
          </div>
@@ -215,6 +245,15 @@
             </div>
          </div>
       </div>
+      <div class="is-label-btn">
+         <Button type="dashed" @click="labelShowFun"><Icon type="arrow-up-b"></Icon>&nbsp;{{is_client_btn_txt}}</Button>
+      </div>
+
+
+
+
+
+
 
       <!-- 添加或修改客户池 -->
       <Modal v-model="popup1" title="客户池组" @on-ok="addCustomerGroup" :styles="{'z-index': 1000}">
@@ -469,7 +508,8 @@
           Label: [],
           tabelName: '',
           selLabelData: null,
-          userData: {}
+          userData: {},
+          is_client_btn_txt: '标签'
         };
       },
       mounted () {
@@ -480,6 +520,28 @@
       watch: {
       },
       methods: {
+        // 客户信息显示
+        labelShowFun () {
+          let div = this.$refs.client;
+          let label = this.$refs.label;
+          if (this.is_client_btn_txt === '标签') {
+            div.style.opacity = 0;
+            setTimeout(() => {
+              div.style.display = 'none';
+              this.is_client_btn_txt = '客户信息';
+              label.style.display = 'block';
+              label.style.opacity = 1;
+            }, 500);
+          } else {
+            label.style.opacity = 0;
+            setTimeout(() => {
+              label.style.display = 'none';
+              div.style.display = 'block';
+              div.style.opacity = 1;
+              this.is_client_btn_txt = '标签';
+            }, 500);
+          }
+        },
         // 姓名失去焦点延迟方法
         blurFun () {
           setTimeout(() => {
