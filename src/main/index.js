@@ -24,7 +24,12 @@ function createWindow () {
     show: false,
     webPreferences: {webSecurity: false}
   });
-
+  // 注册全局快捷键 打开调试
+  app.on('ready', () => {
+    globalShortcut.register('ctrl+alt+d+b', function () {
+      mainWindow.webContents.openDevTools();
+    });
+  });
   // 开发环境默认开启调试窗口
   if (process.env.NODE_ENV === 'development') {
     mainWindow.webContents.openDevTools();
@@ -111,6 +116,7 @@ ipcMain.on('orignal-window', () => {
   mainWindow.unmaximize();
 });
 const $windows = [];
+
 // 注册全局快捷键
 app.on('ready', () => {
   globalShortcut.register('ctrl+alt+a', function () {

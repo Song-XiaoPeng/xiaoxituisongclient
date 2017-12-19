@@ -115,8 +115,10 @@
         top:0;
     }
     .percent{
-        position: relative;
-        top: -18px;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
     }
     .audio-box{
         display: inline-block;
@@ -228,7 +230,6 @@ ul.img-txt{
          <span v-if="isAdministrator" style="position: absolute;right: 15px;">
              <Button  type="ghost" class="btn-r">领导评价</Button>
          </span>
-
      </div>
      <div class="chart-win" ref="win" v-bind:class="{'is_mass_chart':isMass}" style="width: 100%;overflow-y: auto;position: relative;background: #fff;">
          <div ref="win1">
@@ -397,7 +398,7 @@ ul.img-txt{
          <Upload style="display: inline-block;"  action="http://kf.lyfz.net/api/v1/we_chat/WxOperation/uploadResources"
                  name="file" :data="{resources_type: 1}"
                  :max-size='20480'
-                 :format="['zip','doc','pdf','rar','ppt','excel','xls','xlsx']"
+                 :format="['zip','doc','pdf','rar','ppt','excel','xls','xlsx','ZIP']"
                  :show-upload-list="false"
                  :before-upload="handleBeforeUpload"
                  :headers="{token: userInfo.token}"
@@ -414,6 +415,7 @@ ul.img-txt{
         <!--<span style="color: #ff99cc" title="发送满意度"><Icon type="thumbsup"></Icon></span>-->
         <!--<span style="color: #ccff66" title="下次联系提醒"><Icon type="ios-lightbulb"></Icon></span>-->
         <!--<span style="color: #333399" title="退出"><Icon type="log-out"></Icon></span>-->
+         <!--<Button class="f-r" style="position: relative;font-size: 28px;top: 4px;color: #9e9e9e;" type="text" size="small" title="清空聊天记录"><Icon type="trash-a"></Icon></Button>-->
      </div>
      <div class="chart-txt" v-bind:class="{'is_mass_chart-txt':isMass}">
          <textarea v-model="txtra"  class="txt" @click="replyType = 1" v-on:paste="pasteFun" @keyup="keyFun"></textarea>
@@ -502,6 +504,13 @@ ul.img-txt{
       </Modal>
       <!-- end截图窗口看窗口 -->
 
+
+      <!-- 强制会话弹窗 -->
+      <Modal v-model="popup8" title="提示" width="750" ok-text="发送" @on-ok="strongMessFun">
+          <p>该用户近期未于公众号交互，是否强制发起会话消息</p>
+          <p style="color: #ff3300; font-size: 12px">注意：每个公众号每日最多发送100条强制会话消息,请谨慎使用</p>
+      </Modal>
+      <!-- end强制会话弹窗 -->
 
 
       <!-- 加载状态 -->
@@ -725,7 +734,9 @@ ul.img-txt{
           pasteImgUrl: '',
           popup6: false,
           fileData: null,
-          is_key: true
+          is_key: true,
+          messData: null,
+          popup8: false
         };
       },
       components: {
@@ -942,9 +953,10 @@ ul.img-txt{
             this.$Message.warning('请选择会话客户');
             return;
           }
+          this.messData = this.groupData();
           this.is_Loading = true;
           this.ajax.sendMessage({
-            data: this.groupData(),
+            data: this.messData,
             success: (res) => {
               this.is_Loading = false;
               let obj;
@@ -1057,9 +1069,140 @@ ul.img-txt{
               this.txtra = '';
             },
             error: (res) => {
-              this.is_percent = false;
+              if (res.meta.code === 3020) {
+                // 调用强制会话
+                this.popup8 = true;
+              } else {
+                this.is_percent = false;
+                this.is_Loading = false;
+                this.$Message.warning(res.meta.message);
+              }
+            }
+          });
+        },
+        // 强制会话
+        strongMessFun () {
+          this.ajax.forcedSendMessage({
+            data: this.messData,
+            success: (res) => {
               this.is_Loading = false;
-              this.$Message.warning(res.meta.message);
+              let obj;
+              // 组合发送成功的数据  保存到本地数据库
+              if (this.replyType === 1) {
+                obj = {
+                  add_time: this.getAtTimeFun(),
+                  appid: this.datalistArr.appid || this.clientData.appid,
+                  company_id: this.datalistArr.company_id || this.clientData.company_id,
+                  customer_service_id: 4,
+                  customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
+                  message_id: '',
+                  message_type: 1,
+                  opercode: 1,
+                  session_id: this.datalistArr.session_id || this.clientData.session_id,
+                  text: this.txtra,
+                  uid: this.datalistArr.uid || this.clientData.uid
+                };
+              } else if (this.replyType === 2) {
+                obj = {
+                  add_time: this.getAtTimeFun(),
+                  appid: this.datalistArr.appid || this.clientData.appid,
+                  company_id: this.datalistArr.company_id || this.clientData.company_id,
+                  customer_service_id: 4,
+                  customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
+                  message_id: '',
+                  message_type: 2,
+                  opercode: 1,
+                  file_url: this.imgData.url || '',
+                  resources_id: this.imgData.resources_id || '',
+                  session_id: this.datalistArr.session_id || this.clientData.session_id,
+                  text: this.txtra,
+                  uid: this.datalistArr.uid || this.clientData.uid
+                };
+              } else if (this.replyType === 4) {
+                obj = {
+                  add_time: this.getAtTimeFun(),
+                  appid: this.datalistArr.appid || this.clientData.appid,
+                  company_id: this.datalistArr.company_id || this.clientData.company_id,
+                  customer_service_id: 4,
+                  customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
+                  message_id: '',
+                  message_type: 4,
+                  opercode: 1,
+                  file_url: this.mp4Data.url || '',
+                  resources_id: this.mp4Data.resources_id || '',
+                  session_id: this.datalistArr.session_id || this.clientData.session_id,
+                  text: this.txtra,
+                  uid: this.datalistArr.uid || this.clientData.uid
+                };
+              } else if (this.replyType === 3) {
+                obj = {
+                  add_time: this.getAtTimeFun(),
+                  appid: this.datalistArr.appid || this.clientData.appid,
+                  company_id: this.datalistArr.company_id || this.clientData.company_id,
+                  customer_service_id: 4,
+                  customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
+                  message_id: '',
+                  message_type: 3,
+                  opercode: 1,
+                  file_url: this.mp3Data.url || '',
+                  resources_id: this.mp3Data.resources_id || '',
+                  session_id: this.datalistArr.session_id || this.clientData.session_id,
+                  text: this.txtra,
+                  uid: this.datalistArr.uid || this.clientData.uid,
+                  is_state: true,
+                  is_time: false,
+                  is_icon: false
+                };
+              } else if (this.replyType === 6) {
+                obj = {
+                  add_time: this.getAtTimeFun(),
+                  appid: this.datalistArr.appid || this.clientData.appid,
+                  company_id: this.datalistArr.company_id || this.clientData.company_id,
+                  customer_service_id: 4,
+                  customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
+                  message_id: '',
+                  message_type: 6,
+                  opercode: 1,
+                  file_url: '',
+                  resources_id: '',
+                  session_id: this.datalistArr.session_id || this.clientData.session_id,
+                  text: this.txtra,
+                  uid: this.datalistArr.uid || this.clientData.uid,
+                  htmlContent: this.el.content.news_item
+                };
+              } else if (this.replyType === 8) {
+                obj = {
+                  add_time: this.getAtTimeFun(),
+                  appid: this.datalistArr.appid || this.clientData.appid,
+                  company_id: this.datalistArr.company_id || this.clientData.company_id,
+                  customer_service_id: 4,
+                  customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
+                  message_id: '',
+                  message_type: 8,
+                  opercode: 1,
+                  file_url: this.fileData.url,
+                  file_name: this.upFileData.name,
+                  resources_id: '',
+                  session_id: this.datalistArr.session_id || this.clientData.session_id,
+                  text: this.txtra,
+                  uid: this.datalistArr.uid || this.clientData.uid
+                };
+              }
+              this.is_percent = false;
+              this.el = '';
+              this.clientData.data.push(obj);
+              this.scroFun();
+              this.updbFun(obj);
+              this.txtra = '';
+            },
+            error: (res) => {
+              if (res.meta.code === 3020) {
+                // 调用强制会话
+              } else {
+                this.is_percent = false;
+                this.is_Loading = false;
+                this.$Message.warning(res.meta.message);
+              }
             }
           });
         },

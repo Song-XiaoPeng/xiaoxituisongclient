@@ -1380,4 +1380,38 @@ ajax.createWxUserSession = (obj) => {
     console.log(error);
   });
 };
+// 强制会话
+ajax.forcedSendMessage = (obj) => {
+  util.ajax.post('/api/v1/message/Common/forcedSendMessage', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+// 会话规则
+ajax.setSessionRule = (obj) => {
+  util.ajax.post('/api/v1/setting/Rule/setSessionRule', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
 export default ajax;
