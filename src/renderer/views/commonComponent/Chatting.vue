@@ -952,64 +952,64 @@ ul.img-txt{
               if (this.replyType === 1) {
                 obj = {
                   add_time: this.getAtTimeFun(),
-                  appid: this.datalistArr ? this.datalistArr.appid : this.clientData.appid,
-                  company_id: this.datalistArr ? this.datalistArr.company_id : this.clientData.company_id,
+                  appid: this.datalistArr.appid || this.clientData.appid,
+                  company_id: this.datalistArr.company_id || this.clientData.company_id,
                   customer_service_id: 4,
-                  customer_wx_openid: this.datalistArr ? this.datalistArr.customer_wx_openid : this.clientData.customer_wx_openid,
+                  customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
                   message_id: '',
                   message_type: 1,
                   opercode: 1,
-                  session_id: this.datalistArr ? this.clientData.session_id : this.clientData.session_id,
+                  session_id: this.datalistArr.session_id || this.clientData.session_id,
                   text: this.txtra,
-                  uid: this.datalistArr ? this.datalistArr.uid : this.clientData.uid
+                  uid: this.datalistArr.uid || this.clientData.uid
                 };
               } else if (this.replyType === 2) {
                 obj = {
                   add_time: this.getAtTimeFun(),
-                  appid: this.datalistArr ? this.datalistArr.appid : this.clientData.appid,
-                  company_id: this.datalistArr ? this.datalistArr.company_id : this.clientData.company_id,
+                  appid: this.datalistArr.appid || this.clientData.appid,
+                  company_id: this.datalistArr.company_id || this.clientData.company_id,
                   customer_service_id: 4,
-                  customer_wx_openid: this.datalistArr ? this.datalistArr.customer_wx_openid : this.clientData.customer_wx_openid,
+                  customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
                   message_id: '',
                   message_type: 2,
                   opercode: 1,
                   file_url: this.imgData.url || '',
                   resources_id: this.imgData.resources_id || '',
-                  session_id: this.datalistArr ? this.datalistArr.session_id : this.clientData.session_id,
+                  session_id: this.datalistArr.session_id || this.clientData.session_id,
                   text: this.txtra,
-                  uid: this.datalistArr ? this.datalistArr.uid : this.clientData.uid
+                  uid: this.datalistArr.uid || this.clientData.uid
                 };
               } else if (this.replyType === 4) {
                 obj = {
                   add_time: this.getAtTimeFun(),
-                  appid: this.datalistArr ? this.datalistArr.appid : this.clientData.appid,
-                  company_id: this.datalistArr ? this.datalistArr.company_id : this.clientData.company_id,
+                  appid: this.datalistArr.appid || this.clientData.appid,
+                  company_id: this.datalistArr.company_id || this.clientData.company_id,
                   customer_service_id: 4,
-                  customer_wx_openid: this.datalistArr ? this.datalistArr.customer_wx_openid : this.clientData.customer_wx_openid,
+                  customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
                   message_id: '',
                   message_type: 4,
                   opercode: 1,
                   file_url: this.mp4Data.url || '',
                   resources_id: this.mp4Data.resources_id || '',
-                  session_id: this.datalistArr ? this.datalistArr.session_id : this.clientData.session_id,
+                  session_id: this.datalistArr.session_id || this.clientData.session_id,
                   text: this.txtra,
-                  uid: this.datalistArr ? this.datalistArr.uid : this.clientData.uid
+                  uid: this.datalistArr.uid || this.clientData.uid
                 };
               } else if (this.replyType === 3) {
                 obj = {
                   add_time: this.getAtTimeFun(),
-                  appid: this.datalistArr ? this.datalistArr.appid : this.clientData.appid,
-                  company_id: this.datalistArr ? this.datalistArr.company_id : this.clientData.company_id,
+                  appid: this.datalistArr.appid || this.clientData.appid,
+                  company_id: this.datalistArr.company_id || this.clientData.company_id,
                   customer_service_id: 4,
-                  customer_wx_openid: this.datalistArr ? this.datalistArr.customer_wx_openid : this.clientData.customer_wx_openid,
+                  customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
                   message_id: '',
                   message_type: 3,
                   opercode: 1,
                   file_url: this.mp3Data.url || '',
                   resources_id: this.mp3Data.resources_id || '',
-                  session_id: this.datalistArr ? this.datalistArr.session_id : this.clientData.session_id,
+                  session_id: this.datalistArr.session_id || this.clientData.session_id,
                   text: this.txtra,
-                  uid: this.datalistArr ? this.datalistArr.uid : this.clientData.uid,
+                  uid: this.datalistArr.uid || this.clientData.uid,
                   is_state: true,
                   is_time: false,
                   is_icon: false
@@ -1017,36 +1017,36 @@ ul.img-txt{
               } else if (this.replyType === 6) {
                 obj = {
                   add_time: this.getAtTimeFun(),
-                  appid: this.datalistArr ? this.datalistArr.appid : this.clientData.appid,
-                  company_id: this.datalistArr ? this.datalistArr.company_id : this.clientData.company_id,
+                  appid: this.datalistArr.appid || this.clientData.appid,
+                  company_id: this.datalistArr.company_id || this.clientData.company_id,
                   customer_service_id: 4,
-                  customer_wx_openid: this.datalistArr ? this.datalistArr.customer_wx_openid : this.clientData.customer_wx_openid,
+                  customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
                   message_id: '',
                   message_type: 6,
                   opercode: 1,
                   file_url: '',
                   resources_id: '',
-                  session_id: this.datalistArr ? this.datalistArr.session_id : this.clientData.session_id,
+                  session_id: this.datalistArr.session_id || this.clientData.session_id,
                   text: this.txtra,
-                  uid: this.datalistArr ? this.datalistArr.uid : this.clientData.uid,
+                  uid: this.datalistArr.uid || this.clientData.uid,
                   htmlContent: this.el.content.news_item
                 };
               } else if (this.replyType === 8) {
                 obj = {
                   add_time: this.getAtTimeFun(),
-                  appid: this.datalistArr ? this.datalistArr.appid : this.clientData.appid,
-                  company_id: this.datalistArr ? this.datalistArr.company_id : this.clientData.company_id,
+                  appid: this.datalistArr.appid || this.clientData.appid,
+                  company_id: this.datalistArr.company_id || this.clientData.company_id,
                   customer_service_id: 4,
-                  customer_wx_openid: this.datalistArr ? this.datalistArr.customer_wx_openid : this.clientData.customer_wx_openid,
+                  customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
                   message_id: '',
                   message_type: 8,
                   opercode: 1,
                   file_url: this.fileData.url,
                   file_name: this.upFileData.name,
                   resources_id: '',
-                  session_id: this.datalistArr ? this.datalistArr.session_id : this.clientData.session_id,
+                  session_id: this.datalistArr.session_id || this.clientData.session_id,
                   text: this.txtra,
-                  uid: this.datalistArr ? this.datalistArr.uid : this.clientData.uid
+                  uid: this.datalistArr.uid || this.clientData.uid
                 };
               }
               this.is_percent = false;

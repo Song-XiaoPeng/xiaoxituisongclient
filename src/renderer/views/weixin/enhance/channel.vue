@@ -34,8 +34,8 @@
                   <Button type="ghost" @click="modal1 = false,popup3 = true">操作</Button>
               </FormItem>
               <FormItem label="自动标签">
-                  <Tag closable color="green" v-for="(k, i) in tabArr" :key="k" @on-close="handleClose2(i)">{{k}}</Tag>
-                  <Button type="ghost" @click="popup6 = true, modal1 = false">添加</Button>
+                  <Tag closable color="green" v-for="(k, i) in tabArr" :key="i" @on-close="handleClose2(i)">{{k.label_name}}</Tag>
+                  <Button type="ghost" @click="popup14 = true, modal1 = false">添加</Button>
               </FormItem>
               <FormItem label="接待类型">
                   <RadioGroup v-model="selRader" @on-change="radioFun">
@@ -131,7 +131,7 @@
 
 
       <!-- 客服弹窗 -->
-      <Modal v-model="popup7"  title="自动标签"  @on-cancel="popup7 = false, modal1 = true" @on-ok="popup7 = false, modal1 = true">
+      <Modal v-model="popup7"  title="客服"  @on-cancel="popup7 = false, modal1 = true" @on-ok="popup7 = false, modal1 = true">
           <!--<div class="">-->
               <!--<span>当前公共号：</span>-->
               <!--<Select v-model="appid" style="width:200px" @on-change="selAppidFun">-->
@@ -139,11 +139,13 @@
               <!--</Select>-->
               <!--<span style="color: #ff3300">点击列表一项即选择</span>-->
           <!--</div>-->
-          <div class=""  style="padding-top: 10px">
-              <Table highlight-row :columns="columns5" :data="data3" @on-current-change="selTabRowFun"></Table>
-          </div>
-          <div class="" style="padding-top: 10px;text-align: center">
-              <Page :total="pageData.count" :page-size="pageData.rows_num" @on-change="pageFun"></Page>
+          <div  style="max-height: 500px;overflow: auto">
+              <div class=""  style="padding-top: 10px">
+                  <Table highlight-row :columns="columns5" :data="data3" @on-current-change="selTabRowFun"></Table>
+              </div>
+              <div class="" style="padding-top: 10px;text-align: center">
+                  <Page :total="pageData.count" :page-size="pageData.rows_num" @on-change="pageFun"></Page>
+              </div>
           </div>
       </Modal>
       <!-- end客服弹窗 -->
@@ -204,6 +206,14 @@
           </div>
       </Modal>
       <!-- end图片 -->
+
+
+      <!-- 添加标签 -->
+      <Modal v-model="popup14" title="标签">
+          <div><span style="color: #ff3300">点击其中一项即选择</span></div>
+          <Table border :columns="columns11" highlight-row :data="Label" @on-current-change="selLabelFun"></Table>
+      </Modal>
+      <!-- end添加标签 -->
 
 
       <!-- 加载状态 -->
@@ -511,7 +521,28 @@
         reply_type: '1',
         reply_text: '',
         media_id: '',
-        resources_id: ''
+        resources_id: '',
+        selLabelData: {},
+        columns11: [
+          {
+            title: '标签名',
+            key: 'label_name'
+          },
+          {
+            title: '标签id',
+            key: 'label_id'
+          },
+          {
+            title: '标签分组',
+            key: 'group_name'
+          },
+          {
+            title: '标签分组id',
+            key: 'label_group_id'
+          }
+        ],
+        popup14: false,
+        Label: []
       };
     },
     mounted () {
@@ -519,6 +550,33 @@
     beforeDestroy () {
     },
     methods: {
+      // 选择标签列表 中的数据
+      selLabelFun (v) {
+        if (this.tabArr.length === 0) {
+          this.tabArr.push(v);
+        } else {
+          this.tabArr.forEach((k) => {
+            if (k.label_id === v.label_id) {
+              this.$Message.warning('不能重复选择');
+            } else {
+              this.tabArr.push(v);
+            }
+          });
+        }
+        // 去重
+        let arr = [];
+        let json = {};
+        this.tabArr.forEach((k) => {
+          json[k.label_id] = k;
+        });
+        for (let k in json) {
+          arr.push(json[k]);
+        }
+        this.tabArr = arr;
+        this.selLabelData = v;
+        this.popup14 = false;
+        this.modal1 = true;
+      },
       // 上传图片
       upImgFun (v) {
         this.ImgData = v.body;
@@ -667,6 +725,9 @@
           this.customer_service_id = '';
           this.customer_service_group_id = '';
         }
+        let arr = this.tabArr.map((k) => {
+          return k.label_id;
+        });
         let obj = {
           type: '1',
           appid: this.appid,
@@ -674,7 +735,7 @@
           activity_name: this.name,
           qrcode_group_id: this.qrcode_group_id,
           invalid_day: this.dey,
-          label: this.tabArr,
+          label: arr,
           customer_service_id: this.customer_service_id,
           customer_service_group_id: this.customer_service_group_id,
           reception_type: this.reception_type,
@@ -897,6 +958,18 @@
           this.userName = '';
           this.customer_service_id = '';
         }
+      },
+      // 获取标签列表
+      getLabelList () {
+        this.ajax.getLabelList({
+          data: {},
+          success: (res) => {
+            this.Label = res.body;
+          },
+          error: (res) => {
+            this.$Message.waiting(res.meta.message);
+          }
+        });
       }
     },
     watch: {
@@ -915,6 +988,7 @@
       this.geteChannelGroupListFun();
       this.getSection();
       this.getQrcodList();
+      this.getLabelList();
       this.ajax.getWxAuthList({
         data: {},
         success: (res) => {

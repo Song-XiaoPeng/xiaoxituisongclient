@@ -141,7 +141,10 @@
                 return [start, end];
               }
             }
-          ]
+          ],
+          disabledDate (date) {
+            return date && date.valueOf() > Date.now() - 86400000;
+          }
         },
         is_Loading: false,
         time: false,
