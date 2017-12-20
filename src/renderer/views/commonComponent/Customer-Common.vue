@@ -870,6 +870,23 @@
           this.clientData = k;
           this.getClientFun();
           this.getWxUserInfo();
+          this.formData.customer_info_id = '';
+          this.formData.real_name = '';
+          this.formData.real_sex = '';
+          this.formData.birthday = '';
+          this.formData.real_phone = '';
+          this.formData.contact_address = '';
+          this.formData.wx_company_id = '';
+          this.formData.wx_user_group_id = '';
+          this.formData.customer_type = '';
+          this.formData.company_id = '';
+          this.formData.desc = '';
+          this.formData.wx_number = '';
+          this.formData.product_id = '';
+          this.formData.email = '';
+          this.formData.tel = '';
+          this.formData.wx_user_group_name = '';
+          this.formData.wx_company_name = '';
         });
       }
     };

@@ -45,9 +45,9 @@
   </div>
 </template>
 <script>
-    import personnel from '../commonComponent/ChatPopulation';
-    import formation from '../commonComponent/commoninformation';
-    import chart from '../commonComponent/Chatting';
+    import personnel from './ChatPopulation.vue';
+    import formation from './commoninformation';
+    import chart from './Chatting';
     export default {
       data () {
         return {
@@ -65,6 +65,7 @@
       },
       methods: {},
       created () {
+        console.log(21123);
       }
     };
 </script>

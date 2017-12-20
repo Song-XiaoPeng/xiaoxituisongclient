@@ -1414,4 +1414,21 @@ ajax.setSessionRule = (obj) => {
     console.log(error);
   });
 };
+// 监控 --- 》 获取会话人员列表
+ajax.getMonitorSessionList = (obj) => {
+  util.ajax.get('/api/v1/message/Interaction/getMonitorSessionList', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
 export default ajax;
