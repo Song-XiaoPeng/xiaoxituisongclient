@@ -1,6 +1,7 @@
 <style scoped lang="less">
     .right-box{
         display: -webkit-box;
+        border-top: 1px #eaeaea solid;
     }
     .btn{
         height: 37px;
@@ -62,7 +63,7 @@
              业务提醒
           </div>
       </div>
-      <div>
+      <div style="height: 100%">
          <Common v-show="navState == 1"></Common>
          <information v-show="navState == 2 && isAdministrator == false"></information>
          <Record v-show="navState == 3" ></Record>
@@ -124,7 +125,8 @@
       },
       created () {
         Bus.$on('change', (k, o) => {
-          // 判断是否是客户管理数据/ 控制显示（客户信息/常用话术/漫游信息/业务提醒）
+          // 判断是否是客户管理数据/ 控制显示（客户信息/常用话术/漫游信息/业务提醒） dwadw
+          console.log(11234545);
           Object.assign(this.is_CRM, o);
           let i = 1;
           for (let s in o) {

@@ -156,6 +156,7 @@
                <li><span>来源：</span> <span style="color:#999">{{clientData.app_name}}</span> </li>
                <!--<li><span>公共平台</span> <span style="color:#999">哇大王</span> </li>-->
                <li><span>来访次数</span> <span style="color:#999">{{clientData.session_frequency}}</span> </li>
+               <li><span>客服人员</span> <span style="color: #2db7f5">{{clientData.customer_service_name}}</span> </li>
             </ul>
          </div>
          <!--<div class="txt-bot">-->
@@ -176,65 +177,65 @@
             <!--</FormItem>-->
             <FormItem style="border-bottom: 0px;" label="客户类型：">
                <Select v-model="formData.customer_type" style="width:  44%;">
-                  <Option v-for="item in clientTypeArr" :value="item.id" :key="item.id">{{ item.label }}</Option>
+                  <Option v-for="item in clientTypeArr" :value="item.id" :key="item.id" disabled>{{ item.label }}</Option>
                </Select>
             </FormItem>
             <FormItem style="border-bottom: 0px;" label="客户池组：">
                <Select v-model="formData.wx_user_group_id" style="width:  44%;">
-                  <Option v-for="item in cityList" :value="parseInt(item.wx_user_group_id)" :key="item.wx_user_group_id">{{ item.group_name }}</Option>
+                  <Option v-for="item in cityList" :value="parseInt(item.wx_user_group_id)" :key="item.wx_user_group_id" disabled>{{ item.group_name }}</Option>
                </Select>
-               <Button type="dashed" @click="popup2 = true">操作</Button>
+               <Button type="dashed" @click="popup2 = true" disabled>操作</Button>
             </FormItem>
             <FormItem label="意向产品：">
                <span>{{selPurposeData.product_name}}</span>
-               <Button type="dashed" @click="popup12 = true">操作</Button>
+               <Button type="dashed" @click="popup12 = true" disabled>操作</Button>
             </FormItem>
             <FormItem style="border-bottom: 0px;" label="客户生日：" >
                <DatePicker type="date" v-model="formData.birthday" placeholder="选择时间" style="width:  100%;" @on-change="birthdayFun"></DatePicker>
             </FormItem>
             <FormItem style="border-bottom: 0px;" label="性别：" >
                <RadioGroup v-model="formData.real_sex">
-                  <Radio label="1">
+                  <Radio label="1" disabled>
                      <span>男</span>
                   </Radio>
-                  <Radio label="2">
+                  <Radio label="2" disabled>
                      <span>女</span>
                   </Radio>
                </RadioGroup>
             </FormItem>
             <FormItem style="border-bottom: 0px;"  label="姓名：">
-               <Input v-model="formData.real_name" style="width:  100%;" @on-change="nameSeekFun" @on-blur="blurFun"></Input>
+               <Input v-model="formData.real_name" style="width:  100%;" @on-change="nameSeekFun" @on-blur="blurFun" disabled></Input>
                <ul class="name-box" v-if="is_name_show">
                   <li v-for="(item, i) in nameArr" @click="selNameSeekFun(item)">{{ item.real_name }}</li>
                </ul>
             </FormItem>
             <FormItem style="border-bottom: 0px;"  label="手机：">
-               <Input v-model="formData.real_phone" style="width:  100%;"></Input>
+               <Input v-model="formData.real_phone" style="width:  100%;" disabled></Input>
             </FormItem>
             <FormItem style="border-bottom: 0px;"  label="联系地址：">
-               <Input v-model="formData.contact_address" style="width:  100%;"></Input>
+               <Input v-model="formData.contact_address" style="width:  100%;" disabled></Input>
             </FormItem>
             <FormItem style="border-bottom: 0px;"  label="微信号">
-               <Input v-model="formData.wx_number" style="width:  100%;"></Input>
+               <Input v-model="formData.wx_number" style="width:  100%;" disabled></Input>
             </FormItem>
             <FormItem style="border-bottom: 0px;"  label="邮箱">
-               <Input v-model="formData.email" style="width:  100%;"></Input>
+               <Input v-model="formData.email" style="width:  100%;" disabled></Input>
             </FormItem>
             <FormItem style="border-bottom: 0px;"  label="客户电话">
-               <Input v-model="formData.tel" style="width:  100%;"></Input>
+               <Input v-model="formData.tel" style="width:  100%;" disabled></Input>
             </FormItem>
             <FormItem style="border-bottom: 0px;" label="备注">
-               <Input type="textarea" v-model="formData.desc" style="width: 100%;"></Input>
+               <Input type="textarea" v-model="formData.desc" style="width: 100%;" disabled></Input>
             </FormItem>
             <FormItem style="border-bottom: 0px;" label="">
-               <Button type="info" @click="saveFun" icon="plus-round">保存</Button>
+               <Button type="info" @click="saveFun" icon="plus-round" disabled>保存</Button>
             </FormItem>
          </Form>
 
       </div>
       <div class="custom-group-box cl" ref="label">
          <div class="" style="text-align: right">
-            <Button type="info" size="small" @click="popup14 = true">添加标签</Button>
+            <Button type="info" size="small" @click="popup14 = true" disabled>添加标签</Button>
          </div>
          <div class="label-box">
             <div class="label-list" v-for="(k, i) in userData.label">
@@ -325,6 +326,7 @@
           selPurposeData: {},
           popup13: false,
           popup14: false,
+          userInfo: {},
           data7: [],
           columns8: [
             {
@@ -769,7 +771,8 @@
             data: this.formData,
             success: (res) => {
               if (res.body.customer_info_id && res.body.customer_info_id !== null) {
-                Bus.$emit('is_remind', {'remind': true});
+                // 通知业务提醒事件
+                // Bus.$emit('is_remind', {'remind': true});
               }
               this.$Message.success('操作成功');
             },
@@ -807,7 +810,8 @@
               this.formData.wx_user_group_name = res.body.wx_user_group_name;
               this.is_Loading = false;
               if (res.body.customer_info_id && res.body.customer_info_id !== null) {
-                Bus.$emit('is_remind', res.body, {'remind': true});
+                // 通知业务提醒事件
+                // Bus.$emit('is_remind', res.body, {'remind': true});
               }
             },
             error: (res) => {
@@ -859,6 +863,7 @@
         // Bus.$off();
       },
       created () {
+        this.userInfo = JSON.parse(localStorage.getItem('userInfo'));
         this.getProductList();
         this.getLabelList();
         Bus.$on('WxAuthList', (k) => {

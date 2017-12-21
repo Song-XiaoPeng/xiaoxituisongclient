@@ -169,7 +169,7 @@
                    等待中
                </div>
                <ul ref="list2" class="list" :style="'height:' + data2.length * 67 + 'px'">
-                   <li v-for="(k, i) in data2" @click.stop="popup1 = true,clientName = k.customer_wx_nickname,clientData = k,clientDataIndex = i, is_w_v = 2">
+                   <li v-for="(k, i) in data2" @click.stop="underwayPopupFun(clientName = k.customer_wx_nickname,clientData = k,clientDataIndex = i, is_w_v = 2)">
                        <span class="end" title="结束会话" @click.stop="popup2 = true, clientName = k, is_w_v = 2, clientDataIndex = i"><Icon  type="close-circled" style="vertical-align: top"></Icon></span>
                        <div class="picture">
                            <img :src="k.customer_wx_portrait" alt="">
@@ -207,11 +207,11 @@
        <!-- end接入会话弹窗 -->
 
 
-       <!-- 接入会话弹窗 -->
+       <!-- 结束会话弹窗 -->
        <Modal v-model="popup2" title="提示" @on-ok="endFun">
            确定结束与 <span style="color: #2b85e4">{{clientName.customer_wx_nickname}}</span>的会话？
        </Modal>
-       <!-- end接入会话弹窗 -->
+       <!-- end结束会话弹窗 -->
 
        <!-- 加载状态 -->
        <Spin fix v-if="is_Loading">
@@ -337,6 +337,8 @@
           let that = this;
           let arr = [];
           let db = new DB();
+          that.clientDataIndex = i;
+          this.clientData = k;
           that.is_dialogue_click = true;
           that.messageData = k;
           that.data1.forEach((k) => {
@@ -349,6 +351,7 @@
           db.type = 'get'; // 执行类型
           db.tabName = 'message'; // 数据表名称
           db.fun = function (res) { // 执行成功回掉函数
+            console.log(res);
             res.forEach((k) => {
               if (k.customer_wx_openid === that.messageData.customer_wx_openid) {
                 arr.push(k);
@@ -375,6 +378,7 @@
         },
         // 获取微信用户基本信息
         getWxUserInfo (d, obj) {
+          this.is_Loading = true;
           this.ajax.getWxUserInfo({
             data: {
               appid: d.appid,
@@ -420,7 +424,6 @@
                 db.fun = function (res) { // 执行成功回掉函数 1531
                   db.close();
                 };
-                console.log(this.data2[this.clientDataIndex]);
                 that.data1.unshift(this.data2[this.clientDataIndex]);
                 that.data2.splice(this.clientDataIndex, 1);
               } else if (that.is_w_v === 3) {
@@ -439,14 +442,20 @@
               that.clientName = '';
             },
             error: (res) => {
-              that.is_Loading = false;
-              that.$Message.warning(res.meta.message);
+              if (res.meta.code === 3001) {
+                this.$Message.warning('会话不存在，自动删除当前客户');
+                this.is_w_v = 2;
+                this.endFun();
+              } else {
+                that.is_Loading = false;
+                that.$Message.warning(res.meta.message);
+              }
             }
           });
         },
         // 结束会话
         endFun () {
-          let k = this.clientName;
+          let k = this.clientData;
           this.is_Loading = true;
           this.ajax.closeSession({
             data: {
@@ -498,12 +507,33 @@
               Bus.$emit('change', this.messageData, obj, {});
               this.is_Loading = false;
               this.clientName = '';
+              this.delMessRecordFun();
             },
             error: (res) => {
               this.is_Loading = false;
               this.$Message.warning(res.meta.message);
             }
           });
+        },
+        // 关闭客户 删除本地聊
+        delMessRecordFun (openid) {
+          // 获取本地聊天记录
+          let that = this;
+          let db = new DB();
+          db.type = 'get'; // 执行类型
+          db.tabName = 'message'; // 数据表名称
+          db.fun = function (res) { // 执行成功回掉函数 customer_wx_openid
+            console.log(res);
+            res.forEach((k, i) => {
+              console.log(k.customer_wx_openid, that.clientData.customer_wx_openid);
+              if (k.customer_wx_openid === that.clientData.customer_wx_openid) {
+                db.remove('message', (res) => {
+                  console.log('删除成功');
+                }, k.key);
+              }
+            });
+            db.close();
+          };
         },
         // 获取正在会话列表中客户会话数据
         getMessage (res) {
@@ -674,6 +704,11 @@
         });
         Bus.$on('MessageList', (k) => {
           this.getMessage(k);
+        });
+        // 监听发送消息 如果返回错误会话已关闭    就关闭会话列表中的这个客户
+        Bus.$on('closeDialogue', () => {
+          this.is_w_v = 1;
+          this.endFun();
         });
         // store.state['dialogueArr'] = '132123123';
         // this.$electron.ipcRenderer.send('getCookie');

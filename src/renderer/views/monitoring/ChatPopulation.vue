@@ -158,7 +158,7 @@
                        </div>
                        <div class="txt">
                            <div class="name">{{k.customer_wx_nickname}}</div>
-                           <div class="remark">{{k.app_name}}</div>
+                           <div class="remark">{{k.app_name || k.nick_name}}</div>
                        </div>
                    </li>
                </ul>
@@ -169,14 +169,15 @@
                    等待中
                </div>
                <ul ref="list2" class="list" :style="'height:' + data2.length * 67 + 'px'">
-                   <li v-for="(k, i) in data2" @click.stop="popup1 = true,clientName = k.customer_wx_nickname,clientData = k,clientDataIndex = i, is_w_v = 2">
-                       <!--<span class="end" title="结束会话" @click.stop="popup2 = true, clientName = k, is_w_v = 2, clientDataIndex = i"><Icon  type="close-circled" style="vertical-align: top"></Icon></span>-->
+                   <!-- @click.stop="popup1 = true,clientName = k.customer_wx_nickname,clientData = k,clientDataIndex = i, is_w_v = 2" -->
+                   <li v-for="(k, i) in data2" >
+                       <span class="end" title="关闭会话" @click.stop="popup2 = true, clientName = k, is_w_v = 2, clientDataIndex = i"><Icon  type="close-circled" style="vertical-align: top"></Icon></span>
                        <div class="picture">
                            <img :src="k.customer_wx_portrait" alt="">
                        </div>
                        <div class="txt">
                            <div class="name">{{k.customer_wx_nickname}}</div>
-                           <div class="remark">{{k.app_name}}</div>
+                           <div class="remark">{{k.app_name || k.nick_name}}</div>
                        </div>
                    </li>
                </ul>
@@ -187,13 +188,15 @@
                    排队中
                </div>
                <ul ref="list3" class="list" :style="'height:' + data3.length * 67 + 'px'">
-                   <li v-for="(k, i) in data3" @click.stop="addDialogueFun(k, i)">
+                   <!--  @click.stop="addDialogueFun(k, i)" -->
+                   <li v-for="(k, i) in data3" >
+                       <span class="end" title="关闭会话" @click.stop="popup2 = true, clientName = k, is_w_v = 2, clientDataIndex = i"><Icon  type="close-circled" style="vertical-align: top"></Icon></span>
                        <div class="picture">
                            <img :src="k.customer_wx_portrait" alt="">
                        </div>
                        <div class="txt">
                            <div class="name">{{k.customer_wx_nickname}}</div>
-                           <div class="remark">{{k.app_name}}</div>
+                           <div class="remark">{{k.app_name || k.nick_name}}</div>
                        </div>
                    </li>
                </ul>
@@ -209,7 +212,11 @@
 
        <!-- 接入会话弹窗 -->
        <Modal v-model="popup2" title="提示" @on-ok="endFun">
-           确定结束与 <span style="color: #2b85e4">{{clientName.customer_wx_nickname}}</span>的会话？
+           <div class="" style="padding: 5px 0;color: #2db7f5;text-align: center;">确定结束与 <span style="color: #ff3300">{{clientName.customer_wx_nickname}}</span>的会话？</div>
+           <div style="text-align: center;">
+               <span>关闭原因:</span>&nbsp;<Input v-model="close_explain" placeholder="请输入" style="width: 300px"></Input>
+           </div>
+
        </Modal>
        <!-- end接入会话弹窗 -->
 
@@ -272,7 +279,10 @@
             icon3: '1'
           },
           clueData: null,
-          dialogue_time_i: 0
+          dialogue_time_i: 0,
+          dialogue_arr_i: '',
+          openid: '',
+          close_explain: ''
         };
       },
       mounted () {
@@ -336,46 +346,29 @@
         // 会话中---》点击进入会话
         underwayFun (k, i) {
           let that = this;
-          let arr = [];
-          let db = new DB();
           that.is_dialogue_click = true;
           that.messageData = k;
+          that.openid = k.customer_wx_openid;
           that.data1.forEach((k) => {
             k['is_class'] = false;
           });
           that.data1[i]['is_class'] = true;
           that.data1[i]['sum'] = 0;
-          Object.assign(that.messageData, {'data': null});
-          // 获取选择客户的相关数据
-          db.type = 'get'; // 执行类型
-          db.tabName = 'message'; // 数据表名称
-          db.fun = function (res) { // 执行成功回掉函数
-            res.forEach((k) => {
-              if (k.customer_wx_openid === that.messageData.customer_wx_openid) {
-                arr.push(k);
-              }
-            });
-            that.arr = arr;
-            that.messageData.data = arr;
-            // that.messageData.data = arr;
-            // 调用自定义事件传递数据到 聊天窗口
-            let obj = {
-              common: true,
-              information: true,
-              record: true,
-              remind: false,
-              type: 'mess'
-            };
-            if (arr.length === 0) {
-              that.getWxUserInfo(that.messageData, obj);
-            } else {
-              Bus.$emit('change', that.messageData, obj);
-            }
-            db.close();
+          Object.assign(that.messageData, {'data': []});
+          // 调用自定义事件传递数据到 聊天窗口
+          let obj = {
+            common: true,
+            information: true,
+            record: true,
+            remind: false,
+            type: 'mess'
           };
+          that.getWxUserInfo(that.messageData, obj);
+          // Bus.$emit('change', that.messageData, obj);
         },
         // 获取微信用户基本信息
         getWxUserInfo (d, obj) {
+          this.is_Loading = true;
           this.ajax.getWxUserInfo({
             data: {
               appid: d.appid,
@@ -384,6 +377,9 @@
             success: (res) => {
               this.userData = res.body;
               this.is_Loading = false;
+              Object.assign(this.messageData, {session_frequency: res.body.session_frequency});
+              Object.assign(this.messageData, {invitation_frequency: res.body.invitation_frequency});
+              Object.assign(this.messageData, {app_name: this.messageData.nick_name});
               Bus.$emit('change', this.messageData, obj, res);
             },
             error: (res) => {
@@ -421,7 +417,6 @@
                 db.fun = function (res) { // 执行成功回掉函数 1531
                   db.close();
                 };
-                console.log(this.data2[this.clientDataIndex]);
                 that.data1.unshift(this.data2[this.clientDataIndex]);
                 that.data2.splice(this.clientDataIndex, 1);
               } else if (that.is_w_v === 3) {
@@ -449,9 +444,10 @@
         endFun () {
           let k = this.clientName;
           this.is_Loading = true;
-          this.ajax.closeSession({
+          this.ajax.monitoringCloseSession({
             data: {
-              session_list: [k.session_id]
+              close_explain: this.close_explain,
+              session_id: k.session_id
             },
             success: (res) => {
               if (this.is_w_v === 1) {
@@ -658,6 +654,25 @@
         //
         //
         //
+        // 会话列表数据的 增删
+        data1Handle (d) {
+          if (this.data1.length === 0) {
+            d.forEach((k) => {
+              k['is_class'] = false;
+            });
+            d[0].is_class = true;
+            this.data1 = d;
+            this.underwayFun(d[0], 0);
+          } else {
+            d.forEach((k) => {
+              if (k.customer_wx_openid === this.openid) {
+                k['is_class'] = true;
+              } else {
+                k['is_class'] = false;
+              }
+            });
+          }
+        },
         // 获取会话列表数据的定时器
         timerFun () {
           this.dialogue_time_i = setInterval(() => {
@@ -670,7 +685,7 @@
             data: {},
             success: (res) => {
               // this.conversationDeWeightFun(res.body.conversation_session);
-              this.data1 = res.body.conversation_session;
+              this.data1Handle(res.body.conversation_session);
               this.data2 = res.body.pending_access_session;
               this.data3 = res.body.line_up_session;
             },
@@ -684,6 +699,7 @@
         clearInterval(this.dialogue_time_i);
       },
       created () {
+        // Bus.$off();
         this.getDialogueListFun();
         this.timerFun();
         // this.clueData = this.$route.query;

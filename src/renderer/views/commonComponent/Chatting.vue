@@ -36,6 +36,24 @@
                 border-radius: 4px;
                 max-width: 70%;
                 vertical-align: top;
+                .lading-box{
+                    position: absolute;
+                    height: 20px;
+                    width: 20px;
+                    top: 4px;
+                    left: -22px;
+                }
+                .is-err{
+                    position: absolute;
+                    height: 20px;
+                    width: 20px;
+                    top: 4px;
+                    left: -22px;
+                    font-size: 16px;
+                    text-align: center;
+                    line-height: 22px;
+                    color: #ff3300;
+                }
                 .arrow_out {
                     position: absolute;
                     display: inline-block;
@@ -297,6 +315,14 @@ ul.img-txt{
                  <!---------------------------------- 客服消息 ------------------------------------>
                  <div class="content-box" style="text-align: right" v-if="k.opercode == 1">
                      <div class="crate" style="right: 10px;background-color: #e7e8ea;">
+                         <div class="lading-box" v-if="k.is_loading">
+                             <Spin fix>
+                                 <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
+                             </Spin>
+                         </div>
+                         <div class="is-err" v-if="k.is_err">
+                             <Icon type="close-circled"></Icon>
+                         </div>
                          <div class="crate-box" style="display: inline-block;">
                              <!-- 文字 -->
                              <pre v-if="k.message_type == 1" v-text="k.text" style="text-align: left; margin: 0; color: #3e3e3e;white-space: pre-wrap;word-wrap: break-word;max-width: 400px;"></pre>
@@ -736,7 +762,9 @@ ul.img-txt{
           fileData: null,
           is_key: true,
           messData: null,
-          popup8: false
+          popup8: false,
+          strongData: null,
+          is_sub: true
         };
       },
       components: {
@@ -775,7 +803,9 @@ ul.img-txt{
           if (e.keyCode === 13 && e.ctrlKey) {
             this.txtra += '\r\n';
           } else if (e.keyCode === 13) {
-            this.subFun();
+            if (this.is_sub) {
+              this.subFun();
+            }
           }
           e.preventDefault();
         },
@@ -946,6 +976,122 @@ ul.img-txt{
           }
           return data;
         },
+        // 组合发送的数据
+        subBeforeGroupFun () {
+          let obj;
+          // 组合发送成功的数据  保存到本地数据库
+          if (this.replyType === 1) {
+            obj = {
+              add_time: this.getAtTimeFun(),
+              appid: this.datalistArr.appid || this.clientData.appid,
+              company_id: this.datalistArr.company_id || this.clientData.company_id,
+              customer_service_id: 4,
+              customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
+              message_id: '',
+              message_type: 1,
+              opercode: 1,
+              is_loading: true,
+              is_err: false,
+              session_id: this.datalistArr.session_id || this.clientData.session_id,
+              text: this.txtra,
+              uid: this.datalistArr.uid || this.clientData.uid
+            };
+          } else if (this.replyType === 2) {
+            obj = {
+              add_time: this.getAtTimeFun(),
+              appid: this.datalistArr.appid || this.clientData.appid,
+              company_id: this.datalistArr.company_id || this.clientData.company_id,
+              customer_service_id: 4,
+              customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
+              message_id: '',
+              message_type: 2,
+              opercode: 1,
+              file_url: this.imgData.url || '',
+              resources_id: this.imgData.resources_id || '',
+              session_id: this.datalistArr.session_id || this.clientData.session_id,
+              text: this.txtra,
+              uid: this.datalistArr.uid || this.clientData.uid
+            };
+          } else if (this.replyType === 4) {
+            obj = {
+              add_time: this.getAtTimeFun(),
+              appid: this.datalistArr.appid || this.clientData.appid,
+              company_id: this.datalistArr.company_id || this.clientData.company_id,
+              customer_service_id: 4,
+              customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
+              message_id: '',
+              message_type: 4,
+              is_loading: true,
+              opercode: 1,
+              is_err: false,
+              file_url: this.mp4Data.url || '',
+              resources_id: this.mp4Data.resources_id || '',
+              session_id: this.datalistArr.session_id || this.clientData.session_id,
+              text: this.txtra,
+              uid: this.datalistArr.uid || this.clientData.uid
+            };
+          } else if (this.replyType === 3) {
+            obj = {
+              add_time: this.getAtTimeFun(),
+              appid: this.datalistArr.appid || this.clientData.appid,
+              company_id: this.datalistArr.company_id || this.clientData.company_id,
+              customer_service_id: 4,
+              customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
+              message_id: '',
+              message_type: 3,
+              is_loading: true,
+              is_err: false,
+              opercode: 1,
+              file_url: this.mp3Data.url || '',
+              resources_id: this.mp3Data.resources_id || '',
+              session_id: this.datalistArr.session_id || this.clientData.session_id,
+              text: this.txtra,
+              uid: this.datalistArr.uid || this.clientData.uid,
+              is_state: true,
+              is_time: false,
+              is_icon: false
+            };
+          } else if (this.replyType === 6) {
+            obj = {
+              add_time: this.getAtTimeFun(),
+              appid: this.datalistArr.appid || this.clientData.appid,
+              company_id: this.datalistArr.company_id || this.clientData.company_id,
+              customer_service_id: 4,
+              customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
+              message_id: '',
+              message_type: 6,
+              is_err: false,
+              opercode: 1,
+              is_loading: true,
+              file_url: '',
+              resources_id: '',
+              session_id: this.datalistArr.session_id || this.clientData.session_id,
+              text: this.txtra,
+              uid: this.datalistArr.uid || this.clientData.uid,
+              htmlContent: this.el.content.news_item
+            };
+          } else if (this.replyType === 8) {
+            obj = {
+              add_time: this.getAtTimeFun(),
+              appid: this.datalistArr.appid || this.clientData.appid,
+              company_id: this.datalistArr.company_id || this.clientData.company_id,
+              customer_service_id: 4,
+              customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
+              message_id: '',
+              message_type: 8,
+              is_err: false,
+              is_loading: true,
+              opercode: 1,
+              file_url: this.fileData.url,
+              file_name: this.upFileData.name,
+              resources_id: '',
+              session_id: this.datalistArr.session_id || this.clientData.session_id,
+              text: this.txtra,
+              uid: this.datalistArr.uid || this.clientData.uid
+            };
+          }
+          return obj;
+        },
         // 发送信息
         subFun (e) {
           // 组合普通文字相关数据
@@ -954,116 +1100,16 @@ ul.img-txt{
             return;
           }
           this.messData = this.groupData();
-          this.is_Loading = true;
+          let obj = this.subBeforeGroupFun();
+          this.clientData.data.push(obj);
+          this.is_sub = false;
           this.ajax.sendMessage({
             data: this.messData,
             success: (res) => {
-              this.is_Loading = false;
-              let obj;
-              // 组合发送成功的数据  保存到本地数据库
-              if (this.replyType === 1) {
-                obj = {
-                  add_time: this.getAtTimeFun(),
-                  appid: this.datalistArr.appid || this.clientData.appid,
-                  company_id: this.datalistArr.company_id || this.clientData.company_id,
-                  customer_service_id: 4,
-                  customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
-                  message_id: '',
-                  message_type: 1,
-                  opercode: 1,
-                  session_id: this.datalistArr.session_id || this.clientData.session_id,
-                  text: this.txtra,
-                  uid: this.datalistArr.uid || this.clientData.uid
-                };
-              } else if (this.replyType === 2) {
-                obj = {
-                  add_time: this.getAtTimeFun(),
-                  appid: this.datalistArr.appid || this.clientData.appid,
-                  company_id: this.datalistArr.company_id || this.clientData.company_id,
-                  customer_service_id: 4,
-                  customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
-                  message_id: '',
-                  message_type: 2,
-                  opercode: 1,
-                  file_url: this.imgData.url || '',
-                  resources_id: this.imgData.resources_id || '',
-                  session_id: this.datalistArr.session_id || this.clientData.session_id,
-                  text: this.txtra,
-                  uid: this.datalistArr.uid || this.clientData.uid
-                };
-              } else if (this.replyType === 4) {
-                obj = {
-                  add_time: this.getAtTimeFun(),
-                  appid: this.datalistArr.appid || this.clientData.appid,
-                  company_id: this.datalistArr.company_id || this.clientData.company_id,
-                  customer_service_id: 4,
-                  customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
-                  message_id: '',
-                  message_type: 4,
-                  opercode: 1,
-                  file_url: this.mp4Data.url || '',
-                  resources_id: this.mp4Data.resources_id || '',
-                  session_id: this.datalistArr.session_id || this.clientData.session_id,
-                  text: this.txtra,
-                  uid: this.datalistArr.uid || this.clientData.uid
-                };
-              } else if (this.replyType === 3) {
-                obj = {
-                  add_time: this.getAtTimeFun(),
-                  appid: this.datalistArr.appid || this.clientData.appid,
-                  company_id: this.datalistArr.company_id || this.clientData.company_id,
-                  customer_service_id: 4,
-                  customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
-                  message_id: '',
-                  message_type: 3,
-                  opercode: 1,
-                  file_url: this.mp3Data.url || '',
-                  resources_id: this.mp3Data.resources_id || '',
-                  session_id: this.datalistArr.session_id || this.clientData.session_id,
-                  text: this.txtra,
-                  uid: this.datalistArr.uid || this.clientData.uid,
-                  is_state: true,
-                  is_time: false,
-                  is_icon: false
-                };
-              } else if (this.replyType === 6) {
-                obj = {
-                  add_time: this.getAtTimeFun(),
-                  appid: this.datalistArr.appid || this.clientData.appid,
-                  company_id: this.datalistArr.company_id || this.clientData.company_id,
-                  customer_service_id: 4,
-                  customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
-                  message_id: '',
-                  message_type: 6,
-                  opercode: 1,
-                  file_url: '',
-                  resources_id: '',
-                  session_id: this.datalistArr.session_id || this.clientData.session_id,
-                  text: this.txtra,
-                  uid: this.datalistArr.uid || this.clientData.uid,
-                  htmlContent: this.el.content.news_item
-                };
-              } else if (this.replyType === 8) {
-                obj = {
-                  add_time: this.getAtTimeFun(),
-                  appid: this.datalistArr.appid || this.clientData.appid,
-                  company_id: this.datalistArr.company_id || this.clientData.company_id,
-                  customer_service_id: 4,
-                  customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
-                  message_id: '',
-                  message_type: 8,
-                  opercode: 1,
-                  file_url: this.fileData.url,
-                  file_name: this.upFileData.name,
-                  resources_id: '',
-                  session_id: this.datalistArr.session_id || this.clientData.session_id,
-                  text: this.txtra,
-                  uid: this.datalistArr.uid || this.clientData.uid
-                };
-              }
+              Object.assign(obj, {is_loading: false});
+              this.is_sub = true;
               this.is_percent = false;
               this.el = '';
-              this.clientData.data.push(obj);
               this.scroFun();
               this.updbFun(obj);
               this.txtra = '';
@@ -1071,8 +1117,18 @@ ul.img-txt{
             error: (res) => {
               if (res.meta.code === 3020) {
                 // 调用强制会话
+                this.strongData = obj;
                 this.popup8 = true;
+              } else if (res.meta.code === 3001) {
+                this.$Message.warning('会话不存在，自动删除当前客户');
+                this.txtra = '';
+                Bus.$emit('closeDialogue');
+                this.is_sub = true;
               } else {
+                this.is_sub = true;
+                Object.assign(obj, {is_err: true});
+                Object.assign(obj, {is_loading: false});
+                this.updbFun(obj);
                 this.is_percent = false;
                 this.is_Loading = false;
                 this.$Message.warning(res.meta.message);
@@ -1086,123 +1142,23 @@ ul.img-txt{
             data: this.messData,
             success: (res) => {
               this.is_Loading = false;
-              let obj;
               // 组合发送成功的数据  保存到本地数据库
-              if (this.replyType === 1) {
-                obj = {
-                  add_time: this.getAtTimeFun(),
-                  appid: this.datalistArr.appid || this.clientData.appid,
-                  company_id: this.datalistArr.company_id || this.clientData.company_id,
-                  customer_service_id: 4,
-                  customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
-                  message_id: '',
-                  message_type: 1,
-                  opercode: 1,
-                  session_id: this.datalistArr.session_id || this.clientData.session_id,
-                  text: this.txtra,
-                  uid: this.datalistArr.uid || this.clientData.uid
-                };
-              } else if (this.replyType === 2) {
-                obj = {
-                  add_time: this.getAtTimeFun(),
-                  appid: this.datalistArr.appid || this.clientData.appid,
-                  company_id: this.datalistArr.company_id || this.clientData.company_id,
-                  customer_service_id: 4,
-                  customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
-                  message_id: '',
-                  message_type: 2,
-                  opercode: 1,
-                  file_url: this.imgData.url || '',
-                  resources_id: this.imgData.resources_id || '',
-                  session_id: this.datalistArr.session_id || this.clientData.session_id,
-                  text: this.txtra,
-                  uid: this.datalistArr.uid || this.clientData.uid
-                };
-              } else if (this.replyType === 4) {
-                obj = {
-                  add_time: this.getAtTimeFun(),
-                  appid: this.datalistArr.appid || this.clientData.appid,
-                  company_id: this.datalistArr.company_id || this.clientData.company_id,
-                  customer_service_id: 4,
-                  customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
-                  message_id: '',
-                  message_type: 4,
-                  opercode: 1,
-                  file_url: this.mp4Data.url || '',
-                  resources_id: this.mp4Data.resources_id || '',
-                  session_id: this.datalistArr.session_id || this.clientData.session_id,
-                  text: this.txtra,
-                  uid: this.datalistArr.uid || this.clientData.uid
-                };
-              } else if (this.replyType === 3) {
-                obj = {
-                  add_time: this.getAtTimeFun(),
-                  appid: this.datalistArr.appid || this.clientData.appid,
-                  company_id: this.datalistArr.company_id || this.clientData.company_id,
-                  customer_service_id: 4,
-                  customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
-                  message_id: '',
-                  message_type: 3,
-                  opercode: 1,
-                  file_url: this.mp3Data.url || '',
-                  resources_id: this.mp3Data.resources_id || '',
-                  session_id: this.datalistArr.session_id || this.clientData.session_id,
-                  text: this.txtra,
-                  uid: this.datalistArr.uid || this.clientData.uid,
-                  is_state: true,
-                  is_time: false,
-                  is_icon: false
-                };
-              } else if (this.replyType === 6) {
-                obj = {
-                  add_time: this.getAtTimeFun(),
-                  appid: this.datalistArr.appid || this.clientData.appid,
-                  company_id: this.datalistArr.company_id || this.clientData.company_id,
-                  customer_service_id: 4,
-                  customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
-                  message_id: '',
-                  message_type: 6,
-                  opercode: 1,
-                  file_url: '',
-                  resources_id: '',
-                  session_id: this.datalistArr.session_id || this.clientData.session_id,
-                  text: this.txtra,
-                  uid: this.datalistArr.uid || this.clientData.uid,
-                  htmlContent: this.el.content.news_item
-                };
-              } else if (this.replyType === 8) {
-                obj = {
-                  add_time: this.getAtTimeFun(),
-                  appid: this.datalistArr.appid || this.clientData.appid,
-                  company_id: this.datalistArr.company_id || this.clientData.company_id,
-                  customer_service_id: 4,
-                  customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
-                  message_id: '',
-                  message_type: 8,
-                  opercode: 1,
-                  file_url: this.fileData.url,
-                  file_name: this.upFileData.name,
-                  resources_id: '',
-                  session_id: this.datalistArr.session_id || this.clientData.session_id,
-                  text: this.txtra,
-                  uid: this.datalistArr.uid || this.clientData.uid
-                };
-              }
               this.is_percent = false;
+              this.is_sub = true;
               this.el = '';
-              this.clientData.data.push(obj);
               this.scroFun();
-              this.updbFun(obj);
+              Object.assign(this.strongData, {is_loading: false});
+              this.updbFun(this.strongData);
               this.txtra = '';
             },
             error: (res) => {
-              if (res.meta.code === 3020) {
-                // 调用强制会话
-              } else {
-                this.is_percent = false;
-                this.is_Loading = false;
-                this.$Message.warning(res.meta.message);
-              }
+              this.is_sub = true;
+              Object.assign(this.strongData, {is_err: true});
+              Object.assign(this.strongData, {is_loading: false});
+              this.updbFun(this.strongData);
+              this.is_percent = false;
+              this.is_Loading = false;
+              this.$Message.warning(res.meta.message);
             }
           });
         },
@@ -1426,14 +1382,16 @@ ul.img-txt{
           this.elmetArr.length = 0;
           // 如果传过来客户聊天数据为空 就添加轨迹地图
           if (k.data.length === 0 && d.type === 'mess') {
-            k.data.push({
-              message_type: -5,
-              map_label: '客户当前位置',
-              lat: user.body.user_info.lat,
-              opercode: 2,
-              lng: user.body.user_info.lng,
-              precision: user.body.user_info.precision
-            });
+            if (user.body.user_info.lat) {
+              k.data.push({
+                message_type: -5,
+                map_label: '客户当前位置',
+                lat: user.body.user_info.lat,
+                opercode: 2,
+                lng: user.body.user_info.lng,
+                precision: user.body.user_info.precision
+              });
+            }
           }
           this.elmetArr = k.data;
           this.clientData = k;

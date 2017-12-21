@@ -157,7 +157,7 @@
                     <li @click="hintFun">本月需沟通</li>
                 </ul>
             </div>
-            <div ref="chartEl" v-bind:class="is_show_chartEl ? 'chart1' : ''" class="chart f-l">
+            <div ref="chartEl" v-bind:class="is_show_chartEl ? 'chart1' : ''" class="chart f-l" style="height: 87%;overflow: auto">
                  <span  class="is_left_show" v-if="is_left_show && !is_show_chartEl" @click="isLefttShowFun">
                     <Icon type="android-funnel"></Icon>
                  </span>
@@ -216,7 +216,7 @@
                 </div>
 
             </div>
-            <div ref="informationEl" v-bind:class="is_show_informationEl ? 'informationEl1' : ''" class="information f-l">
+            <div ref="informationEl" v-bind:class="is_show_informationEl ? 'informationEl1' : ''" class="information f-l" style="height: 87%;overflow: auto">
                     <span ref="isRightShow" v-if="is_left_show && is_show_chartEl" class="is_right_show" @click="isRightShowFun">
                         <Icon type="android-funnel"></Icon>
                     </span>
@@ -744,9 +744,11 @@
       }
     },
     computed: {},
+    destroyed (s) {
+      // Bus.$off();
+    },
     created () {
       this.userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
-      Bus.$off();
       this.ajax.getWxAuthList({
         data: {},
         success: (res) => {

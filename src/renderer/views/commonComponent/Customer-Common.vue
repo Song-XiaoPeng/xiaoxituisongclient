@@ -771,6 +771,7 @@
               if (res.body.customer_info_id && res.body.customer_info_id !== null) {
                 Bus.$emit('is_remind', {'remind': true});
               }
+
               this.$Message.success('操作成功');
             },
             error: (res) => {
@@ -873,7 +874,6 @@
           this.formData.customer_info_id = '';
           this.formData.real_name = '';
           this.formData.real_sex = '';
-          this.formData.birthday = '';
           this.formData.real_phone = '';
           this.formData.contact_address = '';
           this.formData.wx_company_id = '';

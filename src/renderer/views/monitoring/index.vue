@@ -51,7 +51,7 @@
     export default {
       data () {
         return {
-          isAdministrator: true
+          isAdministrator: false
         };
       },
       components: {
@@ -65,7 +65,6 @@
       },
       methods: {},
       created () {
-        console.log(21123);
       }
     };
 </script>

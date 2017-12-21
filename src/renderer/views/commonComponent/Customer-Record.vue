@@ -212,7 +212,7 @@
                <!--<Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>-->
            <!--</Select>-->
            <!--<Select v-model="model1" style="width:200px">-->
-               <!--<Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>-->
+               <!--<Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option> -->
            <!--</Select>-->
        <!--</div>-->
        <div class="list">
@@ -221,13 +221,14 @@
                    <div v-for="(k, i) in elmetArr" >
                        <!---------------------------------- 客户消息 ------------------------------------>
                        <div class="content-box"  v-if="k.opercode == 2">
+                           <div class="" style="text-align: left;font-size: 10px;color: #999;box-sizing: border-box;padding-left: 50px">{{k.add_time}}</div>
                            <div class="graphic" ><Avatar :src="clientData.customer_wx_portrait" style="margin-left: 5px"/></div>
                            <div class="crate" style="left: 10px">
                                <div style="display: inline-block">
 
 
                                    <!-- 普通文本 -->
-                                   <pre v-if="k.message_type == 1" v-text="k.text" style="text-align: left; margin: 0; color: #3e3e3e;"></pre>
+                                   <pre v-if="k.message_type == 1" v-text="k.text" style="text-align: left; margin: 0; color: #3e3e3e;white-space: pre-wrap;word-wrap: break-word;max-width: 300px;"></pre>
                                    <!-- end普通文本 -->
 
 
@@ -265,7 +266,7 @@
                                    <!-- 位置 -->
                                    <div v-if="k.message_type == 5" @click="locationFun(k)" style="cursor: pointer;">
                                        <div style="padding-bottom: 5px">{{k.map_label}}</div>
-                                       <img :src="'http://apis.map.qq.com/ws/staticmap/v2/?center=' + k.lat + ',' + k.lng + '&zoom=18&size=300*150&maptype=roadmap&markers=color:red|' + k.lat + ',' + k.lng + '&key=TUTBZ-YEPWX-WEN4N-7OZUC-T4MT7-IXFN6'" v-on:load="loadFun"></img>
+                                       <img :src="'http://apis.map.qq.com/ws/staticmap/v2/?center=' + k.lat + ',' + k.lng + '&zoom=18&size=250*150&maptype=roadmap&markers=color:red|' + k.lat + ',' + k.lng + '&key=TUTBZ-YEPWX-WEN4N-7OZUC-T4MT7-IXFN6'" v-on:load="loadFun"></img>
                                    </div>
                                    <!-- end位置 -->
                                </div>
@@ -278,10 +279,11 @@
 
                        <!---------------------------------- 客服消息 ------------------------------------>
                        <div class="content-box" style="text-align: right" v-if="k.opercode == 1">
+                           <div class="" style="text-align: right;font-size: 10px;color: #999;box-sizing: border-box;padding-right: 50px">{{k.add_time}}</div>
                            <div class="crate" style="right: 10px;background-color: #66cc00;">
                                <div style="display: inline-block;">
                                    <!-- 文字 -->
-                                   <pre v-if="k.message_type == 1" style="text-align: left; margin: 0; color: #3e3e3e;">{{k.text}}</pre>
+                                   <pre v-if="k.message_type == 1" style="text-align: left; margin: 0; color: #3e3e3e;white-space: pre-wrap;word-wrap: break-word;max-width: 300px;">{{k.text}}</pre>
                                    <!-- end文字 -->
 
 

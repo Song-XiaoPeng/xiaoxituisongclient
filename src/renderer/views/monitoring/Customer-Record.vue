@@ -221,13 +221,14 @@
                    <div v-for="(k, i) in elmetArr" >
                        <!---------------------------------- 客户消息 ------------------------------------>
                        <div class="content-box"  v-if="k.opercode == 2">
+                           <div class="" style="text-align: left;font-size: 10px;color: #999;box-sizing: border-box;padding-left: 50px">{{k.add_time}}</div>
                            <div class="graphic" ><Avatar :src="clientData.customer_wx_portrait" style="margin-left: 5px"/></div>
                            <div class="crate" style="left: 10px">
                                <div style="display: inline-block">
 
 
                                    <!-- 普通文本 -->
-                                   <pre v-if="k.message_type == 1" v-text="k.text" style="text-align: left; margin: 0; color: #3e3e3e;"></pre>
+                                   <pre v-if="k.message_type == 1" v-text="k.text" style="text-align: left; margin: 0; color: #3e3e3e;white-space: pre-wrap;word-wrap: break-word;max-width: 300px;"></pre>
                                    <!-- end普通文本 -->
 
 
@@ -277,11 +278,12 @@
 
 
                        <!---------------------------------- 客服消息 ------------------------------------>
-                       <div class="content-box" style="text-align: right" v-if="k.opercode == 1">
+                       <div class="content-box" style="text-align: right" v-if="k.opercode == 1 || k.opercode == 3">
+                           <div class="" style="text-align: right;font-size: 10px;color: #999;box-sizing: border-box;padding-right: 50px">{{k.add_time}}</div>
                            <div class="crate" style="right: 10px;background-color: #66cc00;">
                                <div style="display: inline-block;">
                                    <!-- 文字 -->
-                                   <pre v-if="k.message_type == 1" style="text-align: left; margin: 0; color: #3e3e3e;">{{k.text}}</pre>
+                                   <pre v-if="k.message_type == 1" style="text-align: left; margin: 0; color: #3e3e3e;white-space: pre-wrap;word-wrap: break-word;max-width: 300px;">{{k.text}}</pre>
                                    <!-- end文字 -->
 
 
@@ -325,7 +327,10 @@
                                <i class="arrow arrow_out" style="right: -10px;transform: rotate(270deg);border-top-color: #66cc00"></i>
                                <i class="arrow arrow_in" style="right: -9px;transform: rotate(270deg);border-top-color: #66cc00"></i>
                            </div>
-                           <div class="graphic" ><Avatar :src="userInfo.avatar_url" style="margin-right: 5px"/></div>
+                           <div class="graphic" >
+                               <Avatar v-if="k.opercode == 1" :src="clientData.customer_service_avatar" style="margin-right: 5px"/>
+                               <Avatar v-if="k.opercode == 3" :src="userInfo.avatar_url" style="margin-right: 5px"/>
+                           </div>
                        </div>
                        <!---------------------------------- end客服消息 ------------------------------------>
                    </div>
@@ -389,10 +394,12 @@
           this.ajax.getHistoryMessage({
             data: {
               page: this.pageData.page,
-              customer_wx_openid: this.clientData.customer_wx_openid
+              customer_wx_openid: this.clientData.customer_wx_openid,
+              uid: this.clientData.uid
             },
             success: (res) => {
               this.elmetArr = res.body.data_list.reverse();
+              console.log(this.elmetArr);
               this.pageData.rows_num = res.body.page_data.rows_num;
               this.pageData.count = res.body.page_data.count;
               this.scroFun();

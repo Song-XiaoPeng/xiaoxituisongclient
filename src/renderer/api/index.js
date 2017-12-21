@@ -719,7 +719,7 @@ ajax.setQuickReplyText = (obj) => {
 };
 // 获取快捷回复列表
 ajax.getQuickReplyList = (obj) => {
-  util.ajax.post('/api/v1/message/Common/getQuickReplyList', obj.data).then(function (response) {
+  util.ajax.get('/api/v1/message/Common/getQuickReplyList', obj.data).then(function (response) {
     if (response.data) {
       if (response.data.meta.code === 200) {
         obj.success(response.data);
@@ -1359,7 +1359,7 @@ ajax.updateLabel = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
-    obj.error(error);
+    // obj.error(error);
     console.log(error);
   });
 };
@@ -1373,7 +1373,7 @@ ajax.createWxUserSession = (obj) => {
         obj.error(response.data);
       }
     } else {
-      obj.error(response.data);
+      // obj.error(response.data);
     }
   }).catch(function (error) {
     obj.error(error);
@@ -1393,7 +1393,7 @@ ajax.forcedSendMessage = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
-    obj.error(error);
+    // obj.error(error); ddwadwaddawdwaf
     console.log(error);
   });
 };
@@ -1427,7 +1427,58 @@ ajax.getMonitorSessionList = (obj) => {
       obj.error(response.data);
     }
   }).catch(function (error) {
-    obj.error(error);
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 监控 --- 》 获取聊天信息
+ajax.getMonitorMessage = (obj) => {
+  util.ajax.post('/api/v1/message/Interaction/getMonitorMessage', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 监控 --- 》 关闭会话
+ajax.monitoringCloseSession = (obj) => {
+  util.ajax.post('/api/v1/message/Interaction/closeSession', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 监控 --- 》 添加评价
+ajax.sessionEvaluate = (obj) => {
+  util.ajax.post('/api/v1/message/Interaction/sessionEvaluate', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
     console.log(error);
   });
 };
