@@ -105,6 +105,20 @@ ajax.setUserState = (obj) => {
   });
 };
 
+// 添加编辑红包活动
+ajax.addRedEnvelopes = (obj) => {
+  util.ajax.post('/api/v1/extension/Handle/addRedEnvelopes', obj.data).then(function (response) {
+    if (response.data.meta.code === 200) {
+      obj.success(response.data);
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+
 // 删除部门
 ajax.delUserGroup = (obj) => {
   util.ajax.post('/api/v1/user/UserOperation/delUserGroup', obj.data).then(function (response) {
