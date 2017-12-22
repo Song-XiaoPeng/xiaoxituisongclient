@@ -56,13 +56,16 @@ html,body{
     left: 0;
     bottom: 0;
     right: 0;
+    overflow: auto;
 }
 
 .window-border {
-    width: 90%;
     height: 50px;
+    left: 0;
+    top: 0;
+    right: 170px;
     -webkit-app-region: drag;
-    position: relative;
+    position: absolute;
     background-color: #fff;
     box-shadow: 20px 0px 15px rgba(0, 0, 0, 0.267);
     z-index: 200;
@@ -79,7 +82,7 @@ html,body{
 .window-control {
     position: absolute;
     right: 0;
-    width: 11%;
+    width: 170px;
     height: 50px;
     line-height: 50px;
     font-size: 18px;

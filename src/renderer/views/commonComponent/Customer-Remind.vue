@@ -66,6 +66,11 @@
     }
     @media all and (min-height:800px) and (max-height:1000px){
         .list{
+            height: 440px
+        }
+    }
+    @media all and (min-height:800px) and (max-height:1000px){
+        .list{
             height: 540px
         }
     }

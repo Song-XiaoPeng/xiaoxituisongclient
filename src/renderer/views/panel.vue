@@ -7,8 +7,9 @@
     max-width: 200px;
   }
   .menu-box{
-    width: 100%;
+    width: 200px;
     height: 100%;
+    position: relative;
     background: url('~@/assets/images/meun-bg.png');
     background-color: #072250;
     overflow: hidden;
@@ -86,48 +87,48 @@
         <Icon type="close"></Icon>
       </span>
     </div>
-    <Row type="flex">
-      <Col span="3" class="layout-menu-left" style="z-index:999; position:relative; float:left; width:200px; margin-right:-200px;">
-         <div class="menu-box" style="position:relative;">
-           <div class="window-title">
-             <div class="user-portrait">
-                <div class="img-box">
-                  <img :src="userInfo.avatar_url" alt="">
-                </div>
-             </div>
-             <div class="user-text">{{userInfo.username}}</div>
-           </div>
+    <div style="position: absolute;left: 0;top: 50px;right: 0;bottom: 0;">
 
-           <div class="menu-wire"></div>
-           <!-- 左侧导航 -->
-           <div style="overflow:auto; position:absolute; right:-18px; left:0; bottom:0; top:130px; padding-bottom:50px;">
-             <ul>
-               <li :ref="'parent-menu' + i" v-for="(k, i) in menuList" @click.stop="parentMenuFun(i, k)" :key="i">
-                 <div v-bind:class="parent_i == i && child_i === '' ? 'active' : ''" style="padding: 10px">
-                   <span style="margin-left: 10px"><Icon :type="k.iconName"></Icon></span>
-                   <span style="margin-left: 10px">{{k.menuTitle}}</span>
-                   <span class="f-r" style="margin-right: 12%" v-if="k.son.sonList.length != 0"><Icon type="ios-arrow-right"></Icon></span>
-                 </div>
-                 <!-- 左侧子导航 -->
-                 <div class="child-menu" :ref="'child-div' + i" v-if="k.son.sonList.length != 0">
-                   <ul  :ref="'child-menu' + i">
-                     <li v-for="(s, si) in k.son.sonList" v-bind:class="child_i === si && parent_i === i ? 'active' : ''" @click.stop="childMenuFun(s, si, i)" :key="si">{{s.menuTitle}}</li>
-                   </ul>
-                 </div>
-                 <!-- end左侧子导航 -->
-               </li>
-             </ul>
-           </div>
-         </div>
-         <!-- end左侧导航 -->
-      </Col>
-      <Col span="21" id="container" style="float:right; width:100%; right:-15px;">
-        <div class="content-page" style="margin-left:185px;">
-          <router-view></router-view>
-          <div style="width:100%; height:60px;"></div>
+        <!--<Col span="3" class="layout-menu-left" style="z-index:999; position:relative; float:left; width:200px; margin-right:-200px;">-->
+        <div class="menu-box" style="position:relative;">
+          <div class="window-title">
+            <div class="user-portrait">
+              <div class="img-box">
+                <img :src="userInfo.avatar_url" alt="">
+              </div>
+            </div>
+            <div class="user-text">{{userInfo.username}}</div>
+          </div>
+
+          <div class="menu-wire"></div>
+          <!-- 左侧导航 -->
+          <div style="overflow:auto; position:absolute; right:-18px; left:0; bottom:0; top:130px; padding-bottom:50px;">
+            <ul>
+              <li :ref="'parent-menu' + i" v-for="(k, i) in menuList" @click.stop="parentMenuFun(i, k)" :key="i">
+                <div v-bind:class="parent_i == i && child_i === '' ? 'active' : ''" style="padding: 10px">
+                  <span style="margin-left: 10px"><Icon :type="k.iconName"></Icon></span>
+                  <span style="margin-left: 10px">{{k.menuTitle}}</span>
+                  <span class="f-r" style="margin-right: 12%" v-if="k.son.sonList.length != 0"><Icon type="ios-arrow-right"></Icon></span>
+                </div>
+                <!-- 左侧子导航 -->
+                <div class="child-menu" :ref="'child-div' + i" v-if="k.son.sonList.length != 0">
+                  <ul  :ref="'child-menu' + i">
+                    <li v-for="(s, si) in k.son.sonList" v-bind:class="child_i === si && parent_i === i ? 'active' : ''" @click.stop="childMenuFun(s, si, i)" :key="si">{{s.menuTitle}}</li>
+                  </ul>
+                </div>
+                <!-- end左侧子导航 -->
+              </li>
+            </ul>
+          </div>
         </div>
-      </Col>
-    </Row>
+        <!-- end左侧导航 -->
+        <!--</Col>-->
+        <!--<Col span="21" id="container" style="float:right; width:100%; right:-15px;">-->
+        <div class="content-page" style="margin-left:200px;">
+          <router-view></router-view>
+        </div>
+        <!--</Col>-->
+    </div>
   </div>
 </template>
 
@@ -451,8 +452,8 @@
           if (!this.is_ws_initiative_off) {
             this.ws_intval = setInterval(() => {
               this.WebSocketFun();
-            }, 60000);
-            this.$Message.warning('网络不稳定或服务器断开，60秒后为您重连。。。');
+            }, 3000);
+            this.$Message.warning('网络不稳定或服务器断开，30秒后为您重连。。。');
           }
         };
       },

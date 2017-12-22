@@ -204,6 +204,17 @@
             height: 400px
         }
     }
+    @media all and (min-height:400px) and (max-height:799px){
+        .chart-win{
+            height: 360px;
+        }
+        .chart-txt{
+            top: 460px;
+        }
+        .form-box{
+            height: 300px
+        }
+    }
     @media all and (min-height:1000px) and (max-height:1200px){
         .chart-win{
             height: 560px;
