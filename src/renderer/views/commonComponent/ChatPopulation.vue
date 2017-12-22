@@ -36,6 +36,14 @@
                 .icon-active{
                     transform: rotate(90deg);
                 }
+                .crew-count{
+                    margin-left: 10px;
+                    padding: 2px 8px;
+                    border-radius: 10px;
+                    background-color: #ebeef2;
+                    color: #999;
+                    overflow: hidden;
+                }
             }
             .tle:hover{
                 color: #3399ff;
@@ -148,6 +156,7 @@
                <div class="tle" @click="telFun('list1')" style="border-bottom: 1px #d7dde4 solid;background-color: #fff">
                    <Icon class="icon-rotate" v-bind:class="icon_rotate.icon1 == '1' ? 'icon-active' : ''" type="arrow-right-b"></Icon>
                    会话中
+                   <span class="crew-count">{{data1.length}}</span>
                </div>
                <ul ref="list1" class="list" :style="'height:' + data1.length * 67 + 'px'">
                    <li v-for="(k, i) in data1" v-bind:class="k.is_class ? 'active' : ''" @click.stop="underwayFun(k, i)">
@@ -167,6 +176,7 @@
                <div class="tle" @click.stop="telFun('list2')" style="border-bottom: 1px #d7dde4 solid;background-color: #fff;">
                    <Icon class="icon-rotate" v-bind:class="icon_rotate.icon2 == '1' ? 'icon-active' : ''" type="arrow-right-b"></Icon>
                    等待中
+                   <span class="crew-count">{{data2.length}}</span>
                </div>
                <ul ref="list2" class="list" :style="'height:' + data2.length * 67 + 'px'">
                    <li v-for="(k, i) in data2" @click.stop="underwayPopupFun(clientName = k.customer_wx_nickname,clientData = k,clientDataIndex = i, is_w_v = 2)">
@@ -185,6 +195,7 @@
                <div class="tle" @click.stop="telFun('list3')" style="border-bottom: 1px #d7dde4 solid;background-color: #fff;">
                    <Icon class="icon-rotate" v-bind:class="icon_rotate.icon3 == '1' ? 'icon-active' : ''" type="arrow-right-b"></Icon>
                    排队中
+                   <span class="crew-count">{{data3.length}}</span>
                </div>
                <ul ref="list3" class="list" :style="'height:' + data3.length * 67 + 'px'">
                    <li v-for="(k, i) in data3" @click.stop="addDialogueFun(k, i)">
@@ -351,7 +362,6 @@
           db.type = 'get'; // 执行类型
           db.tabName = 'message'; // 数据表名称
           db.fun = function (res) { // 执行成功回掉函数
-            console.log(res);
             res.forEach((k) => {
               if (k.customer_wx_openid === that.messageData.customer_wx_openid) {
                 arr.push(k);
