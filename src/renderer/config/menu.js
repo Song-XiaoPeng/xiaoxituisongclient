@@ -202,6 +202,13 @@ let menuData = [
           route: 'wxfans',
           routeBreadcrumb: [],
           sonMenu: []
+        },
+        {
+          model_id: 27,
+          menuTitle: '扫码红包',
+          route: 'redEnvelopes',
+          routeBreadcrumb: [],
+          sonMenu: []
         }
       ]
     },

@@ -222,6 +222,14 @@ export default new Router({
           component: (resolve) => require(['@/views/weixin/fans'], resolve)
         },
         {
+          path: 'redEnvelopes',
+          name: 'redEnvelopes',
+          meta: {
+            title: '扫码红包'
+          },
+          component: (resolve) => require(['@/views/weixin/redEnvelopes'], resolve)
+        },
+        {
           path: 'serviceList',
           name: 'serviceList',
           meta: {
