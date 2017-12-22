@@ -53,7 +53,7 @@
       <Table :columns="staffColumns" :data="staffData"></Table>
 
       <div class="page-centent">
-        <Page :total="100"></Page>
+        <Page :total="total" :page-size="pageSize"></Page>
       </div>
     </Card>
 
@@ -217,6 +217,9 @@
         coverUrl: '',
         userInfo: null,
         visible: false,
+        total: 0,
+        pageSize: 0,
+        page: 1,
         uploadList: [],
         addActivityFormItem: {
           is_open: 1,
@@ -240,37 +243,37 @@
         staffColumns: [
           {
             title: '活动名称',
-            key: 'name',
+            key: 'activity_name',
             align: 'center'
           },
           {
             title: '活动开始时间',
-            key: 'nickname',
+            key: 'start_time',
             align: 'center'
           },
           {
             title: '活动结束时间',
-            key: 'phone_no',
+            key: 'end_time',
             align: 'center'
           },
           {
             title: '所属公众号',
-            key: 'is_customer_service',
+            key: 'app_name',
             align: 'center'
           },
           {
             title: '派发金额上限',
-            key: 'department',
+            key: 'amount_upper_limit',
             align: 'center'
           },
           {
             title: '已发金额',
-            key: 'duty',
+            key: 'already_amount',
             align: 'center'
           },
           {
             title: '状态',
-            key: 'sex',
+            key: 'state',
             align: 'center'
           },
           {
@@ -339,17 +342,7 @@
             }
           }
         ],
-        staffData: [
-          {
-            'name': '张三',
-            'nickname': '张望的人',
-            'phone_no': '18316313321',
-            'is_customer_service': '是',
-            'department': '客服部',
-            'duty': '客服',
-            'sex': '男'
-          }
-        ]
+        staffData: []
       };
     },
     components: {
@@ -442,6 +435,48 @@
           },
           error: () => {}
         });
+      },
+      getRedEnvelopesList () {
+        this.ajax.getRedEnvelopesList({
+          data: {
+            page: this.page
+          },
+          success: (response) => {
+            this.total = parseInt(response.body.page_data.count);
+            this.pageSize = parseInt(response.body.page_data.rows_num);
+            this.page = parseInt(response.body.page_data.page);
+
+            for (let item of response.body.data_list) {
+              let obj = {};
+              obj.activity_id = item.activity_id;
+              obj.activity_name = item.activity_name;
+              obj.company_id = item.company_id;
+              obj.number = item.number;
+              obj.amount = item.amount;
+              obj.amount_start = item.amount_start;
+              obj.amount_end = item.amount_end;
+              obj.amount_type = item.amount_type;
+              obj.start_time = item.start_time;
+              obj.end_time = item.end_time;
+              obj.create_time = item.create_time;
+              obj.is_follow = item.is_follow;
+              obj.appid = item.appid;
+              obj.is_share = item.is_share;
+              obj.share_url = item.share_url;
+              obj.share_cover = item.share_cover;
+              obj.amount_upper_limit = item.amount_upper_limit;
+              obj.already_amount = item.already_amount;
+              obj.is_open = item.is_open;
+              obj.details_list = item.details_list;
+              obj.app_name = item.app_name;
+              obj.state = item.state;
+              obj.share_cover_url = item.share_cover_url;
+
+              this.staffData.push(obj);
+            }
+          },
+          error: () => {}
+        });
       }
     },
     created () {
@@ -451,6 +486,8 @@
         },
         error: () => {}
       });
+
+      this.getRedEnvelopesList();
 
       this.userInfo = JSON.parse(localStorage.getItem('userInfo'));
     }
