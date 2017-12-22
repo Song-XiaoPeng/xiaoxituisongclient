@@ -57,15 +57,13 @@
       </div>
     </Card>
 
-    <Modal v-model="addActivity" title="添加红包活动">
+    <Modal v-model="addActivity" title="添加编辑红包活动" @on-ok="addRedEnvelopes">
       <Form :label-width="85">
         <Row>
           <Col span="12">
             <FormItem label="公众号">
-              <Select>
-                <Option value="beijing">财务部</Option>
-                <Option value="shanghai">客服部</Option>
-                <Option value="shenzhen">售后部</Option>
+              <Select v-model="addActivityFormItem.appid">
+                <Option v-for="item in appList" :value="item.appid" :key="item.appid">{{ item.nick_name }}</Option>
               </Select>
             </FormItem>
           </Col>
@@ -150,7 +148,6 @@
                 :max-size="2048"
                 :on-format-error="handleCoverFormatError"
                 :on-exceeded-size="handleCoverMaxSize"
-                :before-upload="handleCoverBeforeUpload"
                 :data="{resources_type: 4}"
                 :headers="{token: userInfo.token}"
                 type="drag"
@@ -214,6 +211,7 @@
   export default {
     data () {
       return {
+        appList: [],
         defaultList: [],
         imgName: '',
         coverUrl: '',
@@ -235,7 +233,8 @@
           appid: '',
           start_time: '',
           end_time: '',
-          share_cover: ''
+          share_cover: '',
+          details_list: []
         },
         addActivity: false,
         staffColumns: [
@@ -370,6 +369,8 @@
       handleSuccess (res, file) {
         file.url = file.response.body.url;
         file.resources_id = file.response.body.resources_id;
+
+        this.addActivityFormItem.details_list.push(file.response.body.resources_id);
       },
       handleFormatError (file) {
         this.$Notice.warning({
@@ -412,21 +413,45 @@
           desc: '文件 ' + file.name + ' 大小不超过 2M.'
         });
       },
-      handleCoverBeforeUpload () {
-        const check = this.uploadList.length < 5;
-        if (!check) {
-          this.$Notice.warning({
-            title: '最多只能上传5张图片'
-          });
-        }
-        return check;
-      },
       selectTime (time) {
         this.addActivityFormItem.start_time = time[0];
         this.addActivityFormItem.end_time = time[1];
+      },
+      addRedEnvelopes () {
+        this.ajax.addRedEnvelopes({
+          data: {
+            activity_name: this.addActivityFormItem.activity_name,
+            number: this.addActivityFormItem.number,
+            amount: this.addActivityFormItem.amount,
+            amount_start: this.addActivityFormItem.amount_start,
+            amount_end: this.addActivityFormItem.amount_end,
+            amount_type: this.addActivityFormItem.amount_type,
+            start_time: this.addActivityFormItem.start_time,
+            end_time: this.addActivityFormItem.end_time,
+            is_follow: this.addActivityFormItem.is_follow,
+            appid: this.addActivityFormItem.appid,
+            is_share: this.addActivityFormItem.is_share,
+            share_url: this.addActivityFormItem.share_url,
+            share_cover: this.addActivityFormItem.share_cover,
+            amount_upper_limit: this.addActivityFormItem.amount_upper_limit,
+            is_open: this.addActivityFormItem.is_open,
+            details_list: this.addActivityFormItem.details_list
+          },
+          success: (res) => {
+            console.log(res);
+          },
+          error: () => {}
+        });
       }
     },
     created () {
+      this.ajax.getWxAuthList({
+        success: (res) => {
+          this.appList = res.body;
+        },
+        error: () => {}
+      });
+
       this.userInfo = JSON.parse(localStorage.getItem('userInfo'));
     }
   };
