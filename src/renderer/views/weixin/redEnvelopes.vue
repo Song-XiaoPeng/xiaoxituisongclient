@@ -59,21 +59,36 @@
 
     <Modal v-model="addActivity" title="添加红包活动">
       <Form :label-width="85">
-        <FormItem label="公众号">
-          <Select>
-            <Option value="beijing">财务部</Option>
-            <Option value="shanghai">客服部</Option>
-            <Option value="shenzhen">售后部</Option>
-          </Select>
-        </FormItem>
-        <FormItem label="活动名称">
-          <Input placeholder="请输入活动名称" v-model="addActivityFormItem.activity_name"></Input>
-        </FormItem>
-        <FormItem label="红包数量">
-          <Input placeholder="请输入红包数量" v-model="addActivityFormItem.number"></Input>
-        </FormItem>
-        <FormItem label="金额上限">
-          <Input placeholder="请输入派发红包金额上限" v-model="addActivityFormItem.amount_upper_limit"></Input>
+        <Row>
+          <Col span="12">
+            <FormItem label="公众号">
+              <Select>
+                <Option value="beijing">财务部</Option>
+                <Option value="shanghai">客服部</Option>
+                <Option value="shenzhen">售后部</Option>
+              </Select>
+            </FormItem>
+          </Col>
+          <Col span="12">
+            <FormItem label="活动名称">
+              <Input placeholder="请输入活动名称" v-model="addActivityFormItem.activity_name"></Input>
+            </FormItem>
+          </Col>
+        </Row>
+        <Row>
+          <Col span="12">
+            <FormItem label="红包数量">
+              <Input placeholder="请输入红包数量" v-model="addActivityFormItem.number"></Input>
+            </FormItem>
+          </Col>
+          <Col span="12">
+            <FormItem label="金额上限">
+              <Input placeholder="请输入派发红包金额上限" v-model="addActivityFormItem.amount_upper_limit"></Input>
+            </FormItem>
+          </Col>
+        </Row>
+        <FormItem label="活动时间">
+          <DatePicker type="datetimerange" placeholder="请选择活动时间段" style="width:403px" @on-change="selectTime"></DatePicker>
         </FormItem>
         <Row>
           <Col span="12">
@@ -218,6 +233,8 @@
           amount_upper_limit: '',
           amount: '',
           appid: '',
+          start_time: '',
+          end_time: '',
           share_cover: ''
         },
         addActivity: false,
@@ -260,7 +277,7 @@
           {
             title: '操作',
             key: 'handle',
-            width: 200,
+            width: 280,
             align: 'center',
             render: (h, params) => {
               return h('div', [
@@ -277,7 +294,7 @@
                       this.receivables(params.index);
                     }
                   }
-                }, '编辑'),
+                }, '导出二维码'),
                 h('Button', {
                   props: {
                     type: 'primary',
@@ -292,6 +309,20 @@
                     }
                   }
                 }, '领取情况'),
+                h('Button', {
+                  props: {
+                    type: 'primary',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.receivables(params.index);
+                    }
+                  }
+                }, '编辑'),
                 h('Button', {
                   props: {
                     type: 'error',
@@ -389,6 +420,10 @@
           });
         }
         return check;
+      },
+      selectTime (time) {
+        this.addActivityFormItem.start_time = time[0];
+        this.addActivityFormItem.end_time = time[1];
       }
     },
     created () {
