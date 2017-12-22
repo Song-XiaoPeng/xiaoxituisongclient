@@ -24,29 +24,7 @@
     }
 </style>
 <template>
-  <div>
-      <!--<Row>-->
-          <!--<Col :xs="isAdministrator ? 12 : 12"  :lg="isAdministrator ? 8 : 6">-->
-              <!--<div class="btn" v-bind:class="navState == 1 ? 'active' : ''" @click="selTbeFun(1)">-->
-                  <!--客户信息-->
-              <!--</div>-->
-          <!--</Col>-->
-          <!--<Col v-if="isAdministrator ? false : true" :xs="12"  :lg="6">-->
-      <!--<div class="btn" v-bind:class="navState == 3 ? 'active' : ''" @click="selTbeFun(3)">-->
-      <!--漫游消息-->
-      <!--</div>-->
-          <!--</Col>-->
-          <!--<Col :xs="isAdministrator ? 12 : 12"  :lg="isAdministrator ? 8 : 6">-->
-              <!--<div class="btn" v-bind:class="navState == 3 ? 'active' : ''" @click="selTbeFun(3)">-->
-                  <!--漫游消息-->
-              <!--</div>-->
-          <!--</Col>-->
-          <!--<Col :xs="isAdministrator ? 24 : 12"  :lg="isAdministrator ? 8 : 6">-->
-              <!--<div class="btn" v-bind:class="navState == 4 ? 'active' : ''" style="border-right: 0" @click="selTbeFun(4)">-->
-                  <!--业务提醒-->
-              <!--</div>-->
-          <!--</Col>-->
-      <!--</Row>-->
+  <div style="height: 100%; position: relative">
       <div class="right-box">
           <div class="btn" v-if="is_CRM.common" v-bind:class="navState == 1 ? 'active' : ''" @click="selTbeFun(1)">
               客户信息
@@ -61,7 +39,7 @@
              业务提醒
           </div>
       </div>
-      <div>
+      <div class="" style="overflow: auto; position: absolute;left: 0;top: 40px; bottom: 0;right: 0;">
          <Common v-show="navState == 1 && is_CRM.common"></Common>
          <information v-show="navState == 2 && isAdministrator == false && is_CRM.information"></information>
          <Record v-show="navState == 3 && is_CRM.record" ></Record>

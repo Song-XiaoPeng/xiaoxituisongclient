@@ -67,6 +67,11 @@
          background-color: #f7f7f7;
       }
    }
+ @media all and (min-height:400px) and (max-height:799px){
+    .form-box{
+       height: 450px
+    }
+ }
  @media all and (min-height:800px) and (max-height:1000px){
     .form-box{
        height: 450px

@@ -64,19 +64,24 @@
             }
         }
     }
+    @media all and (min-height:400px) and (max-height:799px){
+        .list{
+            height: 450px
+        }
+    }
     @media all and (min-height:800px) and (max-height:1000px){
         .list{
-            height: 570px
+            height: 550px
         }
     }
     @media all and (min-height:1000px) and (max-height:1200px){
         .list{
-            height: 770px
+            height: 750px
         }
     }
     @media all and (min-height:1201px){
         .list{
-            height: 870px
+            height: 850px
         }
     }
 </style>

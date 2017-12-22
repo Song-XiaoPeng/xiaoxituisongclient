@@ -1,5 +1,6 @@
 <style scoped lang="less">
     #index{
+        height: 100%;
     }
     .box,.personnel,.chart,.information{
         height: 100%;
@@ -60,6 +61,7 @@
     }
     .informationEl1{
         width: 33.33333333%;
+        border: 1px solid rgb(234, 234, 234);
     }
     .time-box{
         padding: 0px 10px;
@@ -250,7 +252,7 @@
                 </div>
 
 
-                <div ref="informationEl" v-bind:class="is_show_informationEl ? 'informationEl1' : ''" class="information f-l" style="height: 87%;overflow: auto">
+                <div ref="informationEl" v-bind:class="is_show_informationEl ? 'informationEl1' : ''" class="information f-l" style="height: 87%;overflow: auto;box-sizing: border-box;">
                     <span ref="isRightShow" v-if="is_left_show && is_show_chartEl" class="is_right_show" @click="isRightShowFun">
                         <Icon type="android-funnel"></Icon>
                     </span>

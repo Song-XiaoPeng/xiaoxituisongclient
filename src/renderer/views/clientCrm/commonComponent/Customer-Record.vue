@@ -165,6 +165,17 @@
             border-right: 0;
         }
     }
+    @media all and (min-height:400px) and (max-height:799px){
+        .chart-win{
+            height: 530px;
+        }
+        .chart-txt{
+            top: 460px;
+        }
+        .form-box{
+            height: 300px
+        }
+    }
     @media all and (min-height:800px) and (max-height:1000px){
         .chart-win{
             height: 600px;

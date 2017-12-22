@@ -13,6 +13,11 @@
         /* border-top: 1px #eaeaea solid; */
         padding-top: 10px;
     }
+@media all and (min-height:400px) and (max-height:799px){
+    .tab-box{
+        height: 450px
+    }
+}
 @media all and (min-height:800px) and (max-height:1000px){
     .tab-box{
         height: 550px
