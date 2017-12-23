@@ -57,6 +57,14 @@
       </div>
     </Card>
 
+    <Modal v-model="viewQrcode" title="领取情况">
+      <Table :columns="qrCodeColumn" :data="qrCodeList"></Table>
+
+      <div class="page-centent">
+        <Page :total="qrCodePage.total" :page-size="qrCodePage.pageSize"></Page>
+      </div>
+    </Modal>
+
     <Modal v-model="addActivity" title="添加编辑红包活动" @on-ok="addRedEnvelopes">
       <Form :label-width="85">
         <Row>
@@ -203,14 +211,47 @@
     data () {
       return {
         appList: [],
+        qrCodeColumn: [
+          {
+            title: '用户头像',
+            key: 'wx_nickname',
+            align: 'center',
+            ellipsis: true
+          },
+          {
+            title: '领取用户',
+            key: 'wx_nickname',
+            align: 'center',
+            ellipsis: true
+          },
+          {
+            title: '领取金额',
+            key: 'receive_amount',
+            align: 'center',
+            ellipsis: true
+          },
+          {
+            title: '领取时间',
+            key: 'wx_portrait',
+            align: 'center',
+            ellipsis: true
+          }
+        ],
         imgName: '',
         coverUrl: '',
         userInfo: null,
         visible: false,
         isEdit: false,
+        viewQrcode: false,
         total: 0,
         pageSize: 0,
         page: 1,
+        qrCodeList: [],
+        qrCodePage: {
+          total: 0,
+          pageSize: 0,
+          page: 1
+        },
         timeSlot: [],
         uploadList: [],
         addActivityFormItem: {
@@ -294,7 +335,6 @@
                   },
                   on: {
                     click: () => {
-                      this.receivables(params.index);
                     }
                   }
                 }, '导出二维码'),
@@ -308,7 +348,7 @@
                   },
                   on: {
                     click: () => {
-                      this.receivables(params.index);
+                      this.checkQrcode(params.row.activity_id);
                     }
                   }
                 }, '领取情况'),
@@ -572,11 +612,31 @@
         this.timeSlot.push(this.staffData[index].end_time);
 
         this.addActivity = true;
+      },
+      checkQrcode (activityId) {
+        this.ajax.getRedEnvelopeList({
+          data: {
+            page: this.qrCodePage.page,
+            activity_id: activityId
+          },
+          success: (res) => {
+            this.qrCodePage.total = parseInt(res.body.page_data.count);
+            this.qrCodePage.pageSize = parseInt(res.body.page_data.rows_num);
+            this.qrCodePage.page = parseInt(res.body.page_data.page);
+
+            this.qrCodeList = res.body.data_list;
+          },
+          error: () => {}
+        });
+
+        this.viewQrcode = true;
       }
     },
     created () {
       this.ajax.getWxAuthList({
         success: (res) => {
+          this.appList.splice(0, this.appList.length);
+
           this.appList = res.body;
         },
         error: () => {}
