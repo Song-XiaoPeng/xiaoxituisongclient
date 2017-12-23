@@ -47,7 +47,7 @@
         扫码红包
       </p>
       <p slot="extra">
-        <Button type="info" @click="addActivity = true">添加红包活动</Button>
+        <Button type="info" @click="addRedEnvelopesOperation()"><Icon type="plus-round"></Icon> 添加红包活动</Button>
       </p>
 
       <Table :columns="staffColumns" :data="staffData"></Table>
@@ -86,7 +86,7 @@
           </Col>
         </Row>
         <FormItem label="活动时间">
-          <DatePicker type="datetimerange" placeholder="请选择活动时间段" style="width:403px" @on-change="selectTime"></DatePicker>
+          <DatePicker type="datetimerange" placeholder="请选择活动时间段" v-model="timeSlot" style="width:403px" @on-change="selectTime"></DatePicker>
         </FormItem>
         <Row>
           <Col span="12">
@@ -220,6 +220,7 @@
         total: 0,
         pageSize: 0,
         page: 1,
+        timeSlot: '',
         uploadList: [],
         addActivityFormItem: {
           is_open: 1,
@@ -342,6 +343,7 @@
                   },
                   on: {
                     click: () => {
+                      this.delRedEnvelopes(params.row.activity_id);
                     }
                   }
                 }, '删除')
@@ -417,6 +419,30 @@
         this.addActivityFormItem.start_time = time[0];
         this.addActivityFormItem.end_time = time[1];
       },
+      addRedEnvelopesOperation () {
+        for (let index in this.addActivityFormItem) {
+          switch (index) {
+            case 'is_open':
+              this.addActivityFormItem[index] = 1;
+              break;
+            case 'is_follow':
+              this.addActivityFormItem[index] = 1;
+              break;
+            case 'is_share':
+              this.addActivityFormItem[index] = -1;
+              break;
+            case 'amount_type':
+              this.addActivityFormItem[index] = 1;
+              break;
+            default:
+              this.addActivityFormItem[index] = '';
+          }
+        }
+
+        this.timeSlot = '';
+
+        this.addActivity = true;
+      },
       addRedEnvelopes () {
         this.ajax.addRedEnvelopes({
           data: {
@@ -449,6 +475,8 @@
             page: this.page
           },
           success: (response) => {
+            this.staffData.splice(0, this.staffData.length);
+
             this.total = parseInt(response.body.page_data.count);
             this.pageSize = parseInt(response.body.page_data.rows_num);
             this.page = parseInt(response.body.page_data.page);
@@ -483,6 +511,20 @@
             }
           },
           error: () => {}
+        });
+      },
+      delRedEnvelopes (activityId) {
+        this.ajax.delRedEnvelopes({
+          data: {
+            activity_id: activityId
+          },
+          success: () => {
+            this.$Message.success('删除成功');
+            this.getRedEnvelopesList();
+          },
+          error: () => {
+            this.$Message.error('删除失败');
+          }
         });
       }
     },

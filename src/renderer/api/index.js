@@ -119,6 +119,20 @@ ajax.addRedEnvelopes = (obj) => {
   });
 };
 
+// 删除红包活动
+ajax.delRedEnvelopes = (obj) => {
+  util.ajax.post('/api/v1/extension/Handle/delRedEnvelopes', obj.data).then(function (response) {
+    if (response.data.meta.code === 200) {
+      obj.success(response.data);
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    obj.error(error);
+    console.log(error);
+  });
+};
+
 // 获取红包list
 ajax.getRedEnvelopesList = (obj) => {
   util.ajax.post('/api/v1/extension/Handle/getRedEnvelopesList', obj.data).then(function (response) {
