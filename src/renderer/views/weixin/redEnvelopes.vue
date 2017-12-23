@@ -244,37 +244,44 @@
           {
             title: '活动名称',
             key: 'activity_name',
-            align: 'center'
+            align: 'center',
+            ellipsis: true
           },
           {
             title: '活动开始时间',
             key: 'start_time',
-            align: 'center'
+            align: 'center',
+            ellipsis: true
           },
           {
             title: '活动结束时间',
             key: 'end_time',
-            align: 'center'
+            align: 'center',
+            ellipsis: true
           },
           {
             title: '所属公众号',
             key: 'app_name',
-            align: 'center'
+            align: 'center',
+            ellipsis: true
           },
           {
             title: '派发金额上限',
             key: 'amount_upper_limit',
-            align: 'center'
+            align: 'center',
+            width: 110
           },
           {
             title: '已发金额',
             key: 'already_amount',
-            align: 'center'
+            align: 'center',
+            width: 100
           },
           {
             title: '状态',
             key: 'state',
-            align: 'center'
+            align: 'center',
+            width: 80
           },
           {
             title: '操作',
