@@ -96,7 +96,7 @@
                 <Radio label="2">随机金额</Radio>
               </RadioGroup>
             </FormItem>
-          </COl>
+          </Col>
           <Col span="10">
             <FormItem label="活动开启">
               <RadioGroup v-model="addActivityFormItem.is_open">
