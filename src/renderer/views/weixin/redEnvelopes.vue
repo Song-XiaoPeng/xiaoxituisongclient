@@ -630,6 +630,8 @@
         });
 
         this.viewQrcode = true;
+      },
+      downloadQrcode () {
       }
     },
     created () {

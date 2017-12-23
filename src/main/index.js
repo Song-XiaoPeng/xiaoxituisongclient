@@ -24,10 +24,12 @@ function createWindow () {
     show: false,
     webPreferences: {webSecurity: false}
   });
+
   // 注册全局快捷键 打开调试
   globalShortcut.register('ctrl+alt+d+b', function () {
     mainWindow.webContents.openDevTools();
   });
+
   // 开发环境默认开启调试窗口
   if (process.env.NODE_ENV === 'development') {
     mainWindow.webContents.openDevTools();
@@ -42,20 +44,25 @@ function createWindow () {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+
   mainWindow.on('minimize', (e) => {
     mainWindow.webContents.send('mini');
   });
+
   mainWindow.on('restore', (e) => {
     mainWindow.webContents.send('restore');
   });
+
   mainWindow.on('maximize', (e) => {
     mainWindow.webContents.send('max');
   });
+
   // 设置cookie
   ipcMain.on('setCookie', (e, str) => {
     session.defaultSession.cookies.set({ url: winURL, name: 'dialogueArr', value: str }, (e, c) => {
     });
   });
+
   // 获取cookie
   ipcMain.on('getCookie', () => {
     session.defaultSession.cookies.get({url: winURL, name: 'dialogueArr'}, (e, c) => {
@@ -63,6 +70,7 @@ function createWindow () {
     });
   });
 }
+
 // 防止重复打开
 const shouldQuit = app.makeSingleInstance((commandLine, workingDirectory) => {
   if (mainWindow) {
