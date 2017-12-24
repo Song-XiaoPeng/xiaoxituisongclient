@@ -45,7 +45,7 @@
                     </RadioGroup>
                 </FormItem>
                 <FormItem label="客服分组" v-if="selRader == 2">
-                    <Select  placeholder="Select your city" v-model="customer_service_group_id " style="width: 91%" @on-change="selUserGourpFun">
+                    <Select  placeholder="请选择" v-model="customer_service_group_id " style="width: 91%" @on-change="selUserGourpFun">
                         <Option v-for="k in userGroupData" :value="k.user_group_id" :key="k.value">{{k.user_group_name}}</Option>
                     </Select>
                     <!--<span>{{selRowData.user_name}}</span>-->

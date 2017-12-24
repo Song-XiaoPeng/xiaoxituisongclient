@@ -23,12 +23,12 @@
       left: 260px;
       top: 0;
       bottom: 0;
-      right: 420px;
+      right: 380px;
   }
   .information{
       position: absolute;
       right: 0;
-      width: 420px;
+      width: 380px;
       top: 0;
       bottom: 0;
       border-right: 1px #eaeaea solid;

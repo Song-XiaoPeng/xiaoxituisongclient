@@ -237,7 +237,7 @@
                            <div class="" style="text-align: left;font-size: 10px;color: #999;box-sizing: border-box;padding-left: 50px">{{k.add_time}}</div>
                            <div class="graphic" ><Avatar :src="clientData.customer_wx_portrait" style="margin-left: 5px"/></div>
                            <div class="crate" style="left: 10px">
-                               <div style="display: inline-block">
+                               <div style="display: inline-block;overflow: hidden">
 
 
                                    <!-- 普通文本 -->
@@ -246,7 +246,7 @@
 
 
                                    <!-- 图片 -->
-                                   <img  v-if="k.message_type == 2" :src="k.file_url" alt="" style="max-height: 300px;max-width: 240px;vertical-align: bottom"  v-on:load="loadFun">
+                                   <img  v-if="k.message_type == 2" :src="k.file_url" alt="" style="height: 100%;width: 100%;vertical-align: bottom"  v-on:load="loadFun">
                                    <!-- end图片 -->
 
                                    <!-- 视频 -->
@@ -278,8 +278,8 @@
 
                                    <!-- 位置 -->
                                    <div v-if="k.message_type == 5" @click="locationFun(k)" style="cursor: pointer;">
-                                       <div style="padding-bottom: 5px">{{k.map_label}}</div>
-                                       <img :src="'http://apis.map.qq.com/ws/staticmap/v2/?center=' + k.lat + ',' + k.lng + '&zoom=18&size=250*150&maptype=roadmap&markers=color:red|' + k.lat + ',' + k.lng + '&key=TUTBZ-YEPWX-WEN4N-7OZUC-T4MT7-IXFN6'" v-on:load="loadFun"></img>
+                                       <div style="padding-bottom: 5px;color: #999">{{k.map_label}}</div>
+                                       <img  style="height: 100%;width: 100%" :src="'http://apis.map.qq.com/ws/staticmap/v2/?center=' + k.lat + ',' + k.lng + '&zoom=18&size=250*150&maptype=roadmap&markers=color:red|' + k.lat + ',' + k.lng + '&key=TUTBZ-YEPWX-WEN4N-7OZUC-T4MT7-IXFN6'" v-on:load="loadFun"></img>
                                    </div>
                                    <!-- end位置 -->
                                </div>

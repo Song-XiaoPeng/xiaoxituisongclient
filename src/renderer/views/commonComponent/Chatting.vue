@@ -254,23 +254,25 @@ ul.img-txt{
 <template>
   <div class="chart-box">
      <div class="user-top" v-if="isMass ? false : true" style="background-color: #e7f1fd;">
-         <Avatar :src="clientData.customer_wx_portrait" style="margin-left: 5px"/>
-         <span class="name">{{clientData.customer_wx_nickname}}</span>
-         <span class="txt">来访：{{clientData.session_frequency}}次</span>
-         <span class="txt">主动邀请：{{clientData.invitation_frequency}}次</span>
-         <span class="txt">来自：{{clientData.app_name}}</span>
-         <span v-if="isAdministrator" style="position: absolute;right: 15px;">
-             <Button  type="ghost" class="btn-r">领导评价</Button>
-         </span>
+         <div class="f-l">
+             <Avatar :src="clientData.customer_wx_portrait" style="margin-left: 5px"/>
+         </div>
+         <div style="word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+             <span class="name">{{clientData.customer_wx_nickname}}</span>
+             <span class="txt">来访：{{clientData.session_frequency}}次</span>
+             <span class="txt">主动邀请：{{clientData.invitation_frequency}}次</span>
+             <span class="txt">来自：{{clientData.app_name}}</span>
+         </div>
      </div>
      <div class="chart-win" ref="win" v-bind:class="{'is_mass_chart':isMass}" style="width: 100%;overflow-y: auto;position: relative;background: #fff;">
          <div ref="win1">
              <div v-for="(k, i) in elmetArr" >
                  <!---------------------------------- 客户消息 ------------------------------------>
                  <div class="content-box"  v-if="k.opercode == 2">
+                     <div class="" style="text-align: left;font-size: 10px;color: #999;box-sizing: border-box;padding-left: 50px">{{k.add_time}}</div>
                      <div class="graphic" ><Avatar :src="clientData.customer_wx_portrait" style="margin-left: 5px"/></div>
                      <div class="crate" style="left: 10px">
-                         <div style="display: inline-block">
+                         <div style="display: inline-block;overflow: hidden">
 
 
                              <!-- 普通文本 -->
@@ -280,7 +282,7 @@ ul.img-txt{
 
 
                              <!-- 图片 -->
-                             <img  v-if="k.message_type == 2" :src="k.file_url" alt="" style="max-height: 400px;max-width: 360px;vertical-align: bottom"  v-on:load="loadFun">
+                             <img  v-if="k.message_type == 2" :src="k.file_url" alt="" style="height: 100%;width: 100%;vertical-align: bottom"  v-on:load="loadFun">
                              <!-- end图片 -->
 
                              <!-- 视频 -->
@@ -312,8 +314,8 @@ ul.img-txt{
 
                              <!-- 位置 -->
                              <div v-if="k.message_type == 5 || k.message_type == -5" @click="locationFun(k)" style="cursor: pointer;">
-                                 <div style="padding-bottom: 5px">{{k.map_label}}</div>
-                                 <img :src="'http://apis.map.qq.com/ws/staticmap/v2/?center=' + k.lat + ',' + k.lng + '&zoom=18&size=350*200&maptype=roadmap&markers=color:red|' + k.lat + ',' + k.lng + '&key=TUTBZ-YEPWX-WEN4N-7OZUC-T4MT7-IXFN6'" v-on:load="loadFun"></img>
+                                 <div style="padding-bottom: 5px;color: #fff">{{k.map_label}}</div>
+                                 <img style="height: 100%;width: 100%" :src="'http://apis.map.qq.com/ws/staticmap/v2/?center=' + k.lat + ',' + k.lng + '&zoom=18&size=350*200&maptype=roadmap&markers=color:red|' + k.lat + ',' + k.lng + '&key=TUTBZ-YEPWX-WEN4N-7OZUC-T4MT7-IXFN6'" v-on:load="loadFun"></img>
                              </div>
                              <!-- end位置 -->
 
@@ -328,6 +330,7 @@ ul.img-txt{
 
                  <!---------------------------------- 客服消息 ------------------------------------>
                  <div class="content-box" style="text-align: right" v-if="k.opercode == 1">
+                     <div class="" style="text-align: right;font-size: 10px;color: #999;box-sizing: border-box;padding-right: 50px">{{k.add_time}}</div>
                      <div class="crate" style="right: 10px;background-color: #e7e8ea;">
                          <div class="lading-box" v-if="k.is_loading">
                              <Spin fix>

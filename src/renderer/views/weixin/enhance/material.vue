@@ -1,9 +1,9 @@
 <style scoped lang="less">
     .container{
-        padding:0 10px;
         background-color: #fff;
         .top-tab{
-            padding: 0 10px;
+            height: 60px;
+            background-color: #ecf0f4;
             ul{
                 text-align: right;
                 li{
@@ -26,6 +26,77 @@
         }
         .list-box{
             padding-bottom: 10px;
+            .list-content{
+                width: 340px;
+                height: 300px;
+                margin: 10px;
+                box-sizing: border-box;
+                border: 1px #d7dde4 solid;
+                box-shadow: 0px 0px 5px 1px #d7dde4;
+                float: left;
+                .time{
+                    background-color: #f7f8f8;
+                    color: #999;
+                    height: 40px;
+                    overflow: hidden;
+                    line-height: 40px;
+                    word-wrap: break-word;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    padding-left: 5px;
+                }
+                .content{
+                    background-color: #fff;
+                    height: 218px;
+                    box-sizing: border-box;
+                    padding: 5px;
+                    .title{
+                        height: 20px;
+                        line-height: 20px;
+                        overflow: hidden;
+                        word-wrap: break-word;
+                        white-space: nowrap;
+                        text-overflow: ellipsis;
+                        color: #1a1a1a;
+                    }
+                    .img-box{
+                        height: 168px;
+                        img{
+                            height: 100%;
+                            width: 100%;
+                            object-fit: cover;
+                            object-position: center;
+                        }
+                    }
+                    .decs{
+                        height: 20px;
+                        line-height: 20px;
+                        overflow: hidden;
+                        word-wrap: break-word;
+                        white-space: nowrap;
+                        text-overflow: ellipsis;
+                        color: #1a1a1a;
+                    }
+                }
+                .btn-box{
+                    height: 40px;
+                    display: -webkit-box;
+                    background-color: #f7f8f8;
+                    div{
+                        -webkit-box-flex: 1;
+                        line-height: 40px;
+                        font-size: 16px;
+                        text-align: center;
+                        color: #999;;
+                        cursor: pointer;
+                        border-right: 1px #eaeaea solid;
+                    }
+                    div:hover{
+                        // background-color: #2db7f5;
+                        color: #2db7f5;
+                    }
+                }
+            }
           .list{
               .list-content{
                   margin: 5px;
@@ -85,40 +156,77 @@
 </style>
 <template>
     <div class="container">
-        <div class="cl">
-            <Select class="f-r" v-model="model1" style="width:200px" @on-change="selMarkFun">
+        <div class="cl" style="padding: 10px">
+            <Select  v-model="model1" style="width:200px" @on-change="selMarkFun">
                 <Option v-for="item in cityList" :value="item.appid" :key="item.value">{{ item.nick_name }}</Option>
             </Select>
-            <span class="f-r" style="margin-top: 5px">当前公共号：</span>
         </div>
         <div class="top-tab">
-            <Button  type="info" @click="addMaterialFun">添加素材</Button>
-            <ul>
+             <span class="" style="color: #2db7f5;position: relative;top: 21px;left: 10px;">
+                素材管理
+            </span>
+            <Button  type="info" class="f-r" @click="addMaterialFun" style="margin: 14px">添加素材</Button>
+            <ul class="f-r cl" style="margin: 21px">
                 <li data-start="1" v-bind:class="is_img_txt === 'news' ? 'active' : ''" @click="imgTxtFun">图文</li>
                 <li data-start="2" v-bind:class="is_img_txt === 'image' ? 'active' : ''" @click="imgFun">图片</li>
                 <!--<li data-start="3">语音</li>-->
                 <!--<li data-start="4">视频</li>-->
             </ul>
         </div>
-        <div class="list-box" style="margin-top: 10px">
-            <div v-if="modal2">
-                <div>
-                    <Table highlight-row ref="currentRowTable" :columns="columns5" :data="data5" @on-current-change="selImgTxtFun"></Table>
+        <div class="list-box">
+            <div class="cl" v-if="modal2">
+                <div class="list-content" v-for="(k, i) in data5">
+                    <div class="time">{{k.content.create_time}}</div>
+                    <div class="content">
+                        <div class="title">{{k.content.news_item[0].title}}</div>
+                        <div class="img-box" style="cursor: pointer" @click="modal4 = true,el = k.content.news_item">
+                            <img :src="k.content.news_item[0].thumb_url" alt="">
+                        </div>
+                        <div class="decs">{{k.content.news_item[0].digest}}</div>
+
+                    </div>
+                    <div class="btn-box">
+                        <!--<div title="修改">-->
+                            <!--<Icon type="compose"></Icon>-->
+                        <!--</div>-->
+                        <div style="border: 0" title="删除" @click="delImgFun(k.media_id, i)"><Icon type="trash-a"></Icon></div>
+                    </div>
                 </div>
-                <div style="text-align: center;padding: 10px">
-                    <Page :total="pageData1.count" :page-size="pageData1.rows_num"  @on-change="pageFun1"></Page>
-                </div>
+
+                <!--<div>-->
+                    <!--<Table highlight-row ref="currentRowTable" :columns="columns5" :data="data5" @on-current-change="selImgTxtFun"></Table>-->
+                <!--</div>-->
+
             </div>
+            <div v-if="modal2" style="text-align: center;padding: 10px">
+                <Page :total="pageData1.count" :page-size="pageData1.rows_num"  @on-change="pageFun1"></Page>
+            </div>
+           <div v-if="modal3" class="cl">
+               <div class="list-content" v-for="(k, i) in data6">
+                   <div class="time">{{k.update_time}}</div>
+                   <div class="content">
+                       <div class="title">{{k.name}}</div>
+                       <div class="img-box">
+                           <img :src="k.url" alt="">
+                       </div>
+                       <div class="decs">{{k.media_id}}</div>
 
-           <div v-if="modal3">
-               <div>
-                   <Table highlight-row ref="currentRowTable" :columns="columns6" :data="data6" @on-current-change="selTxtFun" ></Table>
+                   </div>
+                   <div class="btn-box">
+                       <!--<div title="修改">-->
+                           <!--<Icon type="compose"></Icon>-->
+                       <!--</div>-->
+                       <div style="border: 0" title="删除" @click="delImgFun(k.media_id, i)"><Icon type="trash-a"></Icon></div>
+                   </div>
                </div>
-               <div style="text-align: center;padding: 10px">
-                   <Page :total="pageData1.count" :page-size="pageData1.rows_num"  @on-change="pageFun1"></Page>
-               </div>
-           </div>
+               <!--<div>-->
+                   <!--<Table highlight-row ref="currentRowTable" :columns="columns6" :data="data6" @on-current-change="selTxtFun" ></Table>-->
+               <!--</div>-->
 
+            </div>
+            <div  v-if="modal3" style="text-align: center;padding: 10px">
+                <Page :total="pageData1.count" :page-size="pageData1.rows_num"  @on-change="pageFun1"></Page>
+            </div>
 
         </div>
 
@@ -280,13 +388,22 @@
             type: this.is_img_txt
           },
           success: (res) => {
+            let newDate = new Date();
             this.$Spin.hide();
             if (this.is_img_txt === 'news') {
               // 如果是图文
+              res.body.data_list.forEach((k) => {
+                newDate.setTime(k.content.create_time);
+                Object.assign(k.content, {create_time: newDate.getFullYear() + '-' + (newDate.getMonth() + 1) + '-' + newDate.getDate() + '  ' + newDate.getHours() + ':' + newDate.getSeconds() + ':' + newDate.getMinutes()});
+              });
               this.data5 = res.body.data_list;
               this.modal2 = true;
             } else if (this.is_img_txt === 'image') {
               // 如果是图片
+              res.body.data_list.forEach((k) => {
+                newDate.setTime(k.update_time);
+                Object.assign(k, {update_time: newDate.getFullYear() + '-' + (newDate.getMonth() + 1) + '-' + newDate.getDate() + '  ' + newDate.getHours() + ':' + newDate.getSeconds() + ':' + newDate.getMinutes()});
+              });
               this.data6 = res.body.data_list;
               this.modal3 = true;
             }

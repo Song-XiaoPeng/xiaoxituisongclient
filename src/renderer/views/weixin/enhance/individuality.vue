@@ -29,7 +29,6 @@
     .table-copy th{
         background-color: #f8f8f9;
     }
-
     .table-copy tr:nth-child(even){
         background: #f8f8f9;
     }
@@ -37,18 +36,25 @@
     .table-copy tr:hover{
         background: #ebf7ff;
     }
+    .title-box-btn{
+        height: 60px;
+        line-height: 60px;
+        background-color: #ecf0f4;
+    }
 </style>
 <template>
     <div id="index">
         <div class="sel-top">
-            <span>当前公共号：</span>
             <Select v-model="model1" style="width:200px" @on-change="selFun">
                 <Option v-for="item in cityList" :value="item.appid" :key="item.appid">{{ item.nick_name }}</Option>
             </Select>
+            <!--<Input class=""  icon="search" placeholder="" style="width: 200px"></Input>-->
         </div>
-        <div class="cl add-btn">
-            <Input class="f-r"  icon="search" placeholder="" style="width: 200px"></Input>
-            <Button type="info" class="" @click="addMenuFun(null)">
+        <div class="title-box-btn cl" style="">
+            <span class="" style="color: #2db7f5;margin-left: 10px">
+               个性化菜单
+            </span>
+            <Button type="info" class="f-r" @click="addMenuFun(null)" style="margin: 15px">
                 <Icon type="plus-round"></Icon>
                 添加个性化菜单
             </Button>
@@ -146,14 +152,14 @@
       },
       watch: {
       },
-      // 获取列表
+      // 获取列表 12123
       getIndividualiMeunFun () {
         this.ajax.getWxIndividualizationMenu({
           data: {
             appid: this.model1
           },
           success: (res) => {
-            this.data7 = res.body;
+            this.data7 = res.body || [];
           },
           error: (res) => {
             this.$Message.warning(res.meta.message);

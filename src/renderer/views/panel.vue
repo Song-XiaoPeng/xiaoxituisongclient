@@ -452,8 +452,8 @@
           if (!this.is_ws_initiative_off) {
             this.ws_intval = setInterval(() => {
               this.WebSocketFun();
-            }, 3000);
-            this.$Message.warning('网络不稳定或服务器断开，30秒后为您重连。。。');
+            }, 20000);
+            // this.$Message.warning('网络不稳定或服务器断开，30秒后为您重连。。。');
           }
         };
       },

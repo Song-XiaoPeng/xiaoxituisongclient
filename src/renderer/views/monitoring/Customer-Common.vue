@@ -1,8 +1,10 @@
 <style scoped lang="less">
- .box{
-     margin: 10px;
-     overflow: hidden;
- }
+   .box{
+      overflow: auto;
+      height: 100%;
+      padding: 10px;
+      box-sizing: border-box;
+   }
    .client{
       border-bottom: 1px #eaeaea solid;
       position: relative;
@@ -42,32 +44,32 @@
          left: 0;
       }
    }
- .form-btn{
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
- }
+   .form-btn{
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+   }
    .form-box{
       padding: 10px;
       border-bottom: 1px #eaeaea solid;
-      width: 98%;
-      overflow-y: scroll;
+      width: 100%;
+      overflow: auto;
       top: 167px;
       left: 0px;
-      position: absolute;
       /* margin-bottom: 45px; */
       /* height: 57%; */
       right: -29px;
-      bottom: 40px;
+      /* bottom: 40px; */
       transition: all .5s;
       opacity: 1;
+      height: 510px;
    }
- .is-label-btn{
-    position: absolute;
-    bottom: 5px;
-    text-align: center;
-    width: 100%;
- }
+   .is-label-btn{
+      position: absolute;
+      bottom: 5px;
+      text-align: center;
+      width: 100%;
+   }
    .custom-group-box{
       padding: 10px;
       border-bottom: 1px #eaeaea solid;
@@ -101,7 +103,6 @@
       }
    }
    .label-box{
-      height: 260px;
       width: 100%;
       overflow: auto;
       .label-list{
@@ -128,21 +129,6 @@
          }
       }
    }
- /*@media all and (min-height:800px) and (max-height:1000px){*/
-    /*.form-box{*/
-       /*height: 220px*/
-    /*}*/
- /*}*/
- /*@media all and (min-height:1000px) and (max-height:1200px){*/
-    /*.form-box{*/
-       /*height: 450px*/
-    /*}*/
- /*}*/
- /*@media all and (min-height:1201px){*/
-    /*.form-box{*/
-       /*height: 550px*/
-    /*}*/
- /*}*/
 </style>
 <template>
    <div class="box">
@@ -169,7 +155,7 @@
          <!--</div>-->
       </div>
       <div class="form-box" ref="client">
-         <Form label-position="right" :label-width="80" style="border-bottom: 0">
+         <Form label-position="right" id="client-form" :label-width="80" style="border-bottom: 0">
             <!--<FormItem label="粉丝分组：">-->
                <!--<Select v-model="WxAutId" style="width:  100%;">-->
                   <!--<Option v-for="item in cityList1" :value="item.id" :key="item.id">{{ item.name }}</Option>-->
@@ -233,21 +219,13 @@
          </Form>
 
       </div>
-      <div class="custom-group-box cl" ref="label">
-         <div class="" style="text-align: right">
+      <div class="cl" ref="label">
+         <div class="" style="text-align: right; padding: 5px">
             <Button type="info" size="small" @click="popup14 = true" disabled>添加标签</Button>
          </div>
          <div class="label-box">
-            <div class="label-list" v-for="(k, i) in userData.label">
-               <!--<span type="ghost" class="label-list-edit-btn" size="small">修改标签</span>-->
-               <!--<p><span>所属行业：</span>我也不dwadwadwad知道</p>-->
-               <p><span>标签名称：</span>{{k.label_name}}</p>
-               <!--<p><span>满意度：</span>50%</p>-->
-            </div>
+            <Tag v-for="(k, i) in userData.label" color="green" :key="i">{{k.label_name}}</Tag>
          </div>
-      </div>
-      <div class="is-label-btn">
-         <Button type="dashed" @click="labelShowFun"><Icon type="arrow-up-b"></Icon>&nbsp;{{is_client_btn_txt}}</Button>
       </div>
 
 

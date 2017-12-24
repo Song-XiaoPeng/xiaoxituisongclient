@@ -11,24 +11,31 @@
             right: 10px;
         }
     }
+    .title-box-btn{
+        height: 60px;
+        line-height: 60px;
+        background-color: #ecf0f4;
+    }
 </style>
 <template>
-    <div  style="padding: 10px;">
-        <div class="sel-top">
-            <span>当前公共号：</span>
+    <div >
+        <div class="sel-top" style="padding: 10px">
             <Select v-model="model1" style="width:200px" @on-change="selFun">
                 <Option v-for="item in cityList" :value="item.appid" :key="item.appid">{{ item.nick_name }}</Option>
             </Select>
         </div>
-        <div class="cl add-btn" >
-            <span class="" style="color: #ff3300">
-                *只能生效一个自定义菜单
+        <div class="title-box-btn cl" style="">
+            <span class="" style="color: #2db7f5;margin-left: 10px">
+                默认自定义菜单
             </span>
-            <Button type="info" class="" @click="addMenuFun">
+            <Button type="info" class="f-r" @click="addMenuFun" style="margin: 14px;">
                 添加/删除/修改/自定义菜单
             </Button>
         </div>
-        <Table border :columns="columns7" :data="data6"></Table>
+        <div style="padding: 10px">
+            <Table border  :columns="columns7" :data="data6"></Table>
+        </div>
+
     </div>
 </template>
 <script>
@@ -95,7 +102,6 @@
         success: (res) => {
           this.cityList = res.body;
           this.model1 = res.body[0].appid;
-          this.getMeunListFun();
         },
         error: (res) => {
           this.is_Loading = false;

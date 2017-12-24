@@ -244,7 +244,7 @@
 
 
                                    <!-- 图片 -->
-                                   <img  v-if="k.message_type == 2" :src="k.file_url" alt="" style="max-height: 300px;max-width: 240px;vertical-align: bottom"  v-on:load="loadFun">
+                                   <img  v-if="k.message_type == 2" :src="k.file_url" alt="" style="height: 100%;width: 100%;vertical-align: bottom"  v-on:load="loadFun">
                                    <!-- end图片 -->
 
                                    <!-- 视频 -->
@@ -277,7 +277,7 @@
                                    <!-- 位置 -->
                                    <div v-if="k.message_type == 5" @click="locationFun(k)" style="cursor: pointer;">
                                        <div style="padding-bottom: 5px">{{k.map_label}}</div>
-                                       <img :src="'http://apis.map.qq.com/ws/staticmap/v2/?center=' + k.lat + ',' + k.lng + '&zoom=18&size=300*150&maptype=roadmap&markers=color:red|' + k.lat + ',' + k.lng + '&key=TUTBZ-YEPWX-WEN4N-7OZUC-T4MT7-IXFN6'" v-on:load="loadFun"></img>
+                                       <img style="height: 100%;width: 100%;vertical-align: bottom" :src="'http://apis.map.qq.com/ws/staticmap/v2/?center=' + k.lat + ',' + k.lng + '&zoom=18&size=300*150&maptype=roadmap&markers=color:red|' + k.lat + ',' + k.lng + '&key=TUTBZ-YEPWX-WEN4N-7OZUC-T4MT7-IXFN6'" v-on:load="loadFun"></img>
                                    </div>
                                    <!-- end位置 -->
                                </div>
@@ -299,7 +299,7 @@
 
 
                                    <!-- 图片 -->
-                                   <img  v-if="k.message_type == 2" :src="k.file_url" alt="" style="max-height: 300px;max-width: 240px;vertical-align: bottom">
+                                   <img  v-if="k.message_type == 2" :src="k.file_url" alt="" style="height: 100%;width: 100%;vertical-align: bottom">
                                    <!-- end图片 -->
 
 

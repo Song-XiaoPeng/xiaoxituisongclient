@@ -60,7 +60,7 @@
                         <th>是否客服</th>
                         <th>设置客服</th>
                         <th>解除硬件绑定</th>
-                        <th>在职/离职 操作</th>
+                        <th>操作</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -102,10 +102,7 @@
                             <Button v-else type="ghost" size="small" @click="untieFun(k)">解除</Button>
                         </td>
                         <td>
-                            <i-switch v-model="k.is_switch" @on-change="switchFun(k)">
-                                <span slot="1">在职</span>
-                                <span slot="2">离职</span>
-                            </i-switch>
+                            <Button type="ghost" size="small" @click="changePermission(k)">修改权限</Button>
                         </td>
                     </tr>
                     </tbody>
@@ -176,7 +173,6 @@
                     <th>客服名称</th>
                     <th>公共号/小程序名称</th>
                     <th>客服状态</th>
-                    <th>权限管理</th>
                     <th>操作</th>
                 </tr>
                 </thead>
@@ -190,9 +186,6 @@
                     </td>
                     <td>
                         {{k.state === -1 ? '离线' : k.state === 1 ? '在线' : k.state === 2 ? '离开' : '未知'}}
-                    </td>
-                    <td>
-                        <Button type="ghost" @click="changePermission(k)">修改权限</Button>
                     </td>
                     <td>
                         <Button type="ghost" @click="popup9 = true, selUserData = k, popup8 = false,serviceName = k.name">修改客服名</Button>
@@ -250,7 +243,7 @@
 
         <!-- 权限管理 -->
         <Modal v-model="popup11" title="权限管理" :width="500" @on-ok="jurisdictionFun" @on-cancel="cancelJurisdictionFun">
-            <Tree :data="menuArr" show-checkbox @on-check-change="jurisdiction"></Tree>
+            <Tree :data="menuArr" show-checkbox multiple @on-check-change="jurisdiction"></Tree>
         </Modal>
         <!-- end权限管理 -->
 
@@ -404,36 +397,45 @@
         });
       },
       // 修改权限
-      changePermission (k) {
-        let arr = this.changeUserData.model_list ? this.changeUserData.model_list : [];
+      changePermission (d) {
+        let arr = d.model_list ? d.model_list : [];
         this.menuArr.forEach((k) => {
-          arr.forEach((s) => {
-            if (k.model_id === s) {
-              Object.assign(k, {expand: true});
-            } else {
-              // Object.assign(k, {checked: false});
-            }
-          });
-          k.children.forEach((z) => {
-            arr.forEach((b) => {
-              if (z.model_id === b) {
-                Object.assign(z, {checked: true});
+          if (k.superior_id === -1 && k.children.length === 0) {
+            arr.forEach((s) => {
+              if (k.model_id === s) {
+                Object.assign(k, {selected: true});
+                Object.assign(k, {checked: true});
               } else {
-                // Object.assign(z, {checked: false});
+                // Object.assign(k, {selected: false});
+                // Object.assign(k, {expand: false});
               }
             });
-          });
+          } else {
+            Object.assign(k, {expand: true});
+            k.children.forEach((k) => {
+              arr.forEach((s) => {
+                if (k.model_id === s) {
+                  // Object.assign(k, {selected: true});
+                  Object.assign(k, {checked: true});
+                } else {
+                  // Object.assign(k, {checked: false});
+                }
+              });
+            });
+          }
         });
         // this.menuArr1 = arr;
         this.popup11 = true;
         this.popup8 = false;
-        this.selUserData = k;
+        this.selUserData = d;
       },
       cancelJurisdictionFun () {
         this.menuArr.forEach((k) => {
-          Object.assign(k, {expand: false});
+          Object.assign(k, {selected: false});
+          Object.assign(k, {checked: false});
           k.children.forEach((z) => {
             Object.assign(z, {checked: false});
+            Object.assign(z, {selected: false});
           });
         });
       },
@@ -612,8 +614,10 @@
             let arr = res.body;
             arr.forEach((k, i) => {
               if (k.superior_id === -1) {
-                Object.assign(k, {'title': k.model_name});
-                Object.assign(k, {'expand': false});
+                Object.assign(k, {title: k.model_name});
+                Object.assign(k, {expand: true});
+                Object.assign(k, {selected: false});
+                Object.assign(k, {checked: false});
                 this.menuArr.push(k);
               }
             });
@@ -661,6 +665,7 @@
           },
           success: (res) => {
             this.menuArr1 = [];
+            this.getUserList();
             this.$Message.success('操作成功');
           },
           error: (res) => {

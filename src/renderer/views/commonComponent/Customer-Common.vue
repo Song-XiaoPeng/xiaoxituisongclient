@@ -238,7 +238,7 @@
             <Button type="info" size="small" @click="popup14 = true">添加标签</Button>
          </div>
          <div class="label-box">
-            <Tag v-for="(k, i) in userData.label" color="green">{{k.label_name}}</Tag>
+            <Tag v-for="(k, i) in userData.label" color="green" :key="i">{{k.label_name}}</Tag>
          </div>
       </div>
 

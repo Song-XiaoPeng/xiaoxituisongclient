@@ -259,13 +259,17 @@
 <template>
     <div class="chart-box">
         <div class="user-top" v-if="isMass ? false : true" style="background-color: #e7f1fd;">
-            <Avatar :src="clientData.customer_wx_portrait" style="margin-left: 5px"/>
-            <span class="name">{{clientData.customer_wx_nickname}}</span>
-            <span class="txt">来访：{{clientData.session_frequency}}次</span>
-            <span class="txt">主动邀请：{{clientData.invitation_frequency}}次</span>
-            <span class="txt">来自：{{clientData.app_name}}</span>
+            <div class="f-l">
+                <Avatar :src="clientData.customer_wx_portrait" style="margin-left: 5px"/>
+            </div>
+            <div style="word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                <span class="name">{{clientData.customer_wx_nickname}}</span>
+                <span class="txt">来访：{{clientData.session_frequency}}次</span>
+                <span class="txt">主动邀请：{{clientData.invitation_frequency}}次</span>
+                <span class="txt">来自：{{clientData.app_name}}</span>
+            </div>
         </div>
-        <div class="chart-win" ref="win" v-bind:class="{'is_mass_chart':isMass}" style="width: 100%;overflow-y: auto;position: relative;background: #fff;">
+        <div class="chart-win" ref="win" v-bind:class="{'is_mass_chart':isMass}" @scroll="scrollFun" style="width: 100%;overflow-y: auto;position: relative;background: #fff;">
             <div class="scroll-loading-box" v-if="is_scroll_loading">
                 <Spin fix>
                     <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
@@ -276,6 +280,7 @@
                 <div v-for="(k, i) in elmetArr" >
                     <!---------------------------------- 客户消息 ------------------------------------>
                     <div class="content-box"  v-if="k.opercode == 2">
+                        <div class="" style="text-align: left;font-size: 10px;color: #999;box-sizing: border-box;padding-left: 50px">{{k.add_time}}</div>
                         <div class="graphic" ><Avatar :src="clientData.customer_wx_portrait" style="margin-left: 5px"/></div>
                         <div class="crate" style="left: 10px">
                             <div style="display: inline-block">
@@ -288,7 +293,7 @@
 
 
                                 <!-- 图片 -->
-                                <img  v-if="k.message_type == 2" :src="k.file_url" alt="" style="max-height: 400px;max-width: 360px;vertical-align: bottom"  v-on:load="loadFun">
+                                <img  v-if="k.message_type == 2" :src="k.file_url" alt="" style="height: 100%;width: 100%;vertical-align: bottom"  v-on:load="loadFun">
                                 <!-- end图片 -->
 
                                 <!-- 视频 -->
@@ -321,7 +326,7 @@
                                 <!-- 位置 -->
                                 <div v-if="k.message_type == 5 || k.message_type == -5" @click="locationFun(k)" style="cursor: pointer;">
                                     <div style="padding-bottom: 5px">{{k.map_label}}</div>
-                                    <img :src="'http://apis.map.qq.com/ws/staticmap/v2/?center=' + k.lat + ',' + k.lng + '&zoom=18&size=350*200&maptype=roadmap&markers=color:red|' + k.lat + ',' + k.lng + '&key=TUTBZ-YEPWX-WEN4N-7OZUC-T4MT7-IXFN6'" v-on:load="loadFun"></img>
+                                    <img style="height: 100%;width: 100%;vertical-align: bottom" :src="'http://apis.map.qq.com/ws/staticmap/v2/?center=' + k.lat + ',' + k.lng + '&zoom=18&size=350*200&maptype=roadmap&markers=color:red|' + k.lat + ',' + k.lng + '&key=TUTBZ-YEPWX-WEN4N-7OZUC-T4MT7-IXFN6'" v-on:load="loadFun"></img>
                                 </div>
                                 <!-- end位置 -->
 
@@ -336,6 +341,7 @@
 
                     <!---------------------------------- 客服消息 ------------------------------------>
                     <div class="content-box" style="text-align: right" v-if="k.opercode == 1 || k.opercode == 3">
+                        <div class="" style="text-align: right;font-size: 10px;color: #999;box-sizing: border-box;padding-right: 50px">{{k.add_time}}</div>
                         <div class="crate" style="right: 10px;background-color: #e7e8ea;">
                             <div class="lading-box" v-if="k.is_loading">
                                 <Spin fix>
@@ -352,7 +358,7 @@
 
 
                                 <!-- 图片 -->
-                                <img  v-if="k.message_type == 2" :src="k.file_url" alt="" style="max-height: 400px;max-width: 360px;vertical-align: bottom">
+                                <img  v-if="k.message_type == 2" :src="k.file_url" alt="" style="height: 100%;width: 100%;vertical-align: bottom">
                                 <!-- end图片 -->
 
 
@@ -831,17 +837,17 @@
         is_scrollTime: 0,
         page: 1,
         is_scorllTopAjax: false,
-        is_scorH: 0, // 获取滚动条高度控制只执行一次
-        scorH: 0 // 获取滚动条高度控制只执行一次
+        is_scorH: 0, // 选择客户，获取客户数据后控制滚动条到底部，只执行一次
+        scorH: 0
       };
     },
     components: {
       HZRecorder
     },
     mounted () {
-      // 聊天窗口滚动事件 dahd
-      let div = this.$refs.win;
-      div.addEventListener('scroll', this.scrollFun, false);
+      // 聊天窗口滚动事件dwafwagegerg cdwadwd
+      // let div = this.$refs.win;
+      window.addEventListener('scroll', this.scrollFun, false);
     },
     props: {
       isMass: {
@@ -1327,7 +1333,7 @@
           let div1 = this.$refs.win1;
           let div = this.$refs.win;
           div.scrollTop = div1.offsetHeight;
-        }, 100);
+        }, 300);
       },
       // 实时获取当前时间并返回字符串 */
       getAtTimeFun () {
@@ -1379,13 +1385,18 @@
           this.$Message.warning('文件过大，请选择小于10MB的mp4文件');
         }
       },
-      // 滚动条方法 123123
+      // 滚动条方法
       loadFun (e) {
         let div = this.$refs.win;
         let h = div.offsetHeight;
         let sh = div.scrollHeight;
-        if ((h + div.scrollTop) >= (sh - 100)) {
+        // 如果是切换客户加载数据 就执行滚动条到底部
+        if (this.is_scorH === 0) {
           this.scroFun();
+        } else {
+          if ((h + div.scrollTop) >= (sh - 100)) {
+            this.scroFun();
+          }
         }
       },
       // 地图位置
@@ -1475,7 +1486,7 @@
                 }
               }
             });
-            // 滚动到顶部加载数据 123
+            // 滚动到顶部加载数据
             if (this.is_scorllTopAjax) {
               this.is_scroll_loading = false;
               this.elmetArr = res.body.data_list.concat(this.elmetArr);
@@ -1491,6 +1502,7 @@
             }
             this.pageData2.count = res.body.page_data.count;
             this.pageData2.rows_num = res.body.page_data.rows_num;
+            this.loadFun();
             this.is_scorH++;
             // this.elmetArr.length = k.data.length + 1;
             // 取到数据最后一个数组， 便于添加数据 取最新相关数据
@@ -1508,7 +1520,7 @@
         this.timer_i = setInterval(() => {
           let div = this.$refs.win;
           let div1 = this.$refs.win1;
-          let h = div1.offsetHeight; // 内容高度 dwakdbhafj
+          let h = div1.offsetHeight; // 内容高度
           let sh = div.offsetHeight; // 可见区域高度
           // 如果没有滚动条
           if (h < sh) {
@@ -1524,6 +1536,7 @@
               if (h - sh - div.scrollTop <= 200 || this.pageData2.page === 1) {
                 this.is_scorllTopAjax = false;
                 this.pageData2.page = 1;
+                // this.is_scorH = 0;
                 this.getChatFun();
               }
             }

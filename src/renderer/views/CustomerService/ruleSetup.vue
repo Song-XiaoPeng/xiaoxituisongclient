@@ -17,55 +17,55 @@
         <TabPane label="客资领取回收规则" name="1">
           <Row>
             <Col span="14">
-              <Form :model="formItem" :label-width="100">
+              <Form  :label-width="100">
                 <Row>
                   <Col span="10">
                     <FormItem label="线索池领取周期">
-                      <Select v-model="formItem.select">
-                        <Option value="beijing">本天</Option>
-                        <Option value="shanghai">本周</Option>
-                        <Option value="shenzhen">本月</Option>
+                      <Select v-model="recycle.cued_pool.cycle">
+                        <Option value="1">本天</Option>
+                        <Option value="2">本周</Option>
+                        <Option value="3">本月</Option>
                       </Select>
                     </FormItem>
                   </Col>
                   <Col span="10">
                     <FormItem label="内限制领取">
-                      <Input v-model="formItem.input" placeholder="请输入个数"></Input>
+                      <Input v-model="recycle.cued_pool.number" placeholder="请输入个数"></Input>
                     </FormItem>
                   </Col>
                 </Row>
                 <Row>
                   <Col span="10">
                     <FormItem label="线索池回收周期">
-                      <Input v-model="formItem.input" placeholder="请输入天数"></Input>
+                      <Input v-model="recycle.cued_pool_recovery" placeholder="请输入天数"></Input>
                     </FormItem>
                   </Col>
                 </Row>
                 <Row>
                   <Col span="10">
                     <FormItem label="意向领取周期">
-                      <Select v-model="formItem.select">
-                        <Option value="beijing">本天</Option>
-                        <Option value="shanghai">本周</Option>
-                        <Option value="shenzhen">本月</Option>
+                      <Select v-model="recycle.intention_receive.cycle">
+                        <Option value="1">本天</Option>
+                        <Option value="2">本周</Option>
+                        <Option value="3">本月</Option>
                       </Select>
                     </FormItem>
                   </Col>
                   <Col span="10">
                     <FormItem label="内限制领取">
-                      <Input v-model="formItem.input" placeholder="请输入个数"></Input>
+                      <Input v-model="recycle.intention_receive.number" placeholder="请输入个数"></Input>
                     </FormItem>
                   </Col>
                 </Row>
                 <Row>
                   <Col span="10">
                     <FormItem label="意向池回收周期">
-                      <Input v-model="formItem.input" placeholder="请输入天数"></Input>
+                      <Input v-model="recycle.intention_recovery" placeholder="请输入天数"></Input>
                     </FormItem>
                   </Col>
                 </Row>
                 <FormItem>
-                  <Button type="primary">保存</Button>
+                  <Button type="primary" @click="setCustomerResourcesRuleFun">保存</Button>
                 </FormItem>
               </Form>
             </Col>
@@ -218,6 +218,18 @@
         ruleFrom: {
           select: '',
           input: ''
+        },
+        recycle: {
+          cued_pool: {
+            cycle: '',
+            number: ''
+          },
+          cued_pool_recovery: '',
+          intention_receive: {
+            cycle: '',
+            number: ''
+          },
+          intention_recovery: ''
         },
         formItem: {
           input: '',
@@ -432,6 +444,42 @@
     mounted () {
     },
     methods: {
+      // 保存客资领取规则
+      setCustomerResourcesRuleFun () {
+        if (this.recycle.cued_pool.cycle === '') {
+          this.$Message.warning('请输入线索池领取周期');
+          return;
+        }
+        if (this.recycle.cued_pool.number === '') {
+          this.$Message.warning('请输入线索池领取周期内限制个数');
+          return;
+        }
+        if (this.recycle.cued_pool_recovery === '') {
+          this.$Message.warning('请输入线索池回收周期天数');
+          return;
+        }
+        if (this.recycle.intention_receive.cycle === '') {
+          this.$Message.warning('请输入意向领取周期');
+          return;
+        }
+        if (this.recycle.intention_receive.number === '') {
+          this.$Message.warning('请输入意向领取周期内限制领取个数');
+          return;
+        }
+        if (this.recycle.intention_recovery === '') {
+          this.$Message.warning('请输入意向池回收周期');
+          return;
+        }
+        this.ajax.setCustomerResourcesRule({
+          data: this.recycle,
+          success: () => {
+            this.$Message.success('设置成功');
+          },
+          error: (res) => {
+            this.$Message.warning(res.meta.message);
+          }
+        });
+      },
       // 保存会话规则
       addRuleFun () {
         if (this.ruleFrom.select === '') {

@@ -1,47 +1,50 @@
 <style scoped lang="less">
     #index{
-        height: 90%;
+        height: 100%;
+        position: relative;
     }
-   .box,.personnel,.chart,.information{
-       height: 100%;
-   }
-  .box{
-      background-color: #fff;
-  }
-  .personnel,.chart,.information{
-      border-top: 1px #eaeaea solid;
-      border-left: 1px #eaeaea solid;
-      border-bottom: 1px #eaeaea solid;
-  }
-  .personnel{
-
-  }
-  .chart{
-
-  }
-  .information{
-      border-right: 1px #eaeaea solid;
-  }
+    .box{
+        background-color: #fff;
+    }
+    .personnel,.chart,.information{
+        border-top: 1px #eaeaea solid;
+        border-left: 1px #eaeaea solid;
+        border-bottom: 1px #eaeaea solid;
+    }
+    .personnel{
+        width: 260px;
+        position: absolute;
+        left: 0;
+        top:0;
+        bottom: 0;
+    }
+    .chart{
+        position: absolute;
+        left: 260px;
+        top: 0;
+        bottom: 0;
+        right: 380px;
+    }
+    .information{
+        position: absolute;
+        right: 0;
+        width: 380px;
+        top: 0;
+        bottom: 0;
+        border-right: 1px #eaeaea solid;
+    }
 </style>
 <template>
   <div id="index">
-      <Row class="box">
-          <Col span="4" class="box">
-             <div class="personnel">
-               <personnel></personnel>
-             </div>
-          </Col>
-          <Col span="12" class="box">
-               <div class="chart">
-                   <chart :isAdministrator="isAdministrator"></chart>
-               </div>
-          </Col>
-          <Col span="8" class="box">
-              <div class="information">
-                <formation :isAdministrator="isAdministrator"></formation>
-              </div>
-          </Col>
-      </Row>
+      <div class="personnel">
+          <personnel></personnel>
+      </div>
+      <div class="chart">
+          <chart :isAdministrator="isAdministrator"></chart>
+      </div>
+      <div class="information">
+          <formation :isAdministrator="isAdministrator"></formation>
+      </div>
   </div>
 </template>
 <script>

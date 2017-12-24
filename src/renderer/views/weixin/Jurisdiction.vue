@@ -35,22 +35,22 @@
 </style>
 <template>
    <div id="index">
-       <div class="top-box">
+       <div class="top-box" style="background-color: #ecf0f4">
            <Button type="ghost" @click="accredit">授权公共平台</Button>
            <Button type="ghost">添加小程序</Button>
        </div>
        <div class="tab">
            <table class="table-copy">
                <thead>
-               <tr>
-                   <th>logo</th>
-                   <th>类型</th>
-                   <th>名称</th>
-                   <th>公众号或小程序所属公司名称</th>
-                   <th>二维码</th>
-                   <th>语言识别</th>
-                   <th>获取地理位置</th>
-                   <!-- <th>能否接单</th> -->
+               <tr >
+                   <th style="background-color: #e6f1fe">logo</th>
+                   <th style="background-color: #e6f1fe">类型</th>
+                   <th style="background-color: #e6f1fe">名称</th>
+                   <th style="background-color: #e6f1fe">公众号或小程序所属公司名称</th>
+                   <th style="background-color: #e6f1fe">二维码</th>
+                   <!--<th style="background-color: #e6f1fe">语言识别</th>-->
+                   <!--<th style="background-color: #e6f1fe">获取地理位置</th>-->
+                   <!-- <th>能否接单</th> dwa231d23wa1d -->
                </tr>
                </thead>
                <tbody>
@@ -70,18 +70,18 @@
                    <td style="padding: 4px;">
                        <img :src="k.qrcode_url" style="width: 100px;height: 100px" alt="">
                    </td>
-                   <td>
-                       <i-switch>
-                           <span slot="open">开</span>
-                           <span slot="close">关</span>
-                       </i-switch>
-                   </td>
-                   <td>
-                       <i-switch>
-                           <span slot="open">开</span>
-                           <span slot="close">关</span>
-                       </i-switch>
-                   </td>
+                   <!--<td>-->
+                       <!--<i-switch>-->
+                           <!--<span slot="open">开</span>-->
+                           <!--<span slot="close">关</span>-->
+                       <!--</i-switch>-->
+                   <!--</td>-->
+                   <!--<td>-->
+                       <!--<i-switch>-->
+                           <!--<span slot="open">开</span>-->
+                           <!--<span slot="close">关</span>-->
+                       <!--</i-switch>-->
+                   <!--</td>-->
                </tr>
                </tbody>
            </table>

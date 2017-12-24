@@ -53,25 +53,37 @@
     .table-copy tr:hover{
         background: #ebf7ff;
     }
+    .title-box-btn{
+        height: 60px;
+        line-height: 60px;
+        background-color: #ecf0f4;
+    }
 </style>
 <template>
    <div class="">
-       <div class="top-tab cl">
+       <div class="top-tab cl" style="padding: 10px">
 
            <!--<ul class="f-r" style="margin-top: 5px">-->
                <!--<li>关键词回复</li>-->
                <!--<li>收到消息回复</li>-->
                <!--<li>被关注回复</li>-->
            <!--</ul>-->
-           <Select class="f-r" v-model="model2" style="width:200px;margin-right: 10px" @on-change="selMarkFun">
+           <Select class="" v-model="model2" style="width:200px;margin-right: 10px" @on-change="selMarkFun">
                <Option v-for="item in cityList" :value="item.appid" :key="item.value">{{ item.nick_name }}</Option>
            </Select>
+       </div>
+       <div class="title-box-btn cl" style="">
+            <span class="" style="color: #2db7f5;margin-left: 10px">
+                自动回复
+            </span>
+           <Button class="f-r" type="info" @click="addRevertFun" style="margin: 15px">添加自动回复</Button>
        </div>
        <div class="content-box">
           <div class="cl" style="padding: 10px">
               <!--<Input  placeholder="关键字" icon="search" style="width: 300px"></Input>-->
-              <Button class="f-r" type="info" @click="addRevertFun">添加自动回复</Button>
+
           </div>
+
           <div>
               <table class="table-copy">
                   <thead>

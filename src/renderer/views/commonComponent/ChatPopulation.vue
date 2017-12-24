@@ -533,12 +533,9 @@
           db.type = 'get'; // 执行类型
           db.tabName = 'message'; // 数据表名称
           db.fun = function (res) { // 执行成功回掉函数 customer_wx_openid
-            console.log(res);
             res.forEach((k, i) => {
-              console.log(k.customer_wx_openid, that.clientData.customer_wx_openid);
               if (k.customer_wx_openid === that.clientData.customer_wx_openid) {
                 db.remove('message', (res) => {
-                  console.log('删除成功');
                 }, k.key);
               }
             });

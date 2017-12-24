@@ -2,9 +2,6 @@
     #index{
         height: 100%;
     }
-    .box,.personnel,.chart,.information{
-        height: 100%;
-    }
     .box{
         background-color: #fff;
     }
@@ -208,7 +205,7 @@
                     <li @click="hintFun">本月需沟通</li>
                 </ul>
             </div>
-            <div ref="chartEl" v-bind:class="is_show_chartEl ? 'chart1' : ''" class="chart f-l" style="height: 87%;overflow: auto">
+            <div ref="chartEl" v-bind:class="is_show_chartEl ? 'chart1' : ''" class="chart f-l" >
                  <span  class="is_left_show" v-if="is_left_show && !is_show_chartEl" @click="isLefttShowFun">
                     <Icon type="android-funnel"></Icon>
                  </span>

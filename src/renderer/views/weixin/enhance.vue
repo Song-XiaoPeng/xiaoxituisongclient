@@ -11,28 +11,60 @@
             right: 10px;
         }
     }
-
+.tab-box{
+    background-color: #fefefe;
+    box-sizing: border-box;
+    height: 60px;
+    border-bottom: 1px #d1d6dc solid;
+    ul{
+        li{
+            float: left;
+            height: 60px;
+            line-height: 60px;
+            padding: 0 10px;
+            cursor: pointer;
+        }
+        li.active{
+            background-color: #90c0fc;
+            color: #fff;
+        }
+    }
+}
 </style>
 <template>
     <div id="index">
        <div>
-           <Tabs v-model="tab">
-               <TabPane label="自定义菜单" name="name1">
-                  <costom ></costom>
-               </TabPane>
+           <div class="tab-box">
+               <ul class="cl">
+                   <li v-bind:class="tab == 'name1' ? 'active' : ''" @click="tabFun('name1')">自定义菜单</li>
+                   <li v-bind:class="tab == 'name2' ? 'active' : ''" @click="tabFun('name2')">个性化菜单</li>
+                   <li v-bind:class="tab == 'name3' ? 'active' : ''" @click="tabFun('name3')">自动回复</li>
+                   <li v-bind:class="tab == 'name4' ? 'active' : ''" @click="tabFun('name4')">素材管理</li>
+               </ul>
+           </div>
+           <div>
+               <costom v-if="tab === 'name1'" ></costom>
+               <individuality  v-if="tab === 'name2'" ></individuality>
+               <revert  v-if="tab === 'name3'" ></revert>
+               <material v-if="tab === 'name4'" ></material>
+           </div>
+           <!--<Tabs v-model="tab">-->
+               <!--<TabPane label="自定义菜单" name="name1">-->
+                  <!--<costom ></costom>-->
+               <!--</TabPane>-->
 
-               <TabPane label="个性化菜单" name="name2">
-                   <individuality  v-if="tab === 'name2'" ></individuality>
-               </TabPane>
+               <!--<TabPane label="个性化菜单" name="name2">-->
+                   <!--<individuality  v-if="tab === 'name2'" ></individuality>-->
+               <!--</TabPane>-->
 
-               <TabPane label="自动回复" name="name3">
-                   <revert  v-if="tab === 'name3'" ></revert>
-               </TabPane>
+               <!--<TabPane label="自动回复" name="name3">-->
+                   <!--<revert  v-if="tab === 'name3'" ></revert>-->
+               <!--</TabPane>-->
 
-               <TabPane label="素材管理" name="name4">
-                   <material v-if="tab === 'name4'" ></material>
-               </TabPane>
-           </Tabs>
+               <!--<TabPane label="素材管理" name="name4">-->
+                   <!--<material v-if="tab === 'name4'" ></material>-->
+               <!--</TabPane>-->
+           <!--</Tabs>-->
        </div>
     </div>
 </template>
@@ -240,10 +272,13 @@
     beforeDestroy () {
     },
     methods: {
+      tabFun (t) {
+        this.tab = t;
+      }
     },
     created () {
-      this.tab = this.$route.query.tab;
-      console.log(this.tab);
+      // this.tab = this.$route.query.tab;
+      console.log(this.tab, 132132);
       // 获取appid
     }
   };
