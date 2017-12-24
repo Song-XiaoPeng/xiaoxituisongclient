@@ -3,7 +3,9 @@
 import { app, BrowserWindow, ipcMain, globalShortcut, screen, session } from 'electron';
 import updater from 'electron-simple-updater';
 import url from 'url';
+const { download } = require('electron-dl');
 const path = require('path');
+
 if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\');
 }
@@ -56,19 +58,6 @@ function createWindow () {
   mainWindow.on('maximize', (e) => {
     mainWindow.webContents.send('max');
   });
-
-  // 设置cookie
-  ipcMain.on('setCookie', (e, str) => {
-    session.defaultSession.cookies.set({ url: winURL, name: 'dialogueArr', value: str }, (e, c) => {
-    });
-  });
-
-  // 获取cookie
-  ipcMain.on('getCookie', () => {
-    session.defaultSession.cookies.get({url: winURL, name: 'dialogueArr'}, (e, c) => {
-      mainWindow.webContents.send('getLossDialogueFun', c);
-    });
-  });
 }
 
 // 防止重复打开
@@ -99,6 +88,26 @@ app.on('activate', () => {
   if (mainWindow === null) {
     createWindow();
   }
+});
+
+// 下载文件
+ipcMain.on('download-btn', (e, args) => {
+  download(BrowserWindow.getFocusedWindow(), args.url)
+    .then(dl => console.log(dl.getSavePath()))
+    .catch(console.error);
+});
+
+// 设置cookie
+ipcMain.on('setCookie', (e, str) => {
+  session.defaultSession.cookies.set({ url: winURL, name: 'dialogueArr', value: str }, (e, c) => {
+  });
+});
+
+// 获取cookie
+ipcMain.on('getCookie', () => {
+  session.defaultSession.cookies.get({url: winURL, name: 'dialogueArr'}, (e, c) => {
+    mainWindow.webContents.send('getLossDialogueFun', c);
+  });
 });
 
 // 退出

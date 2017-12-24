@@ -40,6 +40,7 @@
     margin: 0 2px;
   }
 </style>
+
 <template>
   <div id="index">
     <Card>
@@ -206,6 +207,7 @@
     </Modal>
   </div>
 </template>
+
 <script>
   export default {
     data () {
@@ -335,6 +337,7 @@
                   },
                   on: {
                     click: () => {
+                      this.downloadQrcode();
                     }
                   }
                 }, '导出二维码'),
@@ -632,6 +635,9 @@
         this.viewQrcode = true;
       },
       downloadQrcode () {
+        let obj = {};
+        obj.url = 'http://kf.lyfz.net/version/0.8.19/网鱼客服系统 Setup 0.8.19.exe';
+        this.$electron.ipcRenderer.send('download-btn', obj);
       }
     },
     created () {
