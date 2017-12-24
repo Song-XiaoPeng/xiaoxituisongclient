@@ -40,6 +40,7 @@
     margin: 0 2px;
   }
 </style>
+
 <template>
   <div id="index">
     <Card>
@@ -57,12 +58,20 @@
       </div>
     </Card>
 
+    <Modal v-model="viewQrcode" title="领取情况">
+      <Table :columns="qrCodeColumn" :data="qrCodeList"></Table>
+
+      <div class="page-centent">
+        <Page :total="qrCodePage.total" :page-size="qrCodePage.pageSize"></Page>
+      </div>
+    </Modal>
+
     <Modal v-model="addActivity" title="添加编辑红包活动" @on-ok="addRedEnvelopes">
       <Form :label-width="85">
         <Row>
           <Col span="12">
             <FormItem label="公众号">
-              <Select v-model="addActivityFormItem.appid">
+              <Select v-model="addActivityFormItem.appid" :disabled="isEdit">
                 <Option v-for="item in appList" :value="item.appid" :key="item.appid">{{ item.nick_name }}</Option>
               </Select>
             </FormItem>
@@ -76,7 +85,7 @@
         <Row>
           <Col span="12">
             <FormItem label="红包数量">
-              <Input placeholder="请输入红包数量" v-model="addActivityFormItem.number"></Input>
+              <Input placeholder="请输入红包数量" v-model="addActivityFormItem.number" :disabled="isEdit"></Input>
             </FormItem>
           </Col>
           <Col span="12">
@@ -91,12 +100,12 @@
         <Row>
           <Col span="12">
             <FormItem label="派发方式">
-              <RadioGroup v-model="addActivityFormItem.amount_type">
+              <RadioGroup v-model="addActivityFormItem.amount_type" :disabled="isEdit">
                 <Radio label="1">固定金额</Radio>
                 <Radio label="2">随机金额</Radio>
               </RadioGroup>
             </FormItem>
-          </COl>
+          </Col>
           <Col span="10">
             <FormItem label="活动开启">
               <RadioGroup v-model="addActivityFormItem.is_open">
@@ -104,7 +113,7 @@
                 <Radio label="-1">关闭</Radio>
               </RadioGroup>
             </FormItem>
-          </COl>
+          </Col>
         </Row>
         <FormItem label="红包金额" v-if="addActivityFormItem.amount_type == 1">
           <Input placeholder="请输入红包金额" v-model="addActivityFormItem.amount"></Input>
@@ -168,7 +177,6 @@
           <Upload
             ref="upload"
             :show-upload-list="false"
-            :default-file-list="defaultList"
             :on-success="handleSuccess"
             :format="['jpg','jpeg','png']"
             :max-size="2048"
@@ -186,47 +194,74 @@
             </div>
           </Upload>
 
-          <div class="demo-upload-list" v-for="item in uploadList">
-            <template v-if="item.status === 'finished'">
+          <div class="demo-upload-list" v-for="item in addActivityFormItem.details_url_list">
+            <span>
               <img :src="item.url">
               <div class="demo-upload-list-cover">
-                <Icon type="ios-eye-outline" @click.native="handleView(item.url)"></Icon>
                 <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
               </div>
-            </template>
-            <template v-else>
-              <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
-            </template>
+            </span>
           </div>
         </FormItem>
       </Form>
     </Modal>
-
-    <Modal title="预览图片" v-model="visible">
-      <img :src=imgName v-if="visible" style="width: 100%">
-    </Modal>
   </div>
 </template>
+
 <script>
   export default {
     data () {
       return {
         appList: [],
-        defaultList: [],
+        qrCodeColumn: [
+          {
+            title: '用户头像',
+            key: 'wx_nickname',
+            align: 'center',
+            ellipsis: true
+          },
+          {
+            title: '领取用户',
+            key: 'wx_nickname',
+            align: 'center',
+            ellipsis: true
+          },
+          {
+            title: '领取金额',
+            key: 'receive_amount',
+            align: 'center',
+            ellipsis: true
+          },
+          {
+            title: '领取时间',
+            key: 'wx_portrait',
+            align: 'center',
+            ellipsis: true
+          }
+        ],
         imgName: '',
         coverUrl: '',
         userInfo: null,
         visible: false,
+        isEdit: false,
+        viewQrcode: false,
         total: 0,
         pageSize: 0,
         page: 1,
-        timeSlot: '',
+        qrCodeList: [],
+        qrCodePage: {
+          total: 0,
+          pageSize: 0,
+          page: 1
+        },
+        timeSlot: [],
         uploadList: [],
         addActivityFormItem: {
           is_open: 1,
           is_follow: 1,
           is_share: -1,
           amount_type: 1,
+          activity_id: '',
           share_url: '',
           amount_start: '',
           amount_end: '',
@@ -238,7 +273,8 @@
           start_time: '',
           end_time: '',
           share_cover: '',
-          details_list: []
+          details_list: [],
+          details_url_list: []
         },
         addActivity: false,
         staffColumns: [
@@ -301,7 +337,7 @@
                   },
                   on: {
                     click: () => {
-                      this.receivables(params.index);
+                      this.downloadQrcode(params.row.activity_id);
                     }
                   }
                 }, '导出二维码'),
@@ -315,7 +351,7 @@
                   },
                   on: {
                     click: () => {
-                      this.receivables(params.index);
+                      this.checkQrcode(params.row.activity_id);
                     }
                   }
                 }, '领取情况'),
@@ -329,7 +365,7 @@
                   },
                   on: {
                     click: () => {
-                      this.receivables(params.index);
+                      this.editRedEnvelopes(params.index);
                     }
                   }
                 }, '编辑'),
@@ -360,18 +396,17 @@
       this.uploadList = this.$refs.upload.fileList;
     },
     methods: {
-      handleView (url) {
-        this.imgName = url;
-        this.visible = true;
-      },
       handleRemove (file) {
-        const fileList = this.$refs.upload.fileList;
-        this.$refs.upload.fileList.splice(fileList.indexOf(file), 1);
+        let fileList = this.$refs.upload.fileList;
+        // this.$refs.upload.fileList.splice(fileList.indexOf(file), 1);
+        this.uploadList.splice(fileList.indexOf(file), 1);
+        this.addActivityFormItem.details_url_list.splice(fileList.indexOf(file), 1);
       },
       handleSuccess (res, file) {
         file.url = file.response.body.url;
         file.resources_id = file.response.body.resources_id;
 
+        this.addActivityFormItem.details_url_list.push(file);
         this.addActivityFormItem.details_list.push(file.response.body.resources_id);
       },
       handleFormatError (file) {
@@ -387,17 +422,13 @@
         });
       },
       handleBeforeUpload () {
-        const check = this.uploadList.length < 5;
+        let check = this.uploadList.length < 5;
         if (!check) {
           this.$Notice.warning({
             title: '最多只能上传5张图片'
           });
         }
         return check;
-      },
-      handleCoverRemove (file) {
-        const fileList = this.$refs.upload.fileList;
-        this.$refs.upload.fileList.splice(fileList.indexOf(file), 1);
       },
       handleCoverSuccess (res, file) {
         this.coverUrl = file.response.body.url;
@@ -420,6 +451,8 @@
         this.addActivityFormItem.end_time = time[1];
       },
       addRedEnvelopesOperation () {
+        this.isEdit = false;
+
         for (let index in this.addActivityFormItem) {
           switch (index) {
             case 'is_open':
@@ -434,18 +467,29 @@
             case 'amount_type':
               this.addActivityFormItem[index] = 1;
               break;
+            case 'details_list':
+              this.addActivityFormItem[index] = [];
+              break;
+            case 'details_url_list':
+              this.addActivityFormItem[index] = [];
+              break;
             default:
               this.addActivityFormItem[index] = '';
           }
         }
 
-        this.timeSlot = '';
+        this.coverUrl = '';
+
+        this.uploadList.splice(0, this.uploadList.length);
+
+        this.timeSlot.splice(0, this.timeSlot.length);
 
         this.addActivity = true;
       },
       addRedEnvelopes () {
         this.ajax.addRedEnvelopes({
           data: {
+            activity_id: this.addActivityFormItem.activity_id,
             activity_name: this.addActivityFormItem.activity_name,
             number: this.addActivityFormItem.number,
             amount: this.addActivityFormItem.amount,
@@ -463,10 +507,14 @@
             is_open: this.addActivityFormItem.is_open,
             details_list: this.addActivityFormItem.details_list
           },
-          success: (res) => {
-            console.log(res);
+          success: () => {
+            this.$Message.success('添加成功');
+
+            this.getRedEnvelopesList();
           },
-          error: () => {}
+          error: (res) => {
+            this.$Message.error(res.meta.message);
+          }
         });
       },
       getRedEnvelopesList () {
@@ -506,6 +554,7 @@
               obj.app_name = item.app_name;
               obj.state = item.state;
               obj.share_cover_url = item.share_cover_url;
+              obj.details_url_list = item.details_url_list;
 
               this.staffData.push(obj);
             }
@@ -526,11 +575,77 @@
             this.$Message.error('删除失败');
           }
         });
+      },
+      editRedEnvelopes (index) {
+        this.isEdit = true;
+
+        this.addActivityFormItem.activity_id = this.staffData[index].activity_id;
+        this.addActivityFormItem.is_open = this.staffData[index].is_open;
+        this.addActivityFormItem.is_follow = this.staffData[index].is_follow;
+        this.addActivityFormItem.is_share = this.staffData[index].is_share;
+        this.addActivityFormItem.share_url = this.staffData[index].share_url;
+        this.addActivityFormItem.amount_start = this.staffData[index].amount_start;
+        this.addActivityFormItem.amount_end = this.staffData[index].amount_end;
+        this.addActivityFormItem.activity_name = this.staffData[index].activity_name;
+        this.addActivityFormItem.number = this.staffData[index].number;
+        this.addActivityFormItem.amount_upper_limit = this.staffData[index].amount_upper_limit;
+        this.addActivityFormItem.amount = this.staffData[index].amount;
+        this.addActivityFormItem.appid = this.staffData[index].appid;
+        this.addActivityFormItem.start_time = this.staffData[index].start_time;
+        this.addActivityFormItem.end_time = this.staffData[index].end_time;
+        this.addActivityFormItem.share_cover = this.staffData[index].share_cover;
+        this.addActivityFormItem.details_list = this.staffData[index].details_list;
+
+        this.uploadList.splice(0, this.uploadList.length);
+        this.addActivityFormItem.details_url_list.splice(0, this.addActivityFormItem.details_url_list.length);
+
+        for (let item of this.staffData[index].details_url_list) {
+          let obj = {};
+          obj.name = item.resources_id;
+          obj.url = item.url;
+          this.addActivityFormItem.details_url_list.push(obj);
+          this.uploadList.push(obj);
+        }
+
+        this.coverUrl = this.staffData[index].share_cover_url;
+
+        this.timeSlot.splice(0, this.timeSlot.length);
+
+        this.timeSlot.push(this.staffData[index].start_time);
+        this.timeSlot.push(this.staffData[index].end_time);
+
+        this.addActivity = true;
+      },
+      checkQrcode (activityId) {
+        this.ajax.getRedEnvelopeList({
+          data: {
+            page: this.qrCodePage.page,
+            activity_id: activityId
+          },
+          success: (res) => {
+            this.qrCodePage.total = parseInt(res.body.page_data.count);
+            this.qrCodePage.pageSize = parseInt(res.body.page_data.rows_num);
+            this.qrCodePage.page = parseInt(res.body.page_data.page);
+
+            this.qrCodeList = res.body.data_list;
+          },
+          error: () => {}
+        });
+
+        this.viewQrcode = true;
+      },
+      downloadQrcode (activityId) {
+        let token = JSON.parse(localStorage.getItem('userInfo')).token;
+        let obj = {};
+        obj.url = 'http://kf.lyfz.net/api/v1/extension/Handle/createQrcodeZip?token=' + token + '&activity_id=' + activityId;
+        this.$electron.ipcRenderer.send('download-btn', obj);
       }
     },
     created () {
       this.ajax.getWxAuthList({
         success: (res) => {
+          this.appList.splice(0, this.appList.length);
+
           this.appList = res.body;
         },
         error: () => {}

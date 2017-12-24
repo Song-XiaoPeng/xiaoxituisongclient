@@ -3,7 +3,9 @@
 import { app, BrowserWindow, ipcMain, globalShortcut, screen, session } from 'electron';
 import updater from 'electron-simple-updater';
 import url from 'url';
+const { download } = require('electron-dl');
 const path = require('path');
+
 if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\');
 }
@@ -24,10 +26,12 @@ function createWindow () {
     show: false,
     webPreferences: {webSecurity: false}
   });
+
   // 注册全局快捷键 打开调试
   globalShortcut.register('ctrl+alt+d+b', function () {
     mainWindow.webContents.openDevTools();
   });
+
   // 开发环境默认开启调试窗口
   if (process.env.NODE_ENV === 'development') {
     mainWindow.webContents.openDevTools();
@@ -42,27 +46,20 @@ function createWindow () {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+
   mainWindow.on('minimize', (e) => {
     mainWindow.webContents.send('mini');
   });
+
   mainWindow.on('restore', (e) => {
     mainWindow.webContents.send('restore');
   });
+
   mainWindow.on('maximize', (e) => {
     mainWindow.webContents.send('max');
   });
-  // 设置cookie
-  ipcMain.on('setCookie', (e, str) => {
-    session.defaultSession.cookies.set({ url: winURL, name: 'dialogueArr', value: str }, (e, c) => {
-    });
-  });
-  // 获取cookie
-  ipcMain.on('getCookie', () => {
-    session.defaultSession.cookies.get({url: winURL, name: 'dialogueArr'}, (e, c) => {
-      mainWindow.webContents.send('getLossDialogueFun', c);
-    });
-  });
 }
+
 // 防止重复打开
 const shouldQuit = app.makeSingleInstance((commandLine, workingDirectory) => {
   if (mainWindow) {
@@ -93,6 +90,33 @@ app.on('activate', () => {
   }
 });
 
+// 下载文件
+ipcMain.on('download-btn', (e, args) => {
+  download(
+    BrowserWindow.getFocusedWindow(),
+    args.url,
+    {
+      saveAs: true,
+      onProgress: (number) => {
+        console.log(number);
+      }
+    }
+  ).then(dl => console.log(dl.getSavePath())).catch(console.error);
+});
+
+// 设置cookie
+ipcMain.on('setCookie', (e, str) => {
+  session.defaultSession.cookies.set({ url: winURL, name: 'dialogueArr', value: str }, (e, c) => {
+  });
+});
+
+// 获取cookie
+ipcMain.on('getCookie', () => {
+  session.defaultSession.cookies.get({url: winURL, name: 'dialogueArr'}, (e, c) => {
+    mainWindow.webContents.send('getLossDialogueFun', c);
+  });
+});
+
 // 退出
 ipcMain.on('window-all-closed', () => {
   // window.localStorage.
@@ -121,11 +145,13 @@ app.on('ready', () => {
     mainWindow.webContents.send('shortcut-capture');
   });
 });
+
 // 抓取截图之后显示窗口
 ipcMain.on('shortcut-capture', () => {
   closeWindow();
   screenShotFun();
 });
+
 // 创建透明窗口
 function screenShotFun (source) {
   let $win;
@@ -168,6 +194,7 @@ function screenShotFun (source) {
     $win.focus();
   });
 };
+
 function closeWindow () {
   while ($windows.length) {
     const $winItem = $windows.pop();
