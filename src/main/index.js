@@ -92,9 +92,16 @@ app.on('activate', () => {
 
 // 下载文件
 ipcMain.on('download-btn', (e, args) => {
-  download(BrowserWindow.getFocusedWindow(), args.url)
-    .then(dl => console.log(dl.getSavePath()))
-    .catch(console.error);
+  download(
+    BrowserWindow.getFocusedWindow(),
+    args.url,
+    {
+      saveAs: true,
+      onProgress: (number) => {
+        console.log(number);
+      }
+    }
+  ).then(dl => console.log(dl.getSavePath())).catch(console.error);
 });
 
 // 设置cookie
@@ -138,11 +145,13 @@ app.on('ready', () => {
     mainWindow.webContents.send('shortcut-capture');
   });
 });
+
 // 抓取截图之后显示窗口
 ipcMain.on('shortcut-capture', () => {
   closeWindow();
   screenShotFun();
 });
+
 // 创建透明窗口
 function screenShotFun (source) {
   let $win;
@@ -185,6 +194,7 @@ function screenShotFun (source) {
     $win.focus();
   });
 };
+
 function closeWindow () {
   while ($windows.length) {
     const $winItem = $windows.pop();

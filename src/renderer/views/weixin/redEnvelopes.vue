@@ -113,7 +113,7 @@
                 <Radio label="-1">关闭</Radio>
               </RadioGroup>
             </FormItem>
-          </COl>
+          </Col>
         </Row>
         <FormItem label="红包金额" v-if="addActivityFormItem.amount_type == 1">
           <Input placeholder="请输入红包金额" v-model="addActivityFormItem.amount"></Input>
@@ -337,7 +337,7 @@
                   },
                   on: {
                     click: () => {
-                      this.downloadQrcode();
+                      this.downloadQrcode(params.row.activity_id);
                     }
                   }
                 }, '导出二维码'),
@@ -634,9 +634,10 @@
 
         this.viewQrcode = true;
       },
-      downloadQrcode () {
+      downloadQrcode (activityId) {
+        let token = JSON.parse(localStorage.getItem('userInfo')).token;
         let obj = {};
-        obj.url = 'http://kf.lyfz.net/version/0.8.19/网鱼客服系统 Setup 0.8.19.exe';
+        obj.url = 'http://kf.lyfz.net/api/v1/extension/Handle/createQrcodeZip?token=' + token + '&activity_id=' + activityId;
         this.$electron.ipcRenderer.send('download-btn', obj);
       }
     },
