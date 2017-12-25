@@ -70,19 +70,7 @@
                        <img :src="k.qrcode_url" style="width: 100px;height: 100px" alt="">
                    </td>
                    <td>
-                       <Upload style="display: inline-block;"  action="http://kf.lyfz.net/api/v1/we_chat/WxOperation/uploadResources"
-                               name="file" :data="{resources_type: 1}"
-                               :max-size='20480'
-                               :format="['zip','doc','pdf','rar','ppt','excel','xls','xlsx','ZIP']"
-                               :show-upload-list="false"
-                               :before-upload="handleBeforeUpload"
-                               :headers="{token: userInfo.token}"
-                               :on-progress="upLodingFun"
-                               :on-format-error="handleFormatError"
-                               :on-exceeded-size="handleMaxSize"
-                               :on-success="upfileFun">
-                           <Button type="ghost">上传支付证书</Button>
-                       </Upload>
+                       <Button type="ghost" @click="popup2 = true, appid = k.appid">上传支付凭证文件</Button>
                    </td>
                    <!--<td>-->
                        <!--<i-switch>-->
@@ -94,6 +82,53 @@
                </tbody>
            </table>
        </div>
+
+
+       <!-- 支付凭证弹窗 -->
+       <Modal v-model="popup2" title="支付凭证" @on-ok="upCertificateFun">
+         <div>
+             <Form  label-position="right" :label-width="100">
+                 <FormItem label="商户号">
+                     <Input v-model="merchant_id"></Input>
+                 </FormItem>
+                 <FormItem label="支付密匙">
+                     <Input v-model="pay_key"></Input>
+                 </FormItem>
+                 <FormItem label="上传">
+                     <Upload style="display: inline-block;"  action="http://kf.lyfz.net/api/v1/we_chat/WxOperation/uploadResources"
+                             name="file" :data="{resources_type: 3}"
+                             :max-size='20480'
+                             :format="['pem']"
+                             :show-upload-list="false"
+                             :before-upload="handleBeforeUpload"
+                             :headers="{token: userInfo.token}"
+                             :on-progress="upLodingFun"
+                             :on-format-error="handleFormatError"
+                             :on-exceeded-size="handleMaxSize"
+                             :on-success="upfileCertFun">
+                         <Button type="ghost">上传支付公钥文件</Button>
+                     </Upload>
+                     <Upload style="display: inline-block;"  action="http://kf.lyfz.net/api/v1/we_chat/WxOperation/uploadResources"
+                             name="file" :data="{resources_type: 3}"
+                             :max-size='20480'
+                             :format="['pem']"
+                             :show-upload-list="false"
+                             :before-upload="handleBeforeUpload"
+                             :headers="{token: userInfo.token}"
+                             :on-progress="upLodingFun"
+                             :on-format-error="handleFormatError"
+                             :on-exceeded-size="handleMaxSize"
+                             :on-success="upfileKeyFun">
+                         <Button type="ghost">上传支付私钥文件</Button>
+                     </Upload>
+                 </FormItem>
+             </Form>
+         </div>
+       </Modal>
+       <!-- end支付凭证弹窗 -->
+
+
+
        <Spin fix v-if="is_Loading">
            <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
            <div>请求中....</div>
@@ -106,9 +141,15 @@
     data () {
       return {
         data6: [],
+        popup2: false,
         modal1: false,
         is_Loading: true,
-        userInfo: null
+        userInfo: null,
+        apiclient_cert_pem: '',
+        apiclient_key_pem: '',
+        appid: '',
+        merchant_id: '',
+        pay_key: ''
       };
     },
     mounted () {
@@ -116,11 +157,58 @@
     beforeDestroy () {
     },
     methods: {
-      handleBeforeUpload () {},
-      upLodingFun () {},
-      handleFormatError () {},
-      handleMaxSize () {},
-      upfileFun () {},
+      // 上传支付证书
+      upCertificateFun () {
+        if (this.merchant_id === '') {
+          this.$Message.warning('请输入商户号');
+          return;
+        }
+        if (this.pay_key === '') {
+          this.$Message.warning('请输入密匙');
+          return;
+        }
+        if (this.apiclient_cert_pem === '') {
+          this.$Message.warning('请上传支付公钥文件');
+          return;
+        }
+        if (this.apiclient_key_pem === '') {
+          this.$Message.warning('请上传支付私钥文件');
+          return;
+        }
+        this.ajax.setCertificate({
+          data: {
+            appid: this.appid,
+            apiclient_cert_pem: this.apiclient_cert_pem,
+            apiclient_key_pem: this.apiclient_key_pem,
+            merchant_id: this.merchant_id,
+            pay_key: this.pay_key
+          },
+          success: (res) => {
+            this.$Message.success('设置成功');
+          },
+          error: (res) => {
+            this.$Message.warning(res.meta.message);
+          }
+        });
+      },
+      handleBeforeUpload (res) {
+      },
+      upLodingFun (res) {
+      },
+      handleFormatError (res) {
+      },
+      handleMaxSize (res) {
+      },
+      // 支付公钥文件
+      upfileCertFun (res) {
+        this.$Message.success('上传成功');
+        this.apiclient_cert_pem = res.body.resources_id;
+      },
+      // 支付私钥文件
+      upfileKeyFun (res) {
+        this.$Message.success('上传成功');
+        this.apiclient_key_pem = res.body.resources_id;
+      },
       accredit (v) {
         if (v !== undefined) {
           setTimeout(() => {

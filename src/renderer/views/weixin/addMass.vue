@@ -25,12 +25,15 @@
 <template>
    <div id="index">
        <div>
-           <Tabs v-model="tabs" @on-click="tabFun">
-               <TabPane label="全部" name="name0"></TabPane>
-               <TabPane label="按分组发送" name="name1"></TabPane>
-               <TabPane label="指定用户" name="name2"></TabPane>
-           </Tabs>
+           <Form  label-position="right" :label-width="100">
+               <FormItem label="群发类别">
+                   <Button :type="tabs == 'name0' ? 'info' : 'text'" @click="tabFun('name0')">全部</Button>
+                   <Button :type="tabs == 'name1' ? 'info' : 'text'" @click="tabFun('name1')">按分组发送</Button>
+                   <Button :type="tabs == 'name2' ? 'info' : 'text'" @click="tabFun('name2')">指定用户</Button>
+               </FormItem>
+           </Form>
        </div>
+       <!-- adwadawd -->
        <div v-if="tabs == 'name1'">
            <Form  label-position="right" :label-width="100">
                <FormItem label="分组">
@@ -91,7 +94,6 @@
 
        </div>
 
-
        <div style="text-align: center;padding: 10px">
            <Button type="primary" @click="addMassNews">保存</Button>
        </div>
@@ -136,7 +138,6 @@
       return {
         cityList: [],
         is_Loading: false,
-        appid: '',
         animal: '',
         anima3: '男',
         columns3: [
@@ -334,11 +335,17 @@
         console.log(v);
       }
     },
+    props: {
+      appid: {
+        type: String,
+        default: ''
+      }
+    },
     beforeDestroy () {
     },
     methods: {
       tabFun (v) {
-        console.log(v, this.tabs);
+        this.tabs = v;
       },
       // 获取粉丝分组
       getWxGroup () {
@@ -430,7 +437,6 @@
           this.modal3 = false;
           this.modal2 = false;
         }
-        console.log(v, 123132);
       },
       // 选择图片
       selTxtFun (v) {
@@ -530,7 +536,6 @@
       }
     },
     created () {
-      this.appid = this.$route.query.appid;
       this.getWxGroup();
       this.imgTxtFun();
     }

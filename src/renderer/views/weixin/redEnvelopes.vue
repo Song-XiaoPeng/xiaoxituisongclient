@@ -39,21 +39,43 @@
     cursor: pointer;
     margin: 0 2px;
   }
+  .top-box{
+    height: 60px;
+    border-bottom: 1px #eaeaea solid;
+    ul{
+      li{
+        height: 60px;
+        line-height: 60px;
+        text-align: center;
+        font-size: 16px;
+        color: #333333;
+        float: left;
+        padding: 0 10px;
+        cursor: pointer;
+      }
+      li.active{
+        background-color: #2db7f5;
+        color: #fff;
+      }
+    }
+  }
 </style>
 
 <template>
   <div id="index">
-    <Card>
-      <p slot="title">
-        扫码红包
-      </p>
-      <p slot="extra">
-        <Button type="info" @click="addRedEnvelopesOperation()"><Icon type="plus-round"></Icon> 添加红包活动</Button>
-      </p>
-
-      <Table :columns="staffColumns" :data="staffData"></Table>
-
-      <div class="page-centent">
+    <Card :padding="0">
+      <div class="top-box">
+        <ul>
+          <li v-bind:class="is_tab == 'name1' ? 'active' : ''">扫码红包</li>
+        </ul>
+      </div>
+      <div class="cl" style="padding: 10px;background-color: #ecf0f4;">
+        <Button class="f-r" type="info" @click="addRedEnvelopesOperation()"><Icon type="plus-round"></Icon> 添加红包活动</Button>
+      </div>
+      <div style="padding: 10px">
+        <Table :columns="staffColumns" :data="staffData"></Table>
+      </div>
+      <div class="page-centent" style="padding-bottom: 10px">
         <Page :total="total" :page-size="pageSize"></Page>
       </div>
     </Card>
@@ -387,7 +409,8 @@
             }
           }
         ],
-        staffData: []
+        staffData: [],
+        is_tab: 'name1'
       };
     },
     components: {

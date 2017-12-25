@@ -2,105 +2,145 @@
   .mass-type {
     line-height: 32px;
   }
+  .top-box{
+    height: 60px;
+    background-color: #ffffff;
+    border-bottom: 1px #f7f7f7 solid;
+    ul{
+      li{
+        height: 60px;
+        line-height: 60px;
+        text-align: center;
+        font-size: 16px;
+        color: #333333;
+        float: left;
+        padding: 0 10px;
+        cursor: pointer;
+      }
+      li.active{
+        background-color: #2db7f5;
+        color: #fff;
+      }
+    }
+  }
+  .title-box{
+    height: 60px;
+    background-color: #ecf0f4;
+    span{
+      font-size: 16px;
+      margin: 18px;
+      display: inline-block;
+      color: #2db7f5;
+    }
+  }
 </style>
 <template>
   <div id="index">
-    <Card>
-      <Tabs v-model="tabsVal" value="1">
-        <p slot="extra">
-          <Button @click="addDepartment = true">添加部门</Button>
-          <Button @click="addPosition = true">添加岗位</Button>
-          <Button @click="addUser = true">添加用户</Button>
-        </p>
-        <TabPane label="组织架构" name="1">
-          <Row>
-            <Col span="2" class="mass-type">
-              &nbsp&nbsp&nbsp&nbsp群发类别：
-            </Col>
-            <Col span="1">
-              <Button type="primary">部门岗位图</Button>
-            </Col>
-            <Col span="1" offset="1">
-              <Button>上下级关系图</Button>
-            </Col>
-          </Row>
-          </br>
-          <Row>
-            <Col span="5">
-              <Tree :data="frameworkData"></Tree>
-            </Col>
-          </Row>
-        </TabPane>
+    <Card :padding="0">
+      <div class="top-box">
+        <ul>
+          <li  v-bind:class="tabVal == 'name1' ? 'active' : ''" @click="tabFun('name1')">组织架构</li>
+          <li  v-bind:class="tabVal == 'name2' ? 'active' : ''" @click="tabFun('name2')">用户管理</li>
+          <li  v-bind:class="tabVal == 'name3' ? 'active' : ''" @click="tabFun('name3')">已停止用户</li>
+        </ul>
+      </div>
+      <div class="title-box">
+        <span v-if="tabVal == 'name1'">组织架构</span>
+        <span v-if="tabVal == 'name2'">用户管理</span>
+        <span v-if="tabVal == 'name3'">已停止用户</span>
+        <Button class="f-r" style="margin: 15px" @click="addDepartment = true">添加部门</Button>
+        <Button class="f-r" style="margin: 15px" @click="addPosition = true">添加岗位</Button>
+        <Button class="f-r" style="margin: 15px" @click="addUser = true">添加用户</Button>
+      </div>
 
-        <TabPane label="用户管理" name="2">
-          <Row>
-            <Col span="24">
-              <Form :label-width="80">
-                <Row>
-                  <Col span="6">
-                    <FormItem label="上级部门">
-                      <Select>
-                        <Option value="beijing">财务部</Option>
-                        <Option value="shanghai">客服部</Option>
-                        <Option value="shenzhen">售后部</Option>
-                      </Select>
-                    </FormItem>
-                  </Col>
-                  <Col span="6">
-                    <FormItem label="关键字">
-                      <Input placeholder="请输入关键字"></Input>
-                    </FormItem>
-                  </Col>
-                  <Col span="2" style="margin-left:20px; line-height:32px;">
-                    <Button type="primary">搜索</Button>
-                  </Col>
-                </Row>
-              </Form>
-            </Col>
-          </Row>
 
-          <Table border :columns="staffColumns" :data="staffData" stripe></Table>
 
-          <div class="page-centent">
-            <Page :total="100"></Page>
-          </div>
-        </TabPane>
 
-        <TabPane label="已停止用户" name="3">
-          <Row>
-            <Col span="24">
-              <Form :label-width="80">
-                <Row>
-                  <Col span="6">
-                    <FormItem label="上级部门">
-                      <Select>
-                        <Option value="beijing">财务部</Option>
-                        <Option value="shanghai">客服部</Option>
-                        <Option value="shenzhen">售后部</Option>
-                      </Select>
-                    </FormItem>
-                  </Col>
-                  <Col span="6">
-                    <FormItem label="关键字">
-                      <Input placeholder="请输入关键字"></Input>
-                    </FormItem>
-                  </Col>
-                  <Col span="2" style="margin-left:20px; line-height:32px;">
-                    <Button type="primary">搜索</Button>
-                  </Col>
-                </Row>
-              </Form>
-            </Col>
-          </Row>
 
-          <Table border :columns="staffColumns" :data="staffQuitData" stripe></Table>
 
-          <div class="page-centent">
-            <Page :total="4"></Page>
-          </div>
-        </TabPane>
-      </Tabs>
+      <div v-if="tabVal == 'name1'" style="padding: 15px;">
+        <div>
+           <span>群发类别：</span> <Button type="primary">部门岗位图</Button>  <Button style="margin-left: 10px">上下级关系图</Button>
+        </div>
+        <div>
+          <Tree :data="frameworkData"></Tree>
+        </div>
+      </div>
+
+
+
+
+
+
+      <div v-if="tabVal == 'name2'" style="padding: 15px;">
+        <Row>
+          <Col span="24">
+          <Form :label-width="80">
+            <Row>
+              <Col span="6">
+              <FormItem label="上级部门">
+                <Select>
+                  <Option value="beijing">财务部</Option>
+                  <Option value="shanghai">客服部</Option>
+                  <Option value="shenzhen">售后部</Option>
+                </Select>
+              </FormItem>
+              </Col>
+              <Col span="6">
+              <FormItem label="关键字">
+                <Input placeholder="请输入关键字"></Input>
+              </FormItem>
+              </Col>
+              <Col span="2" style="margin-left:20px; line-height:32px;">
+              <Button type="primary">搜索</Button>
+              </Col>
+            </Row>
+          </Form>
+          </Col>
+        </Row>
+
+        <Table border :columns="staffColumns" :data="staffData" stripe></Table>
+
+        <div class="page-centent">
+          <Page :total="100"></Page>
+        </div>
+      </div>
+      <div v-if="tabVal == 'name3'" style="padding: 15px;">
+        <Row>
+          <Col span="24">
+          <Form :label-width="80">
+            <Row>
+              <Col span="6">
+              <FormItem label="上级部门">
+                <Select>
+                  <Option value="beijing">财务部</Option>
+                  <Option value="shanghai">客服部</Option>
+                  <Option value="shenzhen">售后部</Option>
+                </Select>
+              </FormItem>
+              </Col>
+              <Col span="6">
+              <FormItem label="关键字">
+                <Input placeholder="请输入关键字"></Input>
+              </FormItem>
+              </Col>
+              <Col span="2" style="margin-left:20px; line-height:32px;">
+              <Button type="primary">搜索</Button>
+              </Col>
+            </Row>
+          </Form>
+          </Col>
+        </Row>
+
+        <Table border :columns="staffColumns" :data="staffQuitData" stripe></Table>
+
+        <div class="page-centent">
+          <Page :total="4"></Page>
+        </div>
+      </div>
     </Card>
+
+
 
     <Modal v-model="addDepartment" title="添加部门">
       <Form :label-width="80">
@@ -466,14 +506,59 @@
           {
             title: 'CEO行政部 (钟立新、钟北清、李玉平)',
             expand: true,
+            render: (h, { root, node, data }) => {
+              return h('span', [
+                h('Icon', {
+                  props: {
+                    type: 'person'
+                  },
+                  style: {
+                    marginRight: '8px',
+                    color: '#ffd700',
+                    fontSize: '14px'
+                  }
+                }),
+                h('span', data.title)
+              ]);
+            },
             children: [
               {
                 title: '财务部 （钟岁霞）',
                 expand: true,
+                render: (h, { root, node, data }) => {
+                  return h('span', [
+                    h('Icon', {
+                      props: {
+                        type: 'person'
+                      },
+                      style: {
+                        marginRight: '8px',
+                        color: '#993333',
+                        fontSize: '14px'
+                      }
+                    }),
+                    h('span', data.title)
+                  ]);
+                },
                 children: [
                   {
                     title: '开发部 (王剑锋)',
                     expand: true,
+                    render: (h, { root, node, data }) => {
+                      return h('span', [
+                        h('Icon', {
+                          props: {
+                            type: 'person'
+                          },
+                          style: {
+                            marginRight: '8px',
+                            color: '#0066cc',
+                            fontSize: '14px'
+                          }
+                        }),
+                        h('span', data.title)
+                      ]);
+                    },
                     children: [
                       {
                         title: '程序员 (黄飞、刘超)'
@@ -547,7 +632,8 @@
               }
             ]
           }
-        ]
+        ],
+        tabVal: 'name1'
       };
     },
     components: {
@@ -555,6 +641,10 @@
     mounted () {
     },
     methods: {
+      // tab切换
+      tabFun (v) {
+        this.tabVal = v;
+      }
     },
     created () {
     }

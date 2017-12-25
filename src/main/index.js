@@ -1,6 +1,6 @@
 'use strict';
 
-import { app, BrowserWindow, ipcMain, globalShortcut, screen, session } from 'electron';
+import { app, BrowserWindow, ipcMain, globalShortcut, screen, session, clipboard, nativeImage } from 'electron';
 import updater from 'electron-simple-updater';
 import url from 'url';
 const { download } = require('electron-dl');
@@ -137,33 +137,43 @@ ipcMain.on('show-window', () => {
 ipcMain.on('orignal-window', () => {
   mainWindow.unmaximize();
 });
+var isClose = false;
 const $windows = [];
-
 // 注册全局快捷键
 app.on('ready', () => {
-  globalShortcut.register('ctrl+alt+a', function () {
+  globalShortcut.register('ctrl+alt+p', function () {
     mainWindow.webContents.send('shortcut-capture');
   });
 });
 
 // 抓取截图之后显示窗口
-ipcMain.on('shortcut-capture', () => {
-  closeWindow();
-  screenShotFun();
+ipcMain.on('shortcut-capture', (e, url) => {
+  // closeWindow();
+  screenShotFun(url);
 });
 
-// 创建透明窗口
-function screenShotFun (source) {
+// 截图
+function screenShotFun (s) {
   let $win;
+  let screenshotUrl = s;
   let display = screen.getPrimaryDisplay();
-  console.log(display, 13212);
   $win = new BrowserWindow({
     width: display.workAreaSize.width,
     height: display.workAreaSize.height,
     x: display.bounds.x,
-    y: display.bounds.y
+    y: display.bounds.y,
+    frame: false,
+    show: false,
+    transparent: true,
+    resizable: false,
+    alwaysOnTop: true,
+    fullscreen: true,
+    skipTaskbar: true,
+    closable: true,
+    minimizable: false,
+    maximizable: false
     // frame: false,
-    // show: false
+    // show: false,
     // transparent: true,
     // resizable: false,
     // alwaysOnTop: true,
@@ -173,6 +183,7 @@ function screenShotFun (source) {
     // minimizable: false,
     // maximizable: false
   });
+  $win.webContents.closeDevTools();
   $win.on('close', function () { $win = null; });
   $win.loadURL(url.format({
     pathname: path.join(__dirname, './window/shortcut-capture.html'),
@@ -186,18 +197,30 @@ function screenShotFun (source) {
   // });
   // 只能通过cancel-shortcut-capture的方式关闭窗口
   $win.on('close', e => {
-    e.preventDefault();
+    if (!isClose) {
+      e.preventDefault();
+    }
   });
   $win.webContents.on('dom-ready', () => {
-    $win.webContents.executeJavaScript(`window.source = ${JSON.stringify(display)}`);
+    // screenshotUrl
+    $win.webContents.executeJavaScript(`window.screenshotUrl = ` + JSON.stringify(screenshotUrl));
     $win.webContents.send('dom-ready');
     $win.focus();
+  });
+  $windows.push($win);
+  // 只能通过cancel-shortcut-capture的方式关闭窗口
+  ipcMain.on('cancel-shortcut-capture', closeWindow);
+  ipcMain.on('set-shortcut-capture', (e, dataURL) => {
+    clipboard.writeImage(nativeImage.createFromDataURL(dataURL));
+    closeWindow();
   });
 };
 
 function closeWindow () {
-  while ($windows.length) {
-    const $winItem = $windows.pop();
-    $winItem.close();
+  isClose = true;
+  for (let i = 0; i < $windows.length; i++) {
+    $windows[i].close();
   }
+  $windows.length = 0;
+  isClose = false;
 }

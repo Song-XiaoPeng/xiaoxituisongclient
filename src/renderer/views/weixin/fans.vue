@@ -1,6 +1,28 @@
 <style scoped lang="less">
     .top-box{
-        padding: 10px;
+        height: 60px;
+        background-color: #ffffff;
+        border-bottom: 1px #f7f7f7 solid;
+        ul{
+            li{
+                height: 60px;
+                line-height: 60px;
+                text-align: center;
+                font-size: 16px;
+                color: #333333;
+                float: left;
+                padding: 0 10px;
+                cursor: pointer;
+            }
+            li.active{
+                background-color: #2db7f5;
+                color: #fff;
+            }
+        }
+    }
+    .title-box{
+        height: 60px;
+        background-color: #ecf0f4;
     }
     .tab{
         padding: 10px;
@@ -75,87 +97,88 @@
 <template>
     <div id="index">
         <div class="top-box">
-            <span>当前公共号：</span>
-            <Select v-model="model1" style="width:200px">
+            <ul>
+                <li v-bind:class="tabVal == 'name1' ? 'active' : ''" @click="tabFun('name1')" >全部粉丝</li>
+                <li v-bind:class="tabVal == 'name2' ? 'active' : ''" @click="tabFun('name2')">同步粉丝</li>
+            </ul>
+
+        </div>
+        <div class="title-box">
+            <Select class="" v-model="model1" style="width:200px;margin: 14px">
                 <Option v-for="item in cityList" :value="item.appid" :key="item.appid">{{ item.nick_name }}</Option>
             </Select>
+            <Button type="info" slot="extra" class="f-r" @click="modal4 = true" size="small" v-show="tabVal == 'name1'" style="margin: 15px">新建分组</Button>
+            <Button type="info" class="f-r" @click="modal6 = true" v-show="tabVal == 'name2'" size="small" style="margin: 15px">创建同步任务</Button>
         </div>
-        <Tabs value="name1" v-model="tabVal" @on-click="tabFun">
-            <div style="padding:10px;" slot="extra">
-              <Button type="info" slot="extra" class="f-r" @click="modal4 = true" size="small" v-show="tabVal == 'name1'">新建分组</Button>
-              <Button type="info" class="f-r" @click="modal6 = true" v-show="tabVal == 'name2'" size="small">创建同步任务</Button>
-            </div>
-            <TabPane label="全部粉丝" name="name1">
-                <div class="tab cl">
-                    <div class="f-l l">
-                        <Table border :columns="columns7" :data="data6" @on-selection-change="selWxUser" ></Table>
-                        <div class="" style="text-align: center; padding: 10px">
-                            <Button type="info" class="f-l" @click="modal5 = true">批量移动分组</Button>
-                            <Page :total="pageData1.count" :page-size="pageData1.rows_num"  @on-change="pageFun1"></Page>
-                        </div>
+        <div v-if="tabVal == 'name1'">
+            <div class="tab cl">
+                <div class="f-l l">
+                    <Table border :columns="columns7" :data="data6" @on-selection-change="selWxUser" ></Table>
+                    <div class="" style="text-align: center; padding: 10px">
+                        <Button type="info" class="f-l" @click="modal5 = true">批量移动分组</Button>
+                        <Page :total="pageData1.count" :page-size="pageData1.rows_num"  @on-change="pageFun1"></Page>
                     </div>
-                    <div class="f-r r">
-                        <div class="title">所有分组</div>
-                        <div class="list">
-                            <ul>
-                                <li v-for="(k, index) in data7" :key="index">
-                                    {{k.name}}({{k.count}})
-                                    <span  color="group_del" style="float: right" title="删除当前组" @click="delGroupFun(k)">
+                </div>
+                <div class="f-r r">
+                    <div class="title">所有分组</div>
+                    <div class="list">
+                        <ul>
+                            <li v-for="(k, index) in data7" :key="index">
+                                {{k.name}}({{k.count}})
+                                <span  color="group_del" style="float: right" title="删除当前组" @click="delGroupFun(k)">
                                         <Icon type="trash-a"></Icon>
                                     </span>
-                                    <span  color="" style="float: right;margin-right: 15px" title="修改当前组名" @click="modal4 = true,GroupId = k.id">
+                                <span  color="" style="float: right;margin-right: 15px" title="修改当前组名" @click="modal4 = true,GroupId = k.id">
                                         <Icon type="edit"></Icon>
                                     </span>
-                                </li>
-                            </ul>
-                        </div>
+                            </li>
+                        </ul>
                     </div>
+                </div>
 
-                </div>
-            </TabPane>
-            <TabPane label="同步粉丝" name="name2">
-                <div style="padding:0 10px;">
-                    <table class="table-copy">
-                        <thead>
-                        <tr>
-                            <th>商户名称</th>
-                            <th>任务类型</th>
-                            <th>添加时间</th>
-                            <th>结束时间</th>
-                            <th>任务状态</th>
-                            <th>任务进度</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr v-for="(k, index) in data8" :key="index">
-                            <td style="padding: 4px;">
-                                {{k.app_name}}
-                            </td>
-                            <td style="padding: 4px;">
-                                {{k.task_type === 1 ? '同步粉丝列表' : k.task_type === 2 ? '同步粉丝基本信息' : '未知'}}
-                            </td>
-                            <td style="padding: 4px;">
-                                {{k.add_time}}
-                            </td>
-                            <td style="padding: 4px;">
-                                {{k.handle_end_time}}
-                            </td>
-                            <td>
-                                {{k.state === -1 ? '执行失败' : k.state === 0 ? '等待执行' : k.state === 1 ? '执行中' : k.state === 2 ? '完成' : '未知'}}
-                            </td>
-                            <td>
-                                <Progress :percent="parseInt(k.speed_progress)" status="active"></Progress>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div style="text-align: center;padding: 10px">
-                    <Page :total="pageData2.count" :page-size="pageData2.rows_num"  @on-change="pageFun2"></Page>
-                </div>
-            </TabPane>
-        </Tabs>
-
+            </div>
+        </div>
+        <div v-if="tabVal == 'name2'">
+            <div style="padding:10px;">
+                <table class="table-copy">
+                    <thead>
+                    <tr>
+                        <th>商户名称</th>
+                        <th>任务类型</th>
+                        <th>添加时间</th>
+                        <th>结束时间</th>
+                        <th>任务状态</th>
+                        <th>任务进度</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="(k, index) in data8" :key="index">
+                        <td style="padding: 4px;">
+                            {{k.app_name}}
+                        </td>
+                        <td style="padding: 4px;">
+                            {{k.task_type === 1 ? '同步粉丝列表' : k.task_type === 2 ? '同步粉丝基本信息' : '未知'}}
+                        </td>
+                        <td style="padding: 4px;">
+                            {{k.add_time}}
+                        </td>
+                        <td style="padding: 4px;">
+                            {{k.handle_end_time}}
+                        </td>
+                        <td>
+                            {{k.state === -1 ? '执行失败' : k.state === 0 ? '等待执行' : k.state === 1 ? '执行中' : k.state === 2 ? '完成' : '未知'}}
+                        </td>
+                        <td>
+                            <Progress :percent="parseInt(k.speed_progress)" status="active"></Progress>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div style="text-align: center;padding: 10px">
+                <Page :total="pageData2.count" :page-size="pageData2.rows_num"  @on-change="pageFun2"></Page>
+            </div>
+        </div>
         <!-- 创建分组弹窗 -->
         <Modal v-model="modal4" title="组名称" @on-ok="addWxGroup">
             <Form label-position="left" :label-width="100">
@@ -301,6 +324,7 @@
       },
       // tab切换方法
       tabFun (v) {
+        this.tabVal = v;
         if (v === 'name1') {
           this.getFansFun();
         } else if (v === 'name2') {

@@ -411,7 +411,7 @@ ul.img-txt{
      <div class="chart-icon">
         <span title="语音" @click="popup3 = true,replyType = 3"><Icon type="ios-mic"></Icon></span>
         <!--<span style="color: #ff9933" title="表情"><Icon type="happy-outline"></Icon></span>-->
-        <!--<span style="color: #333" title="截图"><Icon type="scissors"></Icon></span>-->
+         <span  @click="screenshotFun" title="截图ctrl+alt+p" ><Icon type="scissors"></Icon></span>
          <Upload style="display: inline-block;"  action="http://kf.lyfz.net/api/v1/we_chat/WxOperation/uploadResources"
                   name="file" :data="{resources_type: 1}"
                   :max-size='1024'
@@ -438,19 +438,19 @@ ul.img-txt{
                  :on-success="upMp4Fun">
              <span  title="视频" @click="replyType = 4"> <Icon type="ios-film-outline"></Icon></span>
          </Upload>
-         <Upload style="display: inline-block;"  action="http://kf.lyfz.net/api/v1/we_chat/WxOperation/uploadResources"
-                 name="file" :data="{resources_type: 1}"
-                 :max-size='20480'
-                 :format="['zip','doc','pdf','rar','ppt','excel','xls','xlsx','ZIP']"
-                 :show-upload-list="false"
-                 :before-upload="handleBeforeUpload"
-                 :headers="{token: userInfo.token}"
-                 :on-progress="upLodingFun"
-                 :on-format-error="handleFormatError"
-                 :on-exceeded-size="handleMaxSize"
-                 :on-success="upfileFun">
-             <span title="文件" @click="replyType = 8"> <Icon type="folder"></Icon></span>
-         </Upload>
+         <!--<Upload style="display: inline-block;"  action="http://kf.lyfz.net/api/v1/we_chat/WxOperation/uploadResources"-->
+                 <!--name="file" :data="{resources_type: 1}"-->
+                 <!--:max-size='20480'-->
+                 <!--:format="['zip','doc','pdf','rar','ppt','excel','xls','xlsx','ZIP']"-->
+                 <!--:show-upload-list="false"-->
+                 <!--:before-upload="handleBeforeUpload"-->
+                 <!--:headers="{token: userInfo.token}"-->
+                 <!--:on-progress="upLodingFun"-->
+                 <!--:on-format-error="handleFormatError"-->
+                 <!--:on-exceeded-size="handleMaxSize"-->
+                 <!--:on-success="upfileFun">-->
+             <!--<span title="文件" @click="replyType = 8"> <Icon type="folder"></Icon></span>-->
+         <!--</Upload>-->
         <!--<span style="color: #99ccff" title="超链接"><Icon type="link"></Icon></Icon></span>-->
         <span  title="模板消息" @click="templateFun"><Icon type="ios-albums-outline"></Icon></span>
         <!--<span style="color: #9999cc" title="群聊"><Icon type="android-person-add"></Icon></span>-->
@@ -505,7 +505,7 @@ ul.img-txt{
           <div>
               <span style="color: #ff3300;padding-top: 10px">请点击其中一条选择</span>
           </div>
-          <div class="tab-box" style="padding-top: 10px">
+          <div class="tab-box popupH">
               <div v-if="modal2">
                   <div>
                       <Table highlight-row ref="currentRowTable" :columns="columns5" :data="data5" @on-current-change="selImgTxtFun"></Table>
@@ -529,7 +529,7 @@ ul.img-txt{
 
       <!-- 模板详情窗口 -->
       <Modal v-model="popup5" title="图片" width="750" ok-text="发送" @on-ok="imgTxtOkFun" @on-cancel="imgTxtCancelFun">
-          <div class="details-popup" style="max-height: 700px; overflow: auto;">
+          <div class="details-popup popupH">
               <div class="row" v-for="k in el">
                   <div class="title">{{k.title}}</div>
                   <div v-html="k.content"></div>
@@ -568,7 +568,10 @@ ul.img-txt{
     import HZRecorder from './luyin';
     import Bus from '../../assets/eventBus';
     import DB from '../../assets/webDB';
-    const { shell } = require('electron');
+    import os from 'os';
+    import fs from 'fs';
+    import path from 'path';
+    import { desktopCapturer, shell, screen } from 'electron';
     export default {
       data () {
         return {
@@ -1354,6 +1357,34 @@ ul.img-txt{
         },
         // 文本显示控制文本域样式
         txtraFun () {
+        },
+        // 获取当前窗口大小
+        determineScreenShotSize () {
+          const screenSize = screen.getPrimaryDisplay().workAreaSize;
+          const maxDimension = Math.max(screenSize.width, screenSize.height);
+          return {
+            width: maxDimension * window.devicePixelRatio,
+            height: maxDimension * window.devicePixelRatio
+          };
+        },
+        // 截图 12123sdsd
+        screenshotFun () {
+          let that = this;
+          const thumbSize = that.determineScreenShotSize();
+          let options = { types: ['screen'], thumbnailSize: thumbSize };
+          desktopCapturer.getSources(options, function (error, sources) {
+            if (error) return console.log(error);
+            sources.forEach(function (source) {
+              if (source.name === 'Entire screen' || source.name === 'Screen 1') {
+                const screenshotPath = path.join(os.tmpdir(), 'screenshot.png');
+                fs.writeFile(screenshotPath, source.thumbnail.toPng(), function (error) {
+                  if (error) return console.log(error);
+                  const message = `${screenshotPath}`;
+                  that.$electron.ipcRenderer.send('shortcut-capture', message);
+                });
+              }
+            });
+          });
         }
       },
       updated () {
@@ -1414,7 +1445,11 @@ ul.img-txt{
           this.clientData = k;
           // this.elmetArr.length = k.data.length + 1;
           // 取到数据最后一个数组， 便于添加数据 取最新相关数据
-          this.datalistArr = k.data[k.data.length - 1];
+          if (k.data.length === 0) {
+            this.datalistArr = k;
+          } else {
+            this.datalistArr = k.data[k.data.length - 1];
+          }
         });
         // 动态获取快捷回复内容 事件
         Bus.$on('ShortcutTxtFun', (k) => {
@@ -1426,7 +1461,6 @@ ul.img-txt{
           this.replyType = 1;
           this.subFun();
         });
-        // 如果客户
       }
     };
 </script>
