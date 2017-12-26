@@ -173,6 +173,7 @@ function screenShotFun (s) {
     // minimizable: false,
     // maximizable: false
   });
+  $win.webContents.openDevTools();
   // $win.webContents.closeDevTools();
   $win.on('close', function () { $win = null; });
   $win.loadURL(url.format({
