@@ -162,19 +162,9 @@ function screenShotFun (s) {
     height: display.workAreaSize.height,
     x: display.bounds.x,
     y: display.bounds.y,
-    frame: false,
-    show: false,
-    transparent: true,
-    resizable: false,
-    alwaysOnTop: true,
-    fullscreen: true,
-    skipTaskbar: true,
-    closable: true,
-    minimizable: false,
-    maximizable: false
     // frame: false,
     // show: false,
-    // transparent: true,
+    transparent: true
     // resizable: false,
     // alwaysOnTop: true,
     // fullscreen: true,
@@ -183,7 +173,7 @@ function screenShotFun (s) {
     // minimizable: false,
     // maximizable: false
   });
-  $win.webContents.closeDevTools();
+  // $win.webContents.closeDevTools();
   $win.on('close', function () { $win = null; });
   $win.loadURL(url.format({
     pathname: path.join(__dirname, './window/shortcut-capture.html'),

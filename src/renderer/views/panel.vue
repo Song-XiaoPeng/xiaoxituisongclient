@@ -400,13 +400,21 @@
         }
       },
       // 通知
-      inform (name, url) {
+      inform (name, url, k) {
         // this.$electron.ipcRenderer.send('asynchronous-message', 'ping');
         Notification.requestPermission();
         let notification = new Notification('提示', {
           body: `你有一位新客户${name}`,
           icon: url
         });
+        notification.onclick = () => {
+          this.$router.push({
+            name: 'ServeIndex',
+            query: {
+              lineData: k
+            }
+          });
+        };
         setTimeout(() => {
           notification.close();
         }, 10000);
@@ -439,7 +447,7 @@
                 Object.assign(this.lineUpObj[k.session_id], k);
               } else {
                 this.lineUpObj[k.session_id] = k;
-                this.inform(k.customer_wx_nickname, k.customer_wx_portrait);
+                this.inform(k.customer_wx_nickname, k.customer_wx_portrait, k);
               }
             });
             this.data3 = data.body.sk_data.queue_up;
