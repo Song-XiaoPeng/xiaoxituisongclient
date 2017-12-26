@@ -162,26 +162,25 @@ function screenShotFun (s) {
     height: display.workAreaSize.height,
     x: display.bounds.x,
     y: display.bounds.y,
-    // frame: false,
-    // show: false,
-    transparent: true
-    // resizable: false,
-    // alwaysOnTop: true,
-    // fullscreen: true,
-    // skipTaskbar: true,
-    // closable: true,
-    // minimizable: false,
-    // maximizable: false
+    frame: false,
+    show: false,
+    transparent: true,
+    resizable: false,
+    alwaysOnTop: true,
+    fullscreen: true,
+    skipTaskbar: true,
+    closable: true,
+    minimizable: false,
+    maximizable: false
   });
   $win.webContents.openDevTools();
   // $win.webContents.closeDevTools();
   $win.on('close', function () { $win = null; });
   $win.loadURL(url.format({
-    pathname: path.join('./static/window/shortcut-capture.html'),
+    pathname: path.join(__static, `/window/shortcut-capture.html`),
     protocol: 'file:',
     slashes: true
   }));
-  // $win.loadURL(`./static/window/shortcut-capture.html`);
   $win.show();
   // $win.on('closed', () => {
   //   mainWindow = null;
