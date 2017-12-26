@@ -857,11 +857,15 @@
           this.WxAuthList = k.body;
           this.getWxGroup();
         });
-        Bus.$on('change', (k, o) => {
+        Bus.$on('change', (k, o, u) => {
           this.is_CRM = o ? o.is_CRM : false;
           this.clientData = k;
+          if (u) {
+            this.userData = u;
+          } else {
+            this.getWxUserInfo();
+          }
           this.getClientFun();
-          this.getWxUserInfo();
           this.formData.customer_info_id = '';
           this.formData.real_name = '';
           this.formData.real_sex = '';

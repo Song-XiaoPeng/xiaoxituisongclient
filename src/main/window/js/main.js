@@ -18,6 +18,7 @@ class Injector {
   initialize () {
     // 只要loading结束
     // 不论页面加载是否成功都会执行
+    console.log('我执行了');
     window.addEventListener('load', () => {
       this.injectCss();
       this.injectJs();
@@ -338,7 +339,7 @@ class Injector {
 
   // 屏幕截图处理
   onShortcutCapture () {
-    ipcRenderer.on('shortcut-capture', () => {
+    ipcRenderer.send('shortcut-capture', () => {
       const displays = screen.getAllDisplays()
       const getDesktopCapturer = displays.map((display, i) => {
         return new Promise((resolve, reject) => {

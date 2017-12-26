@@ -137,6 +137,10 @@
   import Bus from '../assets/eventBus';
   import DB from '../assets/webDB';
   import axios from 'axios';
+  import os from 'os';
+  import fs from 'fs';
+  import path from 'path';
+  import { desktopCapturer, screen } from 'electron';
   export default {
     data () {
       return {
@@ -184,6 +188,14 @@
       }
     },
     methods: {
+      determineScreenShotSize () {
+        const screenSize = screen.getPrimaryDisplay().workAreaSize;
+        const maxDimension = Math.max(screenSize.width, screenSize.height);
+        return {
+          width: maxDimension * window.devicePixelRatio,
+          height: maxDimension * window.devicePixelRatio
+        };
+      },
       // 注销事件
       signOut () {
         var CancelToken = axios.CancelToken;
@@ -452,7 +464,7 @@
           if (!this.is_ws_initiative_off) {
             this.ws_intval = setInterval(() => {
               this.WebSocketFun();
-            }, 20000);
+            }, 10000);
             // this.$Message.warning('网络不稳定或服务器断开，30秒后为您重连。。。');
           }
         };
@@ -519,6 +531,23 @@
       });
       this.$electron.ipcRenderer.on('max', () => {
         this.is_win = true;
+      });
+      this.$electron.ipcRenderer.on('shortcut-capture', (e, m) => {
+        const thumbSize = this.determineScreenShotSize();
+        let options = { types: ['screen'], thumbnailSize: thumbSize };
+        desktopCapturer.getSources(options, function (error, sources) {
+          if (error) return console.log(error);
+          sources.forEach(function (source) {
+            if (source.name === 'Entire screen' || source.name === 'Screen 1') {
+              const screenshotPath = path.join(os.tmpdir(), 'screenshot.png');
+              fs.writeFile(screenshotPath, source.thumbnail.toPng(), function (error) {
+                if (error) return console.log(error);
+                const message = `${screenshotPath}`;
+                e.sender.send('shortcut-capture', message);
+              });
+            }
+          });
+        });
       });
     }
   };

@@ -25,88 +25,112 @@
         padding: 10px;
         text-align: center;
     }
+    .top-box{
+        height: 60px;
+        background-color: #ffffff;
+        border-bottom: 1px #f7f7f7 solid;
+        ul{
+            li{
+                height: 60px;
+                line-height: 60px;
+                text-align: center;
+                font-size: 16px;
+                color: #333333;
+                float: left;
+                padding: 0 10px;
+                cursor: pointer;
+            }
+            li.active{
+                background-color: #2db7f5;
+                color: #fff;
+            }
+        }
+    }
+    .title-box{
+        height: 60px;
+        background-color: #ecf0f4;
+    }
 </style>
 <template>
     <div id="index">
         <Row>
             <Col span="24">
-            <Card>
-                <p slot="title">
-                  角色管理
-                </p>
-                <p slot="extra">
-                    <Button type="ghost" @click="is_sectionPupop = true">添加部门</Button>
-                    <Button type="primary" @click="popupBol = true"><Icon type="plus"></Icon> 添加人员</Button>
-                </p>
-                <div style="padding: 10px">
-                    <span>
-                        当前部门：
-                    </span>
-                    <Select v-model="sectionId" style="width: 200px" @on-change="sectionFun">
+            <Card :padding="0">
+                <div class="top-box">
+                    <ul>
+                        <li class="active" >角色管理</li>
+                    </ul>
+                </div>
+                <div class="title-box">
+                    <Select v-model="sectionId" style="width: 200px;margin: 15px" @on-change="sectionFun">
                         <Option v-for="(item, key) in userGroupData" :key="key" :value="item.user_group_id">{{ item.user_group_name }}</Option>
                     </Select>
                     <Button type="text" @click="delFun">删除当前部门</Button>
-
+                    <Button type="ghost" @click="is_sectionPupop = true" style="margin: 15px">添加部门</Button>
+                    <Button type="primary" @click="popupBol = true" style="margin: 15px"><Icon type="plus"></Icon> 添加人员</Button>
                 </div>
-                <table class="table-copy">
-                    <thead>
-                    <tr>
-                        <th>姓名</th>
-                        <th>图像</th>
-                        <th>账号</th>
-                        <th>所属部门</th>
-                        <th>员工状态</th>
-                        <th>头像</th>
-                        <th>是否客服</th>
-                        <th>设置客服</th>
-                        <th>解除硬件绑定</th>
-                        <th>操作</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="(k, index) in listData" :key="index">
-                        <td style="padding: 4px;">
-                            {{k.user_name}}
-                        </td>
-                        <td style="padding: 4px;">
-                            <img :src="k.avatar_url" alt="" style="height: 50px;width: 50px">
-                        </td>
-                        <td style="padding: 4px;">
-                            {{k.phone_no}}
-                        </td>
-                        <td style="padding: 4px;">
-                            {{k.user_group_name}}
-                        </td>
-                        <td>
-                            {{k.user_state_name}}
-                        </td>
-                        <td>
-                            <Upload  action="http://kf.lyfz.net/api/v1/we_chat/WxOperation/uploadResources"
-                                    name="file" :data="{resources_type: 2}"
-                                    :show-upload-list="false"
-                                    :headers="{token: userInfo.token}"
-                                    :on-success="upImgFun">
-                                <Button type="ghost" size="small" icon="ios-cloud-upload-outline" @click="selEdit = k">上传图像</Button>
-                            </Upload>
-                        </td>
-                        <td>
-                            <span v-if="k.customer_service_list == null">否</span>
-                            <Button v-else type="ghost" size="small" @click="popup8 = true,serviceArr = k.customer_service_list, changeUserData = k">操作</Button>
-                        </td>
-                        <td>
-                            <Button type="ghost" size="small" @click="is_sectionPupop1 = true, selUser = k">设为客服</Button>
-                            <Button type="ghost" size="small" @click="is_sectionPupop2 = true, selEdit = k">调部门</Button>
-                        </td>
-                        <td>
-                            <span v-if="k.client_network_mac == null">未绑定</span>
-                            <Button v-else type="ghost" size="small" @click="untieFun(k)">解除</Button>
-                        </td>
-                        <td>
-                            <Button type="ghost" size="small" @click="changePermission(k)">修改权限</Button>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                <div style="padding: 10px">
+                    <table class="table-copy">
+                        <thead>
+                        <tr>
+                            <th>姓名</th>
+                            <th>图像</th>
+                            <th>账号</th>
+                            <th>所属部门</th>
+                            <th>员工状态</th>
+                            <th>头像</th>
+                            <th>是否客服</th>
+                            <th>设置客服</th>
+                            <th>解除硬件绑定</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="(k, index) in listData" :key="index">
+                            <td style="padding: 4px;">
+                                {{k.user_name}}
+                            </td>
+                            <td style="padding: 4px;">
+                                <img :src="k.avatar_url" alt="" style="height: 50px;width: 50px">
+                            </td>
+                            <td style="padding: 4px;">
+                                {{k.phone_no}}
+                            </td>
+                            <td style="padding: 4px;">
+                                {{k.user_group_name}}
+                            </td>
+                            <td>
+                                {{k.user_state_name}}
+                            </td>
+                            <td>
+                                <Upload  action="http://kf.lyfz.net/api/v1/we_chat/WxOperation/uploadResources"
+                                         name="file" :data="{resources_type: 2}"
+                                         :show-upload-list="false"
+                                         :headers="{token: userInfo.token}"
+                                         :on-success="upImgFun">
+                                    <Button type="ghost" size="small" icon="ios-cloud-upload-outline" @click="selEdit = k">上传图像</Button>
+                                </Upload>
+                            </td>
+                            <td>
+                                <span v-if="k.customer_service_list == null">否</span>
+                                <Button v-else type="ghost" size="small" @click="popup8 = true,serviceArr = k.customer_service_list, changeUserData = k">操作</Button>
+                            </td>
+                            <td>
+                                <Button type="ghost" size="small" @click="is_sectionPupop1 = true, selUser = k">设为客服</Button>
+                                <Button type="ghost" size="small" @click="is_sectionPupop2 = true, selEdit = k">调部门</Button>
+                            </td>
+                            <td>
+                                <span v-if="k.client_network_mac == null">未绑定</span>
+                                <Button v-else type="ghost" size="small" @click="untieFun(k)">解除</Button>
+                            </td>
+                            <td>
+                                <Button type="ghost" size="small" @click="changePermission(k)">修改权限</Button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
                 <div class="page-centent">
                     <Page :total="pageCount" :page-size="pageSize" @on-change="pageFun"></Page>
                 </div>

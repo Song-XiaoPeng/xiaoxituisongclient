@@ -1648,4 +1648,21 @@ ajax.setCustomerResourcesRule = (obj) => {
     console.log(error);
   });
 };
+// 设置支付证书
+ajax.setCertificate = (obj) => {
+  util.ajax.post('/api/v1/we_chat/WxOperation/setCertificate', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
 export default ajax;

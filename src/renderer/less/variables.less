@@ -73,3 +73,28 @@ html,body,#app,.layout,.ivu-row-flex{
         margin-bottom: 2px;
     }
 }
+// 弹窗  不同屏幕高 匹配
+@media all and (min-height:800px) and (max-height:1000px){
+    .popupH{
+        height: 500px;
+        overflow: auto;
+    }
+}
+@media all and (min-height:400px) and (max-height:799px){
+    .popupH{
+        height: 300px;
+        overflow: auto;
+    }
+}
+@media all and (min-height:1000px) and (max-height:1200px){
+    .popupH{
+        height: 700px;
+        overflow: auto;
+    }
+}
+@media all and (min-height:1201px){
+    .popupH{
+        height: 1000px;
+        overflow: auto;
+    }
+}

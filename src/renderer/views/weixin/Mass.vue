@@ -1,6 +1,23 @@
 <style scoped lang="less">
     .top-box{
-        padding: 10px;
+        height: 60px;
+        border-bottom: 1px #eaeaea solid;
+        ul{
+            li{
+                height: 60px;
+                line-height: 60px;
+                text-align: center;
+                font-size: 16px;
+                color: #333333;
+                float: left;
+                padding: 0 10px;
+                cursor: pointer;
+            }
+            li.active{
+                background-color: #2db7f5;
+                color: #fff;
+            }
+        }
     }
     .tab{
         padding: 10px;
@@ -9,22 +26,31 @@
 <template>
     <div id="index">
         <div class="top-box">
-            <span>当前公共号：</span>
+            <ul>
+                <li v-bind:class="is_tab == 'name1' ? 'active' : ''" @click="tabFun('name1')" >新建发送条目</li>
+                <li v-bind:class="is_tab == 'name2' ? 'active' : ''" @click="tabFun('name2')">发送记录</li>
+            </ul>
+        </div>
+        <div style="background-color: #ecf0f4">
+            <span v-if="is_tab == 'name1'" style="color: #2db7f5;margin: 18px;display: inline-block">新建群发</span>
+            <span v-if="is_tab == 'name2'" style="color: #2db7f5;margin: 18px;display: inline-block">发送记录</span>
             <Select v-model="appid" style="width:200px" @on-change="selAppidFun">
                 <Option v-for="item in cityList" :value="item.appid" :key="item.appid">{{ item.nick_name }}</Option>
             </Select>
-            <Button type="info" class="f-r" @click="addMassFun" >
-                新建发送条目
-            </Button>
         </div>
-        <div class="tab">
-            <Table border :columns="columns7" :data="data6"></Table>
-            <div style="text-align: center;padding: 10px">
-                <Page :total="pageData1.count" :page-size="pageData1.rows_num"  @on-change="pageFun1"></Page>
+        <div class="" v-if="is_tab == 'name2'">
+            <div>
+                <div class="tab">
+                    <Table border :columns="columns7" :data="data6"></Table>
+                </div>
+                <div style="text-align: center;padding: 10px">
+                    <Page :total="pageData1.count" :page-size="pageData1.rows_num"  @on-change="pageFun1"></Page>
+                </div>
             </div>
         </div>
-
-
+        <div v-if="is_tab == 'name1'">
+            <addMess :appid="appid"></addMess>
+        </div>
         <!-- 请求状态 -->
         <Spin fix v-if="is_Loading">
             <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
@@ -34,6 +60,7 @@
     </div>
 </template>
 <script>
+  import addMess from './addMass';
   export default {
     data () {
       return {
@@ -95,21 +122,22 @@
           rows_num: 0,
           page: 1
         },
-        is_Loading: false
+        is_Loading: false,
+        is_tab: 'name2'
       };
+    },
+    components: {
+      addMess
     },
     mounted () {
     },
     beforeDestroy () {
     },
     methods: {
-      addMassFun () {
-        this.$router.push({
-          name: 'addMass',
-          query: {
-            appid: this.appid
-          }
-        });
+      // tab切换方法
+      tabFun (v) {
+        console.log(v);
+        this.is_tab = v;
       },
       // 获取发送数据列表
       getMassListFun () {
@@ -165,7 +193,6 @@
         success: (res) => {
           this.cityList = res.body;
           this.appid = res.body[0].appid;
-          this.getMassListFun();
         },
         error: (res) => {
           this.is_Loading = false;

@@ -426,7 +426,7 @@
         <div class="chart-icon">
             <span title="语音" @click="popup3 = true,replyType = 3"><Icon type="ios-mic"></Icon></span>
             <!--<span style="color: #ff9933" title="表情"><Icon type="happy-outline"></Icon></span>-->
-            <!--<span style="color: #333" title="截图"><Icon type="scissors"></Icon></span>-->
+            <span  @click="screenshotFun" title="截图ctrl+alt+p" ><Icon type="scissors"></Icon></span>
             <Upload style="display: inline-block;"  action="http://kf.lyfz.net/api/v1/we_chat/WxOperation/uploadResources"
                     name="file" :data="{resources_type: 1}"
                     :max-size='1024'
@@ -522,7 +522,7 @@
             <div>
                 <span style="color: #ff3300;padding-top: 10px">请点击其中一条选择</span>
             </div>
-            <div class="tab-box" style="padding-top: 10px">
+            <div class="tab-box popupH" >
                 <div v-if="modal2">
                     <div>
                         <Table highlight-row ref="currentRowTable" :columns="columns5" :data="data5" @on-current-change="selImgTxtFun"></Table>
@@ -545,8 +545,8 @@
         <!-- end模板消息窗口 -->
 
         <!-- 模板详情窗口 -->
-        <Modal v-model="popup5" title="图片" width="750" ok-text="发送" @on-ok="imgTxtOkFun" @on-cancel="imgTxtCancelFun">
-            <div class="details-popup" style="max-height: 700px; overflow: auto;">
+        <Modal v-model="popup5" title="图片" ok-text="发送" @on-ok="imgTxtOkFun" @on-cancel="imgTxtCancelFun">
+            <div class="details-popup popupH">
                 <div class="row" v-for="k in el">
                     <div class="title">{{k.title}}</div>
                     <div v-html="k.content"></div>
@@ -566,7 +566,7 @@
 
 
         <!-- 强制会话弹窗 -->
-        <Modal v-model="popup8" title="提示" width="750" ok-text="发送" @on-ok="strongMessFun">
+        <Modal v-model="popup8" title="提示" width="750" ok-text="发送" @on-ok="strongMessFun" @on-cancel="messCancelFun">
             <p>该用户近期未于公众号交互，是否强制发起会话消息</p>
             <p style="color: #ff3300; font-size: 12px">注意：每个公众号每日最多发送100条强制会话消息,请谨慎使用</p>
         </Modal>
@@ -589,7 +589,6 @@
         </Modal>
         <!-- end评价弹窗 -->
 
-
         <!-- 加载状态 -->
         <Spin fix v-if="is_Loading">
             <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
@@ -602,7 +601,10 @@
   import HZRecorder from '../commonComponent/luyin';
   import Bus from '../../assets/eventBus';
   import DB from '../../assets/webDB';
-  const { shell } = require('electron');
+  import os from 'os';
+  import fs from 'fs';
+  import path from 'path';
+  import { desktopCapturer, shell, screen } from 'electron';
   export default {
     data () {
       return {
@@ -861,15 +863,6 @@
     },
     beforeDestroy () {
     },
-    // directives: {
-    // focus: {
-    // update: function (el, {value}) {
-    // if (value) {
-    // el.focus();
-    // }
-    // }
-    // }
-    // },
     methods: {
       // 评价
       addEvaluateFun () {
@@ -1278,6 +1271,12 @@
           }
         });
       },
+      // 强制会话取消
+      messCancelFun () {
+        this.txtra = '';
+        this.messData = null;
+        this.elmetArr.splice(this.elmetArr.length - 1, 1);
+      },
       // 语音
       voiceFun () {
         let that = this;
@@ -1566,6 +1565,34 @@
           }
           this.is_scrollTime++;
         }
+      },
+      // 获取当前窗口大小
+      determineScreenShotSize () {
+        const screenSize = screen.getPrimaryDisplay().workAreaSize;
+        const maxDimension = Math.max(screenSize.width, screenSize.height);
+        return {
+          width: maxDimension * window.devicePixelRatio,
+          height: maxDimension * window.devicePixelRatio
+        };
+      },
+      // 截图 12123sdsd
+      screenshotFun () {
+        let that = this;
+        const thumbSize = that.determineScreenShotSize();
+        let options = { types: ['screen'], thumbnailSize: thumbSize };
+        desktopCapturer.getSources(options, function (error, sources) {
+          if (error) return console.log(error);
+          sources.forEach(function (source) {
+            if (source.name === 'Entire screen' || source.name === 'Screen 1') {
+              const screenshotPath = path.join(os.tmpdir(), 'screenshot.png');
+              fs.writeFile(screenshotPath, source.thumbnail.toPng(), function (error) {
+                if (error) return console.log(error);
+                const message = `${screenshotPath}`;
+                that.$electron.ipcRenderer.send('shortcut-capture', message);
+              });
+            }
+          });
+        });
       }
     },
     updated () {

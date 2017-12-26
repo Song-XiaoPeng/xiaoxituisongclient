@@ -1,134 +1,179 @@
 <style scoped lang="less">
-
+  .top-box{
+    height: 60px;
+    background-color: #ffffff;
+    border-bottom: 1px #f7f7f7 solid;
+    ul{
+      li{
+        height: 60px;
+        line-height: 60px;
+        text-align: center;
+        font-size: 16px;
+        color: #333333;
+        float: left;
+        padding: 0 10px;
+        cursor: pointer;
+      }
+      li.active{
+        background-color: #2db7f5;
+        color: #fff;
+      }
+    }
+  }
+  .title-box{
+    height: 60px;
+    background-color: #ecf0f4;
+    span{
+      color: #2db7f5;
+      margin: 18px;
+      display: inline-block;
+      font-size: 16px;
+    }
+    bottom{
+      margin: 15px;
+    }
+  }
 </style>
 <template>
   <div id="index">
-    <Card>
-      <Tabs v-model="tabsVal" value="1">
-        <div slot="extra" v-show="tabsVal == '3'">
-          <Button type="primary" size="small" @click="addConversationRule = true">新建分组</Button>
-          <Button type="primary" size="small" @click="addConversationContent = true">新建内容</Button>
-        </div>
+      <div class="top-box">
+        <ul>
+          <li v-bind:class="tabVal == 'name1' ? 'active' : ''" @click="tabFun('name1')" >客资领取回收规则</li>
+          <li v-bind:class="tabVal == 'name2' ? 'active' : ''" @click="tabFun('name2')">会话规则</li>
+          <li v-bind:class="tabVal == 'name3' ? 'active' : ''" @click="tabFun('name3')">企业常用话术</li>
+          <li v-bind:class="tabVal == 'name4' ? 'active' : ''" @click="tabFun('name4')">标签设置</li>
+        </ul>
+      </div>
+      <div class="title-box">
+        <span v-if="tabVal == 'name1'">客资领取回收规则</span>
+        <span  v-if="tabVal == 'name2'">会话规则</span>
+        <span  v-if="tabVal == 'name3'">企业常用话术</span>
+        <span  v-if="tabVal == 'name4'">标签设置</span>
+        <Button v-show="tabVal == 'name3'" type="primary" class="f-r" style="margin: 17px"  size="small" @click="addConversationRule = true">新建分组</Button>
+        <Button v-show="tabVal == 'name3'" type="primary" class="f-r" style="margin: 17px"  size="small" @click="addConversationContent = true">新建内容</Button>
+      </div>
 
 
-
-
-
-        <TabPane label="客资领取回收规则" name="1">
-          <Row>
-            <Col span="14">
-              <Form  :label-width="100">
-                <Row>
-                  <Col span="10">
-                    <FormItem label="线索池领取周期">
-                      <Select v-model="recycle.cued_pool.cycle">
-                        <Option value="1">本天</Option>
-                        <Option value="2">本周</Option>
-                        <Option value="3">本月</Option>
-                      </Select>
-                    </FormItem>
-                  </Col>
-                  <Col span="10">
-                    <FormItem label="内限制领取">
-                      <Input v-model="recycle.cued_pool.number" placeholder="请输入个数"></Input>
-                    </FormItem>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span="10">
-                    <FormItem label="线索池回收周期">
-                      <Input v-model="recycle.cued_pool_recovery" placeholder="请输入天数"></Input>
-                    </FormItem>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span="10">
-                    <FormItem label="意向领取周期">
-                      <Select v-model="recycle.intention_receive.cycle">
-                        <Option value="1">本天</Option>
-                        <Option value="2">本周</Option>
-                        <Option value="3">本月</Option>
-                      </Select>
-                    </FormItem>
-                  </Col>
-                  <Col span="10">
-                    <FormItem label="内限制领取">
-                      <Input v-model="recycle.intention_receive.number" placeholder="请输入个数"></Input>
-                    </FormItem>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span="10">
-                    <FormItem label="意向池回收周期">
-                      <Input v-model="recycle.intention_recovery" placeholder="请输入天数"></Input>
-                    </FormItem>
-                  </Col>
-                </Row>
-                <FormItem>
-                  <Button type="primary" @click="setCustomerResourcesRuleFun">保存</Button>
-                </FormItem>
-              </Form>
-            </Col>
-          </Row>
-        </TabPane>
-
-
-
-        <TabPane label="会话规则" name="2">
-          <Form :model="ruleFrom" :label-width="120">
+      <div v-if="tabVal == 'name1'"  style="padding: 16px">
+        <Row>
+          <Col  span="14">
+          <Form  :label-width="100">
             <Row>
               <Col span="10">
+              <FormItem label="线索池领取周期">
+                <Select v-model="recycle.cued_pool.cycle">
+                  <Option value="1">本天</Option>
+                  <Option value="2">本周</Option>
+                  <Option value="3">本月</Option>
+                </Select>
+              </FormItem>
+              </Col>
+              <Col span="10">
+              <FormItem label="内限制领取">
+                <Input v-model="recycle.cued_pool.number" placeholder="请输入个数"></Input>
+              </FormItem>
+              </Col>
+            </Row>
+            <Row>
+              <Col span="10">
+              <FormItem label="线索池回收周期">
+                <Input v-model="recycle.cued_pool_recovery" placeholder="请输入天数"></Input>
+              </FormItem>
+              </Col>
+            </Row>
+            <Row>
+              <Col span="10">
+              <FormItem label="意向领取周期">
+                <Select v-model="recycle.intention_receive.cycle">
+                  <Option value="1">本天</Option>
+                  <Option value="2">本周</Option>
+                  <Option value="3">本月</Option>
+                </Select>
+              </FormItem>
+              </Col>
+              <Col span="10">
+              <FormItem label="内限制领取">
+                <Input v-model="recycle.intention_receive.number" placeholder="请输入个数"></Input>
+              </FormItem>
+              </Col>
+            </Row>
+            <Row>
+              <Col span="10">
+              <FormItem label="意向池回收周期">
+                <Input v-model="recycle.intention_recovery" placeholder="请输入天数"></Input>
+              </FormItem>
+              </Col>
+            </Row>
+            <FormItem>
+              <Button type="primary" @click="setCustomerResourcesRuleFun">保存</Button>
+            </FormItem>
+          </Form>
+          </Col>
+        </Row>
+      </div>
+
+
+
+
+
+
+
+          <div v-if="tabVal == 'name2'" style="padding: 16px">
+            <Form :model="ruleFrom" :label-width="120">
+              <Row>
+                <Col span="10">
                 <FormItem label="无所属咨询分配规则">
                   <Select v-model="ruleFrom.select">
                     <Option value="beijing">平均分配</Option>
                     <Option value="shanghai">抢单模式</Option>
                   </Select>
                 </FormItem>
-              </Col>
-            </Row>
-            <Row>
-              <Col span="10">
+                </Col>
+              </Row>
+              <Row>
+                <Col span="10">
                 <FormItem label="超时会话">
                   <Input v-model="ruleFrom.input" placeholder="请输入超时分钟数"></Input>
                 </FormItem>
-              </Col>
-            </Row>
-            <FormItem>
-              <Button type="primary" @click="addRuleFun">保存</Button>
-            </FormItem>
-          </Form>
-        </TabPane>
-
-
-
-
-        <TabPane label="企业常用话术" name="3">
-          <Table :columns="replyTableColumns" :data="replyTableData"></Table>
-
-          <div class="page-centent">
-            <Page :total="100"></Page>
+                </Col>
+              </Row>
+              <FormItem>
+                <Button type="primary" @click="addRuleFun">保存</Button>
+              </FormItem>
+            </Form>
           </div>
-        </TabPane>
 
 
 
 
-        <TabPane label="标签设置" name="4">
-          <Form :label-width="80">
-            <FormItem label="操作">
-              <Button type="primary" @click="popup3 = true">分组管理</Button>
-              <Button type="primary" @click="popup2 = true">新建标签</Button>
-            </FormItem>
-            <FormItem label="详细">
-              <Table :columns="labelTableColumns" :data="labelTableData"></Table>
-            </FormItem>
-          </Form>
-        </TabPane>
+
+
+          <div  v-if="tabVal == 'name3'"  style="padding: 16px">
+            <Table :columns="replyTableColumns" :data="replyTableData"></Table>
+
+            <div class="page-centent">
+              <Page :total="100"></Page>
+            </div>
+          </div>
 
 
 
-      </Tabs>
-    </Card>
+
+
+
+          <div  v-if="tabVal == 'name4'"  style="padding: 16px">
+            <Form :label-width="80">
+              <FormItem label="操作">
+                <Button type="primary" @click="popup3 = true">分组管理</Button>
+                <Button type="primary" @click="popup2 = true">新建标签</Button>
+              </FormItem>
+              <FormItem label="详细">
+                <Table :columns="labelTableColumns" :data="labelTableData"></Table>
+              </FormItem>
+            </Form>
+          </div>
+
+
 
 
 
@@ -436,7 +481,8 @@
         cityList: [],
         labelGroupContent: '',
         label_id: '',
-        is_group_label: false
+        is_group_label: false,
+        tabVal: 'name1'
       };
     },
     components: {
@@ -444,6 +490,10 @@
     mounted () {
     },
     methods: {
+      // tab 切换
+      tabFun (v) {
+        this.tabVal = v;
+      },
       // 保存客资领取规则
       setCustomerResourcesRuleFun () {
         if (this.recycle.cued_pool.cycle === '') {

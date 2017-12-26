@@ -406,36 +406,6 @@
           this.password = r.pass;
         }
       }
-      this.$electron.ipcRenderer.on('shortcut-capture', (e, m) => {
-        // let BrowserWindow = remote.BrowserWindow;
-        // let display = remote.screen.getPrimaryDisplay();
-        // console.log(display, 13212);
-        // let win = new BrowserWindow({
-        // width: display.workAreaSize.width,
-        // height: display.workAreaSize.height,
-        // x: display.bounds.x,
-        // y: display.bounds.y
-        // frame: false,
-        // show: false
-        // transparent: true,
-        // resizable: false,
-        // alwaysOnTop: true,
-        // fullscreen: true,
-        // skipTaskbar: true,
-        // closable: true,
-        // minimizable: false,
-        // maximizable: false
-        // });
-        // win.on('close', function () { win = null; });
-        // win.loadURL(url.format({
-        //  pathname: path.join(__dirname, '../../main/window/shortcut-capture.html'),
-        //  protocol: 'file:',
-        //  slashes: true
-        // }));
-        // win.show();
-        console.log('qq789789');
-        // e.sender.send('shortcut-capture');
-      });
     }
   };
 </script>

@@ -12,7 +12,6 @@ class Injector {
     // 只要loading结束
     // 不论页面加载是否成功都会执行
     ipcRenderer.on('dom-ready', () => {
-      console.log(1223213);
       this.injectJs()
     })
   }
@@ -37,12 +36,12 @@ class Injector {
     this.ctx = this.$canvas.getContext('2d')
     this.$canvas.width = 0
     this.$canvas.height = 0
+    debugger;
     this.$capture = document.querySelector('#capture')
     this.$capture.addEventListener('load', () => {
       this.onDrawImage()
     })
-
-    this.$capture.src = window.source.thumbnail
+    this.$capture.src = window.screenshotUrl;
     this.$captureToolbar = document.querySelector('#capture-toolbar')
   }
 
