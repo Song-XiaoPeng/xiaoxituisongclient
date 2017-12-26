@@ -177,11 +177,11 @@ function screenShotFun (s) {
   // $win.webContents.closeDevTools();
   $win.on('close', function () { $win = null; });
   $win.loadURL(url.format({
-    pathname: path.join(__dirname, './window/shortcut-capture.html'),
+    pathname: path.join('./static/window/shortcut-capture.html'),
     protocol: 'file:',
     slashes: true
   }));
-  // $win.loadURL(`file://${__dirname}/window/shortcut-capture.html`);
+  // $win.loadURL(`./static/window/shortcut-capture.html`);
   $win.show();
   // $win.on('closed', () => {
   //   mainWindow = null;
