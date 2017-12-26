@@ -541,8 +541,8 @@ ul.img-txt{
 
       <!-- 截图窗口看窗口 -->
       <Modal v-model="popup6" title="图片" width="750" ok-text="发送" @on-ok="pasteUpImgFun">
-          <div class="details-popup" style="max-height: 700px; overflow: auto;">
-              <img :src=pasteImgUrl alt="">
+          <div class="details-popup" style="max-height: 400px; overflow: auto;">
+              <img :src=pasteImgUrl alt="" style="height: 100%;width: 100%;">
           </div>
       </Modal>
       <!-- end截图窗口看窗口 -->
