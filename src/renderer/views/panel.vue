@@ -404,7 +404,7 @@
         // this.$electron.ipcRenderer.send('asynchronous-message', 'ping');
         Notification.requestPermission();
         let notification = new Notification('提示', {
-          body: '你有一位新客户' + name,
+          body: `你有一位新客户${name}`,
           icon: url
         });
         setTimeout(() => {

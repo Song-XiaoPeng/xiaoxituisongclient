@@ -70,7 +70,7 @@
                        <img :src="k.qrcode_url" style="width: 100px;height: 100px" alt="">
                    </td>
                    <td>
-                       <Button type="ghost" @click="popup2 = true, appid = k.appid">上传支付凭证文件</Button>
+                       <Button type="ghost" @click="popup2 = true, appid = k.appid, selData.merchant_id = k.merchant_id, selData.pay_key = k.pay_key, selData.cert_path = k.cert_path, selData.key_path = k.key_path">上传支付凭证文件</Button>
                    </td>
                    <!--<td>-->
                        <!--<i-switch>-->
@@ -85,16 +85,17 @@
 
 
        <!-- 支付凭证弹窗 -->
-       <Modal v-model="popup2" title="支付凭证" @on-ok="upCertificateFun">
+       <Modal v-model="popup2" title="支付凭证" @on-ok="upCertificateFun" width="700">
          <div>
              <Form  label-position="right" :label-width="100">
                  <FormItem label="商户号">
-                     <Input v-model="merchant_id"></Input>
+                     <Input v-model="selData.merchant_id"></Input>
                  </FormItem>
                  <FormItem label="支付密匙">
-                     <Input v-model="pay_key"></Input>
+                     <Input v-model="selData.pay_key"></Input>
                  </FormItem>
-                 <FormItem label="上传">
+                 <FormItem label="公钥文件">
+                     <span>{{selData.cert_path}}</span>
                      <Upload style="display: inline-block;"  action="http://kf.lyfz.net/api/v1/we_chat/WxOperation/uploadResources"
                              name="file" :data="{resources_type: 3}"
                              :max-size='20480'
@@ -108,6 +109,9 @@
                              :on-success="upfileCertFun">
                          <Button type="ghost">上传支付公钥文件</Button>
                      </Upload>
+                 </FormItem>
+                 <FormItem label="私钥文件">
+                     <span>{{selData.key_path}}</span>
                      <Upload style="display: inline-block;"  action="http://kf.lyfz.net/api/v1/we_chat/WxOperation/uploadResources"
                              name="file" :data="{resources_type: 3}"
                              :max-size='20480'
@@ -126,8 +130,6 @@
          </div>
        </Modal>
        <!-- end支付凭证弹窗 -->
-
-
 
        <Spin fix v-if="is_Loading">
            <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
@@ -149,7 +151,13 @@
         apiclient_key_pem: '',
         appid: '',
         merchant_id: '',
-        pay_key: ''
+        pay_key: '',
+        selData: {
+          merchant_id: '',
+          pay_key: '',
+          cert_path: '',
+          key_path: ''
+        }
       };
     },
     mounted () {
@@ -159,31 +167,32 @@
     methods: {
       // 上传支付证书
       upCertificateFun () {
-        if (this.merchant_id === '') {
+        if (this.selData.merchant_id === '' || this.selData.merchant_id === null) {
           this.$Message.warning('请输入商户号');
           return;
         }
-        if (this.pay_key === '') {
+        if (this.selData.pay_key === '' || this.selData.pay_key === null) {
           this.$Message.warning('请输入密匙');
           return;
         }
-        if (this.apiclient_cert_pem === '') {
+        if (this.selData.cert_path === '' || this.selData.cert_path === null) {
           this.$Message.warning('请上传支付公钥文件');
           return;
         }
-        if (this.apiclient_key_pem === '') {
+        if (this.selData.key_path === '' || this.selData.key_path === null) {
           this.$Message.warning('请上传支付私钥文件');
           return;
         }
         this.ajax.setCertificate({
           data: {
             appid: this.appid,
-            apiclient_cert_pem: this.apiclient_cert_pem,
-            apiclient_key_pem: this.apiclient_key_pem,
-            merchant_id: this.merchant_id,
-            pay_key: this.pay_key
+            apiclient_cert_pem: this.selData.cert_path,
+            apiclient_key_pem: this.selData.key_path,
+            merchant_id: this.selData.merchant_id,
+            pay_key: this.selData.pay_key
           },
           success: (res) => {
+            this.getWxAuthList();
             this.$Message.success('设置成功');
           },
           error: (res) => {
@@ -202,12 +211,12 @@
       // 支付公钥文件
       upfileCertFun (res) {
         this.$Message.success('上传成功');
-        this.apiclient_cert_pem = res.body.resources_id;
+        this.selData.cert_path = res.body.resources_id;
       },
       // 支付私钥文件
       upfileKeyFun (res) {
         this.$Message.success('上传成功');
-        this.apiclient_key_pem = res.body.resources_id;
+        this.selData.key_path = res.body.resources_id;
       },
       accredit (v) {
         if (v !== undefined) {
