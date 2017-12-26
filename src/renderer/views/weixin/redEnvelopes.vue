@@ -190,9 +190,20 @@
             </FormItem>
           </Col>
           <Col span="16" offset="1" style="line-height:30px;">
-            <FormItem label="分享链接">
-              <Input placeholder="请输入分享链接" v-model="addActivityFormItem.share_url"></Input>
-            </FormItem>
+            <Row>
+              <Col span="24">
+                <FormItem label="分享标题">
+                  <Input placeholder="请输入分享标题" v-model="addActivityFormItem.share_title"></Input>
+                </FormItem>
+              </Col>
+            </Row>
+            <Row>
+              <Col span="24">
+                <FormItem label="分享链接">
+                  <Input placeholder="请输入分享链接" v-model="addActivityFormItem.share_url"></Input>
+                </FormItem>
+              </Col>
+            </Row>
           </Col>
         </Row>
         <FormItem label="详情图">
@@ -295,6 +306,7 @@
           start_time: '',
           end_time: '',
           share_cover: '',
+          share_title: '',
           details_list: [],
           details_url_list: []
         },
@@ -525,6 +537,7 @@
             appid: this.addActivityFormItem.appid,
             is_share: this.addActivityFormItem.is_share,
             share_url: this.addActivityFormItem.share_url,
+            share_title: this.addActivityFormItem.share_title,
             share_cover: this.addActivityFormItem.share_cover,
             amount_upper_limit: this.addActivityFormItem.amount_upper_limit,
             is_open: this.addActivityFormItem.is_open,
@@ -578,6 +591,7 @@
               obj.state = item.state;
               obj.share_cover_url = item.share_cover_url;
               obj.details_url_list = item.details_url_list;
+              obj.share_title = item.share_title;
 
               this.staffData.push(obj);
             }
@@ -618,6 +632,7 @@
         this.addActivityFormItem.end_time = this.staffData[index].end_time;
         this.addActivityFormItem.share_cover = this.staffData[index].share_cover;
         this.addActivityFormItem.details_list = this.staffData[index].details_list;
+        this.addActivityFormItem.share_title = this.staffData[index].share_title;
 
         this.uploadList.splice(0, this.uploadList.length);
         this.addActivityFormItem.details_url_list.splice(0, this.addActivityFormItem.details_url_list.length);
