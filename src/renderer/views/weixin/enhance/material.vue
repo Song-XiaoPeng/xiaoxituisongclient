@@ -239,6 +239,13 @@
                 </div>
             </div>
         </Modal>
+
+
+
+        <Spin fix v-if="is_Loading">
+            <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
+            <div>请求中....</div>
+        </Spin>
     </div>
 </template>
 <script>
@@ -358,7 +365,8 @@
         modal2: false,
         modal3: false,
         cityList: [],
-        model1: ''
+        model1: '',
+        is_Loading: false
       };
     },
     mounted () {
@@ -380,7 +388,7 @@
       },
       // 获取素材列表
       getMaterial (t) {
-        this.$Spin.show();
+        this.is_Loading = true;
         this.ajax.getArticleList({
           data: {
             page: this.pageData1.page,
@@ -389,7 +397,7 @@
           },
           success: (res) => {
             let newDate = new Date();
-            this.$Spin.hide();
+            this.is_Loading = false;
             if (this.is_img_txt === 'news') {
               // 如果是图文
               res.body.data_list.forEach((k) => {
@@ -411,6 +419,7 @@
             this.pageData1.rows_num = res.body.page_data.rows_num;
           },
           error: (res) => {
+            this.is_Loading = false;
             this.$Message.warning(res.meta.message);
           }
         });
@@ -467,7 +476,6 @@
           this.model1 = res.body[0].appid;
         },
         error: (res) => {
-          this.is_Loading = false;
           this.$Message.warning(res.meta.message);
         }
       });

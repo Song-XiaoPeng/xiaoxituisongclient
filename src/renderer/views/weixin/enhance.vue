@@ -278,7 +278,6 @@
     },
     created () {
       // this.tab = this.$route.query.tab;
-      console.log(this.tab, 132132);
       // 获取appid
     }
   };

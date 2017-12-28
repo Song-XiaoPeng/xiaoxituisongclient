@@ -85,16 +85,28 @@
                         .name{
                             font-weight: bold;
                             font-size: 14px;
-                            padding: 2px 0;
-                            height: 25px;
-                            line-height: 25px;
+                            height: 22px;
+                            line-height: 22px;
                             overflow:hidden;
                             text-overflow:ellipsis;
+                            word-wrap: break-word;
+                            white-space: nowrap;
                             color: #1a1a1a;
                         }
                         .remark{
                             color: #999;
                             font-size: 12px;
+                            word-wrap: break-word;
+                            white-space: nowrap;
+                            overflow:hidden;
+                            text-overflow:ellipsis;
+                            height: 18px;
+                            line-height: 18px;
+                        }
+                        .post-due{
+                            text-align: right;
+                            font-size: 10px;
+                            color: #999;
                         }
                     }
                     .end{
@@ -134,7 +146,7 @@
        <Row>
            <Col :xs="24"  :lg="24">
              <div class="btn active">
-               访客
+               会话监控
              </div>
            </Col>
            <!--<Col :xs="24"  :lg="12">-->
@@ -143,6 +155,14 @@
               <!--</div>-->
            <!--</Col>-->
        </Row>
+       <div class="">
+           <Select v-model="user_group_id" style="" @on-change="changeGroupFun">
+               <Option v-for="item in cityList" :value="item.user_group_id" :key="item.user_group_id">{{ item.user_group_name }}</Option>
+           </Select>
+           <Select v-model="uid" style="" @on-change="changeUserFun">
+               <Option v-for="item in cityList1" :value="item.uid" :key="item.uid">{{ item.user_name }}</Option>
+           </Select>
+       </div>
        <div class="person">
            <div class="list-box">
                <div class="tle" @click="telFun('list1')" style="border-bottom: 1px #d7dde4 solid;background-color: #fff">
@@ -178,6 +198,7 @@
                        <div class="txt">
                            <div class="name">{{k.customer_wx_nickname}}</div>
                            <div class="remark">{{k.app_name || k.nick_name}}</div>
+                           <div class="post-due">已等待<span style="color: #ff3300">{{k.used_time.day}}</span> 天 <span style="color: #ff3300">{{k.used_time.hour}}</span> 时 <span style="color: #ff3300">{{k.used_time.min}}</span> 分</div>
                        </div>
                    </li>
                </ul>
@@ -197,6 +218,7 @@
                        <div class="txt">
                            <div class="name">{{k.customer_wx_nickname}}</div>
                            <div class="remark">{{k.app_name || k.nick_name}}</div>
+                           <div class="post-due">已排队<span style="color: #ff3300">{{k.used_time.day}}</span> 天 <span style="color: #ff3300">{{k.used_time.hour}}</span> 时 <span style="color: #ff3300">{{k.used_time.min}}</span> 分</div>
                        </div>
                    </li>
                </ul>
@@ -282,7 +304,19 @@
           dialogue_time_i: 0,
           dialogue_arr_i: '',
           openid: '',
-          close_explain: ''
+          close_explain: '',
+          cityList: [],
+          cityList1: [],
+          user_group_id: '',
+          uid: '',
+          uid_list: [],
+          is_right_show: {
+            common: true,
+            information: true,
+            record: true,
+            remind: false,
+            type: 'mess'
+          }
         };
       },
       mounted () {
@@ -356,18 +390,11 @@
           that.data1[i]['sum'] = 0;
           Object.assign(that.messageData, {'data': []});
           // 调用自定义事件传递数据到 聊天窗口
-          let obj = {
-            common: true,
-            information: true,
-            record: true,
-            remind: false,
-            type: 'mess'
-          };
-          that.getWxUserInfo(that.messageData, obj);
+          that.getWxUserInfo(that.messageData);
           // Bus.$emit('change', that.messageData, obj);
         },
         // 获取微信用户基本信息
-        getWxUserInfo (d, obj) {
+        getWxUserInfo (d) {
           this.is_Loading = true;
           this.ajax.getWxUserInfo({
             data: {
@@ -380,7 +407,11 @@
               Object.assign(this.messageData, {session_frequency: res.body.session_frequency});
               Object.assign(this.messageData, {invitation_frequency: res.body.invitation_frequency});
               Object.assign(this.messageData, {app_name: this.messageData.nick_name});
-              Bus.$emit('change', this.messageData, obj, res);
+              this.is_right_show.common = true;
+              this.is_right_show.information = true;
+              this.is_right_show.record = true;
+              this.is_right_show.remind = false;
+              Bus.$emit('change', this.messageData, this.is_right_show, res);
             },
             error: (res) => {
               this.is_Loading = false;
@@ -654,11 +685,11 @@
         //
         //
         //
-        // 会话列表数据的 增删
+        // 会话列表数据的 增删 1123
         data1Handle (d) {
           if (this.data1.length === 0) {
             d.forEach((k) => {
-              k['is_class'] = false;
+              Object.assign(k, {is_class: false});
             });
             d[0].is_class = true;
             this.data1 = d;
@@ -671,9 +702,10 @@
                 k['is_class'] = false;
               }
             });
+            this.data1 = d;
           }
         },
-        // 获取会话列表数据的定时器
+        // 获取会话列表数据的定时器 12313sddw
         timerFun () {
           this.dialogue_time_i = setInterval(() => {
             this.getDialogueListFun();
@@ -682,10 +714,24 @@
         // 获取会话列表
         getDialogueListFun () {
           this.ajax.getMonitorSessionList({
-            data: {},
+            data: {
+              uid_list: this.uid_list
+            },
             success: (res) => {
               // this.conversationDeWeightFun(res.body.conversation_session);
-              this.data1Handle(res.body.conversation_session);
+              if (res.body.conversation_session.length === 0) {
+                this.data1.length = 0;
+                this.messageData = {};
+                this.is_right_show.common = false;
+                this.is_right_show.information = false;
+                this.is_right_show.record = false;
+                this.is_right_show.remind = false;
+                Bus.$emit('change', this.messageData, this.is_right_show);
+              } else {
+                this.data1Handle(res.body.conversation_session);
+              }
+              this.data2.length = 0;
+              this.data3.length = 0;
               this.data2 = res.body.pending_access_session;
               this.data3 = res.body.line_up_session;
             },
@@ -693,15 +739,85 @@
               this.$Message.warning(res.meta.message);
             }
           });
+        },
+        // 获取我的下属账号
+        getSubordinateList () {
+          this.ajax.getSubordinateList({
+            data: {},
+            success: (res) => {
+              this.user_group_id = res.body[0].user_group_id;
+              this.cityList = res.body;
+            },
+            error: (res) => {
+              this.$Message.warning(res.meta.message);
+            }
+          });
+        },
+        // 部门分组 dwa321d32
+        changeGroupFun (v) {
+          this.uid_list = [];
+          this.cityList.forEach((k) => {
+            if (k.user_group_id === this.user_group_id) {
+              if (k.uid_list[0]) {
+                if (k.uid_list[0].uid !== '-1') {
+                  k.uid_list.forEach((e) => {
+                    this.uid_list.push(e.uid);
+                  });
+                  k.uid_list.unshift({
+                    uid: '-1',
+                    user_name: '全部',
+                    user_group_id: '',
+                    phone_no: ''
+                  });
+                } else if (k.uid_list[0].uid === '-1') {
+                  k.uid_list.forEach((e) => {
+                    if (e.uid !== '-1') {
+                      this.uid_list.push(e.uid);
+                    }
+                  });
+                }
+              }
+              this.cityList1 = k.uid_list;
+              clearInterval(this.dialogue_time_i);
+              this.getDialogueListFun();
+              this.timerFun();
+            }
+          });
+        },
+        // 部门分组 -> 职位
+        changeUserFun (v) {
+          this.uid_list = [];
+          if (v === '-1') {
+            this.cityList1.forEach((k) => {
+              if (k.uid !== '-1') {
+                this.uid_list.push(k.uid);
+              }
+            });
+          } else if (v === undefined) {
+            this.uid_list.push();
+          } else {
+            this.uid_list.push(v);
+          }
+          this.getDialogueListFun();
+          clearInterval(this.dialogue_time_i);
+          this.timerFun();
+        }
+      },
+      watch: {
+        uid: function (v) {
         }
       },
       destroyed (s) {
         clearInterval(this.dialogue_time_i);
       },
+      beforeRouteLeave (to, from, next) {
+        window.removeEventListener('scroll', this.scrollFun, false);
+        clearInterval(this.timer_i);
+        next();
+      },
       created () {
         // Bus.$off();
-        this.getDialogueListFun();
-        this.timerFun();
+        this.getSubordinateList();
         // this.clueData = this.$route.query;
         // 调用本地数据库 获取储存的数据
         // Notification.requestPermission();

@@ -174,12 +174,6 @@
     },
     computed: {
     },
-    beforeRouteUpdate (to, from, next) {
-      // 根据当前路由选择确定菜单位置
-      this.routeSwitchMenu(to.name);
-
-      next();
-    },
     mounted () {
       if (this.userInfo.user_type === '3' || this.userInfo.user_type === 3) {
       } else {
@@ -523,6 +517,14 @@
     },
     destroyed (s) {
       Bus.$off();
+    },
+    beforeRouteUpdate (to, from, next) {
+      clearTimeout(window.timer_i);
+      window.timer_i = '';
+      // 根据当前路由选择确定菜单位置
+      this.routeSwitchMenu(to.name);
+
+      next();
     },
     created () {
       this.userInfo = JSON.parse(window.localStorage.getItem('userInfo'));

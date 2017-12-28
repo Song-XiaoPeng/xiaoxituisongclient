@@ -33,7 +33,7 @@
             </Button>
         </div>
         <div style="padding: 10px">
-            <Table border  :columns="columns7" :data="data6"></Table>
+            <Table border  :columns="columns7" :loading="is_loading" :data="data6"></Table>
         </div>
 
     </div>
@@ -60,7 +60,8 @@
         ],
         cityList: [],
         data6: [],
-        model1: ''
+        model1: '',
+        is_loading: false
       };
     },
     mounted () {
@@ -79,14 +80,17 @@
       },
       // 获取自定义菜单
       getMeunListFun () {
+        this.is_loading = true;
         this.ajax.getMenuList({
           data: {
             appid: this.model1
           },
           success: (res) => {
+            this.is_loading = false;
             this.data6 = res.body;
           },
           error: (res) => {
+            this.is_loading = false;
             this.$Message.warning(res.meta.message);
           }
         });

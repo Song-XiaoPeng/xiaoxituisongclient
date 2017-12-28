@@ -558,11 +558,11 @@
 
         <!-- 截图窗口看窗口 -->
         <Modal v-model="popup6" title="图片" width="750" ok-text="发送" @on-ok="pasteUpImgFun">
-            <div class="details-popup" style="max-height: 700px; overflow: auto;">
-                <img :src=pasteImgUrl alt="">
+            <div class="details-popup" style="max-height: 400px; overflow: auto;">
+                <img :src=pasteImgUrl alt="" style="height: 100%;width: 100%;">
             </div>
         </Modal>
-        <!-- end截图窗口看窗口 -->
+        <!-- end截图窗口看窗口 1231237455-->
 
 
         <!-- 强制会话弹窗 -->
@@ -831,7 +831,7 @@
         popup8: false,
         strongData: null,
         is_sub: true,
-        timer_i: 0,
+        timer_i: [],
         childIsShowObj: null,
         userData: '',
         scroll_Top: 0,
@@ -1461,7 +1461,7 @@
         xhr.setRequestHeader('token', this.userInfo.token);
         xhr.send(fd);
       },
-      // 获取当前选择的客户聊天信息
+      // 获取当前选择的客户聊天信息 dwa1d2
       getChatFun () {
         this.ajax.getMonitorMessage({
           data: {
@@ -1515,8 +1515,10 @@
       },
       // 定时器 21dwa
       timerFun () {
-        clearInterval(this.timer_i);
-        this.timer_i = setInterval(() => {
+        if (window.timer_i) {
+          clearTimeout(window.timer_i);
+        }
+        window.timer_i = setTimeout(() => {
           let div = this.$refs.win;
           let div1 = this.$refs.win1;
           let h = div1.offsetHeight; // 内容高度
@@ -1540,11 +1542,8 @@
               }
             }
           }
+          this.timerFun();
         }, 3000);
-      },
-      // 清除定时器
-      clearTimer () {
-        clearInterval(this.timer_i);
       },
       // 滚动条方法 kh
       scrollFun () {
@@ -1613,36 +1612,47 @@
       }
     },
     destroyed (s) {
+      if (window.timer_i) {
+        clearTimeout(window.timer_i);
+      }
+      window.removeEventListener('scroll', this.scrollFun, false);
       // Bus.$off();
-      clearInterval(this.timer_i);
       // let div = this.$refs.win;
       // div.removeEventListener('scroll', this.scrollFun, false);
     },
     beforeRouteLeave (to, from, next) {
-      window.removeEventListener('scroll', this.scrollFun, false);
-      clearInterval(this.timer_i);
       next();
     },
     created () {
       // Bus.$off();
+      if (window.timer_i) {
+        clearTimeout(window.timer_i);
+      }
       this.userInfo = JSON.parse(localStorage.getItem('userInfo'));
       // 动态获取传递过来的 会话客户数据
       Bus.$on('change', (k, d, user) => {
-        clearInterval(this.timer_i);
-        this.childIsShowObj = d;
-        this.userData = user;
-        this.clientData = k;
-        this.is_Loading = true;
-        this.is_scorH = 0;
-        this.getChatFun();
-        this.timerFun();
+        clearTimeout(window.timer_i);
+        if (k.session_id) {
+          this.childIsShowObj = d;
+          this.userData = user;
+          this.clientData = k;
+          this.is_Loading = true;
+          this.is_scorH = 0;
+          this.getChatFun();
+          this.timerFun();
+        } else {
+          this.elmetArr = [];
+          this.clientData = {};
+        }
       });
       // 动态获取快捷回复内容 事件
       Bus.$on('ShortcutTxtFun', (k) => {
+        clearTimeout(window.timer_i);
         this.txtra = k.quick_reply_text;
       });
       // 快捷 发送 回复内容 事件
       Bus.$on('promptlyShortcutTxtFun', (k) => {
+        clearTimeout(window.timer_i);
         this.txtra = k.quick_reply_text;
         this.replyType = 1;
         this.subFun();

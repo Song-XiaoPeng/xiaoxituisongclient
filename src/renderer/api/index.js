@@ -1562,7 +1562,7 @@ ajax.setSessionRule = (obj) => {
 
 // 监控 --- 》 获取会话人员列表
 ajax.getMonitorSessionList = (obj) => {
-  util.ajax.get('/api/v1/message/Interaction/getMonitorSessionList', obj.data).then(function (response) {
+  util.ajax.post('/api/v1/message/Interaction/getMonitorSessionList', obj.data).then(function (response) {
     if (response.data) {
       if (response.data.meta.code === 200) {
         obj.success(response.data);
@@ -1651,6 +1651,177 @@ ajax.setCustomerResourcesRule = (obj) => {
 // 设置支付证书
 ajax.setCertificate = (obj) => {
   util.ajax.post('/api/v1/we_chat/WxOperation/setCertificate', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 添加部门
+ajax.addDepartment = (obj) => {
+  util.ajax.post('/api/v1/user/Framework/addDepartment', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 获取部门列表
+ajax.getDepartmentList = (obj) => {
+  util.ajax.get('/api/v1/user/Framework/getDepartmentList', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 删除部门
+ajax.delDepartment = (obj) => {
+  util.ajax.post('/api/v1/user/Framework/delDepartment', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 添加岗位
+ajax.addPosition = (obj) => {
+  util.ajax.post('/api/v1/user/Framework/addPosition', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 获取岗位列表
+ajax.getPositionList = (obj) => {
+  util.ajax.post('/api/v1/user/Framework/getPositionList', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 删除岗位
+ajax.delPosition = (obj) => {
+  util.ajax.post('/api/v1/user/Framework/delPosition', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 添加人员
+ajax.addUser = (obj) => {
+  util.ajax.post('/api/v1/user/Framework/addUser', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 获取人员列表
+ajax.getTissueUserList = (obj) => {
+  util.ajax.post('/api/v1/user/Framework/getUserList', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 获取组织结构图
+ajax.getFrameworkData = (obj) => {
+  util.ajax.get('/api/v1/user/Framework/getFrameworkData', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+
+// 获取线索数据统计
+ajax.getClueStatisticData = (obj) => {
+  util.ajax.get('/api/v1/customer/CustomerOperation/getClueStatisticData', obj.data).then(function (response) {
     if (response.data) {
       if (response.data.meta.code === 200) {
         obj.success(response.data);

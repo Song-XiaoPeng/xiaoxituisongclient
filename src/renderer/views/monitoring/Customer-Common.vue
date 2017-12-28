@@ -850,9 +850,11 @@
         });
         Bus.$on('change', (k, o) => {
           this.is_CRM = o ? o.is_CRM : false;
-          this.clientData = k;
-          this.getClientFun();
-          this.getWxUserInfo();
+          if (k.session_id) {
+            this.clientData = k;
+            this.getClientFun();
+            this.getWxUserInfo();
+          }
         });
       }
     };

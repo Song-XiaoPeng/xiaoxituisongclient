@@ -118,6 +118,10 @@
               <Page :total="pageData.count" :page-size="pageData.rows_num" @on-change="pageFun"></Page>
           </div>
        </div>
+
+
+
+
        <Spin fix v-if="is_Loading">
            <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
            <div>请求中....</div>
@@ -217,7 +221,6 @@
           success: () => {
             this.is_Loading = false;
             this.$Message.success('操作成功');
-            console.log(this.data6);
             this.data6.splice(i, 1);
           },
           error: (res) => {

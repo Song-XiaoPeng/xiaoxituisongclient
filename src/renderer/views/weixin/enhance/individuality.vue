@@ -60,7 +60,7 @@
             </Button>
         </div>
         <div class="tab">
-            <Table border :columns="columns7" :data="data7"></Table>
+            <Table border :columns="columns7" :loading="is_loading" :data="data7"></Table>
         </div>
     </div>
 </template>
@@ -127,7 +127,8 @@
           }
         ],
         model1: '',
-        cityList: []
+        cityList: [],
+        is_loading: false
       };
     },
     mounted () {
@@ -136,7 +137,6 @@
     },
     methods: {
       addMenuFun (data) {
-        console.log(data);
         this.$router.push({
           name: 'addMenu',
           query: {
@@ -152,16 +152,19 @@
       },
       watch: {
       },
-      // 获取列表 12123
+      // 获取列表
       getIndividualiMeunFun () {
+        this.is_loading = true;
         this.ajax.getWxIndividualizationMenu({
           data: {
             appid: this.model1
           },
           success: (res) => {
+            this.is_loading = false;
             this.data7 = res.body || [];
           },
           error: (res) => {
+            this.is_loading = false;
             this.$Message.warning(res.meta.message);
           }
         });

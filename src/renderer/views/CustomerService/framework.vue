@@ -33,6 +33,22 @@
       color: #2db7f5;
     }
   }
+  .portrait{
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    box-sizing: border-box;
+    border: 1px #eaeaea solid;
+    vertical-align: middle;
+    img{
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+      object-position: 100% 100%;
+    }
+  }
 </style>
 <template>
   <div id="index">
@@ -48,16 +64,16 @@
         <span v-if="tabVal == 'name1'">组织架构</span>
         <span v-if="tabVal == 'name2'">用户管理</span>
         <span v-if="tabVal == 'name3'">已停止用户</span>
-        <Button class="f-r" style="margin: 15px" @click="addDepartment = true">添加部门</Button>
-        <Button class="f-r" style="margin: 15px" @click="addPosition = true">添加岗位</Button>
-        <Button class="f-r" style="margin: 15px" @click="addUser = true">添加用户</Button>
+        <Button v-if="tabVal == 'name2' || tabVal == 'name3'" class="f-r" style="margin: 15px" @click="popup1 = true">部门</Button>
+        <Button v-if="tabVal == 'name2' || tabVal == 'name3'" class="f-r" style="margin: 15px" @click="popup3 = true">岗位</Button>
+        <Button v-if="tabVal == 'name2' || tabVal == 'name3'" class="f-r" style="margin: 15px" @click="popup6 = true">添加用户</Button>
       </div>
 
 
 
 
 
-
+      <!-- 组织架构list -->
       <div v-if="tabVal == 'name1'" style="padding: 15px;">
         <div>
            <span>群发类别：</span> <Button type="primary">部门岗位图</Button>  <Button style="margin-left: 10px">上下级关系图</Button>
@@ -66,172 +82,245 @@
           <Tree :data="frameworkData"></Tree>
         </div>
       </div>
+      <!-- 组织架构list  -->
 
 
-
-
-
-
+      <!-- 用户管理 -->
       <div v-if="tabVal == 'name2'" style="padding: 15px;">
         <Row>
           <Col span="24">
           <Form :label-width="80">
             <Row>
               <Col span="6">
-              <FormItem label="上级部门">
-                <Select>
-                  <Option value="beijing">财务部</Option>
-                  <Option value="shanghai">客服部</Option>
-                  <Option value="shenzhen">售后部</Option>
+              <FormItem label="部门">
+                <Select class="f-r" v-model="branch_id" @on-change="selBranchFun">
+                  <Option  :value="k.user_group_id" v-for="(k, i) in data1" :key="i">{{k.user_group_name}}</Option>
                 </Select>
               </FormItem>
               </Col>
               <Col span="6">
               <FormItem label="关键字">
-                <Input placeholder="请输入关键字"></Input>
+                <Input placeholder="请输入关键字" v-model="seekTxt"></Input>
               </FormItem>
               </Col>
               <Col span="2" style="margin-left:20px; line-height:32px;">
-              <Button type="primary">搜索</Button>
+                <Button type="primary" @click="getUserListFun(pageData1.page = 1)">搜索</Button>
               </Col>
             </Row>
           </Form>
           </Col>
         </Row>
-
-        <Table border :columns="staffColumns" :data="staffData" stripe></Table>
-
+        <Table border :columns="staffColumns" :loading="is_Loading" :data="staffData" stripe></Table>
         <div class="page-centent">
-          <Page :total="100"></Page>
+          <Page :total="pageData1.count" :page-size="pageData1.rows_num"  @on-change="pageFun1"></Page>
         </div>
       </div>
+      <!-- 用户管理 -->
+
+
+
+     <!-- 已停止用户 -->
       <div v-if="tabVal == 'name3'" style="padding: 15px;">
         <Row>
           <Col span="24">
           <Form :label-width="80">
             <Row>
               <Col span="6">
-              <FormItem label="上级部门">
-                <Select>
-                  <Option value="beijing">财务部</Option>
-                  <Option value="shanghai">客服部</Option>
-                  <Option value="shenzhen">售后部</Option>
+              <FormItem label="部门">
+                <Select class="f-r" style="width: 200px" v-model="branch_id" @on-change="selBranchFun">
+                  <Option  :value="k.user_group_id" v-for="(k, i) in data1" :key="i">{{k.user_group_name}}</Option>
                 </Select>
               </FormItem>
               </Col>
               <Col span="6">
               <FormItem label="关键字">
-                <Input placeholder="请输入关键字"></Input>
+                <Input placeholder="请输入关键字" v-model="seekTxt"></Input>
               </FormItem>
               </Col>
               <Col span="2" style="margin-left:20px; line-height:32px;">
-              <Button type="primary">搜索</Button>
+              <Button type="primary" @click="getUserListFun(pageData1.page = 1)">搜索</Button>
               </Col>
             </Row>
           </Form>
           </Col>
         </Row>
-
-        <Table border :columns="staffColumns" :data="staffQuitData" stripe></Table>
-
+        <Table border :columns="staffColumns1" :loading="is_Loading" :data="staffQuitData" stripe></Table>
         <div class="page-centent">
-          <Page :total="4"></Page>
+          <Page :total="pageData1.count" :page-size="pageData1.rows_num"  @on-change="pageFun1"></Page>
         </div>
       </div>
+      <!-- 已停止用户 -->
+
+
+
+
     </Card>
 
 
 
-    <Modal v-model="addDepartment" title="添加部门">
+
+
+    <!-- 部门列表弹窗 -->
+    <Modal  v-model="popup1" title="部门列表">
+       <div class="" style="max-height: 400px;overflow: auto">
+          <div class="" style="padding: 5px">
+            <Button zise="small" style="" @click="popup2 = true">添加部门</Button>
+          </div>
+         <div>
+           <Table border :columns="columns1" :data="data1"></Table>
+         </div>
+       </div>
+    </Modal>
+    <!--end部门列表弹窗 -->
+
+
+
+    <!-- 添加部门弹窗 -->
+    <Modal v-model="popup2" title="添加部门" @on-ok="addBranchFun">
       <Form :label-width="80">
         <FormItem label="部门名称">
-          <Input placeholder="请输入部门名称"></Input>
+          <Input v-model="branchData.department_name" placeholder="请输入部门名称"></Input>
         </FormItem>
         <FormItem label="上级部门">
-          <Select>
-            <Option value="beijing">财务部</Option>
-            <Option value="shanghai">客服部</Option>
-            <Option value="shenzhen">售后部</Option>
+          <Select v-model="branchData.parent_id">
+            <Option :value="k.user_group_id"  v-for="(k, i) in data1" :key="i">{{k.user_group_name}}</Option>
           </Select>
         </FormItem>
         <FormItem label="部门描述">
-          <Input placeholder="请输入部门描述" type="textarea" :rows="4"></Input>
+          <Input placeholder="请输入部门描述" v-model="branchData.desc" type="textarea" :rows="4"></Input>
         </FormItem>
       </Form>
     </Modal>
+    <!-- end添加部门弹窗 -->
 
-    <Modal v-model="addPosition" title="添加岗位">
+
+
+    <!-- 岗位列表 -->
+    <Modal  v-model="popup3" title="部门列表">
+      <div class="" style="max-height: 400px;overflow: auto">
+        <div class="" style="padding: 5px">
+          <Button zise="small" style="" @click="popup4 = true">添加岗位</Button>
+          <Select class="f-r" style="width: 200px" v-model="branch_id2">
+            <Option  :value="k.user_group_id" v-for="(k, i) in data1" :key="i">{{k.user_group_name}}</Option>
+          </Select>
+        </div>
+        <div>
+          <Table border :columns="columns2" :loading="is_Loading" :data="data2"></Table>
+        </div>
+      </div>
+    </Modal>
+    <!-- 岗位列表 -->
+
+
+    <!-- 添加岗位列表 -->
+    <Modal v-model="popup4" title="添加岗位" @on-ok="addPostFun">
       <Form :label-width="80">
         <FormItem label="岗位名">
-          <Input placeholder="请输入岗位名	"></Input>
+          <Input v-model="postObj.position_name" placeholder="请输入岗位名	"></Input>
         </FormItem>
-        <FormItem label="所属部门">
-          <Select>
-            <Option value="beijing">财务部</Option>
-            <Option value="shanghai">客服部</Option>
-            <Option value="shenzhen">售后部</Option>
-          </Select>
-        </FormItem>
-        <FormItem label="上级部门">
-          <Select>
-            <Option value="beijing">财务部</Option>
-            <Option value="shanghai">客服部</Option>
-            <Option value="shenzhen">售后部</Option>
+        <FormItem label="部门">
+          <Select v-model="postObj.user_group_id">
+            <Option :value="k.user_group_id" v-for="(k, i) in data1" :key="i">{{k.user_group_name}}</Option>
           </Select>
         </FormItem>
         <FormItem label="岗位描述">
-          <Input placeholder="请输入岗位描述	" type="textarea" :rows="4"></Input>
+          <Input v-model="postObj.describe" placeholder="请输入岗位描述	" type="textarea" :rows="4"></Input>
         </FormItem>
       </Form>
     </Modal>
+    <!-- end添加岗位列表 -->
 
-    <Modal v-model="addUser" title="添加用户">
+
+
+    <!-- 人员列表 -->
+    <Modal  v-model="popup5" title="部门列表" width="800">
+      <div class="popupH" >
+        <div class="" style="padding: 5px">
+          <Button zise="small" style="" @click="popup6 = true">添加人员</Button>
+          <Select class="f-r" style="width: 200px" v-model="branch_id1">
+            <Option  :value="k.user_group_id" v-for="(k, i) in data1" :key="i">{{k.user_group_name}}</Option>
+          </Select>
+        </div>
+        <div>
+          <Table border :columns="columns3" :data="data3"></Table>
+        </div>
+        <div style="text-align: center;padding: 10px">
+          <Page :total="pageData1.count" :page-size="pageData1.rows_num"  @on-change="pageFun1"></Page>
+        </div>
+      </div>
+    </Modal>
+    <!-- end人员列表 -->
+
+
+    <!-- 添加人员列表 1213-->
+    <Modal v-model="popup6" title="添加用户" @on-ok="addUserFun">
       <Form :label-width="80">
         <FormItem label="姓名">
-          <Input placeholder="请输入姓名	"></Input>
-        </FormItem>
-        <FormItem label="昵称">
-          <Input placeholder="请输入昵称	"></Input>
+          <Input v-model="userObj.user_name" placeholder="请输入姓名"></Input>
         </FormItem>
         <FormItem label="用户账号">
-          <Input placeholder="请输入用户账号	"></Input>
+          <Input v-model="userObj.phone_no" placeholder="请输入用户账号"></Input>
         </FormItem>
         <FormItem label="登录密码">
-          <Input placeholder="请输入登录密码	"></Input>
+          <Input v-model="pass" type="password" placeholder="请输入登录密码" @on-change="passFun" @on-focus="inputKeyFun"></Input>
         </FormItem>
         <FormItem label="所属部门">
-          <Select>
-            <Option value="beijing">财务部</Option>
-            <Option value="shanghai">客服部</Option>
-            <Option value="shenzhen">售后部</Option>
+          <Select  v-model="userObj.user_group_id">
+            <Option  :value="k.user_group_id" v-for="(k, i) in data1" :key="i">{{k.user_group_name}}</Option>
           </Select>
         </FormItem>
-        <FormItem label="所属职责">
-          <Select>
-            <Option value="beijing">客服</Option>
-            <Option value="shanghai">员工</Option>
+        <FormItem label="所属职位">
+          <Select   v-model="userObj.position_id">
+            <Option  :value="k.position_id" v-for="(k, i) in data2" :key="i">{{k.position_name}}</Option>
           </Select>
         </FormItem>
         <FormItem label="头像上传">
-          <Button type="primary"><Icon type="ios-cloud-upload-outline"></Icon> 选择头像</Button>
+          <div class="portrait">
+            <img :src="portraitObj.url" alt="">
+          </div>
+          <Upload style="display: inline-block;"  action="http://kf.lyfz.net/api/v1/we_chat/WxOperation/uploadResources"
+                  name="file" :data="{resources_type: 1}"
+                  :max-size='1024'
+                  :format="['jpg','jpeg','png','gif']"
+                  :show-upload-list="false"
+                  :before-upload="handleBeforeUpload"
+                  :headers="{token: userInfo.token}"
+                  :on-progress="upLodingFun"
+                  :on-format-error="handleFormatError"
+                  :on-exceeded-size="handleMaxSize"
+                  :on-success="upImgFun">
+            <Button type="primary"><Icon type="ios-cloud-upload-outline"></Icon> 选择头像</Button>
+          </Upload>
         </FormItem>
         <FormItem label="是否客服">
-          <RadioGroup v-model="addUserFormItem.isCustomerService">
+          <RadioGroup v-model="userObj.is_customer_service">
             <Radio label="1">是</Radio>
             <Radio label="-1">否</Radio>
           </RadioGroup>
         </FormItem>
         <FormItem label="用户性别">
-          <RadioGroup v-model="addUserFormItem.sex">
+          <RadioGroup v-model="userObj.sex">
             <Radio label="1">男</Radio>
             <Radio label="-1">女</Radio>
           </RadioGroup>
         </FormItem>
       </Form>
     </Modal>
+    <!-- end添加人员列表 -->
+
+
+
+
+
+    <!--<Spin fix v-if="is_Loading">-->
+      <!--<Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>-->
+      <!--<div>请求中....</div>-->
+    <!--</Spin>-->
+
   </div>
 </template>
 <script>
+  import md5 from 'js-md5';
   export default {
     data () {
       return {
@@ -241,66 +330,57 @@
         },
         tabsVal: '1',
         addUser: false,
-        addDepartment: false,
+        popup2: false,
+        popup3: false,
+        popup4: false,
+        popup5: false,
+        popup6: false,
         addPosition: false,
         staffColumns: [
           {
             title: '姓名',
-            key: 'name',
-            width: 80,
-            align: 'center'
-          },
-          {
-            title: '昵称',
-            key: 'nickname',
-            width: 90,
+            key: 'user_name',
             align: 'center'
           },
           {
             title: '用户账号',
             key: 'phone_no',
-            width: 120,
             align: 'center'
           },
           {
             title: '是否客服',
-            key: 'is_customer_service',
-            width: 90,
-            align: 'center'
+            align: 'center',
+            render: (h, p) => {
+              return h(`span`, p.row.is_customer_service === 1 ? `是` : `否`);
+            }
           },
           {
             title: '部门',
-            key: 'department',
-            width: 90,
+            key: 'user_group_name',
             align: 'center'
           },
           {
-            title: '职责',
-            key: 'duty',
-            width: 90,
+            title: '职位',
+            key: 'position_name',
             align: 'center'
           },
           {
             title: '性别',
-            key: 'sex',
-            width: 70,
-            align: 'center'
-          },
-          {
-            title: '地址',
-            key: 'address',
-            align: 'center'
+            align: 'center',
+            render: (h, p) => {
+              return h(`span`, p.row.sex === 1 ? `男` : p.row.sex === 2 ? `女` : `未知`);
+            }
           },
           {
             title: '在职状态',
-            key: 'state',
-            width: 90,
+            render: (h, p) => {
+              return h(`span`, `在职`);
+            },
             align: 'center'
           },
           {
             title: '操作',
             key: 'handle',
-            width: 90,
             align: 'center',
             render: (h, params) => {
               return h('div', [
@@ -314,339 +394,677 @@
                   },
                   on: {
                     click: () => {
-                      this.receivables(params.index);
+                      this.setDimissionFun(params.row, '-1');
                     }
                   }
-                }, '编辑')
+                }, '设为离职')
+              ]);
+            }
+          },
+          {
+            title: '操作',
+            align: 'center',
+            render: (h, params) => {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'primary',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.userObj.user_name = params.row.user_name;
+                      this.userObj.phone_no = params.row.phone_no;
+                      this.userObj.password = params.row.password;
+                      this.pass = params.row.password;
+                      this.userObj.user_group_id = params.row.user_group_id;
+                      this.userObj.position_id = params.row.position_id === -1 ? '' : params.row.position_id;
+                      this.userObj.portrait = params.row.portrait;
+                      this.userObj.is_customer_service = params.row.is_customer_service;
+                      this.userObj.sex = params.row.sex;
+                      this.userObj.uid = params.row.uid;
+                      this.portraitObj.url = params.row.avatar_url;
+                      this.is_pass = false;
+                      this.popup6 = true;
+                    }
+                  }
+                }, '修改')
               ]);
             }
           }
         ],
-        staffData: [
+        staffColumns1: [
           {
-            'name': '张三',
-            'nickname': '张望的人',
-            'phone_no': '18316313321',
-            'is_customer_service': '是',
-            'department': '客服部',
-            'duty': '客服',
-            'sex': '男',
-            'address': '广东省惠州市惠城区',
-            'state': '在职'
+            title: '姓名',
+            key: 'user_name',
+            align: 'center'
           },
           {
-            'name': '黄飞',
-            'nickname': '飞哥',
-            'phone_no': '18924392999',
-            'is_customer_service': '是',
-            'department': '客服部',
-            'duty': '客服',
-            'sex': '男',
-            'address': '广东省惠州市惠城区',
-            'state': '在职'
+            title: '用户账号',
+            key: 'phone_no',
+            align: 'center'
           },
           {
-            'name': '张力',
-            'nickname': '亮亮',
-            'phone_no': '13692711899',
-            'is_customer_service': '是',
-            'department': '客服部',
-            'duty': '客服',
-            'sex': '男',
-            'address': '广东省惠州市惠城区',
-            'state': '在职'
+            title: '是否客服',
+            align: 'center',
+            render: (h, p) => {
+              return h(`span`, p.row.is_customer_service === 1 ? `是` : `否`);
+            }
           },
           {
-            'name': '刘晗',
-            'nickname': '叶子',
-            'phone_no': '13249318006',
-            'is_customer_service': '是',
-            'department': '客服部',
-            'duty': '客服',
-            'sex': '男',
-            'address': '广东省惠州市惠城区',
-            'state': '在职'
+            title: '部门',
+            key: 'user_group_name',
+            align: 'center'
           },
           {
-            'name': '张丽',
-            'nickname': 'nba!',
-            'phone_no': '13502439257',
-            'is_customer_service': '是',
-            'department': '客服部',
-            'duty': '客服',
-            'sex': '男',
-            'address': '广东省惠州市惠城区',
-            'state': '在职'
+            title: '职位',
+            key: 'position_name',
+            align: 'center'
           },
           {
-            'name': '李豪',
-            'nickname': '涛涛',
-            'phone_no': '13502789217',
-            'is_customer_service': '是',
-            'department': '客服部',
-            'duty': '客服',
-            'sex': '男',
-            'address': '广东省惠州市惠城区',
-            'state': '在职'
+            title: '性别',
+            align: 'center',
+            render: (h, p) => {
+              return h(`span`, p.row.sex === 1 ? `男` : p.row.sex === 2 ? `女` : `未知`);
+            }
           },
           {
-            'name': '梁坚全',
-            'nickname': '小熊',
-            'phone_no': '13122431115',
-            'is_customer_service': '是',
-            'department': '客服部',
-            'duty': '客服',
-            'sex': '男',
-            'address': '广东省惠州市惠城区',
-            'state': '在职'
+            title: '在职状态',
+            render: (h, p) => {
+              return h(`span`, `离职`);
+            },
+            align: 'center'
           },
           {
-            'name': '孙旭诚',
-            'nickname': '小熊',
-            'phone_no': '13122431235',
-            'is_customer_service': '是',
-            'department': '客服部',
-            'duty': '客服',
-            'sex': '男',
-            'address': '广东省惠州市惠城区',
-            'state': '在职'
-          },
-          {
-            'name': '林楚梵',
-            'nickname': '小熊',
-            'phone_no': '13122431432',
-            'is_customer_service': '是',
-            'department': '客服部',
-            'duty': '客服',
-            'sex': '男',
-            'address': '广东省惠州市惠城区',
-            'state': '在职'
-          },
-          {
-            'name': '王国维',
-            'nickname': '小熊',
-            'phone_no': '13122431331',
-            'is_customer_service': '是',
-            'department': '客服部',
-            'duty': '客服',
-            'sex': '男',
-            'address': '广东省惠州市惠城区',
-            'state': '在职'
-          },
-          {
-            'name': '张昊',
-            'nickname': '小熊',
-            'phone_no': '13122431231',
-            'is_customer_service': '是',
-            'department': '客服部',
-            'duty': '客服',
-            'sex': '男',
-            'address': '广东省惠州市惠城区',
-            'state': '在职'
-          }
-        ],
-        staffQuitData: [
-          {
-            'name': '梁坚全',
-            'nickname': '小熊',
-            'phone_no': '13122431115',
-            'is_customer_service': '是',
-            'department': '客服部',
-            'duty': '客服',
-            'sex': '男',
-            'address': '广东省惠州市惠城区',
-            'state': '离职'
-          },
-          {
-            'name': '孙旭诚',
-            'nickname': '小熊',
-            'phone_no': '13122431235',
-            'is_customer_service': '是',
-            'department': '客服部',
-            'duty': '客服',
-            'sex': '男',
-            'address': '广东省惠州市惠城区',
-            'state': '离职'
-          },
-          {
-            'name': '林楚梵',
-            'nickname': '小熊',
-            'phone_no': '13122431432',
-            'is_customer_service': '是',
-            'department': '客服部',
-            'duty': '客服',
-            'sex': '男',
-            'address': '广东省惠州市惠城区',
-            'state': '离职'
-          },
-          {
-            'name': '王国维',
-            'nickname': '小熊',
-            'phone_no': '13122431331',
-            'is_customer_service': '是',
-            'department': '客服部',
-            'duty': '客服',
-            'sex': '男',
-            'address': '广东省惠州市惠城区',
-            'state': '离职'
-          },
-          {
-            'name': '张昊',
-            'nickname': '小熊',
-            'phone_no': '13122431231',
-            'is_customer_service': '是',
-            'department': '客服部',
-            'duty': '客服',
-            'sex': '男',
-            'address': '广东省惠州市惠城区',
-            'state': '离职'
-          }
-        ],
-        frameworkData: [
-          {
-            title: 'CEO行政部 (钟立新、钟北清、李玉平)',
-            expand: true,
-            render: (h, { root, node, data }) => {
-              return h('span', [
-                h('Icon', {
+            title: '操作',
+            key: 'handle',
+            align: 'center',
+            render: (h, params) => {
+              return h('div', [
+                h('Button', {
                   props: {
-                    type: 'person'
+                    type: 'primary',
+                    size: 'small'
                   },
                   style: {
-                    marginRight: '8px',
-                    color: '#ffd700',
-                    fontSize: '14px'
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.setDimissionFun(params.row, '1');
+                    }
                   }
-                }),
-                h('span', data.title)
+                }, '设为在职')
               ]);
-            },
-            children: [
-              {
-                title: '财务部 （钟岁霞）',
-                expand: true,
-                render: (h, { root, node, data }) => {
-                  return h('span', [
-                    h('Icon', {
-                      props: {
-                        type: 'person'
-                      },
-                      style: {
-                        marginRight: '8px',
-                        color: '#993333',
-                        fontSize: '14px'
-                      }
-                    }),
-                    h('span', data.title)
-                  ]);
-                },
-                children: [
-                  {
-                    title: '开发部 (王剑锋)',
-                    expand: true,
-                    render: (h, { root, node, data }) => {
-                      return h('span', [
-                        h('Icon', {
-                          props: {
-                            type: 'person'
-                          },
-                          style: {
-                            marginRight: '8px',
-                            color: '#0066cc',
-                            fontSize: '14px'
-                          }
-                        }),
-                        h('span', data.title)
-                      ]);
-                    },
-                    children: [
-                      {
-                        title: '程序员 (黄飞、刘超)'
-                      },
-                      {
-                        title: '产品 (刘明)'
-                      },
-                      {
-                        title: '督导 (刘明)'
-                      },
-                      {
-                        title: '程序员 (王涛、张力、刘晗、徐凯、施海月、杨勇、顾航、朱启刚、王奔奔、贺建峰、秦攀、孙伟、张晓婷、汤婷婷)'
-                      }
-                    ]
-                  },
-                  {
-                    title: '网络营销部 (张丽)',
-                    expand: true,
-                    children: [
-                      {
-                        title: '网络销售员 (张三、王五、刘浩、陆宏伟、王建国、刘联合)'
-                      }
-                    ]
-                  },
-                  {
-                    title: '售后部 (张昊)',
-                    expand: true,
-                    children: [
-                      {
-                        title: '售后员工 (张浩、李豪、王国维、黄梦倩、郭宜兴、高群、江璟、李田、郭宜兴、徐凯)'
-                      }
-                    ]
-                  },
-                  {
-                    title: '惠州销售团队 (孙旭诚)',
-                    expand: true,
-                    children: [
-                      {
-                        title: '销售员工 (李琳颖、林楚梵、徐亚楠、刘婷、刘宇、董蓓蓓、顾颖、翟艺霏、高盼盼、董一凡、朱彦博、黄梦倩)'
-                      }
-                    ]
-                  },
-                  {
-                    title: '武汉销售团队 (何文瑜)',
-                    expand: true,
-                    children: [
-                      {
-                        title: '销售员工 (温子帆、黎蓓丹、阮思韵、董冰青、郑越、杨钰成、田新生、任华、吴庆伟、白建红、黄党恩、李明生、黄丰年、任仲敏、孙勇宏、郑欣、孙思阳、高飞)'
-                      }
-                    ]
-                  },
-                  {
-                    title: '西安销售团队 (羊沛)',
-                    expand: true,
-                    children: [
-                      {
-                        title: '销售员工 (陈紫荆、陆晨燕、许丰盈、刘梓言、彭汉英)'
-                      }
-                    ]
-                  },
-                  {
-                    title: '离职员工',
-                    expand: true,
-                    children: [
-                      {
-                        title: '离职员工 (梁坚全、钟颖、何紫敏、林艺萱、方芷芊、胡慧敏、黄莎莎)'
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
+            }
           }
         ],
-        tabVal: 'name1'
+        staffData: [],
+        staffQuitData: [],
+        frameworkData: [],
+        user_group_id: '',
+        tabVal: 'name1',
+        popup1: false,
+        postObj: {
+          position_name: '',
+          user_group_id: '',
+          describe: '',
+          position_id: ''
+        },
+        data3: [],
+        columns3: [
+          {
+            title: '用户姓名',
+            key: 'user_name'
+          },
+          {
+            title: '部门',
+            key: 'user_group_name'
+          },
+          {
+            title: '职位',
+            key: 'position_name'
+          },
+          {
+            title: '性别',
+            render: (h, p) => {
+              return h('span', p.row.sex === 1 ? '男' : p.row.sex === 2 ? '女' : '未知');
+            }
+          },
+          {
+            title: '操作',
+            align: 'center',
+            render: (h, params) => {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'primary',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.userObj.user_name = params.row.user_name;
+                      this.userObj.phone_no = params.row.phone_no;
+                      this.userObj.password = params.row.password;
+                      this.pass = params.row.password;
+                      this.userObj.user_group_id = params.row.user_group_id;
+                      this.userObj.position_id = params.row.position_id === -1 ? '' : params.row.position_id;
+                      this.userObj.portrait = params.row.portrait;
+                      this.userObj.is_customer_service = params.row.is_customer_service;
+                      this.userObj.sex = params.row.sex;
+                      this.userObj.uid = params.row.uid;
+                      this.portraitObj.url = params.row.avatar_url;
+                      this.is_pass = false;
+                      this.popup6 = true;
+                    }
+                  }
+                }, '修改')
+              ]);
+            }
+          }
+        ],
+        columns2: [
+          {
+            title: '岗位名称',
+            key: 'position_name'
+          },
+          {
+            title: '岗位备注',
+            key: 'describe'
+          },
+          {
+            title: '操作',
+            align: 'center',
+            render: (h, params) => {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'primary',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.postObj.position_id = params.row.position_id;
+                      this.postObj.user_group_id = params.row.user_group_id;
+                      this.postObj.describe = params.row.describe;
+                      this.postObj.position_name = params.row.position_name;
+                      this.popup4 = true;
+                    }
+                  }
+                }, '修改'),
+                h('Button', {
+                  props: {
+                    type: 'error',
+                    size: 'small'
+                  },
+                  on: {
+                    click: () => {
+                      this.post_id = params.row.position_id;
+                      this.delPostFun(params.index);
+                    }
+                  }
+                }, '删除')
+              ]);
+            }
+          }
+        ],
+        data2: [],
+        columns1: [
+          {
+            title: '部门名称',
+            key: 'user_group_name'
+          },
+          {
+            title: '部门备注',
+            key: 'desc'
+          },
+          {
+            title: '操作',
+            align: 'center',
+            render: (h, params) => {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'primary',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.branchData.desc = params.row.desc;
+                      this.branchData.department_name = params.row.user_group_name;
+                      this.branchData.parent_id = params.row.parent_id;
+                      this.branchData.user_group_id = params.row.user_group_id;
+                      this.popup2 = true;
+                    }
+                  }
+                }, '修改'),
+                h('Button', {
+                  props: {
+                    type: 'error',
+                    size: 'small'
+                  },
+                  on: {
+                    click: () => {
+                      this.user_group_id = params.row.user_group_id;
+                      this.delBranchFun();
+                    }
+                  }
+                }, '删除')
+              ]);
+            }
+          }
+        ],
+        data1: [],
+        branchData: {
+          user_group_id: '',
+          department_name: '',
+          parent_id: '',
+          desc: ''
+        },
+        cityList1: [
+          {
+            user_group_id: 'New York',
+            label: 'New York'
+          },
+          {
+            value: 'London',
+            label: 'London'
+          },
+          {
+            value: 'Sydney',
+            label: 'Sydney'
+          },
+          {
+            value: 'Ottawa',
+            label: 'Ottawa'
+          },
+          {
+            value: 'Paris',
+            label: 'Paris'
+          },
+          {
+            value: 'Canberra',
+            label: 'Canberra'
+          }
+        ],
+        branch_id: '',
+        branch_id1: '',
+        branch_id2: '',
+        post_id: '',
+        userObj: {
+          phone_no: '',
+          user_name: '',
+          password: '',
+          user_group_id: '',
+          position_id: '',
+          portrait: '',
+          is_customer_service: '1',
+          sex: '1',
+          uid: ''
+        },
+        userInfo: {},
+        portraitObj: {
+          url: '',
+          resources_id: ''
+        },
+        pass: null,
+        pageData1: {
+          count: 0,
+          rows_num: 0,
+          page: 1
+        },
+        is_pass: true, // 控制修改用户时候，不触发md5加密，
+        user_type: '1',
+        is_Loading: false,
+        seekTxt: ''
       };
     },
     components: {
     },
     mounted () {
     },
+    watch: {
+      branch_id: function () {
+        this.getUserListFun();
+      },
+      branch_id2: function () {
+        this.getPostListFun();
+      }
+    },
     methods: {
+      // 按backspace 删除密码
+      inputKeyFun (e) {
+        e.target.value = '';
+        this.pass = '';
+        this.userObj.password = '';
+      },
+      // 密码
+      passFun (e) {
+        this.userObj.password = md5(this.pass);
+      },
+      // 上传图像
+      upImgFun (e) {
+        Object.assign(this.portraitObj, e.body);
+        this.portraitObj.url = e.body.url;
+        this.portraitObj.resources_id = e.body.resources_id;
+        this.userObj.portrait = e.body.resources_id;
+      },
+      // 上传中的方法
+      upLodingFun (e) {
+      },
+      // 上传之前
+      handleBeforeUpload (e) {
+      },
+      handleFormatError () {
+      },
+      handleMaxSize (file) {
+        this.$Message.warning('文件过大，请选择小于1MB的图片');
+      },
       // tab切换
       tabFun (v) {
         this.tabVal = v;
+        if (v === 'name1') {
+          // this.user_type = '1';
+          // this.pageData1.page = 1;
+          // this.getUserListFun();
+        } else if (v === 'name2') {
+          this.user_type = '1';
+          this.pageData1.page = 1;
+          this.getUserListFun();
+        } else if (v === 'name3') {
+          this.user_type = '-1';
+          this.pageData1.page = 1;
+          this.getUserListFun();
+        }
+      },
+      // 添加部门
+      addBranchFun () {
+        if (this.branchData.department_name === '') {
+          this.$Message.warning(`请出入部门名称`);
+          return;
+        }
+        if (this.branchData.desc === '') {
+          this.$Message.warning(`请出入部门备注`);
+          return;
+        }
+        this.ajax.addDepartment({
+          data: this.branchData,
+          success: (res) => {
+            this.getBranchList();
+            this.$Message.success(`操作成功`);
+          },
+          error: (res) => {
+            this.$Message.warning(`错误内容：${res.meta.message}`);
+          }
+        });
+      },
+      // 获取部门列表
+      getBranchList () {
+        this.data1.length = 0;
+        this.ajax.getDepartmentList({
+          data: {},
+          success: (res) => {
+            let obj = {
+              auth_data: null,
+              company_id: '',
+              desc: '',
+              parent_id: '',
+              person_charge: '',
+              user_group_id: '0',
+              user_group_name: '全部'
+            };
+            res.body.unshift(obj);
+            this.branch_id = res.body[0].user_group_id;
+            this.data1 = res.body;
+          },
+          error: (res) => {
+            this.$Message.warning(`错误内容：${res.meta.message}`);
+          }
+        });
+      },
+      // 删除部门 123123
+      delBranchFun () {
+        this.ajax.delDepartment({
+          data: {
+            user_group_id: this.user_group_id
+          },
+          success: (res) => {
+            this.$Message.success(`操作成功`);
+            this.getBranchList();
+          },
+          error: (res) => {
+            this.$Message.warning(`错误内容：${res.meta.message}`);
+          }
+        });
+      },
+      // 添加岗位 123132
+      addPostFun () {
+        if (this.postObj.position_name === '') {
+          this.$Message.warning(`请输入岗位名称`);
+          return;
+        }
+        if (this.postObj.user_group_id === '' || this.postObj.user_group_id === '0') {
+          this.$Message.warning(`请选择部门`);
+          return;
+        }
+        this.ajax.addPosition({
+          data: this.postObj,
+          success: (res) => {
+            this.$Message.success(`操作成功`);
+            this.getPostListFun();
+          },
+          error: (res) => {
+            this.$Message.warning(`错误内容：${res.meta.message}`);
+          }
+        });
+      },
+      // 获取岗位列表
+      getPostListFun () {
+        this.ajax.getPositionList({
+          data: {
+            user_group_id: this.branch_id2
+          },
+          success: (res) => {
+            this.data2 = res.body;
+          },
+          error: (res) => {
+            this.$Message.warning(`错误内容：${res.meta.message}`);
+          }
+        });
+      },
+      // 选取部门获取部门相关的岗位
+      selBranchFun (v) {
+        this.branch_id = v;
+      },
+      // 选取部门获取部门相关的岗位
+      // 删除岗位 dbvawjbd
+      delPostFun (i) {
+        this.ajax.delPosition({
+          data: {
+            position_id: this.post_id
+          },
+          success: (res) => {
+            this.$Message.success(`操作成功`);
+            this.data2.splice(i, 1);
+          },
+          error: (res) => {
+            this.$Message.warning(`错误内容：${res.meta.message}`);
+          }
+        });
+      },
+      // 添加人员
+      addUserFun () {
+        if (this.userObj.user_name === '') {
+          this.$Message.warning(`请输入名称`);
+          return;
+        }
+        if (this.userObj.phone_no === '') {
+          this.$Message.warning(`请输入手机号码`);
+          return;
+        }
+        if (this.pass === null || this.userObj.password === '' || this.pass === '') {
+          this.$Message.warning(`请输入密码`);
+          return;
+        }
+        if (this.userObj.portrait === '') {
+          this.$Message.warning(`请上传图像`);
+          return;
+        }
+        this.ajax.addUser({
+          data: this.userObj,
+          success: (res) => {
+            this.getUserListFun();
+          },
+          error: (res) => {
+            this.$Message.warning(`错误内容：${res.meta.message}`);
+          }
+        });
+      },
+      // 获取人员列表 1
+      getUserListFun () {
+        let obj = {
+          page: this.pageData1.page,
+          user_state: this.user_type,
+          user_group_id: this.branch_id === '0' ? '' : this.branch_id,
+          text: this.seekTxt
+        };
+        this.is_Loading = true;
+        this.ajax.getTissueUserList({
+          data: obj,
+          success: (res) => {
+            if (this.user_type === '1') {
+              this.staffData = res.body.data_list;
+              this.data3 = res.body.data_list;
+            } else if (this.user_type === '-1') {
+              this.staffQuitData = res.body.data_list;
+            }
+            this.pageData1.count = parseInt(res.body.page_data.count);
+            this.pageData1.rows_num = parseInt(res.body.page_data.rows_num);
+            this.is_Loading = false;
+          },
+          error: (res) => {
+            this.is_Loading = false;
+            this.$Message.warning(`错误内容：${res.meta.message}`);
+          }
+        });
+      },
+      // 获取组织架构图
+      getFrameworkData () {
+        this.ajax.getFrameworkData({
+          data: {},
+          success: (res) => {
+            this.frameworkData = this.recursionForFun(res.body);
+          },
+          error: (res) => {
+            this.$Message.warning(`错误内容：${res.meta.message}`);
+          }
+        });
+      },
+      // 递归获取n级 数据
+      recursionForFun (arr) {
+        let temp = [];
+        let forFn = (arr, id, lev) => {
+          for (let i = 0; i < arr.length; i++) {
+            let names = arr[i].person_charge.map((s) => {
+              if (s) return s.user_name;
+            });
+            // console.log(names);
+            let obj = Object.assign({}, {
+              title: `${arr[i].user_group_name}(${names.join()})`,
+              children: [],
+              expand: true,
+              company_id: arr[i].company_id,
+              desc: arr[i].desc,
+              user_group_id: arr[i].user_group_id,
+              person_charge: arr[i].person_charge,
+              user_group_name: arr[i].user_group_name
+            });
+            if (arr[i].son_list) {
+              let forFn1 = (arr1) => {
+                for (let q = 0; q < arr1.length; q++) {
+                  if (arr1[q].son_list) {
+                    forFn1(arr1[q].son_list);
+                  } else {
+                    let obj1 = Object.assign({}, {
+                      title: `${arr1[q].user_group_name}`,
+                      children: [],
+                      expand: true,
+                      auth_data: arr1[q].auth_data,
+                      company_id: arr1[q].company_id,
+                      desc: arr1[q].desc,
+                      parent_id: arr1[q].parent_id,
+                      person_charge: arr1[q].person_charge,
+                      position: arr1[q].position,
+                      user_group_id: arr1[q].user_group_id,
+                      user_group_name: arr1[q].user_group_name
+                    });
+                    arr1[q].position.forEach((s) => {
+                      let names1 = [];
+                      s.staff.forEach((e) => {
+                        names1.push(e.user_name);
+                      });
+                      let obj2 = Object.assign({}, {
+                        title: `${s.position_name}(${names1.join()})`,
+                        expand: true,
+                        staff: s.staff,
+                        company_id: s.company_id,
+                        describe: s.describe,
+                        position_id: s.position_id,
+                        position_name: s.position_name,
+                        user_group_id: s.user_group_id
+                      });
+                      obj1.children.push(obj2);
+                    });
+                    obj.children.push(obj1);
+                  }
+                }
+              };
+              forFn1(arr[i].son_list);
+            }
+            temp.push(obj);
+          }
+        };
+        forFn(arr);
+        return temp;
+      },
+      // 人员分页
+      pageFun1 (v) {
+        this.pageData1.page = v;
+        this.getUserListFun();
+      },
+      // 设为离职
+      setDimissionFun (v, t) {
+        this.ajax.setUserState({
+          data: {
+            uid: v.uid,
+            state: t
+          },
+          success: () => {
+            this.getUserListFun();
+          },
+          error: (res) => {
+            this.$Message.warning(res.meta.message);
+            this.is_Loading = false;
+          }
+        });
       }
     },
     created () {
+      Object.assign(this.userInfo, JSON.parse(localStorage.getItem('userInfo')));
+      this.getBranchList();
+      this.getFrameworkData();
     }
   };
 </script>

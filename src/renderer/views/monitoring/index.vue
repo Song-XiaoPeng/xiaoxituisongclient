@@ -66,6 +66,11 @@
       },
       beforeDestroy () {
       },
+      beforeRouteLeave (to, from, next) {
+        window.removeEventListener('scroll', this.scrollFun, false);
+        clearInterval(this.timer_i);
+        next();
+      },
       methods: {},
       created () {
       }

@@ -149,7 +149,7 @@
 
 
           <div  v-if="tabVal == 'name3'"  style="padding: 16px">
-            <Table :columns="replyTableColumns" :data="replyTableData"></Table>
+            <Table :columns="replyTableColumns" :loading="is_Loading" :data="replyTableData"></Table>
 
             <div class="page-centent">
               <Page :total="100"></Page>
@@ -168,7 +168,7 @@
                 <Button type="primary" @click="popup2 = true">新建标签</Button>
               </FormItem>
               <FormItem label="详细">
-                <Table :columns="labelTableColumns" :data="labelTableData"></Table>
+                <Table :columns="labelTableColumns" :loading="is_Loading" :data="labelTableData"></Table>
               </FormItem>
             </Form>
           </div>
@@ -236,18 +236,18 @@
     <Modal v-model="popup3" title="标签分组">
       <div style="margin-bottom: 5px;"><Button type="primary" @click="popup1 = true">新建分组</Button></div>
       <div>
-        <Table :columns="GroupColumns" :data="cityList"></Table>
+        <Table :columns="GroupColumns" :loading="is_Loading" :data="cityList"></Table>
       </div>
     </Modal>
-    <!-- edn分组操作 弹窗-->
+    <!-- edn分组操作 弹窗 123132-->
 
 
 
     <!-- 加载状态 -->
-    <Spin fix v-if="is_Loading">
-      <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
-      <div>请求中....</div>
-    </Spin>
+    <!--<Spin fix v-if="is_Loading">-->
+      <!--<Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>-->
+      <!--<div>请求中....</div>-->
+    <!--</Spin>-->
     <!-- end加载状态 -->
   </div>
 </template>
@@ -377,7 +377,9 @@
           {
             title: '标签分组',
             key: 'group_name',
-            width: 100
+            render: (h, p) => {
+              return h('span', p.row.group_name === null || p.row.group_name === '' ? '暂无' : p.row.group_name);
+            }
           },
           {
             title: '标签内容',

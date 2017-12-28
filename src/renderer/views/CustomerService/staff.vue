@@ -65,9 +65,6 @@
                     <Select v-model="sectionId" style="width: 200px;margin: 15px" @on-change="sectionFun">
                         <Option v-for="(item, key) in userGroupData" :key="key" :value="item.user_group_id">{{ item.user_group_name }}</Option>
                     </Select>
-                    <Button type="text" @click="delFun">删除当前部门</Button>
-                    <Button type="ghost" @click="is_sectionPupop = true" style="margin: 15px">添加部门</Button>
-                    <Button type="primary" @click="popupBol = true" style="margin: 15px"><Icon type="plus"></Icon> 添加人员</Button>
                 </div>
                 <div style="padding: 10px">
                     <table class="table-copy">
@@ -78,9 +75,6 @@
                             <th>账号</th>
                             <th>所属部门</th>
                             <th>员工状态</th>
-                            <th>头像</th>
-                            <th>是否客服</th>
-                            <th>设置客服</th>
                             <th>解除硬件绑定</th>
                             <th>操作</th>
                         </tr>
@@ -101,23 +95,6 @@
                             </td>
                             <td>
                                 {{k.user_state_name}}
-                            </td>
-                            <td>
-                                <Upload  action="http://kf.lyfz.net/api/v1/we_chat/WxOperation/uploadResources"
-                                         name="file" :data="{resources_type: 2}"
-                                         :show-upload-list="false"
-                                         :headers="{token: userInfo.token}"
-                                         :on-success="upImgFun">
-                                    <Button type="ghost" size="small" icon="ios-cloud-upload-outline" @click="selEdit = k">上传图像</Button>
-                                </Upload>
-                            </td>
-                            <td>
-                                <span v-if="k.customer_service_list == null">否</span>
-                                <Button v-else type="ghost" size="small" @click="popup8 = true,serviceArr = k.customer_service_list, changeUserData = k">操作</Button>
-                            </td>
-                            <td>
-                                <Button type="ghost" size="small" @click="is_sectionPupop1 = true, selUser = k">设为客服</Button>
-                                <Button type="ghost" size="small" @click="is_sectionPupop2 = true, selEdit = k">调部门</Button>
                             </td>
                             <td>
                                 <span v-if="k.client_network_mac == null">未绑定</span>

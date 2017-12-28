@@ -146,10 +146,10 @@
                     <li v-if="tabName === 'name1'" v-bind:class="ascription == '2' ?  'active' : ''" @click="ascriptionFun('2')">下属客户</li>
                 </ul>
                 <ul class="my-box cl" style="margin: 0 20px">
-                    <li @click="hintFun">总线索(<span style="color: #efc27c">47985</span>)</li>
-                    <li @click="hintFun">今日(<span style="color: #efc27c">45</span>)</li>
-                    <li @click="hintFun">待跟进(<span style="color: #efc27c">13</span>)</li>
-                    <li @click="hintFun">本月转为意向(<span style="color: #efc27c">55</span>)</li>
+                    <li @click="hintFun" style="cursor: auto">总线索(<span style="color: #efc27c">{{statistics.clue}}</span>)</li>
+                    <li @click="hintFun" style="cursor: auto">今日(<span style="color: #efc27c">{{statistics.today}}</span>)</li>
+                    <li @click="hintFun" style="cursor: auto">待跟进(<span style="color: #efc27c">{{statistics.follow_up}}</span>)</li>
+                    <li @click="hintFun" style="cursor: auto">本月转为意向(<span style="color: #efc27c">{{statistics.intention}}</span>)</li>
                 </ul>
                 <ul class="my-box cl">
                     <li @click="hintFun">今日需联系</li>
@@ -171,14 +171,14 @@
                                     <div class="btn-box cl" style="text-align: right;padding:10px">
                                         <Input class="f-l" v-model="real_name"  placeholder="客户名称" style="width: 200px"></Input>
                                         <Button class="f-l" type="info" style="margin-left: 2px" @click="getCustomerList('seek')">搜索</Button>
-                                        <Button class="f-l"  style="margin-left: 10px" type="ghost" @click="hintFun">高级搜索<Icon type="arrow-up-b"></Icon></Button>
-                                        <Button class="f-r"  style="margin-left: 10px" type="info"  @click="hintFun">添加业务提醒</Button>
-                                        <Button class="f-r"  style="margin-left: 10px" type="warning"  @click="hintFun">群发激活</Button>
+                                        <!--<Button class="f-l"  style="margin-left: 10px" type="ghost" @click="hintFun">高级搜索<Icon type="arrow-up-b"></Icon></Button>-->
+                                        <!--<Button class="f-r"  style="margin-left: 10px" type="info"  @click="hintFun">添加业务提醒</Button>-->
+                                        <!--<Button class="f-r"  style="margin-left: 10px" type="warning"  @click="hintFun">群发激活</Button> -->
                                     </div>
                                     <div class="title-box cl">
                                         <div class="f-l txt-box">线索</div>
                                         <div class="f-r">
-                                            <Button type="ghost" @click="hintFun" style="margin: 15px">设置标题</Button>
+                                            <!--<Button type="ghost" @click="hintFun" style="margin: 15px">设置标题</Button>-->
                                         </div>
                                     </div>
                                     <div class="table-box">
@@ -193,9 +193,9 @@
                                     <div class="btn-box cl" style="text-align: right;padding:10px">
                                         <Input class="f-l" v-model="real_name"  placeholder="客户名称" style="width: 200px"></Input>
                                         <Button class="f-l" type="info" style="margin-left: 2px" @click="getCustomerList('seek')">搜索</Button>
-                                        <Button class="f-l"  style="margin-left: 10px" type="ghost" @click="hintFun">高级搜索<Icon type="arrow-up-b"></Icon></Button>
-                                        <Button class="f-r"  style="margin-left: 10px" type="info"  @click="hintFun">导出线索</Button>
-                                        <Button class="f-r"  style="margin-left: 10px" type="warning"  @click="hintFun">导入线索</Button>
+                                        <!--<Button class="f-l"  style="margin-left: 10px" type="ghost" @click="hintFun">高级搜索<Icon type="arrow-up-b"></Icon></Button>-->
+                                        <!--<Button class="f-r"  style="margin-left: 10px" type="info"  @click="hintFun">导出线索</Button>-->
+                                        <!--<Button class="f-r"  style="margin-left: 10px" type="warning"  @click="hintFun">导入线索</Button>-->
                                     </div>
                                     <div class="title-box cl">
                                         <div class="f-l txt-box">线索池</div>
@@ -210,40 +210,6 @@
                                         <Page :total="pageData.count" :page-size="pageData.rows_num" @on-change="pageFun"></Page>
                                     </div>
                                 </div>
-
-
-
-
-
-
-                            <!-- end跟踪提醒 -->
-                            <!--<TabPane  label="跟踪提醒" name="name3">-->
-                                <!--<div class="time-box">-->
-                                    <!--<ul class="cl">-->
-                                        <!--<li class="" v-bind:class="time_type == 1 ? 'active' : ''" @click="selContactFun(1)">今日需联系</li>-->
-                                        <!--<li class="" v-bind:class="time_type == 2 ? 'active' : ''" @click="selContactFun(2)">昨日需联系</li>-->
-                                        <!--<li class="" v-bind:class="time_type == 3 ? 'active' : ''" @click="selContactFun(3)">本周需联系</li>-->
-                                        <!--<li class="" v-bind:class="time_type == 4 ? 'active' : ''" @click="selContactFun(4)">本月需联系</li>-->
-                                        <!--<li class="" v-bind:class="time_type == 5 ? 'active' : ''" @click="selContactFun(5)">超时需联系</li>-->
-                                        <!--<li class="" v-bind:class="time_type == 6 ? 'active' : ''" @click="selContactFun(6)">已完成</li>-->
-                                    <!--</ul>-->
-                                <!--</div>-->
-                                <!--<div class="btn-box cl" style="text-align: right;padding:10px">-->
-                                    <!--&lt;!&ndash;<Button type="ghost" style="margin-left: 10px" @click="modal2 = true">添加业务提醒</Button>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<Button type="ghost" style="margin-left: 10px" @click="massFun">群发激活</Button>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<Button class="f-l" type="ghost" style="" @click="is_screen = true">高级搜索</Button>&ndash;&gt;-->
-                                    <!--<Input class="f-l" v-model="real_name"  placeholder="客户名称" style="width: 100px"></Input>-->
-                                    <!--<Button class="f-l" type="info" style="margin-left: 2px" @click="getTailList('seek')">搜索</Button>-->
-                                <!--</div>-->
-                                <!--<div class="table-box">-->
-                                    <!--<Table border ref="selection" highlight-row :columns="columns5" :data="data2"></Table>-->
-                                <!--</div>-->
-                                <!--<div style="text-align: center;padding: 5px">-->
-                                    <!--<Page :total="pageData.count" :page-size="pageData.row_sum" @click="pageFun"></Page>-->
-                                <!--</div>-->
-                            <!--</TabPane>-->
-                            <!-- 跟踪提醒 -->
-
 
                     </div>
 
@@ -387,58 +353,66 @@
             title: '微信用户昵称',
             render: (h, p) => {
               return h('div', [
-                h('span', {
+                h('a', {
                   style: {
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    textDecoration: 'underline'
                   },
                   on: {
                     click: () => {
-                      this.jionUpFun(p.row);
+                      if (this.userInfo.user_type !== 3) {
+                        this.jionUpFun(p.row);
+                      }
                     }
                   }
-                }, p.row.nickname)
+                }, p.row.nickname === '' || p.row.nickname === null ? '无法显示名称' : p.row.nickname)
               ]);
             }
           },
           {
-            title: '微信图像',
+            title: '真实姓名',
+            ellipsis: true,
             render: (h, p) => {
-              return h('img', {
-                style: {
-                  width: '50px',
-                  height: '50px'
-                },
-                attrs: {
-                  src: p.row.portrait
-                }
-              });
+              return h('span', p.row.real_name === null || p.row.real_name === '' ? '暂无' : p.row.real_name);
             }
           },
           {
-            title: '来源',
-            key: 'app_name'
+            title: '公司名称',
+            ellipsis: true,
+            render: (h, p) => {
+              return h('span', p.row.wx_comapny_name === null || p.row.wx_comapny_name === '' ? '暂无' : p.row.wx_comapny_name);
+            }
           },
           {
-            title: '性别',
+            title: '产品',
+            ellipsis: true,
             render: (h, p) => {
-              return h('span', p.row.gender === 1 ? '男' : p.row.gender === 2 ? '女' : '未知');
+              return h('span', p.row.product_name === null || p.row.product_name === '' ? '暂无' : p.row.product_name);
             }
           },
           {
             title: '所在城市',
+            ellipsis: true,
             render: (h, p) => {
               return h('span', p.row.province + ',' + p.row.city);
             }
           },
           {
-            title: '关注时间',
-            key: 'subscribe_time'
+            title: '负责人',
+            ellipsis: true,
+            key: 'customer_service_name'
           },
           {
-            title: '备注',
+            title: '手机号码',
+            ellipsis: true,
             render: (h, p) => {
-              return h('span', p.row.desc === '' ? '暂无备注' : p.row.desc);
+              return h('span', p.row.real_phone === null || p.row.real_phone === '' ? '暂无' : p.row.real_phone);
             }
+          },
+          {
+            title: '来访次数',
+            ellipsis: true,
+            key: 'get_into_count'
           },
           {
             title: '操作',
@@ -466,58 +440,67 @@
             title: '微信用户昵称',
             render: (h, p) => {
               return h('div', [
-                h('span', {
+                h('a', {
                   style: {
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    textDecoration: 'underline'
                   },
                   on: {
                     click: () => {
-                      this.jionUpFun(p.row);
+                      if (this.userInfo.user_type !== 3) {
+                        this.jionUpFun(p.row);
+                      }
                     }
                   }
-                }, p.row.nickname)
+                }, p.row.nickname === '' || p.row.nickname === null ? '无法显示名称' : p.row.nickname)
               ]);
             }
           },
           {
-            title: '来源',
-            key: 'app_name'
-          },
-          {
-            title: '微信图像',
+            title: '真实姓名',
+            ellipsis: true,
             render: (h, p) => {
-              return h('img', {
-                style: {
-                  width: '50px',
-                  height: '50px'
-                },
-                attrs: {
-                  src: p.row.portrait
-                }
-              });
+              return h('span', p.row.real_name === null || p.row.real_name === '' ? '暂无' : p.row.real_name);
             }
           },
           {
-            title: '性别',
+            title: '产品',
+            ellipsis: true,
             render: (h, p) => {
-              return h('span', p.row.gender === 1 ? '男' : p.row.gender === 2 ? '女' : '未知');
+              return h('span', p.row.product_name === null || p.row.product_name === '' ? '暂无' : p.row.product_name);
+            }
+          },
+          {
+            title: '公司名称',
+            ellipsis: true,
+            render: (h, p) => {
+              return h('span', p.row.wx_comapny_name === null || p.row.wx_comapny_name === '' ? '暂无' : p.row.wx_comapny_name);
+            }
+          },
+          {
+            title: '手机号码',
+            ellipsis: true,
+            render: (h, p) => {
+              return h('span', p.row.real_phone === null || p.row.real_phone === '' ? '暂无' : p.row.real_phone);
             }
           },
           {
             title: '所在城市',
+            ellipsis: true,
             render: (h, p) => {
               return h('span', p.row.province + ',' + p.row.city);
             }
           },
           {
-            title: '关注时间',
-            key: 'subscribe_time'
+            title: '进入公共号次数',
+            ellipsis: true,
+            render: (h, p) => {
+              return h('span', p.row.get_into_count);
+            }
           },
           {
-            title: '备注',
-            render: (h, p) => {
-              return h('span', p.row.desc === '' ? '暂无备注' : p.row.desc);
-            }
+            title: '最近沟通时间',
+            key: 'last_time'
           },
           {
             title: '操作',
@@ -568,7 +551,8 @@
           page: 1,
           rows_num: 0
         },
-        ascription: '3'
+        ascription: '3',
+        statistics: {}
       };
     },
     components: {
@@ -584,6 +568,7 @@
     methods: {
       // 接入
       jionUpFun (k) {
+        console.log(k);
         this.is_Loading = true;
         this.ajax.createWxUserSession({
           data: {
@@ -775,12 +760,25 @@
       pageFun (v) {
         this.pageData.page = v;
         this.getCustomerList();
+      },
+      // 获取线索统计数据
+      getClueStatisticData () {
+        this.ajax.getClueStatisticData({
+          data: {},
+          success: (res) => {
+            Object.assign(this.statistics, res.body);
+          },
+          error: (res) => {
+            this.$Message.warning(res.meta.message);
+          }
+        });
       }
     },
     destroyed (s) {
     },
     created () {
       Bus.$off();
+      this.getClueStatisticData();
       this.userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
       this.ajax.getWxAuthList({
         data: {},
