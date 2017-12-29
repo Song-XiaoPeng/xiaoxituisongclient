@@ -1836,4 +1836,89 @@ ajax.getClueStatisticData = (obj) => {
     console.log(error);
   });
 };
+// 获取会话规则
+ajax.getSessionRule = (obj) => {
+  util.ajax.get('/api/v1/setting/Rule/getSessionRule', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 获取客资领取规则
+ajax.getCustomerResourcesRule = (obj) => {
+  util.ajax.get('/api/v1/setting/Rule/getCustomerResourcesRule', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 获取我的下属账号信息list
+ajax.getSubordinateList = (obj) => {
+  util.ajax.get('/api/v1/user/Framework/getSubordinateList', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 添加企业话术
+ajax.setCommonQuickReplyText = (obj) => {
+  util.ajax.post('/api/v1/setting/Rule/setCommonQuickReplyText', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 获取企业常用话术
+ajax.getEnterpriseSentence = (obj) => {
+  util.ajax.post('/api/v1/setting/Rule/getEnterpriseSentence', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
 export default ajax;

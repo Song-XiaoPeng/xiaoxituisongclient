@@ -249,10 +249,10 @@
         <!-- end权限管理 -->
 
 
-        <Spin fix v-if="is_Loading">
-            <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
-            <div>请求中....</div>
-        </Spin>
+        <!--<Spin fix v-if="is_Loading">-->
+            <!--<Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>-->
+            <!--<div>请求中....</div>-->
+        <!--</Spin>-->
     </div>
 </template>
 <script>

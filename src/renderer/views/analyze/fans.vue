@@ -230,7 +230,6 @@
       onReady () {
       },
       onClick () {
-        console.log(179);
       },
       // 获取 数据列表
       getUserSummary () {
@@ -261,7 +260,6 @@
               });
             });
             this.chartData.rows = arr;
-            console.log(this.chartData.rows);
           },
           error: (res) => {
             this.is_Loading = false;

@@ -492,6 +492,7 @@
       }
     },
     created () {
+      this.is_Loading = true;
       this.ajax.getWxAuthList({
         data: {},
         success: (res) => {

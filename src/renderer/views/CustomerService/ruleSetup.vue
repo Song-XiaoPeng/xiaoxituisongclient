@@ -49,8 +49,8 @@
         <span  v-if="tabVal == 'name2'">会话规则</span>
         <span  v-if="tabVal == 'name3'">企业常用话术</span>
         <span  v-if="tabVal == 'name4'">标签设置</span>
-        <Button v-show="tabVal == 'name3'" type="primary" class="f-r" style="margin: 17px"  size="small" @click="addConversationRule = true">新建分组</Button>
-        <Button v-show="tabVal == 'name3'" type="primary" class="f-r" style="margin: 17px"  size="small" @click="addConversationContent = true">新建内容</Button>
+        <!--<Button v-show="tabVal == 'name3'" type="primary" class="f-r" style="margin: 17px"  size="small" @click="addConversationRule = true">新建分组</Button>-->
+        <Button v-show="tabVal == 'name3'" type="primary" class="f-r" style="margin: 17px"  size="small" @click="addConversationContent = true">新建企业话术内容</Button>
       </div>
 
 
@@ -191,13 +191,10 @@
 
 
 
-    <Modal v-model="addConversationContent" title="新建话术内容">
+    <Modal v-model="addConversationContent" title="新建话术内容" @on-ok="addEnterpriseTxtFun">
       <Form :label-width="80">
-        <FormItem label="标题">
-          <Input placeholder="请输入标题	"></Input>
-        </FormItem>
-        <FormItem label="	内容">
-          <Input placeholder="请输入内容	" type="textarea"></Input>
+        <FormItem label="内容">
+          <Input v-model="enterpriseData.text" placeholder="请输入内容" :autosize="{minRows: 4,maxRows: 8}" type="textarea"></Input>
         </FormItem>
       </Form>
     </Modal>
@@ -259,6 +256,10 @@
         addConversationContent: false,
         addConversationRule: false,
         tabsVal: '1',
+        enterpriseData: {
+          quick_reply_id: '',
+          text: ''
+        },
         popup2: false,
         ruleFrom: {
           select: '',
@@ -288,14 +289,6 @@
           textarea: ''
         },
         replyTableColumns: [
-          {
-            title: '话术分组',
-            key: 'group'
-          },
-          {
-            title: '标题',
-            key: 'title'
-          },
           {
             title: '内容',
             key: 'content'
@@ -484,7 +477,12 @@
         labelGroupContent: '',
         label_id: '',
         is_group_label: false,
-        tabVal: 'name1'
+        tabVal: 'name1',
+        pageData1: {
+          count: 0,
+          rows_num: 0,
+          page: 1
+        }
       };
     },
     components: {
@@ -694,10 +692,71 @@
             this.$Message.waiting(res.meta);
           }
         });
+      },
+      // 获取规则数据
+      getSessionRule () {
+        this.ajax.getSessionRule({
+          data: {},
+          success: (res) => {
+            // beijing shanghai
+            this.ruleFrom.select = res.body.rule_type === '1' ? 'beijing' : 'shanghai';
+            this.ruleFrom.input = res.body.overtime;
+          },
+          error: (res) => {
+            this.$Message.waiting(res.meta);
+          }
+        });
+      },
+      // 获取客资领取规则
+      getCustomerResourcesRule () {
+        this.ajax.getCustomerResourcesRule({
+          data: {},
+          success: (res) => {
+            this.recycle.cued_pool.cycle = res.body.cued_pool.cycle;
+            this.recycle.cued_pool.number = res.body.cued_pool.number;
+            this.recycle.cued_pool_recovery = res.body.cued_pool_recovery;
+            this.recycle.intention_receive.cycle = res.body.intention_receive.cycle;
+            this.recycle.intention_receive.number = res.body.intention_receive.number;
+            this.recycle.intention_recovery = res.body.intention_recovery;
+          },
+          error: (res) => {
+            this.$Message.waiting(res.meta);
+          }
+        });
+      },
+      // 添加企业数据
+      addEnterpriseTxtFun () {
+        this.ajax.setCommonQuickReplyText({
+          data: this.enterpriseData,
+          success: (res) => {
+            console.log(res);
+          },
+          error: (res) => {
+            this.$Message.waiting(res.meta);
+          }
+        });
+      },
+      // 获取企业话术列表
+      getEnterpriseTxtListFun () {
+        this.ajax.getEnterpriseSentence({
+          data: {
+            page: 1
+          },
+          success: (res) => {
+            console.log(res);
+            // this.pageData1
+          },
+          error: (res) => {
+            this.$Message.waiting(res.meta);
+          }
+        });
       }
     },
     created () {
       this.getLabelListFun();
+      this.getSessionRule();
+      this.getEnterpriseTxtListFun();
+      this.getCustomerResourcesRule();
       this.getLabelGroupListFun();
     }
   };

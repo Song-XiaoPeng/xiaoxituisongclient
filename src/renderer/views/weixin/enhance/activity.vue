@@ -9,7 +9,7 @@
             <Button class="f-r" type="primary" @click="modal1 = true, qrcode_id = '', name = '', qrcode_group_id = '', tabArr = [], customer_service_group_id = '', qrcode_id = '', userName = '', customer_service_id = ''">新增</Button>
         </div>
         <div>
-            <Table border :columns="columns7" :data="data6"></Table>
+            <Table border :columns="columns7" :loading="is_Loading" :data="data6"></Table>
         </div>
         <div style="margin-top: 10px;text-align: center">
             <Page :total="pageData1.count" :page-size="pageData1.rows_num" @on-change="pageFun1"></Page>
@@ -105,7 +105,7 @@
                 <Button type="primary" @click="popup3 = false, popup4 = true">添加渠道组</Button>
             </div>
             <div  style="margin-top: 10px">
-                <Table  :columns="columns4" :data="data2"></Table>
+                <Table  :columns="columns4" :loading="is_Loading" :data="data2"></Table>
             </div>
         </Modal>
         <!-- end创建分组弹窗 -->
@@ -144,7 +144,7 @@
             <!--</div>-->
             <div style="max-height: 500px;overflow: auto">
                 <div class=""  style="padding-top: 10px">
-                    <Table highlight-row :columns="columns5" :data="data3" @on-current-change="selTabRowFun"></Table>
+                    <Table highlight-row :columns="columns5" :loading="is_Loading" :data="data3" @on-current-change="selTabRowFun"></Table>
                 </div>
                 <div class="" style="padding-top: 10px;text-align: center">
                     <Page :total="pageData.count" :page-size="pageData.rows_num" @on-change="pageFun"></Page>
@@ -167,7 +167,7 @@
         <!-- 图文详情 -->
         <Modal v-model="modal2" title="图文详情" width="800" @on-cancel="modal1 = true, modal2 = false" @on-ok="modal2 = false, modal1 = true">
             <div style="max-height: 700px; overflow: auto">
-                <Table highlight-row ref="currentRowTable" :columns="columns8" :data="data8" @on-current-change="selImgTxtFun"></Table>
+                <Table highlight-row ref="currentRowTable" :loading="is_Loading" :columns="columns8" :data="data8" @on-current-change="selImgTxtFun"></Table>
             </div>
             <div style="text-align: center;padding: 10px">
                 <Page :total="pageData2.count" :page-size="pageData2.rows_num"  @on-change="pageFun2"></Page>
@@ -189,7 +189,7 @@
                 <Table highlight-row ref="currentRowTable" :columns="columns9" :data="data9" @on-current-change="selTxtFun" ></Table>
             </div>
             <div style="text-align: center;padding: 10px">
-                <Page :total="pageData2.count" :page-size="pageData2.rows_num"  @on-change="pageFun2"></Page>
+                <Page :total="pageData2.count" :loading="is_Loading" :page-size="pageData2.rows_num"  @on-change="pageFun2"></Page>
             </div>
 
             <!-- 加载状态 -->
@@ -213,17 +213,17 @@
         <!-- 添加标签 -->
         <Modal v-model="popup14" title="标签">
             <div><span style="color: #ff3300">点击其中一项即选择</span></div>
-            <Table border :columns="columns11" highlight-row :data="Label" @on-current-change="selLabelFun"></Table>
+            <Table border :columns="columns11" :loading="is_Loading" highlight-row :data="Label" @on-current-change="selLabelFun"></Table>
         </Modal>
         <!-- end添加标签 -->
 
 
         <!-- 加载状态 -->
-        <Spin fix v-if="is_Loading">
-            <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
-            <div>请求中...</div>
-        </Spin>
-        <!-- end加载状态 -->
+        <!--<Spin fix v-if="is_Loading">-->
+            <!--<Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>-->
+            <!--<div>请求中...</div>-->
+        <!--</Spin>-->
+        <!-- end加载状态 dwadawd-->
     </div>
 </template>
 <script>
@@ -259,7 +259,6 @@
                   },
                   on: {
                     click: () => {
-                      console.log(p.row);
                       this.txtImgData = p.row;
                       this.txtImgDataContent = p.row.content.news_item;
                       this.modal4 = true;
@@ -681,7 +680,6 @@
           this.selRader2 = '-1';
           this.reply_type = '-1';
         }
-        console.log(213121231);
       },
       // 创建渠道分组
       createChannelNameFun () {
@@ -793,7 +791,6 @@
             this.customer_service_id = '';
             this.qrcode_id = '';
             this.dey = '';
-            console.log(11231);
           },
           error: (res) => {
             this.$Message.warning(res.meta.message);
@@ -936,7 +933,6 @@
             this.data6 = res.body.data_list;
             this.pageData1.count = parseInt(res.body.page_data.count);
             this.pageData1.rows_num = parseInt(res.body.page_data.rows_num);
-            console.log(res);
           },
           error: (res) => {
             this.$Message.warning(res.meta.message);
@@ -982,7 +978,6 @@
     },
     watch: {
       appid: function (v) {
-        console.log(v);
       },
       data3: {
         handler: (val, oldVal) => {
