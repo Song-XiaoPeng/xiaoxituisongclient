@@ -74,6 +74,13 @@ let menuData = [
           routeBreadcrumb: ['管理', '追销客户'],
           sonMenu: []
         }
+        // {
+        //   model_id: 28,
+        //   menuTitle: '客户提醒',
+        //   route: 'clientRemind',
+        //   routeBreadcrumb: ['管理', '客户提醒'],
+        //   sonMenu: []
+        // }
       ]
     },
     route: [],

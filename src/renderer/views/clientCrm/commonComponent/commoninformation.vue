@@ -63,7 +63,7 @@
              业务提醒
           </div>
       </div>
-      <div style="height: 100%">
+      <div style="height: 100%;overflow: auto;">
          <Common v-show="navState == 1"></Common>
          <information v-show="navState == 2 && isAdministrator == false"></information>
          <Record v-show="navState == 3" ></Record>
@@ -116,7 +116,7 @@
             // 点击漫游信息时候  触发滚动条方法
             Bus.$emit('scro');
           } if (v === 4) {
-            // 通知业务提醒组件 请求业务提醒相关的数据
+            // 通知业务提醒组件 请求业务提醒相关的数据 dawdsds
             Bus.$emit('remind');
           }
         }
@@ -125,8 +125,7 @@
       },
       created () {
         Bus.$on('change', (k, o) => {
-          // 判断是否是客户管理数据/ 控制显示（客户信息/常用话术/漫游信息/业务提醒） dwadw
-          console.log(11234545);
+          // 判断是否是客户管理数据/ 控制显示（客户信息/常用话术/漫游信息/业务提醒）
           Object.assign(this.is_CRM, o);
           let i = 1;
           for (let s in o) {

@@ -42,7 +42,7 @@
       <div class="chart">
           <chart :isAdministrator="isAdministrator"></chart>
       </div>
-      <div class="information">
+      <div class="information" style="overflow: auto">
           <formation :isAdministrator="isAdministrator"></formation>
       </div>
   </div>

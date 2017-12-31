@@ -208,7 +208,11 @@
           });
         }
       },
+      destroyed (s) {
+        // Bus.$off();
+      },
       created () {
+        // Bus.$off('WxAuthList');
         this.getShortcutTxtFun();
       }
     };

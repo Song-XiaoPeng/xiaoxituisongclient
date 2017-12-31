@@ -236,6 +236,14 @@ export default new Router({
             title: '同步粉丝'
           },
           component: (resolve) => require(['@/views/CustomerService/serviceList'], resolve)
+        },
+        {
+          path: 'clientRemind',
+          name: 'clientRemind',
+          meta: {
+            title: '客户提醒'
+          },
+          component: (resolve) => require(['@/views/clientCrm/remind'], resolve)
         }
       ]
     }

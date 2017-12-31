@@ -136,7 +136,7 @@
                 <ul class="cl">
                     <li v-bind:class="tabName == 'name1' ? 'active' : ''"  @click="selTabFun('name1')">线索</li>
                     <li v-bind:class="tabName == 'name2' ? 'active' : ''"  @click="selTabFun('name2')">线索池</li>
-                    <li v-bind:class="tabName == '2' ? 'active' : ''"  @click="hintFun()">跟踪提醒</li>
+                    <!--<li v-bind:class="tabName == '2' ? 'active' : ''"  @click="hintFun()">跟踪提醒</li>-->
                 </ul>
             </div>
             <div class="filtrate-box">
@@ -279,6 +279,30 @@
             <!--<screen></screen>-->
         <!--</Modal>-->
 
+
+
+
+        <!-- 分配人员列表 1213-->
+        <Modal v-model="popup6" title="添加用户" @on-ok="allocationUserFun">
+            <div class="" style="max-height: 500px; overflow: auto">
+                <Form :label-width="80">
+                    <FormItem label="所属部门">
+                        <Select  v-model="user_group_id">
+                            <Option  :value="k.user_group_id" v-for="(k, i) in subordinateList" :key="i">{{k.user_group_name}}</Option>
+                        </Select>
+                    </FormItem>
+                    <FormItem label="人员">
+                        <Table border ref="selection" highlight-row :columns="columns6" :data="data6" @on-current-change="selAllocationUser"></Table>
+                    </FormItem>
+                </Form>
+            </div>
+        </Modal>
+        <!-- end分配人员列表 -->
+
+
+
+
+
         <!-- 加载状态 -->
         <Spin fix v-if="is_Loading">
             <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
@@ -345,7 +369,21 @@
         model1: '1',
         model2: '1',
         model3: '1',
+        data6: [],
+        columns6: [
+          {
+            title: '姓名',
+            ellipsis: true,
+            key: 'user_name'
+          },
+          {
+            title: '手机号',
+            ellipsis: true,
+            key: 'phone_no'
+          }
+        ],
         popup3: false,
+        popup6: false,
         is_Loading: false,
         clientData: {},
         columns4: [
@@ -404,7 +442,6 @@
           },
           {
             title: '手机号码',
-            ellipsis: true,
             render: (h, p) => {
               return h('span', p.row.real_phone === null || p.row.real_phone === '' ? '暂无' : p.row.real_phone);
             }
@@ -505,7 +542,7 @@
           {
             title: '操作',
             render: (h, p) => {
-              return h('Button', {
+              /* return h('Button', {
                 props: {
                   type: 'primary',
                   size: 'small'
@@ -518,7 +555,42 @@
                     this.selTableFun(p.row);
                   }
                 }
-              }, '详情');
+              }, '详情'); */
+              return h(`div`, [
+                h('Button', {
+                  props: {
+                    type: 'primary',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.allocationIndex = p.row.index;
+                      this.allocationSelData = p.row;
+                      this.receiveIntention(p.row, p.index);
+                    }
+                  }
+                }, '领取'),
+                h('Button', {
+                  props: {
+                    type: 'primary',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.popup6 = true;
+                      this.allocationIndex = p.row.index;
+                      this.allocationSelData = p.row;
+                      // this.selTableFun(p.row);
+                    }
+                  }
+                }, '分配')
+              ]);
             }
           }
         ],
@@ -552,7 +624,13 @@
           rows_num: 0
         },
         ascription: '3',
-        statistics: {}
+        statistics: {},
+        intentionStatistics: {},
+        subordinateList: [],
+        user_group_id: '',
+        user: null,
+        allocationIndex: null,
+        allocationSelData: null
       };
     },
     components: {
@@ -766,7 +844,60 @@
         this.ajax.getClueStatisticData({
           data: {},
           success: (res) => {
-            Object.assign(this.statistics, res.body);
+            this.statistics = res.body;
+          },
+          error: (res) => {
+            this.$Message.warning(res.meta.message);
+          }
+        });
+      },
+      // 获取我的下属账号信息list
+      getSubordinateList () {
+        this.ajax.getSubordinateList({
+          data: {
+          },
+          success: (res) => {
+            this.user_group_id = res.body[0].user_group_id;
+            this.subordinateList = res.body;
+          },
+          error: (res) => {
+            this.$Message.warning(res.meta.message);
+          }
+        });
+      },
+      // 选择下属别个数据方法
+      selAllocationUser (v) {
+        this.user = v;
+      },
+      // 分配下属 djwandwanfkwa
+      allocationUserFun () {
+        if (this.user === null) {
+          this.$Message.warning('请选择人员');
+          return;
+        }
+        this.ajax.receiveCuedPool({
+          data: {
+            wx_user_id: this.allocationSelData.wx_user_id,
+            uid: this.user.uid
+          },
+          success: (res) => {
+            this.data2.splice(this.allocationIndex, 1);
+            this.$Message.success('操作成功');
+          },
+          error: (res) => {
+            this.$Message.warning(res.meta.message);
+          }
+        });
+      },
+      // 领取意向客户池客户
+      receiveIntention (k, i) {
+        this.ajax.receiveCuedPool({
+          data: {
+            wx_user_id: k.wx_user_id
+          },
+          success: (res) => {
+            this.data2.splice(i, 1);
+            this.$Message.success('操作成功');
           },
           error: (res) => {
             this.$Message.warning(res.meta.message);
@@ -774,10 +905,22 @@
         });
       }
     },
+    watch: {
+      user_group_id: function (v) {
+        this.data6 = [];
+        this.subordinateList.forEach((k) => {
+          if (k.user_group_id === v) {
+            this.data6 = k.uid_list;
+          }
+        });
+      }
+    },
     destroyed (s) {
+      // Bus.$off();
     },
     created () {
       Bus.$off();
+      this.getSubordinateList();
       this.getClueStatisticData();
       this.userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
       this.ajax.getWxAuthList({

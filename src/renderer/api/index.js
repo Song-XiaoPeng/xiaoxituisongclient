@@ -1921,4 +1921,174 @@ ajax.getEnterpriseSentence = (obj) => {
     console.log(error);
   });
 };
+// 删除企业话术
+ajax.delQuickReply = (obj) => {
+  util.ajax.post('/api/v1/setting/Rule/delQuickReply', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 同步所有标签
+ajax.syncWxLabel = (obj) => {
+  util.ajax.get('/api/v1/setting/Rule/syncWxLabel', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 获取意向客户列表
+ajax.getIntentionalCustomers = (obj) => {
+  util.ajax.post('/api/v1/customer/CustomerOperation/getIntentionalCustomers', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 获取意向数据统计
+ajax.getIntentionData = (obj) => {
+  util.ajax.get('/api/v1/customer/CustomerOperation/getIntentionData', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 获取订单客户数据统计
+ajax.getOrderCustomerData = (obj) => {
+  util.ajax.get('/api/v1/customer/CustomerOperation/getOrderCustomerData', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 获取订单客户list
+ajax.getOrderCustomer = (obj) => {
+  util.ajax.post('/api/v1/customer/CustomerOperation/getOrderCustomer', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 获取追销客户list
+ajax.getTrackCustomer = (obj) => {
+  util.ajax.post('/api/v1/customer/CustomerOperation/getTrackCustomer', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 获取追销客户数据统计
+ajax.getTrackCustomerData = (obj) => {
+  util.ajax.post('/api/v1/customer/CustomerOperation/getTrackCustomerData', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 领取意向客户池客户
+ajax.receiveIntention = (obj) => {
+  util.ajax.post('/api/v1/customer/CustomerOperation/receiveIntention', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 领取线索客户池客户
+ajax.receiveCuedPool = (obj) => {
+  util.ajax.post('/api/v1/customer/CustomerOperation/receiveCuedPool', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
 export default ajax;

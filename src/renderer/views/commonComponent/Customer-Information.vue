@@ -14,19 +14,19 @@
         padding-top: 10px;
     }
 @media all and (min-height:800px) and (max-height:1000px){
-    .tab-box{
-        height: 550px
-    }
+    /*.tab-box{*/
+        /*height: 550px*/
+    /*}*/
 }
 @media all and (min-height:1000px) and (max-height:1200px){
-    .tab-box{
-        height: 750px
-    }
+    /*.tab-box{*/
+        /*height: 750px*/
+    /*}*/
 }
 @media all and (min-height:1201px){
-    .tab-box{
-        height: 900px
-    }
+    /*.tab-box{*/
+        /*height: 900px*/
+    /*}*/
 }
 </style>
 <template>
@@ -39,14 +39,20 @@
            <Button type="info"   @click="popup1 = true" icon="plus-round">添加快捷回复</Button>
        </div>
        <div class="tab-box">
+           <div class="tel">
+               我的常用话术
+           </div>
           <Table border :columns="columns7"  :show-header="false" :data="data6" @on-current-change="selShortcutTxtFun"></Table>
        </div>
-       <!--<div>-->
-           <!--<div class="tel">-->
-               <!--企业常用话术-->
-           <!--</div>-->
-           <!--<Table border :columns="columns7" :show-header="false" :data="data6"></Table>-->
-       <!--</div>-->
+       <div>
+           <div class="tel">
+               企业常用话术
+           </div>
+           <Table border :columns="columns8" :show-header="false" :data="data8"></Table>
+           <div class="" style="padding: 5px; text-align: center;">
+               <Page :total="pageData1.count" :page-size="pageData1.rows_num"  @on-change="pageFun1"></Page>
+           </div>
+       </div>
 
 
 
@@ -146,8 +152,59 @@
             }
           ],
           data6: [],
+          data8: [],
+          columns8: [
+            {
+              title: '内容',
+              render: (h, p) => {
+                return h('div', {
+                  style: {
+                    padding: '10px',
+                    cursor: 'pointer'
+                  },
+                  on: {
+                    click: () => {
+                      this.selShortcutTxtFun(p.row);
+                    }
+                  }
+                }, p.row.quick_reply_text);
+              }
+            },
+            {
+              title: 'Action',
+              key: 'action',
+              align: 'center',
+              render: (h, params) => {
+                return h('div', {
+                  style: {
+                    padding: '0'
+                  }
+                }, [
+                  h('Button', {
+                    props: {
+                      type: 'primary',
+                      size: 'small'
+                    },
+                    style: {
+                    },
+                    on: {
+                      click: () => {
+                        // 立即发送， 传递参数到聊天窗口页面并调用发送方法
+                        Bus.$emit('promptlyShortcutTxtFun', params.row);
+                      }
+                    }
+                  }, '发送')
+                ]);
+              }
+            }
+          ],
           txt: '',
-          quick_reply_id: ''
+          quick_reply_id: '',
+          pageData1: {
+            count: 0,
+            rows_num: 0,
+            page: 1
+          }
         };
       },
       mounted () {
@@ -201,10 +258,32 @@
               this.$Message.warning(res.meta.message);
             }
           });
+        },
+        // 获取企业话术列表
+        getEnterpriseTxtListFun () {
+          this.ajax.getEnterpriseSentence({
+            data: {
+              page: this.pageData1.page
+            },
+            success: (res) => {
+              this.data8 = res.body.data_list;
+              this.pageData1.count = parseInt(res.body.page_data.count);
+              this.pageData1.rows_num = parseInt(res.body.page_data.rows_num);
+            },
+            error: (res) => {
+              this.$Message.waiting(res.meta);
+            }
+          });
+        },
+        // 分页 123132
+        pageFun1 (v) {
+          this.pageData1.page = v;
+          this.getEnterpriseTxtListFun();
         }
       },
       created () {
         this.getShortcutTxtFun();
+        this.getEnterpriseTxtListFun();
       }
     };
 </script>

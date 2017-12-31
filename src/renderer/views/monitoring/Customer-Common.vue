@@ -166,12 +166,12 @@
                   <Option v-for="item in clientTypeArr" :value="item.id" :key="item.id" disabled>{{ item.label }}</Option>
                </Select>
             </FormItem>
-            <FormItem style="border-bottom: 0px;" label="客户池组：">
-               <Select v-model="formData.wx_user_group_id" style="width:  44%;">
-                  <Option v-for="item in cityList" :value="parseInt(item.wx_user_group_id)" :key="item.wx_user_group_id" disabled>{{ item.group_name }}</Option>
-               </Select>
-               <Button type="dashed" @click="popup2 = true" disabled>操作</Button>
-            </FormItem>
+            <!--<FormItem style="border-bottom: 0px;" label="客户池组：">-->
+               <!--<Select v-model="formData.wx_user_group_id" style="width:  44%;">-->
+                  <!--<Option v-for="item in cityList" :value="parseInt(item.wx_user_group_id)" :key="item.wx_user_group_id" disabled>{{ item.group_name }}</Option>-->
+               <!--</Select>-->
+               <!--<Button type="dashed" @click="popup2 = true" disabled>操作</Button>-->
+            <!--</FormItem>-->
             <FormItem label="意向产品：">
                <span>{{selPurposeData.product_name}}</span>
                <Button type="dashed" @click="popup12 = true" disabled>操作</Button>
@@ -586,8 +586,6 @@
         },
         // 添加标签
         addLabelFun () {},
-        ok () {
-        },
         // 删除意向产品
         delProductFun (k, i) {
           this.ajax.delProduct({

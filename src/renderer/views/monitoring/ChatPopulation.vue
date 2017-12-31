@@ -211,7 +211,7 @@
                <ul ref="list3" class="list" :style="'height:' + data3.length * 67 + 'px'">
                    <!--  @click.stop="addDialogueFun(k, i)" -->
                    <li v-for="(k, i) in data3" >
-                       <span class="end" title="关闭会话" @click.stop="popup2 = true, clientName = k, is_w_v = 2, clientDataIndex = i"><Icon  type="close-circled" style="vertical-align: top"></Icon></span>
+                       <span class="end" title="关闭会话" @click.stop="popup2 = true, clientName = k, is_w_v = 3, clientDataIndex = i"><Icon  type="close-circled" style="vertical-align: top"></Icon></span>
                        <div class="picture">
                            <img :src="k.customer_wx_portrait" alt="">
                        </div>
@@ -471,7 +471,7 @@
             }
           });
         },
-        // 结束会话
+        // 结束会话 123123
         endFun () {
           let k = this.clientName;
           this.is_Loading = true;
@@ -482,23 +482,25 @@
             },
             success: (res) => {
               if (this.is_w_v === 1) {
-                let db1 = new DB();
-                db1.type = 'remove'; // 执行类型
-                db1.tabName = 'visitor'; // 数据表名称
-                db1.key = k.customer_wx_openid;
-                db1.fun = function (res) { // 执行成功回掉函数
-                  db1.close();
-                };
+                // let db1 = new DB();
+                // db1.type = 'remove'; // 执行类型
+                // db1.tabName = 'visitor'; // 数据表名称
+                // db1.key = k.customer_wx_openid;
+                // db1.fun = function (res) { // 执行成功回掉函数
+                //   db1.close();
+                // };
                 this.data1.splice(this.clientDataIndex, 1);
               } else if (this.is_w_v === 2) {
-                let db = new DB();
-                db.type = 'remove'; // 执行类型
-                db.tabName = 'waiting'; // 数据表名称
-                db.key = k.customer_wx_openid;
-                db.fun = function (res) { // 执行成功回掉函数
-                  db.close();
-                };
+                // let db = new DB();
+                // db.type = 'remove'; // 执行类型
+                // db.tabName = 'waiting'; // 数据表名称
+                // db.key = k.customer_wx_openid;
+                // db.fun = function (res) { // 执行成功回掉函数
+                //   db.close();
+                // };
                 this.data2.splice(this.clientDataIndex, 1);
+              } else if (this.is_w_v === 3) {
+                this.data3.splice(this.clientDataIndex, 1);
               }
               this.messageData = {
                 add_time: '',

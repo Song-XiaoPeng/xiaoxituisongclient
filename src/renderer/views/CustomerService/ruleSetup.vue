@@ -152,7 +152,7 @@
             <Table :columns="replyTableColumns" :loading="is_Loading" :data="replyTableData"></Table>
 
             <div class="page-centent">
-              <Page :total="100"></Page>
+              <Page :total="pageData1.count" :page-size="pageData1.rows_num"  @on-change="pageFun1"></Page>
             </div>
           </div>
 
@@ -166,6 +166,7 @@
               <FormItem label="操作">
                 <Button type="primary" @click="popup3 = true">分组管理</Button>
                 <Button type="primary" @click="popup2 = true">新建标签</Button>
+                <Button type="primary" class="f-r" @click="synchronizationLebleFun">同步所有标签</Button>
               </FormItem>
               <FormItem label="详细">
                 <Table :columns="labelTableColumns" :loading="is_Loading" :data="labelTableData"></Table>
@@ -231,7 +232,7 @@
 
     <!-- 分组操作 弹窗-->
     <Modal v-model="popup3" title="标签分组">
-      <div style="margin-bottom: 5px;"><Button type="primary" @click="popup1 = true">新建分组</Button></div>
+      <div style="margin-bottom: 5px;"><Button type="primary" @click="popup1 = true, popup3 = false">新建分组</Button></div>
       <div>
         <Table :columns="GroupColumns" :loading="is_Loading" :data="cityList"></Table>
       </div>
@@ -291,11 +292,13 @@
         replyTableColumns: [
           {
             title: '内容',
-            key: 'content'
+            key: 'quick_reply_text',
+            align: 'center'
           },
           {
             title: '使用次数',
-            key: 'useCount'
+            key: 'use_count',
+            align: 'center'
           },
           {
             title: '操作',
@@ -312,7 +315,9 @@
                   },
                   on: {
                     click: () => {
-                      this.receivables(params.index);
+                      this.enterpriseData.quick_reply_id = params.row.quick_reply_id;
+                      this.enterpriseData.text = params.row.quick_reply_text;
+                      this.addConversationContent = true;
                     }
                   }
                 }, '编辑'),
@@ -326,7 +331,7 @@
                   },
                   on: {
                     click: () => {
-                      this.cancelOrder(params.index);
+                      this.delEnterpriseTxt(params.row, params.index);
                     }
                   }
                 }, '删除')
@@ -334,38 +339,7 @@
             }
           }
         ],
-        replyTableData: [
-          {
-            group: '第一分组',
-            title: '问候语',
-            content: '您好有什么需要帮助',
-            useCount: '32'
-          },
-          {
-            group: '第二分组',
-            title: '问候语',
-            content: '您好先生需要帮助吗？',
-            useCount: '56'
-          },
-          {
-            group: '第二分组',
-            title: '问候语',
-            content: '您好女士需要帮助吗？',
-            useCount: '75'
-          },
-          {
-            group: '第三分组',
-            title: '问候语',
-            content: '您好女士需要帮助吗？',
-            useCount: '92'
-          },
-          {
-            group: '第三分组',
-            title: '问候语',
-            content: '您好女士需要帮助吗？',
-            useCount: '12'
-          }
-        ],
+        replyTableData: [],
         labelTableColumns: [
           {
             title: '标签分组',
@@ -632,6 +606,8 @@
             this.labelGroupName = '';
             this.is_Loading = false;
             this.$Message.success('操作成功');
+            this.popup1 = false;
+            this.popup3 = true;
           },
           error: (res) => {
             this.is_Loading = false;
@@ -729,7 +705,10 @@
         this.ajax.setCommonQuickReplyText({
           data: this.enterpriseData,
           success: (res) => {
-            console.log(res);
+            this.enterpriseData.text = '';
+            this.enterpriseData.quick_reply_id = '';
+            this.getEnterpriseTxtListFun();
+            this.$Message.success('操作成功');
           },
           error: (res) => {
             this.$Message.waiting(res.meta);
@@ -740,11 +719,47 @@
       getEnterpriseTxtListFun () {
         this.ajax.getEnterpriseSentence({
           data: {
-            page: 1
+            page: this.pageData1.page
           },
           success: (res) => {
-            console.log(res);
+            this.replyTableData = res.body.data_list;
+            this.pageData1.count = parseInt(res.body.page_data.count);
+            this.pageData1.rows_num = parseInt(res.body.page_data.rows_num);
             // this.pageData1
+          },
+          error: (res) => {
+            this.$Message.waiting(res.meta);
+          }
+        });
+      },
+      // 分页 123132
+      pageFun1 (v) {
+        this.pageData1.page = v;
+        this.getEnterpriseTxtListFun();
+      },
+      // 删除企业话术
+      delEnterpriseTxt (k, i) {
+        this.ajax.delQuickReply({
+          data: {
+            quick_reply_id: k.quick_reply_id
+          },
+          success: (res) => {
+            this.replyTableData.splice(i, 1);
+            this.$Message.success(`操作成功`);
+          },
+          error: (res) => {
+            this.$Message.waiting(res.meta);
+          }
+        });
+      },
+      // 同步所有标签
+      synchronizationLebleFun () {
+        this.ajax.syncWxLabel({
+          data: {
+          },
+          success: (res) => {
+            this.getLabelListFun();
+            this.$Message.success(`操作成功`);
           },
           error: (res) => {
             this.$Message.waiting(res.meta);

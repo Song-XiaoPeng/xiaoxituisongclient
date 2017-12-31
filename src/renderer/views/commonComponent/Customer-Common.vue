@@ -180,12 +180,12 @@
                   <Option v-for="item in clientTypeArr" :value="item.id" :key="item.id">{{ item.label }}</Option>
                </Select>
             </FormItem>
-            <FormItem style="border-bottom: 0px;" label="客户池组：">
-               <Select v-model="formData.wx_user_group_id" style="width:  44%;">
-                  <Option v-for="item in cityList" :value="parseInt(item.wx_user_group_id)" :key="item.wx_user_group_id">{{ item.group_name }}</Option>
-               </Select>
-               <Button type="dashed" @click="popup2 = true">操作</Button>
-            </FormItem>
+            <!--<FormItem style="border-bottom: 0px;" label="客户池组：">-->
+               <!--<Select v-model="formData.wx_user_group_id" style="width:  44%;">-->
+                  <!--<Option v-for="item in cityList" :value="parseInt(item.wx_user_group_id)" :key="item.wx_user_group_id">{{ item.group_name }}</Option>-->
+               <!--</Select>-->
+               <!--<Button type="dashed" @click="popup2 = true">操作</Button>-->
+            <!--</FormItem>-->
             <FormItem label="意向产品：">
                <span>{{selPurposeData.product_name}}</span>
                <Button type="dashed" @click="popup12 = true">操作</Button>
@@ -294,7 +294,9 @@
       <!-- 添加标签 -->
       <Modal v-model="popup14" title="标签" @on-ok="setWxUserLabel">
          <div><span style="color: #ff3300">点击其中一项即选择</span></div>
-         <Table border :columns="columns9" highlight-row :data="Label" @on-current-change="selLabelFun"></Table>
+         <div  style="max-height: 450px;overflow: auto;">
+            <Table border :columns="columns9" highlight-row :data="Label" @on-current-change="selLabelFun"></Table>
+         </div>
       </Modal>
       <!-- end添加标签 -->
 

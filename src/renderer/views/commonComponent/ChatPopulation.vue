@@ -198,7 +198,7 @@
                    <span class="crew-count">{{data3.length}}</span>
                </div>
                <ul ref="list3" class="list" :style="'height:' + data3.length * 67 + 'px'">
-                   <li v-for="(k, i) in data3" @click.stop="addDialogueFun(k, i)">
+                   <li v-for="(k, i) in data3" @click.stop="addDialogueFun(k, i, `list3`)">
                        <div class="picture">
                            <img :src="k.customer_wx_portrait" alt="">
                        </div>

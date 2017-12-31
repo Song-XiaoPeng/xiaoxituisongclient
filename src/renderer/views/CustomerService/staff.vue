@@ -244,7 +244,10 @@
 
         <!-- 权限管理 -->
         <Modal v-model="popup11" title="权限管理" :width="500" @on-ok="jurisdictionFun" @on-cancel="cancelJurisdictionFun">
-            <Tree :data="menuArr" show-checkbox multiple @on-check-change="jurisdiction"></Tree>
+            <div style="max-height: 400px;overflow: auto;">
+                <Tree :data="menuArr" show-checkbox multiple @on-check-change="jurisdiction"></Tree>
+            </div>
+
         </Modal>
         <!-- end权限管理 -->
 

@@ -133,7 +133,7 @@
             <div class="top-box">
                 <ul class="cl">
                     <li v-bind:class="tabName == 'name1' ? 'active' : ''"  @click="selTabFun('name1')">订单客户</li>
-                    <li v-bind:class="tabName == 'name2' ? 'active' : ''"  @click="hintFun()">回访提醒</li>
+                    <!--<li v-bind:class="tabName == 'name2' ? 'active' : ''"  @click="hintFun()">回访提醒</li>-->
                 </ul>
             </div>
             <div class="filtrate-box">
@@ -143,9 +143,10 @@
                     <li v-bind:class="ascription == '2' ?  'active' : ''" @click="ascriptionFun('2')">下属客户</li>
                 </ul>
                 <ul class="my-box cl" style="margin: 0 20px">
-                    <li @click="hintFun">总订单数(<span style="color: #efc27c">47985</span>)</li>
-                    <li @click="hintFun">今日订单(<span style="color: #efc27c">45</span>)</li>
-                    <li @click="hintFun">待回访(<span style="color: #efc27c">13</span>)</li>
+                    <li @click="hintFun">总订单数(<span style="color: #efc27c">{{intentionStatistics.total}}</span>)</li>
+                    <li @click="hintFun">今日订单(<span style="color: #efc27c">{{intentionStatistics.today}}</span>)</li>
+                    <li @click="hintFun">待回访(<span style="color: #efc27c">{{intentionStatistics.follow_up}}</span>)</li>
+                    <li @click="hintFun">本月订单(<span style="color: #efc27c">{{intentionStatistics.intention}}</span>)</li>
                 </ul>
                 <ul class="my-box cl">
                     <li @click="hintFun">今日需联系</li>
@@ -171,14 +172,14 @@
                                 <!--<Button class="f-l" type="ghost" style="" @click="is_screen = true">高级搜索</Button>-->
                                 <Input class="f-l" v-model="real_name"  placeholder="客户名称" style="width: 200px"></Input>
                                 <Button class="f-l" type="info" style="margin-left: 2px" @click="getCustomerList('seek')">搜索</Button>
-                                <Button class="f-l"  style="margin-left: 10px" type="ghost" @click="hintFun">高级搜索<Icon type="arrow-up-b"></Icon></Button>
-                                <Button class="f-r"  style="margin-left: 10px" type="info"  @click="hintFun">添加业务提醒</Button>
-                                <Button class="f-r"  style="margin-left: 10px" type="warning"  @click="hintFun">群发激活</Button>
+                                <!--<Button class="f-l"  style="margin-left: 10px" type="ghost" @click="hintFun">高级搜索<Icon type="arrow-up-b"></Icon></Button>-->
+                                <!--<Button class="f-r"  style="margin-left: 10px" type="info"  @click="hintFun">添加业务提醒</Button>-->
+                                <!--<Button class="f-r"  style="margin-left: 10px" type="warning"  @click="hintFun">群发激活</Button>-->
                             </div>
                             <div class="title-box cl">
                                 <div class="f-l txt-box">订单</div>
                                 <div class="f-r">
-                                    <Button type="ghost" @click="hintFun" style="margin: 15px">设置标题</Button>
+                                    <!--<Button type="ghost" @click="hintFun" style="margin: 15px">设置标题</Button>-->
                                 </div>
                             </div>
                             <div class="table-box">
@@ -371,59 +372,73 @@
         clientData: {},
         columns4: [
           {
-            type: 'selection',
-            width: 60,
-            align: 'center'
-          },
-          {
-            title: '客户姓名',
-            key: 'real_name'
-          },
-          {
-            title: '手机',
-            key: 'real_phone'
-          },
-          {
-            title: '微信号',
-            key: 'wx_number'
-          },
-          {
-            title: '添加业务提醒',
-            render: (h, params) => {
+            title: '微信用户昵称',
+            render: (h, p) => {
               return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'ghost',
-                    size: 'small'
+                h('a', {
+                  style: {
+                    cursor: 'pointer',
+                    textDecoration: 'underline'
                   },
                   on: {
                     click: () => {
-                      this.selUserData = params.row;
-                      this.modal2 = true;
+                      if (this.userInfo.user_type !== 3) {
+                        this.jionUpFun(p.row);
+                      }
                     }
                   }
-                }, '添加业务提醒')
+                }, p.row.nickname === '' || p.row.nickname === null ? '无法显示名称' : p.row.nickname)
               ]);
             }
           },
           {
+            title: '真实姓名',
+            ellipsis: true,
+            render: (h, p) => {
+              return h('span', p.row.real_name === null || p.row.real_name === '' ? '暂无' : p.row.real_name);
+            }
+          },
+          {
+            title: '公司名称',
+            ellipsis: true,
+            render: (h, p) => {
+              return h('span', p.row.wx_comapny_name === null || p.row.wx_comapny_name === '' ? '暂无' : p.row.wx_comapny_name);
+            }
+          },
+          {
+            title: '产品',
+            ellipsis: true,
+            render: (h, p) => {
+              return h('span', p.row.product_name === null || p.row.product_name === '' ? '暂无' : p.row.product_name);
+            }
+          },
+          {
+            title: '所在城市',
+            ellipsis: true,
+            render: (h, p) => {
+              return h('span', p.row.province + ',' + p.row.city);
+            }
+          },
+          {
+            title: '负责人',
+            ellipsis: true,
+            key: 'customer_service_name'
+          },
+          {
+            title: '手机号码',
+            render: (h, p) => {
+              return h('span', p.row.real_phone === null || p.row.real_phone === '' ? '暂无' : p.row.real_phone);
+            }
+          },
+          {
+            title: '来访次数',
+            ellipsis: true,
+            key: 'get_into_count'
+          },
+          {
             title: '操作',
-            key: 'action',
-            align: 'center',
-            render: (h, params) => {
-              let arr = [];
-              let del = h('Button', {
-                props: {
-                  type: 'error',
-                  size: 'small'
-                },
-                on: {
-                  click: () => {
-                    this.$Message.warning('删除功能玩命开发中。。。。');
-                  }
-                }
-              }, '删除');
-              let dateils = h('Button', {
+            render: (h, p) => {
+              return h('Button', {
                 props: {
                   type: 'primary',
                   size: 'small'
@@ -433,19 +448,10 @@
                 },
                 on: {
                   click: () => {
-                    // Object.assign(this.clientData, params.row);
-                    // this.clientData = params.row;
-                    // this.popup3 = true;
+                    this.selTableFun(p.row);
                   }
                 }
               }, '详情');
-              if (this.userInfo.user_type === '3') {
-                arr.push(dateils);
-                arr.push(del);
-              } else {
-                arr.push(dateils);
-              }
-              return h('div', arr);
             }
           }
         ],
@@ -548,7 +554,8 @@
           page: 1,
           rows_num: 1
         },
-        ascription: ''
+        ascription: '',
+        intentionStatistics: {}
       };
     },
     components: {
@@ -610,11 +617,10 @@
           }
         }
         this.is_Loading = true;
-        this.ajax.getCustomerList({
+        this.ajax.getOrderCustomer({
           data: {
             page: this.pageData1.page,
             real_name: this.real_name,
-            type: 2,
             ascription: this.ascription
           },
           success: (res) => {
@@ -738,6 +744,18 @@
         } else {
           this.getCustomerList();
         }
+      },
+      // 获取订单客户数据统计
+      getOrderCustomerData () {
+        this.ajax.getOrderCustomerData({
+          data: {},
+          success: (res) => {
+            this.intentionStatistics = res.body;
+          },
+          error: (res) => {
+            this.$Message.warning(res.meta.message);
+          }
+        });
       }
     },
     computed: {},
@@ -745,6 +763,8 @@
       // Bus.$off();
     },
     created () {
+      Bus.$off();
+      this.getOrderCustomerData();
       this.userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
       this.ajax.getWxAuthList({
         data: {},

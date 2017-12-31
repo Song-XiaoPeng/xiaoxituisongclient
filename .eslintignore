@@ -14,3 +14,4 @@ src/renderer/views/commonComponent/worker-realtime.js
 src/main/window/js/main.js
 src/main/window/js/email.js
 src/main/window/js/shortcut-capture.js
+static/index.html

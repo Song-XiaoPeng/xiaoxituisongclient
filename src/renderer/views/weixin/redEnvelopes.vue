@@ -80,7 +80,7 @@
       </div>
     </Card>
 
-    <Modal v-model="viewQrcode" title="领取情况">
+    <Modal v-model="viewQrcode" title="领取情况" width="700">
       <Table :columns="qrCodeColumn" :data="qrCodeList"></Table>
 
       <div class="page-centent">
@@ -249,27 +249,36 @@
         qrCodeColumn: [
           {
             title: '用户头像',
-            key: 'wx_nickname',
             align: 'center',
-            ellipsis: true
+            render: (h, p) => {
+              return h('img', {
+                style: {
+                  width: '50px',
+                  height: '50px',
+                  verticalAlign: 'middle',
+                  marginTop: '5px',
+                  marginBottom: '5px'
+                },
+                attrs: {
+                  'src': p.row.wx_portrait
+                }
+              });
+            }
           },
           {
             title: '领取用户',
             key: 'wx_nickname',
-            align: 'center',
-            ellipsis: true
+            align: 'center'
           },
           {
             title: '领取金额',
             key: 'receive_amount',
-            align: 'center',
-            ellipsis: true
+            align: 'center'
           },
           {
             title: '领取时间',
-            key: 'wx_portrait',
-            align: 'center',
-            ellipsis: true
+            key: 'receive_time',
+            align: 'center'
           }
         ],
         imgName: '',

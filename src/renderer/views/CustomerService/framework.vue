@@ -265,13 +265,13 @@
           <Input v-model="pass" type="password" placeholder="请输入登录密码" @on-change="passFun" @on-focus="inputKeyFun"></Input>
         </FormItem>
         <FormItem label="所属部门">
-          <Select  v-model="userObj.user_group_id">
+          <Select  v-model="userObj.user_group_id" @on-change="addUserBranchSelFun">
             <Option  :value="k.user_group_id" v-for="(k, i) in data1" :key="i">{{k.user_group_name}}</Option>
           </Select>
         </FormItem>
         <FormItem label="所属职位">
           <Select   v-model="userObj.position_id">
-            <Option  :value="k.position_id" v-for="(k, i) in data2" :key="i">{{k.position_name}}</Option>
+            <Option  :value="k.position_id" v-for="(k, i) in data4" :key="i">{{k.position_name}}</Option>
           </Select>
         </FormItem>
         <FormItem label="头像上传">
@@ -618,6 +618,7 @@
           }
         ],
         data2: [],
+        data4: [],
         columns1: [
           {
             title: '部门名称',
@@ -741,6 +742,9 @@
       },
       branch_id2: function () {
         this.getPostListFun();
+      },
+      'userObj.user_group_id': function (v) {
+        this.getPostListFun(v);
       }
     },
     methods: {
@@ -834,7 +838,7 @@
           }
         });
       },
-      // 删除部门 123123
+      // 删除部门
       delBranchFun () {
         this.ajax.delDepartment({
           data: {
@@ -849,7 +853,7 @@
           }
         });
       },
-      // 添加岗位 123132
+      // 添加岗位
       addPostFun () {
         if (this.postObj.position_name === '') {
           this.$Message.warning(`请输入岗位名称`);
@@ -871,13 +875,21 @@
         });
       },
       // 获取岗位列表
-      getPostListFun () {
+      getPostListFun (id) {
+        let obj = {};
+        if (this.popup6) {
+          Object.assign(obj, {user_group_id: id});
+        } else {
+          Object.assign(obj, {user_group_id: this.branch_id2 === '0' ? '' : this.branch_id2});
+        }
         this.ajax.getPositionList({
-          data: {
-            user_group_id: this.branch_id2
-          },
+          data: obj,
           success: (res) => {
-            this.data2 = res.body;
+            if (this.popup6) {
+              this.data4 = res.body;
+            } else {
+              this.data2 = res.body;
+            }
           },
           error: (res) => {
             this.$Message.warning(`错误内容：${res.meta.message}`);
@@ -1059,6 +1071,9 @@
             this.is_Loading = false;
           }
         });
+      },
+      // 添加人员  -- 》 部门切换 dwawd
+      addUserBranchSelFun (v) {
       }
     },
     created () {

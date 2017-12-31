@@ -1200,7 +1200,6 @@
         let obj = this.subBeforeGroupFun();
         this.elmetArr.push(obj);
         // this.clientData.data.push(obj);
-        this.clearTimer();
         this.is_sub = false;
         this.ajax.sendMessage({
           data: this.messData,
