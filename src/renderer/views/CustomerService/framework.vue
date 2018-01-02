@@ -66,7 +66,7 @@
         <span v-if="tabVal == 'name3'">已停止用户</span>
         <Button v-if="tabVal == 'name2' || tabVal == 'name3'" class="f-r" style="margin: 15px" @click="popup1 = true">部门</Button>
         <Button v-if="tabVal == 'name2' || tabVal == 'name3'" class="f-r" style="margin: 15px" @click="popup3 = true">岗位</Button>
-        <Button v-if="tabVal == 'name2' || tabVal == 'name3'" class="f-r" style="margin: 15px" @click="popup6 = true">添加用户</Button>
+        <Button v-if="tabVal == 'name2' || tabVal == 'name3'" class="f-r" style="margin: 15px" @click="clearFun(popup6 = true)">添加用户</Button>
       </div>
 
 
@@ -199,7 +199,7 @@
     <Modal  v-model="popup3" title="部门列表">
       <div class="" style="max-height: 400px;overflow: auto">
         <div class="" style="padding: 5px">
-          <Button zise="small" style="" @click="popup4 = true">添加岗位</Button>
+          <Button zise="small" style="" @click="clearFun(popup4 = true)">添加岗位</Button>
           <Select class="f-r" style="width: 200px" v-model="branch_id2">
             <Option  :value="k.user_group_id" v-for="(k, i) in data1" :key="i">{{k.user_group_name}}</Option>
           </Select>
@@ -813,14 +813,33 @@
           }
         });
       },
-      // 清除部门输入的数据
+      // 清除岗位/部门输入的数据
       clearFun () {
+        // 部门
         this.branchData.user_group_id = '';
         this.branchData.department_name = '';
         this.branchData.parent_id = '';
         this.branchData.desc = '';
+        // 岗位
+        this.postObj.user_group_id = '';
+        this.postObj.position_id = '';
+        this.postObj.describe = '';
+        this.postObj.position_name = '';
+        // 人员
+        this.userObj.position_id = '';
+        this.userObj.password = '';
+        this.userObj.user_group_id = '';
+        this.userObj.user_name = '';
+        this.userObj.portrait = '';
+        this.userObj.phone_no = '';
+        this.userObj.sex = '';
+        this.userObj.is_customer_service = '';
+        this.userObj.uid = '';
+        this.portraitObj.url = '';
+        this.portraitObj.resources_id = '';
+        this.pass = '';
       },
-      // 获取部门列表
+      // 获取部门列表 1213
       getBranchList () {
         this.data1.length = 0;
         this.ajax.getDepartmentList({
@@ -878,6 +897,7 @@
           success: (res) => {
             this.$Message.success(`操作成功`);
             this.getPostListFun();
+            this.clearFun();
           },
           error: (res) => {
             this.$Message.warning(`错误内容：${res.meta.message}`);
@@ -947,6 +967,8 @@
         this.ajax.addUser({
           data: this.userObj,
           success: (res) => {
+            this.$Message.success(`操作成功`);
+            this.clearFun();
             this.getUserListFun();
           },
           error: (res) => {
@@ -1090,6 +1112,7 @@
       Object.assign(this.userInfo, JSON.parse(localStorage.getItem('userInfo')));
       this.getBranchList();
       this.getFrameworkData();
+      this.getPostListFun();
     }
   };
 </script>
