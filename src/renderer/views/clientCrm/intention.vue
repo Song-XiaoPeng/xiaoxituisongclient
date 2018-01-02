@@ -147,16 +147,16 @@
                     <li @click="hintFun">总意向(<span style="color: #efc27c">{{intentionStatistics.total}}</span>)</li>
                     <li  @click="hintFun">今日(<span style="color: #efc27c">{{intentionStatistics.today}}</span>)</li>
                     <li @click="hintFun">待跟进(<span style="color: #efc27c">{{intentionStatistics.follow_up}}</span>)</li>
-                    <li @click="hintFun">本月订单(<span style="color: #efc27c">{{intentionStatistics.intention}}</span>)</li>
+                    <li @click="hintFun">本月意向(<span style="color: #efc27c">{{intentionStatistics.intention}}</span>)</li>
                 </ul>
                 <ul class="my-box cl">
-                    <li @click="hintFun">今日需联系</li>
-                    <li @click="hintFun">明日需联系</li>
-                    <li @click="hintFun">本周需沟通</li>
-                    <li @click="hintFun">本月需沟通</li>
-                    <li @click="hintFun">7日未联系</li>
-                    <li @click="hintFun">15日未联系</li>
-                    <li @click="hintFun">30日未联系</li>
+                    <!--<li @click="hintFun">今日需联系</li>-->
+                    <!--<li @click="hintFun">明日需联系</li>-->
+                    <!--<li @click="hintFun">本周需沟通</li>-->
+                    <!--<li @click="hintFun">本月需沟通</li>-->
+                    <!--<li @click="hintFun">7日未联系</li>-->
+                    <!--<li @click="hintFun">15日未联系</li>-->
+                    <!--<li @click="hintFun">30日未联系</li>-->
                 </ul>
             </div>
             <div ref="chartEl" v-bind:class="is_show_chartEl ? 'chart1' : ''" class="chart f-l" style="">
@@ -183,7 +183,7 @@
                             </div>
                             <div class="table-box">
                                 <!-- @on-current-change="selTableFun" -->
-                                <Table border ref="selection"  :columns="columns4" :data="data1" ></Table>
+                                <Table border ref="selection" :loading="is_Loading"  :columns="columns4" :data="data1" ></Table>
                             </div>
                             <div style="text-align: center;padding: 5px">
                                 <Page :total="pageData.count" :page-size="pageData.rows_num" @on-change="pageFun"></Page>
@@ -202,7 +202,7 @@
                                 <Button class="f-l" type="info" style="margin-left: 2px" @click="getCustomerList('seek')">搜索</Button>
                             </div>
                             <div class="table-box">
-                                <Table border ref="selection" highlight-row :columns="columns5" :data="data1"></Table>
+                                <Table border ref="selection" highlight-row :loading="is_Loading" :columns="columns5" :data="data4"></Table>
                             </div>
                             <div style="text-align: center;padding: 5px">
                                 <Page :total="pageData.count" :page-size="pageData.rows_num" @on-change="pageFun"></Page>
@@ -348,10 +348,10 @@
         <!--</Modal>-->
 
         <!-- 加载状态 -->
-        <Spin fix v-if="is_Loading">
-            <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
-            <div>请求中....</div>
-        </Spin>
+        <!--<Spin fix v-if="is_Loading">-->
+            <!--<Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>-->
+            <!--<div>请求中....</div>-->
+        <!--</Spin>-->
         <!-- end加载状态 -->
     </div>
 </template>
@@ -676,7 +676,8 @@
         user_group_id: '',
         user: null,
         allocationIndex: null,
-        allocationSelData: null
+        allocationSelData: null,
+        data4: []
       };
     },
     components: {
@@ -692,7 +693,7 @@
     methods: {
       // 待开发提示
       hintFun () {
-        // this.$Message.warning('玩命开发中。。。。');
+        // this.$Message.warning('玩命开发中。。。ddadwa。');
       },
       // 选择下属别个数据方法
       selAllocationUser (v) {
@@ -762,7 +763,7 @@
           }
         }
         // let obj = {};
-        this.is_Loading = true;
+        // this.is_Loading = true;
         this.ajax.getIntentionalCustomers({
           data: {
             page: this.pageData.page,
@@ -771,7 +772,11 @@
             ascription: this.ascription
           },
           success: (res) => {
-            this.data1 = res.body.data_list;
+            if (this.tabName === 'name1') {
+              this.data1 = res.body.data_list;
+            } else if (this.tabName === 'name2') {
+              this.data4 = res.body.data_list;
+            }
             this.pageData.count = parseInt(res.body.page_data.count);
             this.pageData.rows_num = parseInt(res.body.page_data.rows_num);
             this.is_Loading = false;
@@ -807,7 +812,7 @@
           common: true,
           information: false,
           record: false,
-          remind: false,
+          remind: true,
           type: this.tabName === 'name1' ? '' : '',
           ajax_type: 'clue'
         };

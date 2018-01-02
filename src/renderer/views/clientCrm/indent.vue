@@ -149,10 +149,10 @@
                     <li @click="hintFun">本月订单(<span style="color: #efc27c">{{intentionStatistics.intention}}</span>)</li>
                 </ul>
                 <ul class="my-box cl">
-                    <li @click="hintFun">今日需联系</li>
-                    <li @click="hintFun">明日需联系</li>
-                    <li @click="hintFun">本周需沟通</li>
-                    <li @click="hintFun">本月需沟通</li>
+                    <!--<li @click="hintFun">今日需联系</li>-->
+                    <!--<li @click="hintFun">明日需联系</li>-->
+                    <!--<li @click="hintFun">本周需沟通</li>-->
+                    <!--<li @click="hintFun">本月需沟通</li>-->
                 </ul>
             </div>
             <div ref="chartEl" v-bind:class="is_show_chartEl ? 'chart1' : ''" class="chart f-l" style="">
@@ -183,7 +183,7 @@
                                 </div>
                             </div>
                             <div class="table-box">
-                                <Table border ref="selection" highlight-row :columns="columns4" :data="data1" @on-current-change="selTableFun"></Table>
+                                <Table border ref="selection" highlight-row :loading="is_Loading" :columns="columns4" :data="data1" @on-current-change="selTableFun"></Table>
                             </div>
                             <div style="text-align: center;padding: 5px">
                                 <Page :total="pageData.count" :page-size="pageData.rows_num" @click="pageFun"></Page>
@@ -202,7 +202,7 @@
                                 <Button class="f-l" type="info" style="margin-left: 2px" @click="getCustomerList('seek')">搜索</Button>
                             </div>
                             <div class="table-box">
-                                <Table border ref="selection" highlight-row :columns="columns4" :data="data1" @on-current-change="selTableFun"></Table>
+                                <Table border ref="selection" highlight-row :loading="is_Loading" :columns="columns4" :data="data1" @on-current-change="selTableFun"></Table>
                             </div>
                             <div style="text-align: center;padding: 5px">
                                 <Page :total="pageData.count" :page-size="pageData.rows_num" @click="pageFun"></Page>
@@ -302,10 +302,10 @@
         <!--</Modal>-->
 
         <!-- 加载状态 -->
-        <Spin fix v-if="is_Loading">
-            <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
-            <div>请求中....</div>
-        </Spin>
+        <!--<Spin fix v-if="is_Loading">-->
+            <!--<Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>-->
+            <!--<div>请求中....</div>-->
+        <!--</Spin>-->
         <!-- end加载状态 -->
     </div>
 </template>
@@ -431,7 +431,7 @@
             }
           },
           {
-            title: '来访次数',
+            title: '进入公共号次数',
             ellipsis: true,
             key: 'get_into_count'
           },

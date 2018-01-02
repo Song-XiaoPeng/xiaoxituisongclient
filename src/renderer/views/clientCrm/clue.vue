@@ -152,13 +152,13 @@
                     <li @click="hintFun" style="cursor: auto">本月转为意向(<span style="color: #efc27c">{{statistics.intention}}</span>)</li>
                 </ul>
                 <ul class="my-box cl">
-                    <li @click="hintFun">今日需联系</li>
-                    <li @click="hintFun">明日需联系</li>
-                    <li @click="hintFun">本周需沟通</li>
-                    <li @click="hintFun">本月需沟通</li>
-                    <li @click="hintFun">7日未联系</li>
-                    <li @click="hintFun">15日未联系</li>
-                    <li @click="hintFun">30日未联系</li>
+                    <!--<li @click="hintFun">今日需联系</li>-->
+                    <!--<li @click="hintFun">明日需联系</li>-->
+                    <!--<li @click="hintFun">本周需沟通</li>-->
+                    <!--<li @click="hintFun">本月需沟通</li>-->
+                    <!--<li @click="hintFun">7日未联系</li>-->
+                    <!--<li @click="hintFun">15日未联系</li>-->
+                    <!--<li @click="hintFun">30日未联系</li>-->
                 </ul>
             </div>
             <div ref="chartEl" v-bind:class="is_show_chartEl ? 'chart1' : ''" class="chart f-l" style="">
@@ -182,7 +182,7 @@
                                         </div>
                                     </div>
                                     <div class="table-box">
-                                        <Table border ref="selection" highlight-row :columns="columns4" :data="data1" ></Table>
+                                        <Table border ref="selection" highlight-row :loading="is_Loading" :columns="columns4" :data="data1" ></Table>
                                     </div>
                                     <div style="text-align: center;padding: 5px">
                                         <Page :total="pageData.count" :page-size="pageData.rows_num" @on-change="pageFun"></Page>
@@ -204,7 +204,7 @@
                                         </div>
                                     </div>
                                     <div class="table-box">
-                                        <Table border ref="selection" highlight-row :columns="columns5" :data="data2"></Table>
+                                        <Table border ref="selection" highlight-row :loading="is_Loading" :columns="columns5" :data="data2"></Table>
                                     </div>
                                     <div style="text-align: center;padding: 5px">
                                         <Page :total="pageData.count" :page-size="pageData.rows_num" @on-change="pageFun"></Page>
@@ -292,7 +292,7 @@
                         </Select>
                     </FormItem>
                     <FormItem label="人员">
-                        <Table border ref="selection" highlight-row :columns="columns6" :data="data6" @on-current-change="selAllocationUser"></Table>
+                        <Table border ref="selection" highlight-row :columns="columns6" :data="data6" :loading="is_Loading" @on-current-change="selAllocationUser"></Table>
                     </FormItem>
                 </Form>
             </div>
@@ -304,10 +304,10 @@
 
 
         <!-- 加载状态 -->
-        <Spin fix v-if="is_Loading">
-            <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
-            <div>请求中....</div>
-        </Spin>
+        <!--<Spin fix v-if="is_Loading">-->
+            <!--<Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>-->
+            <!--<div>请求中....</div>-->
+        <!--</Spin>-->
         <!-- end加载状态 -->
     </div>
 </template>
@@ -756,7 +756,7 @@
           common: true,
           information: false,
           record: false,
-          remind: false,
+          remind: true,
           type: this.tabName === 'name1' ? '' : '',
           ajax_type: 'clue'
         };

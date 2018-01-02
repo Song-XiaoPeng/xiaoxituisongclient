@@ -87,6 +87,9 @@
 </style>
 <template>
     <div class="remind-box">
+        <div>
+            <Button class="" size="small" type="info"  @click="popup3 = true">添加提醒</Button>
+        </div>
        <div class="list">
            <div v-for="(k, i) in remindListArr">
                <p class="tel" style="color: #999">创建人：&nbsp;{{k.create_user_name}}&nbsp;&nbsp;创建时间：{{k.add_time}} </p>
@@ -123,6 +126,22 @@
         <div style="padding: 5px;text-align: center;">
             <Page :total="pageData.count" :page-size="pageData.row_sum" @click="pageFun"></Page>
         </div>
+
+
+        <!-- 添加提醒弹窗 -->
+        <Modal v-model="popup3" title="添加提醒" @on-ok="addRemind">
+            <Form :label-width="100">
+                <FormItem label="提醒日期：">
+                    <DatePicker type="date" placeholder="提醒时间" style="width: 100%" @on-change="dateFun"></DatePicker>
+                </FormItem>
+                <FormItem label="具体内容：">
+                    <Input v-model="txta" type="textarea" :autosize="{minRows: 2}" placeholder="请输入..."></Input>
+                </FormItem>
+            </Form>
+        </Modal>
+        <!-- end添加提醒 -->
+
+
 
 
         <!-- 修改提醒弹窗 -->
@@ -193,6 +212,7 @@
           },
           popup1: false,
           popup2: false,
+          popup3: false,
           RemindDate: '',
           txta: '',
           RemindData: ''
@@ -222,6 +242,29 @@
               this.remindListArr = res.body.data_list;
               this.pageData.count = parseInt(res.body.page_data.count);
               this.pageData.row_sum = parseInt(res.body.page_data.rows_num);
+              this.is_Loading = false;
+            },
+            error: (res) => {
+              this.is_Loading = false;
+              this.$Message.warning(res.meta.message);
+            }
+          });
+        },
+        // 添加业务提醒
+        addRemind () {
+          this.is_Loading = true;
+          this.ajax.addRemind({
+            data: {
+              remind_content: this.txta,
+              customer_info_id: this.clientData.customer_info_id,
+              remind_time: this.RemindDate,
+              remind_uid: this.clientData.uid,
+              remind_type: this.RemindDate.is_clue === -1 || 1 ? 1 : this.RemindDate.is_clue === 2 || 3 ? 2 : this.RemindDate.is_clue === 4 ? 3 : ''
+            },
+            success: (res) => {
+              // 如果添加成功 通知业务提醒组件更新数据
+              this.pageData.page = 1;
+              this.getRemindList();
               this.is_Loading = false;
             },
             error: (res) => {
@@ -315,7 +358,6 @@
           this.clientData = k;
         });
         Bus.$on('remind', (k) => {
-          console.log(k);
           if (k) {
             this.clientData = k;
           }

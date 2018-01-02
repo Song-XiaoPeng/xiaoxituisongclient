@@ -555,6 +555,7 @@
             success: (res) => {
               this.userData = res.body;
               this.is_Loading = false;
+              Bus.$emit('userEV', res.body);
             },
             error: (res) => {
               this.is_Loading = false;
@@ -801,7 +802,7 @@
               this.formData.wx_user_group_name = res.body.wx_user_group_name;
               this.is_Loading = false;
               if (res.body.customer_info_id && res.body.customer_info_id !== null) {
-                Bus.$emit('is_remind', res.body, {'remind': true});
+                Bus.$emit('is_remind', res.body, {'remind': true}, this.userData);
               }
             },
             error: (res) => {

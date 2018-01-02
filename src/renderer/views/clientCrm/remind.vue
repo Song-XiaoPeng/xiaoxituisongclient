@@ -134,29 +134,31 @@
         <Row class="box">
             <div class="top-box">
                 <ul class="cl">
-                    <li v-bind:class="tabName == 'name1' ? 'active' : ''"  @click="selTabFun('name1')">客户提醒</li>
+                    <li v-bind:class="tabName == 'name1' ? 'active' : ''"  @click="selTabFun('name1')">线索跟踪提醒</li>
+                    <li v-bind:class="tabName == 'name2' ? 'active' : ''"  @click="selTabFun('name2')">意向跟踪提醒</li>
+                    <li v-bind:class="tabName == 'name3' ? 'active' : ''"  @click="selTabFun('name3')">回访提醒</li>
                 </ul>
             </div>
             <div class="filtrate-box">
-                <ul class="my-box cl">
-                    <li v-if="tabName === 'name1'" v-bind:class="ascription == '3' ?  'active' : ''" @click="ascriptionFun('3')">全部</li>
-                    <li v-if="tabName === 'name1'" v-bind:class="ascription == '1' ?  'active' : ''" @click="ascriptionFun('1')">我的客户</li>
-                    <li v-if="tabName === 'name1'" v-bind:class="ascription == '2' ?  'active' : ''" @click="ascriptionFun('2')">下属客户</li>
-                </ul>
-                <ul class="my-box cl" style="margin: 0 20px">
-                    <li @click="hintFun" style="cursor: auto">总线索(<span style="color: #efc27c">{{statistics.clue}}</span>)</li>
-                    <li @click="hintFun" style="cursor: auto">今日(<span style="color: #efc27c">{{statistics.today}}</span>)</li>
-                    <li @click="hintFun" style="cursor: auto">待跟进(<span style="color: #efc27c">{{statistics.follow_up}}</span>)</li>
-                    <li @click="hintFun" style="cursor: auto">本月转为意向(<span style="color: #efc27c">{{statistics.intention}}</span>)</li>
-                </ul>
-                <ul class="my-box cl">
-                    <li @click="hintFun">今日需联系</li>
-                    <li @click="hintFun">明日需联系</li>
-                    <li @click="hintFun">本周需沟通</li>
-                    <li @click="hintFun">本月需沟通</li>
-                    <li @click="hintFun">7日未联系</li>
-                    <li @click="hintFun">15日未联系</li>
-                    <li @click="hintFun">30日未联系</li>
+                <!--<ul class="my-box cl">-->
+                    <!--<li v-if="tabName === 'name1'" v-bind:class="ascription == '3' ?  'active' : ''" @click="ascriptionFun('3')"></li>-->
+                    <!--<li v-if="tabName === 'name1'" v-bind:class="ascription == '1' ?  'active' : ''" @click="ascriptionFun('1')"></li>-->
+                    <!--<li v-if="tabName === 'name1'" v-bind:class="ascription == '2' ?  'active' : ''" @click="ascriptionFun('2')"></li>-->
+                <!--</ul>-->
+                <!--<ul class="my-box cl" style="margin: 0 20px">-->
+                    <!--&lt;!&ndash;<li @click="hintFun" style="cursor: auto">总线索(<span style="color: #efc27c">{{statistics.clue}}</span>)</li>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<li @click="hintFun" style="cursor: auto">今日(<span style="color: #efc27c">{{statistics.today}}</span>)</li>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<li @click="hintFun" style="cursor: auto">待跟进(<span style="color: #efc27c">{{statistics.follow_up}}</span>)</li>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<li @click="hintFun" style="cursor: auto">本月转为意向(<span style="color: #efc27c">{{statistics.intention}}</span>)</li>&ndash;&gt;-->
+                <!--</ul>-->
+                <ul class="my-box cl" style="float: right;">
+                    <li v-bind:class="time_type == 1 ? 'active' : ''" @click="selContactFun(1)">今日需联系</li>
+                    <li v-bind:class="time_type == 2 ? 'active' : ''" @click="selContactFun(2)">昨日需联系</li>
+                    <li v-bind:class="time_type == 3 ? 'active' : ''" @click="selContactFun(3)">本周需沟通</li>
+                    <li v-bind:class="time_type == 4 ? 'active' : ''" @click="selContactFun(4)">本月需沟通</li>
+                    <li v-bind:class="time_type == 5 ? 'active' : ''" @click="selContactFun(5)">本月需联系</li>
+                    <li v-bind:class="time_type == 6 ? 'active' : ''" @click="selContactFun(6)">超时需联系</li>
+                    <li v-bind:class="time_type == 7 ? 'active' : ''" @click="selContactFun(7)">已完成</li>
                 </ul>
             </div>
             <div ref="chartEl" v-bind:class="is_show_chartEl ? 'chart1' : ''" class="chart f-l" style="">
@@ -165,7 +167,7 @@
                  </span>
                     <div>
 
-                                <div v-if="tabName == 'name1'" class="">
+                                <div class="">
                                     <div class="btn-box cl" style="text-align: right;padding:10px">
                                         <Input class="f-l" v-model="real_name"  placeholder="客户名称" style="width: 200px"></Input>
                                         <Button class="f-l" type="info" style="margin-left: 2px" @click="getCustomerList('seek')">搜索</Button>
@@ -180,34 +182,38 @@
                                         </div>
                                     </div>
                                     <div class="table-box">
-                                        <Table border ref="selection" highlight-row :columns="columns4" :data="data1" ></Table>
+                                        <Table border ref="selection" highlight-row :loading="is_Loading" :columns="columns4" :data="data1" ></Table>
                                     </div>
                                     <div style="text-align: center;padding: 5px">
                                         <Page :total="pageData.count" :page-size="pageData.rows_num" @on-change="pageFun"></Page>
                                     </div>
                                 </div>
 
-                                <div v-if="tabName == 'name2'">
-                                    <div class="btn-box cl" style="text-align: right;padding:10px">
-                                        <Input class="f-l" v-model="real_name"  placeholder="客户名称" style="width: 200px"></Input>
-                                        <Button class="f-l" type="info" style="margin-left: 2px" @click="getCustomerList('seek')">搜索</Button>
-                                        <!--<Button class="f-l"  style="margin-left: 10px" type="ghost" @click="hintFun">高级搜索<Icon type="arrow-up-b"></Icon></Button>-->
-                                        <!--<Button class="f-r"  style="margin-left: 10px" type="info"  @click="hintFun">导出线索</Button>-->
-                                        <!--<Button class="f-r"  style="margin-left: 10px" type="warning"  @click="hintFun">导入线索</Button>-->
-                                    </div>
-                                    <div class="title-box cl">
-                                        <div class="f-l txt-box">线索池</div>
-                                        <div class="f-r">
-                                            <Button type="ghost" @click="hintFun" style="margin: 15px">批量操作</Button>
-                                        </div>
-                                    </div>
-                                    <div class="table-box">
-                                        <Table border ref="selection" highlight-row :columns="columns5" :data="data2"></Table>
-                                    </div>
-                                    <div style="text-align: center;padding: 5px">
-                                        <Page :total="pageData.count" :page-size="pageData.rows_num" @on-change="pageFun"></Page>
-                                    </div>
-                                </div>
+
+
+
+
+                                <!--<div v-if="tabName == 'name2'">-->
+                                    <!--<div class="btn-box cl" style="text-align: right;padding:10px">-->
+                                        <!--<Input class="f-l" v-model="real_name"  placeholder="客户名称" style="width: 200px"></Input>-->
+                                        <!--<Button class="f-l" type="info" style="margin-left: 2px" @click="getCustomerList('seek')">搜索</Button>-->
+                                        <!--&lt;!&ndash;<Button class="f-l"  style="margin-left: 10px" type="ghost" @click="hintFun">高级搜索<Icon type="arrow-up-b"></Icon></Button>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<Button class="f-r"  style="margin-left: 10px" type="info"  @click="hintFun">导出线索</Button>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<Button class="f-r"  style="margin-left: 10px" type="warning"  @click="hintFun">导入线索</Button>&ndash;&gt;-->
+                                    <!--</div>-->
+                                    <!--<div class="title-box cl">-->
+                                        <!--<div class="f-l txt-box">线索池</div>-->
+                                        <!--<div class="f-r">-->
+                                            <!--<Button type="ghost" @click="hintFun" style="margin: 15px">批量操作</Button>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div class="table-box">-->
+                                        <!--<Table border ref="selection" highlight-row :loading="is_Loading" :columns="columns5" :data="data2"></Table>-->
+                                    <!--</div>-->
+                                    <!--<div style="text-align: center;padding: 5px">-->
+                                        <!--<Page :total="pageData.count" :page-size="pageData.rows_num" @on-change="pageFun"></Page>-->
+                                    <!--</div>-->
+                                <!--</div>-->
 
                     </div>
 
@@ -278,10 +284,10 @@
         <!--</Modal>-->
 
         <!-- 加载状态 -->
-        <Spin fix v-if="is_Loading">
-            <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
-            <div>请求中....</div>
-        </Spin>
+        <!--<Spin fix v-if="is_Loading">-->
+            <!--<Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>-->
+            <!--<div>请求中....</div>-->
+        <!--</Spin>-->
         <!-- end加载状态 -->
     </div>
 </template>
@@ -294,52 +300,6 @@
   export default {
     data () {
       return {
-        cityList: [
-          {
-            value: '1',
-            label: '今日会话'
-          },
-          {
-            value: '2',
-            label: '昨日会话'
-          },
-          {
-            value: '3',
-            label: '本周会话'
-          },
-          {
-            value: '4',
-            label: '本月会话'
-          }
-        ],
-        cityList1: [
-          {
-            value: '1',
-            label: '全部'
-          },
-          {
-            value: '2',
-            label: '我的客户'
-          },
-          {
-            value: '3',
-            label: '下属客户'
-          }
-        ],
-        cityList2: [
-          {
-            value: '1',
-            label: '7日未联系'
-          },
-          {
-            value: '2',
-            label: '15日未联系'
-          },
-          {
-            value: '3',
-            label: '30日未联系'
-          }
-        ],
         model1: '1',
         model2: '1',
         model3: '1',
@@ -565,7 +525,6 @@
     methods: {
       // 接入
       jionUpFun (k) {
-        console.log(k);
         this.is_Loading = true;
         this.ajax.createWxUserSession({
           data: {
@@ -615,7 +574,7 @@
         this.modal3 = true;
         this.isMass = true;
       },
-      // 获取客户列表
+      // 获取客户提醒列表
       getCustomerList (is) {
         if (is === 'seek') {
           if (this.real_name === '') {
@@ -624,19 +583,15 @@
           }
         }
         this.is_Loading = true;
-        this.ajax.getClueCustomer({
+        this.ajax.getAllRemindList({
           data: {
             page: this.pageData.page,
-            real_name: this.real_name,
-            type: this.tabName === 'name1' ? 2 : 1,
-            ascription: this.ascription
+            search_text: this.real_name,
+            remind_type: this.tabName === 'name1' ? 1 : this.tabName === 'name2' ? 2 : this.tabName === 'name3' ? 3 : '',
+            time_type: this.time_type
           },
           success: (res) => {
-            if (this.tabName === 'name1') {
-              this.data1 = res.body.data_list;
-            } else if (this.tabName === 'name2') {
-              this.data2 = res.body.data_list;
-            }
+            this.data1 = res.body.data_list;
             this.pageData.count = parseInt(res.body.page_data.count);
             this.pageData.rows_num = parseInt(res.body.page_data.rows_num);
             this.is_Loading = false;
@@ -649,11 +604,6 @@
       },
       // tab切换客户
       selTabFun (v) {
-        if (v === 'name2') {
-          this.ascription = '';
-        } else if (v === 'name1') {
-          this.ascription = '3';
-        }
         this.pageData.page = 1;
         this.pageData.rows_num = 1;
         this.pageData.count = 1;
@@ -696,44 +646,10 @@
         this.is_show_informationEl = true;
         this.is_left_show = true;
       },
-      // 获取提醒跟踪列表
-      getTailList (is) {
-        if (is === 'seek') {
-          if (this.real_name === '') {
-            this.$Message.warning('请输入搜索的内容');
-            return;
-          }
-        }
-        this.is_Loading = true;
-        this.ajax.getAllRemindList({
-          data: {
-            page: 1,
-            search_text: this.real_name,
-            customer_type: 0,
-            time_type: this.time_type
-          },
-          success: (res) => {
-            res.body.data_list.forEach((k) => {
-              if (k.complete_content === null || k.complete_content === '' || k.complete_content === undefined) {
-                k.complete_content = '暂无内容';
-              }
-            });
-            this.data2 = res.body.data_list;
-            this.pageData.count = parseInt(res.body.page_data.count);
-            this.pageData.row_sum = parseInt(res.body.page_data.rows_num);
-            this.real_name = '';
-            this.is_Loading = false;
-          },
-          error: (res) => {
-            this.is_Loading = false;
-            this.$Message.warning(res.meta.message);
-          }
-        });
-      },
       // 选择需要提醒的时间  获取相关的数据
       selContactFun (t) {
         this.time_type = t;
-        this.getTailList();
+        this.getCustomerList();
       },
       // 删除提醒列表的 数据
       delContactFun (k, i) {
@@ -757,18 +673,6 @@
       pageFun (v) {
         this.pageData.page = v;
         this.getCustomerList();
-      },
-      // 获取线索统计数据
-      getClueStatisticData () {
-        this.ajax.getClueStatisticData({
-          data: {},
-          success: (res) => {
-            this.statistics = res.body;
-          },
-          error: (res) => {
-            this.$Message.warning(res.meta.message);
-          }
-        });
       }
     },
     destroyed (s) {
@@ -776,7 +680,6 @@
     },
     created () {
       Bus.$off();
-      this.getClueStatisticData();
       this.userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
       this.ajax.getWxAuthList({
         data: {},

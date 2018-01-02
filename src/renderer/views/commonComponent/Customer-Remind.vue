@@ -223,7 +223,8 @@
             rows_num: 1
           },
           RemindData: '',
-          popup3: false
+          popup3: false,
+          userData: {}
         };
       },
       mounted () {
@@ -266,7 +267,8 @@
               remind_content: this.txta,
               customer_info_id: this.clientData.customer_info_id,
               remind_time: this.RemindDate,
-              remind_uid: this.userInfo.uid
+              remind_uid: this.userInfo.uid,
+              remind_type: this.userData.user_info.is_clue === -1 || 1 ? 1 : this.userData.user_info.is_clue === 2 || 3 ? 2 : this.userData.user_info.is_clue === 4 ? 3 : ''
             },
             success: (res) => {
               // 如果添加成功 通知业务提醒组件更新数据
@@ -317,7 +319,8 @@
             data: {
               remind_id: this.RemindData.remind_id,
               remind_time: this.RemindDate,
-              remind_content: this.txta
+              remind_content: this.txta,
+              remind_type: this.userData.user_info.is_clue === -1 || 1 ? 1 : this.userData.user_info.is_clue === 2 || 3 ? 2 : this.userData.user_info.is_clue === 4 ? 3 : ''
             },
             success: (res) => {
               this.txtra = '';
@@ -358,9 +361,14 @@
         Bus.$on('change', (k) => {
           this.clientData = k;
         });
-        Bus.$on('is_remind', (k, obj) => {
+        Bus.$on('is_remind', (k, obj, user) => {
           Object.assign(this.clientData, {'customer_info_id': k.customer_info_id});
           this.getRemindList();
+        });
+        // 获取客户信息传递本页面
+        Bus.$on('userEV', (user) => {
+          console.log(user);
+          this.userData = user;
         });
       }
     };

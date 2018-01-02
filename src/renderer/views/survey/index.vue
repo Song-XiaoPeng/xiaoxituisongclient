@@ -252,11 +252,6 @@
             align: 'center'
           },
           {
-            title: '会话率',
-            key: 'effective_percentage',
-            align: 'center'
-          },
-          {
             title: '无效会话',
             key: 'invalid_session',
             align: 'center'
@@ -284,11 +279,6 @@
           {
             title: '采集客咨',
             key: 'collection',
-            align: 'center'
-          },
-          {
-            title: '采客咨率',
-            key: 'collection_percentage',
             align: 'center'
           },
           {

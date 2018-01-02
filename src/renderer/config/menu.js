@@ -73,14 +73,14 @@ let menuData = [
           route: 'chase',
           routeBreadcrumb: ['管理', '追销客户'],
           sonMenu: []
+        },
+        {
+          model_id: 28,
+          menuTitle: '客户提醒',
+          route: 'clientRemind',
+          routeBreadcrumb: ['管理', '客户提醒'],
+          sonMenu: []
         }
-        // {
-        //   model_id: 28,
-        //   menuTitle: '客户提醒',
-        //   route: 'clientRemind',
-        //   routeBreadcrumb: ['管理', '客户提醒'],
-        //   sonMenu: []
-        // }
       ]
     },
     route: [],
@@ -147,21 +147,21 @@ let menuData = [
           route: 'fans',
           routeBreadcrumb: [],
           sonMenu: []
-        },
-        {
-          model_id: 8,
-          menuTitle: '工作量分析',
-          route: 'workload',
-          routeBreadcrumb: [],
-          sonMenu: []
-        },
-        {
-          model_id: 9,
-          menuTitle: '质量分析',
-          route: 'quality',
-          routeBreadcrumb: [],
-          sonMenu: []
         }
+        // {
+        //   model_id: 8,
+        //   menuTitle: '工作量分析',
+        //   route: 'workload',
+        //   routeBreadcrumb: [],
+        //   sonMenu: []
+        // },
+        // {
+        //   model_id: 9,
+        //   menuTitle: '质量分析',
+        //   route: 'quality',
+        //   routeBreadcrumb: [],
+        //   sonMenu: []
+        // }
       ]
     },
     route: [],

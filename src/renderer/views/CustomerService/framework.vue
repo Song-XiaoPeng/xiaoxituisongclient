@@ -164,14 +164,14 @@
     <Modal  v-model="popup1" title="部门列表">
        <div class="" style="max-height: 400px;overflow: auto">
           <div class="" style="padding: 5px">
-            <Button zise="small" style="" @click="popup2 = true">添加部门</Button>
+            <Button zise="small" style="" @click="clearFun(popup2 = true)">添加部门</Button>
           </div>
          <div>
-           <Table border :columns="columns1" :data="data1"></Table>
+           <Table border :columns="columns1" :data="data5"></Table>
          </div>
        </div>
     </Modal>
-    <!--end部门列表弹窗 -->
+    <!--end部门列表弹窗 dwadwaddwadwaf-->
 
 
 
@@ -729,7 +729,8 @@
         is_pass: true, // 控制修改用户时候，不触发md5加密，
         user_type: '1',
         is_Loading: false,
-        seekTxt: ''
+        seekTxt: '',
+        data5: []
       };
     },
     components: {
@@ -783,6 +784,7 @@
           // this.user_type = '1';
           // this.pageData1.page = 1;
           // this.getUserListFun();
+          this.getFrameworkData();
         } else if (v === 'name2') {
           this.user_type = '1';
           this.pageData1.page = 1;
@@ -793,19 +795,16 @@
           this.getUserListFun();
         }
       },
-      // 添加部门
+      // 添加部门dwadwadw
       addBranchFun () {
         if (this.branchData.department_name === '') {
           this.$Message.warning(`请出入部门名称`);
           return;
         }
-        if (this.branchData.desc === '') {
-          this.$Message.warning(`请出入部门备注`);
-          return;
-        }
         this.ajax.addDepartment({
           data: this.branchData,
           success: (res) => {
+            this.clearFun();
             this.getBranchList();
             this.$Message.success(`操作成功`);
           },
@@ -813,6 +812,13 @@
             this.$Message.warning(`错误内容：${res.meta.message}`);
           }
         });
+      },
+      // 清除部门输入的数据
+      clearFun () {
+        this.branchData.user_group_id = '';
+        this.branchData.department_name = '';
+        this.branchData.parent_id = '';
+        this.branchData.desc = '';
       },
       // 获取部门列表
       getBranchList () {
@@ -832,6 +838,10 @@
             res.body.unshift(obj);
             this.branch_id = res.body[0].user_group_id;
             this.data1 = res.body;
+            this.data5 = res.body.map((k) => {
+              return k;
+            });
+            this.data5.splice(0, 1);
           },
           error: (res) => {
             this.$Message.warning(`错误内容：${res.meta.message}`);
