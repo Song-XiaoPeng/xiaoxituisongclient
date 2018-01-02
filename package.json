@@ -68,7 +68,7 @@
     "electron-builder-squirrel-windows": "^19.47.0",
     "electron-dl": "^1.10.0",
     "electron-simple-updater": "^1.2.3",
-    "iview": "^2.7.4",
+    "iview": "^2.8.0",
     "js-cookie": "^2.2.0",
     "js-md5": "^0.7.2",
     "localforage": "^1.5.3",
