@@ -66,20 +66,25 @@
         <span v-if="tabVal == 'name3'">已停止用户</span>
         <Button v-if="tabVal == 'name2' || tabVal == 'name3'" class="f-r" style="margin: 15px" @click="popup1 = true">部门</Button>
         <Button v-if="tabVal == 'name2' || tabVal == 'name3'" class="f-r" style="margin: 15px" @click="popup3 = true">岗位</Button>
-        <Button v-if="tabVal == 'name2' || tabVal == 'name3'" class="f-r" style="margin: 15px" @click="clearFun(popup6 = true)">添加用户</Button>
+        <Button v-if="tabVal == 'name2' || tabVal == 'name3'" class="f-r" style="margin: 15px" @click="clearFun(popup6 = true), getPostListFun(data1[1].user_group_id), userObj.user_group_id = data1[1].user_group_id">添加用户</Button>
       </div>
 
 
 
 
 
-      <!-- 组织架构list -->
+      <!-- 组织架构list  -->
       <div v-if="tabVal == 'name1'" style="padding: 15px;">
         <div>
-           <span>群发类别：</span> <Button type="primary">部门岗位图</Button>  <Button style="margin-left: 10px">上下级关系图</Button>
+          <span>群发类别：</span>
+          <Button :type="is_structure_btn == '1' ? 'primary' : 'ghost'" @click="branchMapFun('1')">部门岗位图</Button>
+          <Button :type="is_structure_btn == '2' ? 'primary' : 'ghost'" style="margin-left: 10px" @click="gradeMapFun('2')">上下级关系图</Button>
         </div>
-        <div>
-          <Tree :data="frameworkData"></Tree>
+        <div v-if="is_structure_btn == '1'">
+          <Tree  :data="frameworkData" v-if="is_structure_btn == '1'"></Tree>
+        </div>
+        <div v-if="is_structure_btn == '2'">
+          <Tree  :data="frameworkData1" v-if="is_structure_btn == '2'"></Tree>
         </div>
       </div>
       <!-- 组织架构list  -->
@@ -183,7 +188,7 @@
         </FormItem>
         <FormItem label="上级部门">
           <Select v-model="branchData.parent_id">
-            <Option :value="k.user_group_id"  v-for="(k, i) in data1" :key="i">{{k.user_group_name}}</Option>
+            <Option :value="k.user_group_id"  v-for="(k, i) in data8" :key="i">{{k.user_group_name}}</Option>
           </Select>
         </FormItem>
         <FormItem label="部门描述">
@@ -196,10 +201,10 @@
 
 
     <!-- 岗位列表 -->
-    <Modal  v-model="popup3" title="部门列表">
+    <Modal  v-model="popup3" title="岗位列表" width="800">
       <div class="" style="max-height: 400px;overflow: auto">
         <div class="" style="padding: 5px">
-          <Button zise="small" style="" @click="clearFun(popup4 = true)">添加岗位</Button>
+          <Button zise="small" style="" @click="clearFun(popup4 = true, is_post = 'add', is_disabled = null)">添加岗位</Button>
           <Select class="f-r" style="width: 200px" v-model="branch_id2">
             <Option  :value="k.user_group_id" v-for="(k, i) in data1" :key="i">{{k.user_group_name}}</Option>
           </Select>
@@ -220,7 +225,12 @@
         </FormItem>
         <FormItem label="部门">
           <Select v-model="postObj.user_group_id">
-            <Option :value="k.user_group_id" v-for="(k, i) in data1" :key="i">{{k.user_group_name}}</Option>
+            <Option :value="k.user_group_id" v-for="(k, i) in data7" :key="i">{{k.user_group_name}}</Option>
+          </Select>
+        </FormItem>
+        <FormItem label="上级岗位">
+          <Select v-model="postObj.position_id">
+            <Option  :value="k.position_id" v-for="(k, i) in data6" :key="i" :disabled="is_disabled == i">{{k.position_name}}</Option>
           </Select>
         </FormItem>
         <FormItem label="岗位描述">
@@ -228,7 +238,7 @@
         </FormItem>
       </Form>
     </Modal>
-    <!-- end添加岗位列表 -->
+    <!-- end添加岗位列表 dwadwad-->
 
 
 
@@ -266,10 +276,10 @@
         </FormItem>
         <FormItem label="所属部门">
           <Select  v-model="userObj.user_group_id" @on-change="addUserBranchSelFun">
-            <Option  :value="k.user_group_id" v-for="(k, i) in data1" :key="i">{{k.user_group_name}}</Option>
+            <Option  :value="k.user_group_id" v-for="(k, i) in data1" :key="i" v-if="k.user_group_id != 0">{{k.user_group_name}}</Option>
           </Select>
         </FormItem>
-        <FormItem label="所属职位">
+        <FormItem label="所属岗位">
           <Select   v-model="userObj.position_id">
             <Option  :value="k.position_id" v-for="(k, i) in data4" :key="i">{{k.position_name}}</Option>
           </Select>
@@ -505,12 +515,14 @@
         staffData: [],
         staffQuitData: [],
         frameworkData: [],
+        frameworkData1: [],
         user_group_id: '',
         tabVal: 'name1',
         popup1: false,
         postObj: {
           position_name: '',
           user_group_id: '',
+          position_superior_id: '',
           describe: '',
           position_id: ''
         },
@@ -569,10 +581,18 @@
             }
           }
         ],
+        is_disabled: null,
         columns2: [
           {
             title: '岗位名称',
             key: 'position_name'
+          },
+          {
+            title: '上级岗位',
+            key: 'position_superior_name',
+            render: (h, p) => {
+              return h('span', p.row.position_superior_id === -1 ? '顶级岗位' : p.row.position_superior_name);
+            }
           },
           {
             title: '岗位备注',
@@ -593,11 +613,18 @@
                   },
                   on: {
                     click: () => {
-                      this.postObj.position_id = params.row.position_id;
+                      this.data6.forEach((k, i) => {
+                        if (k.position_id === params.row.position_id) {
+                          this.is_disabled = i;
+                        }
+                      });
+                      this.postObj.position_id = params.row.position_superior_id;
                       this.postObj.user_group_id = params.row.user_group_id;
                       this.postObj.describe = params.row.describe;
                       this.postObj.position_name = params.row.position_name;
                       this.popup4 = true;
+                      this.selPostData = params.row;
+                      this.is_post = 'updata';
                     }
                   }
                 }, '修改'),
@@ -730,7 +757,14 @@
         user_type: '1',
         is_Loading: false,
         seekTxt: '',
-        data5: []
+        data5: [],
+        data6: [],
+        data7: [],
+        structureData: null,
+        is_structure_btn: '1',
+        data8: [],
+        is_post: 'add',
+        selPostData: null
       };
     },
     components: {
@@ -745,10 +779,32 @@
         this.getPostListFun();
       },
       'userObj.user_group_id': function (v) {
+        console.log(v);
         this.getPostListFun(v);
+      },
+      popup4: function (v) {
+        if (v) {
+          this.getPostListFun('');
+        }
       }
     },
     methods: {
+      // 部门岗位图
+      branchMapFun () {
+        this.is_structure_btn = '1';
+        let arr = this.structureData.map((k) => {
+          return k;
+        });
+        this.frameworkData = this.recursionForFun(arr);
+      },
+      // 上下级关系图
+      gradeMapFun () {
+        this.is_structure_btn = '2';
+        let arr = this.structureData.map((k) => {
+          return k;
+        });
+        this.frameworkData1 = this.recursionForFun(arr);
+      },
       // 按backspace 删除密码
       inputKeyFun (e) {
         e.target.value = '';
@@ -795,7 +851,7 @@
           this.getUserListFun();
         }
       },
-      // 添加部门dwadwadw
+      // 添加部门
       addBranchFun () {
         if (this.branchData.department_name === '') {
           this.$Message.warning(`请出入部门名称`);
@@ -825,6 +881,8 @@
         this.postObj.position_id = '';
         this.postObj.describe = '';
         this.postObj.position_name = '';
+        this.postObj.position_superior_id = '';
+        this.data6 = [];
         // 人员
         this.userObj.position_id = '';
         this.userObj.password = '';
@@ -839,7 +897,7 @@
         this.portraitObj.resources_id = '';
         this.pass = '';
       },
-      // 获取部门列表 1213
+      // 获取部门列表
       getBranchList () {
         this.data1.length = 0;
         this.ajax.getDepartmentList({
@@ -857,10 +915,25 @@
             res.body.unshift(obj);
             this.branch_id = res.body[0].user_group_id;
             this.data1 = res.body;
+            // this.userObj.user_group_id = res.body[1].user_group_id;
             this.data5 = res.body.map((k) => {
               return k;
             });
+            this.data7 = res.body.map((k) => {
+              return k;
+            });
+            this.data8 = res.body.slice(1);
+            this.data8.unshift({
+              auth_data: null,
+              company_id: '',
+              desc: '',
+              parent_id: '',
+              person_charge: '',
+              user_group_id: '0',
+              user_group_name: '顶级部门'
+            });
             this.data5.splice(0, 1);
+            this.data7.splice(0, 1);
           },
           error: (res) => {
             this.$Message.warning(`错误内容：${res.meta.message}`);
@@ -883,7 +956,7 @@
         });
       },
       // 添加岗位
-      addPostFun () {
+      addPostFun (k) {
         if (this.postObj.position_name === '') {
           this.$Message.warning(`请输入岗位名称`);
           return;
@@ -891,6 +964,16 @@
         if (this.postObj.user_group_id === '' || this.postObj.user_group_id === '0') {
           this.$Message.warning(`请选择部门`);
           return;
+        }
+        if (this.postObj.position_id === '-1') {
+          this.postObj.position_id = '';
+        }
+        if (this.is_post === 'add') {
+          this.postObj.position_superior_id = this.postObj.position_id;
+          this.postObj.position_id = '';
+        } else if (this.is_post === 'updata') {
+          this.postObj.position_superior_id = this.postObj.position_id;
+          this.postObj.position_id = this.selPostData.position_id;
         }
         this.ajax.addPosition({
           data: this.postObj,
@@ -916,17 +999,33 @@
           data: obj,
           success: (res) => {
             if (this.popup6) {
-              this.data4 = res.body;
+              this.data4 = res.body.map((k) => {
+                return k;
+              });
+            } else if (this.popup4) {
             } else {
               this.data2 = res.body;
             }
+            this.data6 = res.body.map((k) => {
+              k['disabled'] = false;
+              return k;
+            });
+            this.data6.unshift({
+              company_id: '',
+              describe: null,
+              position_id: '-1',
+              position_name: '顶级岗位',
+              position_superior_id: '',
+              position_superior_name: '',
+              user_group_id: ''
+            });
           },
           error: (res) => {
             this.$Message.warning(`错误内容：${res.meta.message}`);
           }
         });
       },
-      // 选取部门获取部门相关的岗位
+      // 选取部门获取部门相关的岗位 dwadawd
       selBranchFun (v) {
         this.branch_id = v;
       },
@@ -954,6 +1053,14 @@
         }
         if (this.userObj.phone_no === '') {
           this.$Message.warning(`请输入手机号码`);
+          return;
+        }
+        if (this.userObj.user_group_id === '') {
+          this.$Message.warning(`请选择部门`);
+          return;
+        }
+        if (this.userObj.position_id === '') {
+          this.$Message.warning(`请选择岗位`);
           return;
         }
         if (this.pass === null || this.userObj.password === '' || this.pass === '') {
@@ -1009,81 +1116,74 @@
         this.ajax.getFrameworkData({
           data: {},
           success: (res) => {
-            this.frameworkData = this.recursionForFun(res.body);
+            this.structureData = res.body;
+            this.gradeMapFun();
           },
           error: (res) => {
             this.$Message.warning(`错误内容：${res.meta.message}`);
           }
         });
       },
-      // 递归获取n级 数据
+      // 递归Nn级 改变后台返回的 数据
       recursionForFun (arr) {
-        let temp = [];
-        let forFn = (arr, id, lev) => {
-          for (let i = 0; i < arr.length; i++) {
-            let names = arr[i].person_charge.map((s) => {
-              if (s) return s.user_name;
-            });
-            // console.log(names);
-            let obj = Object.assign({}, {
-              title: `${arr[i].user_group_name}(${names.join()})`,
-              children: [],
-              expand: true,
-              company_id: arr[i].company_id,
-              desc: arr[i].desc,
-              user_group_id: arr[i].user_group_id,
-              person_charge: arr[i].person_charge,
-              user_group_name: arr[i].user_group_name
-            });
-            if (arr[i].son_list) {
-              let forFn1 = (arr1) => {
-                for (let q = 0; q < arr1.length; q++) {
-                  if (arr1[q].son_list) {
-                    forFn1(arr1[q].son_list);
-                  } else {
-                    let obj1 = Object.assign({}, {
-                      title: `${arr1[q].user_group_name}`,
-                      children: [],
-                      expand: true,
-                      auth_data: arr1[q].auth_data,
-                      company_id: arr1[q].company_id,
-                      desc: arr1[q].desc,
-                      parent_id: arr1[q].parent_id,
-                      person_charge: arr1[q].person_charge,
-                      position: arr1[q].position,
-                      user_group_id: arr1[q].user_group_id,
-                      user_group_name: arr1[q].user_group_name
-                    });
-                    arr1[q].position.forEach((s) => {
-                      let names1 = [];
-                      s.staff.forEach((e) => {
-                        names1.push(e.user_name);
-                      });
-                      let obj2 = Object.assign({}, {
-                        title: `${s.position_name}(${names1.join()})`,
-                        expand: true,
-                        staff: s.staff,
-                        company_id: s.company_id,
-                        describe: s.describe,
-                        position_id: s.position_id,
-                        position_name: s.position_name,
-                        user_group_id: s.user_group_id
-                      });
-                      obj1.children.push(obj2);
-                    });
-                    obj.children.push(obj1);
-                  }
-                }
-              };
-              forFn1(arr[i].son_list);
+        let forFn = (arr) => {
+          arr.forEach((k) => {
+            k['expand'] = true;
+            k['children'] = (k.position || []).concat(k.department || []);
+            if (this.is_structure_btn === '1') {
+              k['title'] = k.user_group_name || k.position_name;
+            } else if (this.is_structure_btn === '2') {
+              let names = [];
+              if (k.user_list && k.user_list.length > 0) {
+                k.user_list.forEach((s) => {
+                  names.push(s.user_name);
+                });
+                k['title'] = `${k.user_group_name || k.position_name}(${names.join()})`;
+              } else {
+                k['title'] = k.user_group_name || k.position_name;
+              }
             }
-            temp.push(obj);
-          }
+            if (k.user_group_name) {
+              k['render'] = (h, { root, node, data }) => {
+                return h('span', [
+                  h('Icon', {
+                    props: {
+                      type: 'ios-folder-outline'
+                    },
+                    style: {
+                      marginRight: '8px',
+                      color: '#ffcc00',
+                      fontSize: '14px'
+                    }
+                  }),
+                  h('span', data.title)
+                ]);
+              };
+            }
+            if (k.position_name) {
+              k['render'] = (h, { root, node, data }) => {
+                return h('span', [
+                  h('Icon', {
+                    props: {
+                      type: 'person'
+                    },
+                    style: {
+                      marginRight: '8px',
+                      color: '#3366cc',
+                      fontSize: '14px'
+                    }
+                  }),
+                  h('span', data.title)
+                ]);
+              };
+            }
+            forFn(k.children);
+          });
         };
         forFn(arr);
-        return temp;
+        return arr;
       },
-      // 人员分页
+      // 人员分页 dawd
       pageFun1 (v) {
         this.pageData1.page = v;
         this.getUserListFun();

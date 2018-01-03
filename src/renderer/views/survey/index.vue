@@ -194,20 +194,27 @@
         <Table border :columns="columns1" stripe :data="data1"></Table>
       </div>
     </div>
-    
-    <div class="table-box">
-      <div class="tab-top">
-        <div class="ranking">
-          绩效咨询
-        </div>
-        <div class="f-r date-sel-box">
 
-        </div>
-      </div>
-      <div style="padding:10px 15px; margin-bottom: 10px;">
-        <ve-line :data="chartData"></ve-line>
-      </div>
-    </div>
+
+
+
+    <!--<div class="table-box">-->
+      <!--<div class="tab-top">-->
+        <!--<div class="ranking">-->
+          <!--绩效咨询-->
+        <!--</div>-->
+        <!--<div class="f-r date-sel-box">-->
+
+        <!--</div>-->
+      <!--</div>-->
+      <!--<div style="padding:10px 15px; margin-bottom: 10px;">-->
+        <!--<ve-line :data="chartData"></ve-line>-->
+      <!--</div>-->
+    <!--</div>-->
+
+
+
+
 
     <!-- 自定义时间段弹窗 -->
     <Modal v-model="popup1" title="自定义时间" @on-ok="customDateFun">
