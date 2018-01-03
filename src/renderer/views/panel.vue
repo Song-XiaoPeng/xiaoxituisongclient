@@ -67,9 +67,6 @@
           </a>
           <DropdownMenu slot="list" style="text-align:center; font-size:22px;">
             <DropdownItem>快捷操作</DropdownItem>
-            <DropdownItem divided>
-              <Icon type="refresh" style="margin-right: 10px;"></Icon>切换状态
-            </DropdownItem>
             <DropdownItem>
               <Icon type="disc" style="margin-right: 10px;"></Icon>注销退出
             </DropdownItem>
