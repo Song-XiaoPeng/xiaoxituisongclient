@@ -136,7 +136,7 @@
         position: absolute;
         left: 0;
         right: 0;
-        bottom: 0;
+        top: -4px;
     }
     .audio-box{
         display: inline-block;
@@ -340,7 +340,7 @@ ul.img-txt{
                          <div class="is-err" v-if="k.is_err">
                              <Icon type="close-circled"></Icon>
                          </div>
-                         <div class="crate-box" style="display: inline-block;">
+                         <div class="crate-box" style="display: inline-block;height: 100%;width: 100%;overflow: hidden">
                              <!-- 文字 -->
                              <pre v-if="k.message_type == 1" v-text="k.text" style="text-align: left; margin: 0; color: #3e3e3e;white-space: pre-wrap;word-wrap: break-word;max-width: 400px;"></pre>
                              <!-- end文字 -->
@@ -394,9 +394,6 @@ ul.img-txt{
                  </div>
                  <!---------------------------------- end客服消息 ------------------------------------>
              </div>
-         </div>
-         <div class="percent" v-if="is_percent">
-             <Progress :percent="up_state"></Progress>
          </div>
          <div v-if="isMass">
              <Tabs value="name1">
@@ -461,6 +458,10 @@ ul.img-txt{
          <!--<Button class="f-r" style="position: relative;font-size: 28px;top: 4px;color: #9e9e9e;" type="text" size="small" title="清空聊天记录"><Icon type="trash-a"></Icon></Button>-->
      </div>
      <div class="chart-txt" v-bind:class="{'is_mass_chart-txt':isMass}">
+         <!--  -->
+         <div class="percent" v-if="is_percent">
+             <Progress :percent="up_state"></Progress>
+         </div>
          <textarea v-model="txtra"  class="txt" @click="replyType = 1" v-on:paste="pasteFun" @keyup="keyFun"></textarea>
          <!--<input class="txt"  @keyup.enter="subFun" style="opacity: 0; position: absolute; z-index: 10;width: 98%;height: 95%;" @focus="ipt">-->
          <!--<textarea ref="txtra" class="txt" @blur="focusState = false" v-focus="focusState" style="position: absolute;z-index: 1;width: 98%;height: 95%;"></textarea>-->
