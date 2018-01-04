@@ -21,13 +21,33 @@
             }
         }
     }
+    .sendMess-box{
+        min-height: 297px;
+        width: 60%;
+        border: 1px #eaeaea solid;
+        position: relative;
+        .sendMess-top{
+            width: 100%;
+            background-color: #f7f8f8;
+            box-sizing: border-box;
+            padding: 10px;
+            height: 55px;
+        }
+        .sendMess-txt{
+            position: absolute;
+            top:55px;
+            left: 0;
+            bottom: 0;
+            right: 0;
+        }
+    }
 </style>
 <template>
    <div id="index">
        <div>
            <Form  label-position="right" :label-width="100">
                <FormItem label="群发类别">
-                   <Button :type="tabs == 'name0' ? 'info' : 'text'" @click="tabFun('name0')">全部</Button>
+                   <!--<Button :type="tabs == 'name0' ? 'info' : 'text'" @click="tabFun('name0')">全部</Button>-->
                    <Button :type="tabs == 'name1' ? 'info' : 'text'" @click="tabFun('name1')">按分组发送</Button>
                    <Button :type="tabs == 'name2' ? 'info' : 'text'" @click="tabFun('name2')">指定用户</Button>
                </FormItem>
@@ -50,15 +70,15 @@
                </FormItem>
            </Form>
        </div>
-       <div>
+       <div style="padding: 10px;">
            <Form  label-position="right" :label-width="100">
-               <FormItem label="发送内容类型">
-                   <RadioGroup v-model="content_type" @on-change="content_type_sel">
-                       <Radio label=2>图文</Radio>
-                       <Radio label=3>图片</Radio>
-                       <Radio label=1>文字</Radio>
-                   </RadioGroup>
-               </FormItem>
+               <!--<FormItem label="发送内容类型">-->
+                   <!--<RadioGroup v-model="content_type" @on-change="content_type_sel">-->
+                       <!--<Radio label=2>图文</Radio>-->
+                       <!--<Radio label=3>图片</Radio>-->
+                       <!--<Radio label=1>文字</Radio>-->
+                   <!--</RadioGroup>-->
+               <!--</FormItem>-->
                <FormItem label="发送时间">
                    <RadioGroup v-model="anima2">
                        <Radio label="1">立即发送</Radio>
@@ -66,37 +86,60 @@
                    </RadioGroup>
                </FormItem>
                <FormItem v-if="anima2 == '2'" label="选择时间">
-                   <DatePicker type="datetime" placeholder="Select date and time" style="width: 200px" @on-change="timingFun"></DatePicker>
+                   <DatePicker type="datetime" placeholder="选择时间" style="width: 200px" @on-change="timingFun"></DatePicker>
                </FormItem>
-               <FormItem v-if="content_type == 1" label="文字内容">
-                   <Input v-model="txt" type="textarea" style="width: 500px" :autosize="{minRows: 5,maxRows: 8}" placeholder="请输入"></Input>
+
+               <FormItem  label="群发内容">
+                   <div class="sendMess-box">
+                       <div class="sendMess-top">
+                           <Button :type="content_type == 2 ? 'info' : 'ghost'" @click="content_type_sel('2')"><Icon type="android-list" style="margin-right: 10px"></Icon>图文消息</Button>
+                           <Button :type="content_type == 3 ? 'info' : 'ghost'" @click="content_type_sel('3')"><Icon type="android-image" style="margin-right: 10px"></Icon>图片</Button>
+                           <Button :type="content_type == 1 ? 'info' : 'ghost'" @click="content_type_sel('1')"><Icon type="android-create" style="margin-right: 10px"></Icon>文字</Button>
+                       </div>
+                       <div class="sendMess-txt">
+                           <Input v-model="txt" type="textarea" :autosize="{minRows: 11,maxRows: 11}" :disabled="content_type == 2 || content_type == 3 ? true : false"  placeholder="请输入"></Input>
+                       </div>
+                   </div>
                </FormItem>
+               <FormItem label="">
+                   <Button type="primary" @click="addMassNews">保存</Button>
+               </FormItem>
+
+
+
+               <!--<FormItem v-if="content_type == 1" label="文字内容">-->
+                   <!--<Input v-model="txt" type="textarea" style="width: 500px" :autosize="{minRows: 5,maxRows: 8}" placeholder="请输入"></Input>-->
+               <!--</FormItem> -->
            </Form>
        </div>
-       <div class="list-box" style="padding: 10px">
-           <div v-if="modal2">
-               <div>
-                   <Table highlight-row ref="currentRowTable" :columns="columns5" :data="data5" @on-current-change="selImgTxtFun"></Table>
+
+
+
+
+       <!-- 用户弹窗 -->
+       <Modal v-model="model9"  title="素材" width="800">
+           <div class="" style="max-height: 400px;overflow: auto">
+               <div v-if="modal2">
+                   <div>
+                       <Table highlight-row ref="currentRowTable" :columns="columns5" :data="data5" @on-current-change="selImgTxtFun"></Table>
+                   </div>
+                   <div style="text-align: center;padding: 10px">
+                       <Page :total="pageData1.count" :page-size="pageData1.rows_num"  @on-change="pageFun1"></Page>
+                   </div>
                </div>
-               <div style="text-align: center;padding: 10px">
-                   <Page :total="pageData1.count" :page-size="pageData1.rows_num"  @on-change="pageFun1"></Page>
+
+               <div v-if="modal3">
+                   <div>
+                       <Table highlight-row ref="currentRowTable" :columns="columns6" :data="data6" @on-current-change="selTxtFun" ></Table>
+                   </div>
+                   <div style="text-align: center;padding: 10px">
+                       <Page :total="pageData1.count" :page-size="pageData1.rows_num"  @on-change="pageFun1"></Page>
+                   </div>
                </div>
+
            </div>
-
-           <div v-if="modal3">
-               <div>
-                   <Table highlight-row ref="currentRowTable" :columns="columns6" :data="data6" @on-current-change="selTxtFun" ></Table>
-               </div>
-               <div style="text-align: center;padding: 10px">
-                   <Page :total="pageData1.count" :page-size="pageData1.rows_num"  @on-change="pageFun1"></Page>
-               </div>
-           </div>
-
-       </div>
-
-       <div style="text-align: center;padding: 10px">
-           <Button type="primary" @click="addMassNews">保存</Button>
-       </div>
+       </Modal>
+       <!-- end用户弹窗 -->
 
 
 
@@ -140,53 +183,8 @@
         is_Loading: false,
         animal: '',
         anima3: '男',
-        columns3: [
-          {
-            type: 'index',
-            width: 60,
-            align: 'center'
-          },
-          {
-            title: 'Name',
-            key: 'name'
-          },
-          {
-            title: 'Age',
-            key: 'age'
-          },
-          {
-            title: 'Address',
-            key: 'address'
-          }
-        ],
-        data1: [
-          {
-            name: 'John Brown',
-            age: 18,
-            address: 'New York No. 1 Lake Park',
-            date: '2016-10-03'
-          },
-          {
-            name: 'Jim Green',
-            age: 24,
-            address: 'London No. 1 Lake Park',
-            date: '2016-10-01'
-          },
-          {
-            name: 'Joe Black',
-            age: 30,
-            address: 'Sydney No. 1 Lake Park',
-            date: '2016-10-02'
-          },
-          {
-            name: 'Jon Snow',
-            age: 26,
-            address: 'Ottawa No. 2 Lake Park',
-            date: '2016-10-04'
-          }
-        ],
         anima2: '1',
-        tabs: 'name0',
+        tabs: 'name1',
         data7: [],
         group_id: '',
         is_img_txt: 'news',
@@ -321,6 +319,7 @@
         model8: false,
         userArr: [],
         model7: false,
+        model9: false,
         modal4: false,
         el: '',
         media_id: '',
@@ -386,6 +385,7 @@
             this.pageData1.count = parseInt(res.body.page_data.count);
             this.pageData1.rows_num = res.body.page_data.rows_num;
             this.is_Loading = false;
+            this.model9 = true;
           },
           error: (res) => {
             this.is_Loading = false;
@@ -429,21 +429,27 @@
       },
       // 选择发送内容类型
       content_type_sel (v) {
+        this.content_type = v;
         if (v === '2') {
+          this.txt = '';
           this.imgTxtFun();
         } else if (v === '3') {
+          this.txt = '';
           this.imgFun();
         } else if (v === '1') {
+          this.txt = '';
           this.modal3 = false;
           this.modal2 = false;
         }
       },
       // 选择图片
       selTxtFun (v) {
+        this.txt = v.media_id;
         this.media_id = v.media_id;
       },
       // 选择素材
       selImgTxtFun (v) {
+        this.txt = v.media_id;
         this.media_id = v.media_id;
       },
       // 素材/ 图片分页
@@ -537,7 +543,7 @@
     },
     created () {
       this.getWxGroup();
-      this.imgTxtFun();
+      this.content_type_sel('1');
     }
   };
 </script>

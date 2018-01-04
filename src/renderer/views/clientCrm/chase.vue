@@ -478,7 +478,10 @@
             title: '产品',
             ellipsis: true,
             render: (h, p) => {
-              return h('span', p.row.product_name === null || p.row.product_name === '' ? '暂无' : p.row.product_name);
+              let names = p.row.product_list.map((k) => {
+                return k.product_name;
+              });
+              return h('span', names.join());
             }
           },
           {
@@ -638,6 +641,40 @@
     beforeDestroy () {
     },
     methods: {
+      // 接入
+      jionUpFun (k) {
+        this.is_Loading = true;
+        this.ajax.createWxUserSession({
+          data: {
+            openid: k.openid,
+            appid: k.appid
+          },
+          success: (res) => {
+            this.is_Loading = false;
+            this.$Spin.show({
+              render: (h) => {
+                return h('div', [
+                  h('div', '正在创建链接。。。')
+                ]);
+              }
+            });
+            setTimeout(() => {
+              this.$Spin.hide();
+              this.$router.push({
+                name: 'ServeIndex',
+                query: {
+                  type: 'clue',
+                  data: res
+                }
+              });
+            }, 3000);
+          },
+          error: (res) => {
+            this.is_Loading = false;
+            this.$Message.warning(res.meta.message);
+          }
+        });
+      },
       // 待开发提示
       hintFun () {
         // this.$Message.warning('玩命开发中。。。。');

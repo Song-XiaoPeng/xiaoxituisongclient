@@ -40,7 +40,7 @@
                 <FormItem label="接待类型">
                     <RadioGroup v-model="selRader" @on-change="radioFun">
                         <Radio value="1" label="1">客服</Radio>
-                        <!--<Radio value="2" label="2">指定分组</Radio>-->
+                        <Radio value="2" label="2">指定分组</Radio>
                         <Radio value="3" label="3">无</Radio>
                     </RadioGroup>
                 </FormItem>

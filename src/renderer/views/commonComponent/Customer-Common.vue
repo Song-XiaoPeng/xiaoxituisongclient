@@ -267,11 +267,11 @@
       </Modal>
       <!-- end客户池列表弹窗 -->
 
-      <!-- 意向产品 -->
-      <Modal v-model="popup12" title="意向产品" :styles="{'z-index': 100}">
+      <!-- 意向产品 12123-->
+      <Modal v-model="popup12" title="意向产品" :styles="{'z-index': 100}" width="800">
          <div style="padding: 5px"><Button type="primary" @click="popup13 = true, popup12 = false">添加意向产品</Button><span style="color: #ff3300; margin-left: 10px">点击其中一项即选择</span></div>
          <div>
-            <Table border :columns="columns8" highlight-row :data="data7" @on-current-change="selPurposeFun"></Table>
+            <Table highlight-row border :columns="columns8" :data="data7" @on-selection-change="selPurposeFun"></Table>
          </div>
          <div style="text-align: center;padding: 5px">
             <Page :total="pageData.count" :page-size="pageData.row_sum" @click="pageFun"></Page>
@@ -306,7 +306,7 @@
          <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
          <div>请求中....</div>
       </Spin>
-      <!-- end请求状态 -->
+      <!-- end请求状态  21312-->
    </div>
 </template>
 <script>
@@ -315,11 +315,16 @@
       data () {
         return {
           popup12: false,
-          selPurposeData: {},
+          selPurposeData: [],
           popup13: false,
           popup14: false,
           data7: [],
           columns8: [
+            {
+              type: 'selection',
+              width: 60,
+              align: 'center'
+            },
             {
               title: '意向产品名称',
               key: 'product_name'
@@ -501,7 +506,7 @@
           Label: [],
           tabelName: '',
           selLabelData: null,
-          userData: {},
+          userData: [],
           is_client_btn_txt: '标签'
         };
       },
@@ -620,7 +625,6 @@
         },
         // 意向产品数据表 选择一项数据
         selPurposeFun (v) {
-          this.popup12 = false;
           Object.assign(this.selPurposeData, v);
         },
         // 意向产品分页方法
@@ -756,8 +760,11 @@
         },
         // 客户池分组改变方法
         saveFun (v) {
+          let arr = this.selPurposeData.map((k) => {
+            return k.product_id;
+          });
           Object.assign(this.formData, {'appid': this.clientData.appid});
-          Object.assign(this.formData, {'product_id': this.selPurposeData.product_id});
+          Object.assign(this.formData, {'product_id': arr});
           Object.assign(this.formData, {'openid': this.clientData.customer_wx_openid});
           this.ajax.setCustomerInfo({
             data: this.formData,

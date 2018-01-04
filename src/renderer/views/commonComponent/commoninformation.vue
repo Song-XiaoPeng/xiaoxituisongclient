@@ -113,7 +113,7 @@
           }
           this.navState = 1;
         });
-        Bus.$on('is_remind', (k, obj) => {
+        Bus.$on('is_remind', (obj) => {
           this.is_CRM.remind = obj.remind;
         });
       }

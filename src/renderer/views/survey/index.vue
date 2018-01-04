@@ -269,12 +269,7 @@
             align: 'center'
           },
           {
-            title: '手动会话',
-            key: 'own_session',
-            align: 'center'
-          },
-          {
-            title: '自动会话',
+            title: '主动会话',
             key: 'auto_session',
             align: 'center'
           },
