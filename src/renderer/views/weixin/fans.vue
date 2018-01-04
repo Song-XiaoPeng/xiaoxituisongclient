@@ -107,7 +107,7 @@
             <Select class="" v-model="model1" style="width:200px;margin: 14px">
                 <Option v-for="item in cityList" :value="item.appid" :key="item.appid">{{ item.nick_name }}</Option>
             </Select>
-            <Button type="info" slot="extra" class="f-r" @click="modal4 = true" size="small" v-show="tabVal == 'name1'" style="margin: 15px">新建分组</Button>
+            <!--<Button type="info" slot="extra" class="f-r" @click="modal4 = true" size="small" v-show="tabVal == 'name1'" style="margin: 15px">新建分组</Button>-->
             <Button type="info" class="f-r" @click="modal6 = true" v-show="tabVal == 'name2'" size="small" style="margin: 15px">创建同步任务</Button>
         </div>
         <div v-if="tabVal == 'name1'">
@@ -115,26 +115,32 @@
                 <div class="f-l l">
                     <Table border :columns="columns7" :data="data6" @on-selection-change="selWxUser" ></Table>
                     <div class="" style="text-align: center; padding: 10px">
-                        <Button type="info" class="f-l" @click="modal5 = true">批量移动分组</Button>
+                        <!--<Button type="info" class="f-l" @click="modal5 = true">批量移动分组</Button>-->
                         <Page :total="pageData1.count" :page-size="pageData1.rows_num"  @on-change="pageFun1"></Page>
                     </div>
                 </div>
-                <div class="f-r r">
-                    <div class="title">所有分组</div>
-                    <div class="list">
-                        <ul>
-                            <li v-for="(k, index) in data7" :key="index">
-                                {{k.name}}({{k.count}})
-                                <span  color="group_del" style="float: right" title="删除当前组" @click="delGroupFun(k)">
-                                        <Icon type="trash-a"></Icon>
-                                    </span>
-                                <span  color="" style="float: right;margin-right: 15px" title="修改当前组名" @click="modal4 = true,GroupId = k.id">
-                                        <Icon type="edit"></Icon>
-                                    </span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+
+
+                <!---->
+                <!--<div class="f-r r">-->
+                    <!--<div class="title">所有分组</div>-->
+                    <!--<div class="list">-->
+                        <!--<ul>-->
+                            <!--<li v-for="(k, index) in data7" :key="index">-->
+                                <!--{{k.name}}({{k.count}})-->
+                                <!--<span  color="group_del" style="float: right" title="删除当前组" @click="delGroupFun(k)">-->
+                                        <!--<Icon type="trash-a"></Icon>-->
+                                    <!--</span>-->
+                                <!--<span  color="" style="float: right;margin-right: 15px" title="修改当前组名" @click="modal4 = true,GroupId = k.id">-->
+                                        <!--<Icon type="edit"></Icon>-->
+                                    <!--</span>-->
+                            <!--</li>-->
+                        <!--</ul>-->
+                    <!--</div>-->
+                <!--</div>-->
+
+
+
 
             </div>
         </div>
@@ -235,11 +241,11 @@
         model1: '',
         is_Loading: false,
         columns7: [
-          {
-            type: 'selection',
-            width: 60,
-            align: 'center'
-          },
+          // {
+          //   type: 'selection',
+          //   width: 60,
+          //   align: 'center'
+          // },
           {
             title: '图像',
             render: (h, p) => {

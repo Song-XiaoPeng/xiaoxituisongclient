@@ -39,8 +39,8 @@
               </FormItem>
               <FormItem label="接待类型">
                   <RadioGroup v-model="selRader" @on-change="radioFun">
-                      <Radio value="1" label="1">客服客服</Radio>
-                      <Radio value="2" label="2">指定分组</Radio>
+                      <Radio value="1" label="1">客服</Radio>
+                      <!--<Radio value="2" label="2">指定分组</Radio>-->
                       <Radio value="3" label="3">无</Radio>
                   </RadioGroup>
               </FormItem>
@@ -318,20 +318,30 @@
         codeUrl: '',
         columns7: [
           {
-            title: '二维码名称',
-            key: 'activity_name'
-          },
-          {
-            title: '渠道名',
-            key: 'qrcode_group_name'
+            title: '二维码创建时间',
+            key: 'create_time'
           },
           {
             title: '创建人姓名',
             key: 'create_user_name'
           },
           {
-            title: '二维码创建时间',
-            key: 'create_time'
+            title: '专属客服',
+            key: 'customer_service_name'
+          },
+          {
+            title: '二维码名称',
+            key: 'activity_name'
+          },
+          {
+            title: '有效时间',
+            render: (h, p) => {
+              return h('span', '永久');
+            }
+          },
+          {
+            title: '渠道名',
+            key: 'qrcode_group_name'
           },
           {
             title: '二维码',
@@ -354,6 +364,18 @@
                 }
               });
             }
+          },
+          {
+            title: '累计关注',
+            key: 'attention'
+          },
+          {
+            title: '取消关注',
+            key: 'canel_attention'
+          },
+          {
+            title: '当前关注数',
+            key: 'attention_num'
           },
           {
             title: '操作',
