@@ -136,7 +136,7 @@
         position: absolute;
         left: 0;
         right: 0;
-        bottom: 0;
+        top: -4px;
     }
     .audio-box{
         display: inline-block;
@@ -395,9 +395,6 @@ ul.img-txt{
                  <!---------------------------------- end客服消息 ------------------------------------>
              </div>
          </div>
-         <div class="percent" v-if="is_percent">
-             <Progress :percent="up_state"></Progress>
-         </div>
          <div v-if="isMass">
              <Tabs value="name1">
                  <TabPane label="48小时内" name="name1"></TabPane>
@@ -461,6 +458,10 @@ ul.img-txt{
          <!--<Button class="f-r" style="position: relative;font-size: 28px;top: 4px;color: #9e9e9e;" type="text" size="small" title="清空聊天记录"><Icon type="trash-a"></Icon></Button>-->
      </div>
      <div class="chart-txt" v-bind:class="{'is_mass_chart-txt':isMass}">
+         <!--  -->
+         <div class="percent" v-if="is_percent">
+             <Progress :percent="up_state"></Progress>
+         </div>
          <textarea v-model="txtra"  class="txt" @click="replyType = 1" v-on:paste="pasteFun" @keyup="keyFun"></textarea>
          <!--<input class="txt"  @keyup.enter="subFun" style="opacity: 0; position: absolute; z-index: 10;width: 98%;height: 95%;" @focus="ipt">-->
          <!--<textarea ref="txtra" class="txt" @blur="focusState = false" v-focus="focusState" style="position: absolute;z-index: 1;width: 98%;height: 95%;"></textarea>-->
