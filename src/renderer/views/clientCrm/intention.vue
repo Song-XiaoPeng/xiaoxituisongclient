@@ -329,7 +329,7 @@
                 <Form :label-width="80">
                     <FormItem label="所属部门">
                         <Select  v-model="user_group_id">
-                            <Option  :value="k.user_group_id" v-for="(k, i) in subordinateList" :key="i">{{k.user_group_name}}</Option>
+                            <Option  :value="k.uid" v-for="(k, i) in subordinateList" :key="i">{{k.user_group_name}}</Option>
                         </Select>
                     </FormItem>
                     <FormItem label="人员">
@@ -969,7 +969,7 @@
           data: {
           },
           success: (res) => {
-            this.user_group_id = res.body[0].user_group_id;
+            this.user_group_id = res.body[0].uid || 0;
             this.subordinateList = res.body;
           },
           error: (res) => {
