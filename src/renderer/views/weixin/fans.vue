@@ -122,22 +122,22 @@
 
 
                 <!---->
-                <!--<div class="f-r r">-->
-                    <!--<div class="title">所有分组</div>-->
-                    <!--<div class="list">-->
-                        <!--<ul>-->
-                            <!--<li v-for="(k, index) in data7" :key="index">-->
-                                <!--{{k.name}}({{k.count}})-->
+                <div class="f-r r">
+                    <div class="title">所有分组</div>
+                    <div class="list">
+                        <ul>
+                            <li v-for="(k, index) in data7" :key="index">
+                                {{k.name}}({{k.count}})
                                 <!--<span  color="group_del" style="float: right" title="删除当前组" @click="delGroupFun(k)">-->
-                                        <!--<Icon type="trash-a"></Icon>-->
-                                    <!--</span>-->
+                                    <!--<Icon type="trash-a"></Icon>-->
+                                <!--</span>-->
                                 <!--<span  color="" style="float: right;margin-right: 15px" title="修改当前组名" @click="modal4 = true,GroupId = k.id">-->
-                                        <!--<Icon type="edit"></Icon>-->
-                                    <!--</span>-->
-                            <!--</li>-->
-                        <!--</ul>-->
-                    <!--</div>-->
-                <!--</div>-->
+                                    <!--<Icon type="edit"></Icon>-->
+                                <!--</span>-->
+                            </li>
+                        </ul>
+                    </div>
+                </div>
 
 
 
