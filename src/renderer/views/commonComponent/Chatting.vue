@@ -340,7 +340,7 @@ ul.img-txt{
                          <div class="is-err" v-if="k.is_err">
                              <Icon type="close-circled"></Icon>
                          </div>
-                         <div class="crate-box" style="display: inline-block;">
+                         <div class="crate-box" style="display: inline-block;height: 100%;width: 100%;overflow: hidden">
                              <!-- 文字 -->
                              <pre v-if="k.message_type == 1" v-text="k.text" style="text-align: left; margin: 0; color: #3e3e3e;white-space: pre-wrap;word-wrap: break-word;max-width: 400px;"></pre>
                              <!-- end文字 -->

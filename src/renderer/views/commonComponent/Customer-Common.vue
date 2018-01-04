@@ -187,7 +187,7 @@
                <!--<Button type="dashed" @click="popup2 = true">操作</Button>-->
             <!--</FormItem>-->
             <FormItem label="意向产品：">
-               <span>{{selPurposeData.product_name}}</span>
+               <span v-for="(k, i) in selPurposeData" :key="i">{{k.product_name}},</span>
                <Button type="dashed" @click="popup12 = true">操作</Button>
             </FormItem>
             <FormItem style="border-bottom: 0px;" label="客户生日：" >
