@@ -157,11 +157,11 @@
        </Row>
        <div class="">
            <Select v-model="user_group_id" style="" @on-change="changeGroupFun">
-               <Option v-for="item in cityList" :value="item.user_group_id" :key="item.user_group_id">{{ item.user_group_name }}</Option>
+               <Option v-for="item in cityList" :value="item.uid" :key="item.user_group_id">{{ item.user_name }}</Option>
            </Select>
-           <Select v-model="uid" style="" @on-change="changeUserFun">
-               <Option v-for="item in cityList1" :value="item.uid" :key="item.uid">{{ item.user_name }}</Option>
-           </Select>
+           <!--<Select v-model="uid" style="" @on-change="changeUserFun">-->
+               <!--<Option v-for="item in cityList1" :value="item.uid" :key="item.uid">{{ item.user_name }}</Option>-->
+           <!--</Select>-->
        </div>
        <div class="person">
            <div class="list-box">
@@ -747,44 +747,36 @@
           this.ajax.getSubordinateList({
             data: {},
             success: (res) => {
-              this.user_group_id = res.body[0].user_group_id;
+              this.user_group_id = -1;
               this.cityList = res.body;
+              this.cityList.unshift({
+                phone_no: '',
+                sex: 0,
+                uid: -1,
+                user_name: `全部`
+              });
             },
             error: (res) => {
               this.$Message.warning(res.meta.message);
             }
           });
         },
-        // 部门分组 dwa321d32
+        // 部门分组
         changeGroupFun (v) {
           this.uid_list = [];
           this.cityList.forEach((k) => {
-            if (k.user_group_id === this.user_group_id) {
-              if (k.uid_list[0]) {
-                if (k.uid_list[0].uid !== '-1') {
-                  k.uid_list.forEach((e) => {
-                    this.uid_list.push(e.uid);
-                  });
-                  k.uid_list.unshift({
-                    uid: '-1',
-                    user_name: '全部',
-                    user_group_id: '',
-                    phone_no: ''
-                  });
-                } else if (k.uid_list[0].uid === '-1') {
-                  k.uid_list.forEach((e) => {
-                    if (e.uid !== '-1') {
-                      this.uid_list.push(e.uid);
-                    }
-                  });
-                }
+            if (this.user_group_id === -1) {
+              if (k.uid !== -1) {
+                this.uid_list.push(k.uid);
               }
-              this.cityList1 = k.uid_list;
-              clearInterval(this.dialogue_time_i);
-              this.getDialogueListFun();
-              this.timerFun();
+            }
+            if (k.uid === this.user_group_id && this.user_group_id !== -1) {
+              this.uid_list.push(k.uid);
             }
           });
+          clearInterval(this.dialogue_time_i);
+          this.getDialogueListFun();
+          this.timerFun();
         },
         // 部门分组 -> 职位
         changeUserFun (v) {
