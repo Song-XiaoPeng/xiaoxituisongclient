@@ -166,10 +166,10 @@
 
 
     <!-- 部门列表弹窗 -->
-    <Modal  v-model="popup1" title="部门列表">
+    <Modal  v-model="popup1" title="部门列表" width="800">
        <div class="" style="max-height: 400px;overflow: auto">
           <div class="" style="padding: 5px">
-            <Button zise="small" style="" @click="clearFun(popup2 = true)">添加部门</Button>
+            <Button zise="small" style="" @click="clearFun(popup2 = true),is_branch = 'add'">添加部门</Button>
           </div>
          <div>
            <Table border :columns="columns1" :data="data5"></Table>
@@ -188,7 +188,7 @@
         </FormItem>
         <FormItem label="上级部门">
           <Select v-model="branchData.parent_id">
-            <Option :value="k.user_group_id"  v-for="(k, i) in data8" :key="i">{{k.user_group_name}}</Option>
+            <Option :value="k.user_group_id"  v-for="(k, i) in data8" :key="i" :disabled="is_Branch_sel == i">{{k.user_group_name}}</Option>
           </Select>
         </FormItem>
         <FormItem label="部门描述">
@@ -652,6 +652,10 @@
             key: 'user_group_name'
           },
           {
+            title: '上级部门',
+            key: 'parent_name'
+          },
+          {
             title: '部门备注',
             key: 'desc'
           },
@@ -670,10 +674,17 @@
                   },
                   on: {
                     click: () => {
+                      this.data8.forEach((k, i) => {
+                        if (k.user_group_id === params.row.user_group_id) {
+                          this.is_Branch_sel = i;
+                        }
+                      });
                       this.branchData.desc = params.row.desc;
                       this.branchData.department_name = params.row.user_group_name;
                       this.branchData.parent_id = params.row.parent_id;
                       this.branchData.user_group_id = params.row.user_group_id;
+                      this.selBranchData = params.row;
+                      this.is_branch = 'updata';
                       this.popup2 = true;
                     }
                   }
@@ -764,7 +775,10 @@
         is_structure_btn: '1',
         data8: [],
         is_post: 'add',
-        selPostData: null
+        selPostData: null,
+        is_branch: 'add',
+        selBranchData: null,
+        is_Branch_sel: -2
       };
     },
     components: {
@@ -779,7 +793,6 @@
         this.getPostListFun();
       },
       'userObj.user_group_id': function (v) {
-        console.log(v);
         this.getPostListFun(v);
       },
       popup4: function (v) {
@@ -851,11 +864,16 @@
           this.getUserListFun();
         }
       },
-      // 添加部门
+      // 添加部门 adwd
       addBranchFun () {
         if (this.branchData.department_name === '') {
           this.$Message.warning(`请出入部门名称`);
           return;
+        }
+        if (this.is_branch === 'add') {
+          this.branchData.user_group_id = '';
+        } else if (this.is_branch === 'updata') {
+          this.branchData.user_group_id = this.selBranchData.user_group_id;
         }
         this.ajax.addDepartment({
           data: this.branchData,
@@ -927,9 +945,9 @@
               auth_data: null,
               company_id: '',
               desc: '',
-              parent_id: '',
+              parent_id: '-1',
               person_charge: '',
-              user_group_id: '0',
+              user_group_id: '-1',
               user_group_name: '顶级部门'
             });
             this.data5.splice(0, 1);

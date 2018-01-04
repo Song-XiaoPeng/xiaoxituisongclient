@@ -36,8 +36,8 @@
 <template>
    <div id="index">
        <div class="top-box" style="background-color: #ecf0f4">
-           <Button type="ghost" @click="accredit">授权公众平台</Button>
-           <Button type="ghost">添加小程序</Button>
+           <Button type="ghost" @click="accredit">授权公众平台/小程序</Button>
+           <!--<Button type="ghost">添加小程序</Button>-->
        </div>
        <div class="tab">
            <table class="table-copy">

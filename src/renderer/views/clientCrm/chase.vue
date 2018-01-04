@@ -217,7 +217,7 @@
                                 <!--<Button type="ghost" style="margin-left: 10px" @click="modal2 = true">添加业务提醒</Button>-->
                                 <!--<Button type="ghost" style="margin-left: 10px" @click="massFun">群发激活</Button>-->
                                 <!--<Button class="f-l" type="ghost" style="" @click="is_screen = true">高级搜索</Button>-->
-                                <Input class="f-l" v-model="real_name"  placeholder="客户名称" style="width: 100px"></Input>
+                                <Input class="f-l" v-model="real_name"  placeholder="客户名称" style="width: 200px"></Input>
                                 <Button class="f-l" type="info" style="margin-left: 2px" @click="getCustomerList('seek')">搜索</Button>
                             </div>
                             <div class="table-box">
