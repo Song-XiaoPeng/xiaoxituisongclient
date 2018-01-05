@@ -58,7 +58,7 @@
                 <FormItem label="扫码回复">
                     <RadioGroup v-model="selRader2" @on-change="radioFun1">
                         <Radio value="1" label="1">文字</Radio>
-                        <Radio value="2" label="2">模板消息</Radio>
+                        <Radio value="2" label="2">图文消息</Radio>
                         <Radio value="3" label="3">图片</Radio>
                         <Radio value="-1" label="-1">不回复</Radio>
                     </RadioGroup>
@@ -66,9 +66,9 @@
                 <FormItem label="回复内容"  v-if="selRader2 == 1">
                     <Input type="textarea" v-model="reply_text" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入"></Input>
                 </FormItem>
-                <FormItem label="模板消息"  v-if="selRader2 == 2">
+                <FormItem label="图文"  v-if="selRader2 == 2">
                     <span v-if="txtImgData">{{txtImgData.media_id}}</span>
-                    <Button type="ghost" @click="imgTxtFun">模板消息</Button>
+                    <Button type="ghost" @click="imgTxtFun">选择图文</Button>
                 </FormItem>
                 <FormItem label="图片"  v-if="selRader2 == 3">
                   <span v-if="ImgData">
@@ -158,6 +158,9 @@
         <Modal v-model="popup8" title="二维码" >
             <div style="height: 100%;width: 100%;text-align: center">
                 <img :src="codeUrl" alt="">
+            </div>
+            <div style="word-break: break-all;">
+                二维码链接：{{codeUrl}}
             </div>
         </Modal>
         <!-- end客服弹窗 -->
@@ -320,10 +323,6 @@
         codeUrl: '',
         columns7: [
           {
-            title: '二维码创建时间',
-            key: 'create_time'
-          },
-          {
             title: '创建人姓名',
             key: 'create_user_name'
           },
@@ -342,6 +341,14 @@
           {
             title: '渠道名',
             key: 'qrcode_group_name'
+          },
+          {
+            title: '意向客户数',
+            key: 'intention_num'
+          },
+          {
+            title: '订单客户数',
+            key: 'order_num'
           },
           {
             title: '累计关注',

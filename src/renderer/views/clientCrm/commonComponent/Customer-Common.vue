@@ -150,6 +150,18 @@
                <!--</Select>-->
                <!--<Button type="dashed" @click="popup2 = true">操作</Button>-->
             <!--</FormItem>-->
+            <FormItem  label="姓名：">
+               <Input v-model="formData.real_name" style="width:  100%;" @on-change="nameSeekFun" @on-blur="blurFun"></Input>
+               <ul class="name-box" v-if="is_name_show">
+                  <li v-for="(item, i) in nameArr" @click="selNameSeekFun(item)">{{ item.real_name }}</li>
+               </ul>
+            </FormItem>
+            <FormItem  label="手机：">
+               <Input v-model="formData.real_phone" style="width:  100%;"></Input>
+            </FormItem>
+            <FormItem  label="微信号">
+               <Input v-model="formData.wx_number" style="width:  100%;"></Input>
+            </FormItem>
             <FormItem label="客户生日：" >
                <DatePicker type="datetime" v-model="formData.birthday" placeholder="选择时间" style="width:  100%;" @on-change="birthdayFun"></DatePicker>
             </FormItem>
@@ -163,20 +175,8 @@
                   </Radio>
                </RadioGroup>
             </FormItem>
-            <FormItem  label="姓名：">
-               <Input v-model="formData.real_name" style="width:  100%;" @on-change="nameSeekFun" @on-blur="blurFun"></Input>
-               <ul class="name-box" v-if="is_name_show">
-                  <li v-for="(item, i) in nameArr" @click="selNameSeekFun(item)">{{ item.real_name }}</li>
-               </ul>
-            </FormItem>
-            <FormItem  label="手机：">
-               <Input v-model="formData.real_phone" style="width:  100%;"></Input>
-            </FormItem>
             <FormItem  label="联系地址：">
                <Input v-model="formData.contact_address" style="width:  100%;"></Input>
-            </FormItem>
-            <FormItem  label="微信号">
-               <Input v-model="formData.wx_number" style="width:  100%;"></Input>
             </FormItem>
             <FormItem  label="邮箱">
                <Input v-model="formData.email" style="width:  100%;"></Input>
@@ -217,7 +217,7 @@
 
 
 
-      <!-- 客户池列表弹窗 -->
+      <!-- 客户池列表弹窗 132123-->
       <Modal v-model="popup2" title="选项名称" :styles="{'z-index': 100}">
          <div style="padding: 5px"><Button type="primary" @click="popup1 = true,is_pond = '1', popup2 = false">添加池组</Button></div>
          <div>
