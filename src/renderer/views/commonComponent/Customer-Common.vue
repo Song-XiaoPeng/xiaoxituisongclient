@@ -190,6 +190,18 @@
                <span v-for="(k, i) in selPurposeData" :key="i">{{k.product_name}},</span>
                <Button type="dashed" @click="popup12 = true">操作</Button>
             </FormItem>
+            <FormItem style="border-bottom: 0px;"  label="姓名：">
+               <Input v-model="formData.real_name" style="width:  100%;" @on-change="nameSeekFun" @on-blur="blurFun"></Input>
+               <ul class="name-box" v-if="is_name_show">
+                  <li v-for="(item, i) in nameArr" @click="selNameSeekFun(item)">{{ item.real_name }}</li>
+               </ul>
+            </FormItem>
+            <FormItem style="border-bottom: 0px;"  label="手机：">
+               <Input v-model="formData.real_phone" style="width:  100%;"></Input>
+            </FormItem>
+            <FormItem style="border-bottom: 0px;"  label="微信号">
+               <Input v-model="formData.wx_number" style="width:  100%;"></Input>
+            </FormItem>
             <FormItem style="border-bottom: 0px;" label="客户生日：" >
                <DatePicker type="date" v-model="formData.birthday" placeholder="选择时间" style="width:  100%;" @on-change="birthdayFun"></DatePicker>
             </FormItem>
@@ -203,20 +215,8 @@
                   </Radio>
                </RadioGroup>
             </FormItem>
-            <FormItem style="border-bottom: 0px;"  label="姓名：">
-               <Input v-model="formData.real_name" style="width:  100%;" @on-change="nameSeekFun" @on-blur="blurFun"></Input>
-               <ul class="name-box" v-if="is_name_show">
-                  <li v-for="(item, i) in nameArr" @click="selNameSeekFun(item)">{{ item.real_name }}</li>
-               </ul>
-            </FormItem>
-            <FormItem style="border-bottom: 0px;"  label="手机：">
-               <Input v-model="formData.real_phone" style="width:  100%;"></Input>
-            </FormItem>
             <FormItem style="border-bottom: 0px;"  label="联系地址：">
                <Input v-model="formData.contact_address" style="width:  100%;"></Input>
-            </FormItem>
-            <FormItem style="border-bottom: 0px;"  label="微信号">
-               <Input v-model="formData.wx_number" style="width:  100%;"></Input>
             </FormItem>
             <FormItem style="border-bottom: 0px;"  label="邮箱">
                <Input v-model="formData.email" style="width:  100%;"></Input>
