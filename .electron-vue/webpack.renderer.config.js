@@ -130,7 +130,14 @@ let rendererConfig = {
         : false
     }),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoEmitOnErrorsPlugin()
+    new webpack.NoEmitOnErrorsPlugin(),
+    new webpack.optimize.UglifyJsPlugin({
+      compress:{
+        warnings: false,
+        drop_debugger: true,
+        drop_console: true
+      }
+    })
   ],
   output: {
     filename: '[name].js',
