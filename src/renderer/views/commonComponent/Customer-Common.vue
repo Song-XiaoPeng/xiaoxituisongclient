@@ -780,8 +780,9 @@
             }
           });
         },
-        // 获取客户信息
+        // 获取客户信息 123123213
         getClientFun () {
+          this.selPurposeData = [];
           this.is_Loading = true;
           this.ajax.getWxCustomerInfo({
             data: {
@@ -800,6 +801,7 @@
               this.formData.wx_company_name = res.body.wx_company_name;
               this.formData.wx_number = res.body.wx_number;
               this.formData.product_id = res.body.product_id;
+              this.selPurposeData = res.body.product_list;
               this.formData.email = res.body.email;
               this.formData.tel = res.body.tel;
               this.formData.contact_address = res.body.contact_address;

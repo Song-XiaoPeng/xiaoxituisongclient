@@ -665,6 +665,7 @@
         },
         // 获取客户信息
         getClientFun (res) {
+          console.log(res.product_list, 1321312321);
           this.formData.birthday = res.birthday;
           this.formData.company_id = res.wx_company_id;
           this.formData.customer_type = res.customer_type;
@@ -684,7 +685,7 @@
           this.formData.real_sex = res.real_sex;
           this.formData.wx_user_group_id = res.wx_user_group_id;
           this.formData.wx_user_group_name = res.wx_user_group_name;
-          Object.assign(this.selPurposeData, res.product_list);
+          this.selPurposeData = res.product_list;
         },
         // 模糊搜索客户名称
         nameSeekFun (v) {

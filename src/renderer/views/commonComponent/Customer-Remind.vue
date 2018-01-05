@@ -367,7 +367,6 @@
         });
         // 获取客户信息传递本页面
         Bus.$on('userEV', (user) => {
-          console.log(user);
           this.userData = user;
         });
       }

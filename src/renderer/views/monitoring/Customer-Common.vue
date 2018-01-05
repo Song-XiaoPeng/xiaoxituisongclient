@@ -162,7 +162,7 @@
                <!--</Select>-->
             <!--</FormItem>-->
             <FormItem style="border-bottom: 0px;" label="客户类型：">
-               <Select v-model="formData.customer_type" style="width:  44%;">
+               <Select v-model="formData.customer_type" style="width:  44%;" disabled>
                   <Option v-for="item in clientTypeArr" :value="item.id" :key="item.id" disabled>{{ item.label }}</Option>
                </Select>
             </FormItem>
@@ -173,11 +173,11 @@
                <!--<Button type="dashed" @click="popup2 = true" disabled>操作</Button>-->
             <!--</FormItem>-->
             <FormItem label="意向产品：">
-               <span>{{selPurposeData.product_name}}</span>
+               <span v-for="(k, i) in selPurposeData" :key="i">{{k.product_name}},</span>
                <Button type="dashed" @click="popup12 = true" disabled>操作</Button>
             </FormItem>
             <FormItem style="border-bottom: 0px;" label="客户生日：" >
-               <DatePicker type="date" v-model="formData.birthday" placeholder="选择时间" style="width:  100%;" @on-change="birthdayFun"></DatePicker>
+               <DatePicker type="date" v-model="formData.birthday" disabled placeholder="选择时间" style="width:  100%;" @on-change="birthdayFun"></DatePicker>
             </FormItem>
             <FormItem style="border-bottom: 0px;" label="性别：" >
                <RadioGroup v-model="formData.real_sex">
@@ -301,7 +301,7 @@
       data () {
         return {
           popup12: false,
-          selPurposeData: {},
+          selPurposeData: [],
           popup13: false,
           popup14: false,
           userInfo: {},
@@ -759,6 +759,7 @@
         },
         // 获取客户信息
         getClientFun () {
+          this.selPurposeData = [];
           this.is_Loading = true;
           this.ajax.getWxCustomerInfo({
             data: {
@@ -772,6 +773,7 @@
               this.formData.desc = res.body.desc;
               this.formData.uid = res.body.uid;
               // this.nameArr.push(res.body);
+              this.selPurposeData = res.body.product_list;
               this.formData.real_name = res.body.real_name;
               this.formData.real_phone = res.body.real_phone;
               this.formData.wx_company_name = res.body.wx_company_name;
