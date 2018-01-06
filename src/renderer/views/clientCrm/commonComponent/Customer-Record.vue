@@ -444,8 +444,6 @@
           // k.is_icon = true;
           that.$set(k, 'is_icon', true);
           audio.onloadedmetadata = function (res) {
-            // console.log(res, 99999);
-            // console.log(audio.duration, 3333333);
           };
           audio.currentTime = 0;
           audio.play();

@@ -332,9 +332,10 @@ ul.img-txt{
                  <div class="content-box" style="text-align: right" v-if="k.opercode == 1">
                      <div class="" style="text-align: right;font-size: 10px;color: #999;box-sizing: border-box;padding-right: 50px">{{k.add_time}}</div>
                      <div class="crate" style="right: 10px;background-color: #e7e8ea;">
-                         <div class="lading-box" v-if="k.is_loading">
-                             <Spin fix>
+                         <div class="video_loading" v-if="k.is_video_loading" style="position: absolute;top:5px;left:5px;bottom: 5px;right: 5px;">
+                             <Spin fix v-if="k.is_video_loading">
                                  <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
+                                 <div>视频加载中...</div>
                              </Spin>
                          </div>
                          <div class="is-err" v-if="k.is_err">
@@ -352,7 +353,7 @@ ul.img-txt{
 
 
                              <!-- 视频 -->
-                             <video v-if="k.message_type == 4"  width="320" height="240" controls style="background-color: #fff;">
+                             <video v-if="k.message_type == 4"  width="320" height="240" controls style="background-color: #fff;" v-on:loadstart="mp4StartFun(k, i)" v-on:loadeddata="mp4SendFun(k, i)">
                                  <source :src="k.file_url" type="video/mp4">
                              </video>
                              <!-- end视频 -->
@@ -473,11 +474,17 @@ ul.img-txt{
 
       <!-- 视频弹窗弹窗 -->
       <Modal v-model="popup2" title="提示">
-          <video v-if="popup2" width="420" height="320"  controls autoplay style="background-color: #fff;">
-              <source :src="mp4Url" type="video/mp4" >
-          </video>
+          <div style="position: relative;text-align: center;">
+              <Spin fix v-if="is_video_loading">
+                  <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
+                  <div>视频加载中...</div>
+              </Spin>
+              <video v-if="popup2" width="420" height="320"  controls autoplay style="background-color: #fff;" v-on:loadstart="mp4StartFun()" v-on:loadeddata="mp4SendFun()">
+                  <source :src="mp4Url" type="video/mp4" >
+              </video>
+          </div>
       </Modal>
-      <!-- end视频弹窗弹窗 -->
+      <!-- end视频弹窗弹窗 12313-->
 
 
       <!-- 音频弹窗 -->
@@ -785,7 +792,8 @@ ul.img-txt{
           messData: null,
           popup8: false,
           strongData: null,
-          is_sub: true
+          is_sub: true,
+          is_video_loading: false
         };
       },
       components: {
@@ -815,6 +823,22 @@ ul.img-txt{
       // }
       // },
       methods: {
+        // 视频加载完成
+        mp4SendFun (k, i) {
+          if (k) {
+            k.is_video_loading = false;
+          } else {
+            this.is_video_loading = false;
+          }
+        },
+        // 视频是否加载 123123sdsad
+        mp4StartFun (k, i) {
+          if (k) {
+            k.is_video_loading = true;
+          } else {
+            this.is_video_loading = true;
+          }
+        },
         // 获取会话客户相关数据
         getclientData () {
         },
@@ -1042,6 +1066,7 @@ ul.img-txt{
               customer_wx_openid: this.datalistArr.customer_wx_openid || this.clientData.customer_wx_openid,
               message_id: '',
               message_type: 4,
+              is_video_loading: false,
               is_loading: true,
               opercode: 1,
               is_err: false,
@@ -1216,19 +1241,16 @@ ul.img-txt{
           db.tabName = 'message';
           db.data = [obj];
           db.fun = function (res) {
-            console.log('DB---》添加数据成功');
             db.close();
           };
         },
         // 音频数据跟新
         updbFun1 (obj) {
-          console.log(obj);
           let db = new DB();
           db.type = 'update';
           db.tabName = 'message';
           db.data = [obj];
           db.fun = function (res) {
-            console.log('DB--》音频数据更新成功');
             db.close();
           };
         },
@@ -1374,12 +1396,12 @@ ul.img-txt{
           const thumbSize = that.determineScreenShotSize();
           let options = { types: ['screen'], thumbnailSize: thumbSize };
           desktopCapturer.getSources(options, function (error, sources) {
-            if (error) return console.log(error);
+            if (error) return;
             sources.forEach(function (source) {
               if (source.name === 'Entire screen' || source.name === 'Screen 1') {
                 const screenshotPath = path.join(os.tmpdir(), 'screenshot.png');
                 fs.writeFile(screenshotPath, source.thumbnail.toPng(), function (error) {
-                  if (error) return console.log(error);
+                  if (error) return;
                   const message = `${screenshotPath}`;
                   that.$electron.ipcRenderer.send('shortcut-capture', message);
                 });

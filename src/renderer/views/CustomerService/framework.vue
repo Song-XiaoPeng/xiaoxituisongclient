@@ -311,7 +311,7 @@
         <FormItem label="用户性别">
           <RadioGroup v-model="userObj.sex">
             <Radio label="1">男</Radio>
-            <Radio label="-1">女</Radio>
+            <Radio label="2">女</Radio>
           </RadioGroup>
         </FormItem>
       </Form>

@@ -5,7 +5,7 @@ let util = {};
 
 // util.ajaxUrl = env === 'development' ? 'http://192.168.1.69:91' : env === 'production' ? 'http://wxyx.lyfz.net/api.php' : 'http://wxyx.lyfz.net/api.php';
 // util.ajaxUrl = 'http://192.168.1.69:91';
-util.ajaxUrl = 'http://kf.lyfz.net';
+util.ajaxUrl = 'https://kf.lyfz.net';
 
 util.ajax = axios.create({
   baseURL: util.ajaxUrl,

@@ -144,7 +144,7 @@
         position: absolute;
         left: 0;
         right: 0;
-        bottom: 0;
+        top: -4px;
     }
     .audio-box{
         display: inline-block;
@@ -343,6 +343,12 @@
                     <div class="content-box" style="text-align: right" v-if="k.opercode == 1 || k.opercode == 3">
                         <div class="" style="text-align: right;font-size: 10px;color: #999;box-sizing: border-box;padding-right: 50px">{{k.add_time}}</div>
                         <div class="crate" style="right: 10px;background-color: #e7e8ea;">
+                            <!--<div class="video_loading" v-if="k.is_video_loading" style="position: absolute;top:5px;left:5px;bottom: 5px;right: 5px;">-->
+                                <!--<Spin fix v-if="k.is_video_loading">-->
+                                    <!--<Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>-->
+                                    <!--<div>视频加载中...</div>-->
+                                <!--</Spin>-->
+                            <!--</div>-->
                             <div class="lading-box" v-if="k.is_loading">
                                 <Spin fix>
                                     <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
@@ -410,9 +416,6 @@
                     <!---------------------------------- end客服消息 ------------------------------------>
                 </div>
             </div>
-            <div class="percent" v-if="is_percent">
-                <Progress :percent="up_state"></Progress>
-            </div>
             <div v-if="isMass">
                 <Tabs value="name1">
                     <TabPane label="48小时内" name="name1"></TabPane>
@@ -473,11 +476,14 @@
             <!--<span style="color: #ff99cc" title="发送满意度"><Icon type="thumbsup"></Icon></span>-->
             <!--<span style="color: #ccff66" title="下次联系提醒"><Icon type="ios-lightbulb"></Icon></span>-->
             <!--<span style="color: #333399" title="退出"><Icon type="log-out"></Icon></span>-->
-            <!--<Button class="f-r" style="position: relative;font-size: 28px;top: 4px;color: #9e9e9e;" type="text" size="small" title="清空聊天记录"><Icon type="trash-a"></Icon></Button>-->
+            <!--<Button class="f-r" style="position: relative;font-size: 28px;top: 4px;color: #9e9e9e;" type="text" size="small" title="清空聊天记录"><Icon type="trash-a"></Icon></Button> -->
 
             <Button v-if="userInfo.user_type == 3"  type="ghost" class="f-r" style="margin-top: 15px; margin-right: 10px;" @click="popup9 = true">领导评价 </Button>
         </div>
         <div class="chart-txt" v-bind:class="{'is_mass_chart-txt':isMass}">
+            <div class="percent" v-if="is_percent">
+                <Progress :percent="up_state"></Progress>
+            </div>
             <textarea v-model="txtra"  class="txt" @click="replyType = 1" v-on:paste="pasteFun" @keyup="keyFun"></textarea>
             <!--<input class="txt"  @keyup.enter="subFun" style="opacity: 0; position: absolute; z-index: 10;width: 98%;height: 95%;" @focus="ipt">-->
             <!--<textarea ref="txtra" class="txt" @blur="focusState = false" v-focus="focusState" style="position: absolute;z-index: 1;width: 98%;height: 95%;"></textarea>-->
@@ -489,9 +495,15 @@
 
         <!-- 视频弹窗弹窗 -->
         <Modal v-model="popup2" title="提示">
-            <video v-if="popup2" width="420" height="320"  controls autoplay style="background-color: #fff;">
-                <source :src="mp4Url" type="video/mp4" >
-            </video>
+            <div style="position: relative;text-align: center;">
+                <Spin fix v-if="is_video_loading">
+                    <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
+                    <div>视频加载中...</div>
+                </Spin>
+                <video v-if="popup2" width="420" height="320"  controls autoplay style="background-color: #fff;" v-on:loadstart="mp4StartFun()" v-on:loadeddata="mp4SendFun()">
+                    <source :src="mp4Url" type="video/mp4" >
+                </video>
+            </div>
         </Modal>
         <!-- end视频弹窗弹窗 -->
 
@@ -840,7 +852,8 @@
         page: 1,
         is_scorllTopAjax: false,
         is_scorH: 0, // 选择客户，获取客户数据后控制滚动条到底部，只执行一次
-        scorH: 0
+        scorH: 0,
+        is_video_loading: false
       };
     },
     components: {
@@ -864,6 +877,22 @@
     beforeDestroy () {
     },
     methods: {
+      // 视频加载完成
+      mp4SendFun (k, i) {
+        if (k) {
+          k.is_video_loading = false;
+        } else {
+          this.is_video_loading = false;
+        }
+      },
+      // 视频是否加载 123123sdsad
+      mp4StartFun (k, i) {
+        if (k) {
+          k.is_video_loading = true;
+        } else {
+          this.is_video_loading = true;
+        }
+      },
       // 评价
       addEvaluateFun () {
         this.ajax.sessionEvaluate({
@@ -1068,7 +1097,7 @@
         }
         return data;
       },
-      // 组合发送的数据
+      // 组合显示的的数据
       subBeforeGroupFun () {
         let obj;
         // 组合发送成功的数据  保存到本地数据库
@@ -1115,6 +1144,7 @@
             message_id: '',
             message_type: 4,
             is_loading: true,
+            is_video_loading: true,
             opercode: 3,
             is_err: false,
             file_url: this.mp4Data.url || '',
@@ -1189,7 +1219,7 @@
         }
         return obj;
       },
-      // 发送信息 kjfajwfawfvhj
+      // 发送信息
       subFun (e) {
         // 组合普通文字相关数据
         if (!this.clientData.session_id) {
@@ -1309,19 +1339,16 @@
         db.tabName = 'message';
         db.data = [obj];
         db.fun = function (res) {
-          console.log('DB---》添加数据成功');
           db.close();
         };
       },
       // 音频数据跟新
       updbFun1 (obj) {
-        console.log(obj);
         let db = new DB();
         db.type = 'update';
         db.tabName = 'message';
         db.data = [obj];
         db.fun = function (res) {
-          console.log('DB--》音频数据更新成功');
           db.close();
         };
       },
@@ -1573,18 +1600,18 @@
           height: maxDimension * window.devicePixelRatio
         };
       },
-      // 截图 12123sdsd
+      // 截图
       screenshotFun () {
         let that = this;
         const thumbSize = that.determineScreenShotSize();
         let options = { types: ['screen'], thumbnailSize: thumbSize };
         desktopCapturer.getSources(options, function (error, sources) {
-          if (error) return console.log(error);
+          if (error) return;
           sources.forEach(function (source) {
             if (source.name === 'Entire screen' || source.name === 'Screen 1') {
               const screenshotPath = path.join(os.tmpdir(), 'screenshot.png');
               fs.writeFile(screenshotPath, source.thumbnail.toPng(), function (error) {
-                if (error) return console.log(error);
+                if (error) return;
                 const message = `${screenshotPath}`;
                 that.$electron.ipcRenderer.send('shortcut-capture', message);
               });

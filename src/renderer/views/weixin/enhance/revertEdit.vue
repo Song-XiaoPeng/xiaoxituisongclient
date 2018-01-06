@@ -215,7 +215,6 @@
             });
           },
           error: (res) => {
-            console.log(res);
             this.is_Loading = false;
             this.$Message.warning(res.meta.message);
           }
@@ -232,7 +231,6 @@
             // this.getUserList();
           },
           error: (res) => {
-            console.log(res, 123456);
             this.is_Loading = false;
             this.$Message.warning(res.meta.message);
           }
@@ -241,7 +239,6 @@
       /* tab的切换方法 */
       selTabFun (k) {
         this.selData = k;
-        console.log(k);
       },
       selTabFun1 (k) {
         this.selData1 = k;

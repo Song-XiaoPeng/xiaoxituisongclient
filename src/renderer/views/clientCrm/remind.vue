@@ -367,7 +367,7 @@
             }
           },
           {
-            title: '来访次数',
+            title: '进入公共号次数',
             ellipsis: true,
             key: 'get_into_count'
           },

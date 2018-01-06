@@ -410,7 +410,6 @@
             },
             success: (res) => {
               this.elmetArr = res.body.data_list.reverse();
-              console.log(this.elmetArr);
               this.pageData.rows_num = res.body.page_data.rows_num;
               this.pageData.count = res.body.page_data.count;
               this.scroFun();

@@ -214,9 +214,20 @@
         <!-- end图片 -->
 
         <!-- 添加标签 -->
-        <Modal v-model="popup14" title="标签">
-            <div><span style="color: #ff3300">点击其中一项即选择</span></div>
-            <Table border :columns="columns11" :loading="is_Loading" highlight-row :data="Label" @on-current-change="selLabelFun"></Table>
+        <Modal v-model="popup14" title="标签" width="800">
+            <div class="">
+                <Select v-model="label_group_id" style="width:200px">
+                    <Option v-for="item in labelGroupArr" :value="item.label_group_id" :key="item.label_group_id">{{ item.group_name }}</Option>
+                </Select>
+                <Input v-model="seek_label_name" style="width:100px;"></Input>
+                <Button type="info" size="small" @click="getLabelList(label_group_id = '')">搜索</Button>
+            </div>
+            <div style="text-align: right;"><span style="color: #ff3300;">点击其中一项即选择</span></div>
+            <div  style="max-height: 450px;overflow: auto;">
+                <Table border :columns="columns11" highlight-row :data="Label" @on-current-change="selLabelFun"></Table>
+            </div>
+            <!--<div><span style="color: #ff3300">点击其中一项即选择</span></div>-->
+            <!--<Table border :columns="columns11" :loading="is_Loading" highlight-row :data="Label" @on-current-change="selLabelFun"></Table> 123132-->
         </Modal>
         <!-- end添加标签 -->
 
@@ -571,7 +582,10 @@
           }
         ],
         popup14: false,
-        Label: []
+        Label: [],
+        labelGroupArr: [],
+        label_group_id: '',
+        seek_label_name: ''
       };
     },
     mounted () {
@@ -579,6 +593,26 @@
     beforeDestroy () {
     },
     methods: {
+      // 获取标签分组
+      labelGroupList () {
+        this.ajax.getLabelGroup({
+          data: {
+          },
+          success: (res) => {
+            this.labelGroupArr = res.body;
+            this.labelGroupArr.unshift({
+              company_id: '',
+              group_name: '全部',
+              label_group_id: -1
+            });
+            this.label_group_id = -1;
+          },
+          error: (res) => {
+            this.is_Loading = false;
+            this.$Message.waiting(res.meta.message);
+          }
+        });
+      },
       // 选择标签列表 中的数据
       selLabelFun (v) {
         if (this.tabArr.length === 0) {
@@ -818,6 +852,7 @@
             this.customer_service_id = '';
             this.qrcode_id = '';
             this.dey = '';
+            this.$Message.success('操作成功');
           },
           error: (res) => {
             this.$Message.warning(res.meta.message);
@@ -993,7 +1028,10 @@
       // 获取标签列表
       getLabelList () {
         this.ajax.getLabelList({
-          data: {},
+          data: {
+            label_group_id: this.label_group_id === -1 ? '' : this.label_group_id,
+            label_name: this.seek_label_name
+          },
           success: (res) => {
             this.Label = res.body;
           },
@@ -1023,9 +1061,16 @@
         },
         // 深度观察
         deep: true
+      },
+      label_group_id: function (v) {
+        if (v !== '') {
+          this.seek_label_name = '';
+          this.getLabelList();
+        }
       }
     },
     created () {
+      this.labelGroupList();
       this.geteChannelGroupListFun();
       this.getSection();
       this.getQrcodList();

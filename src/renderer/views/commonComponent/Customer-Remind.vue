@@ -183,11 +183,14 @@
 
 
 
-        <!-- 完成提醒弹窗 -->
+        <!-- 完成提醒弹窗 1213-->
         <Modal v-model="popup2" title="完成提醒" @on-ok="setFulfillFun">
             <Form :label-width="100">
+                <FormItem label="提醒内容：">
+                    <span>{{RemindData.remind_content}}</span>
+                </FormItem>
                 <FormItem label="完成内容：">
-                    <Input v-model="txta" type="textarea" :autosize="{minRows: 2}" placeholder="请输入..."></Input>
+                    <Input v-model="successTxt" type="textarea" :autosize="{minRows: 2}" placeholder="请输入..."></Input>
                 </FormItem>
             </Form>
         </Modal>
@@ -224,7 +227,8 @@
           },
           RemindData: '',
           popup3: false,
-          userData: {}
+          userData: {},
+          successTxt: ''
         };
       },
       mounted () {
@@ -237,7 +241,7 @@
           this.is_Loading = true;
           this.ajax.getRemindList({
             data: {
-              customer_info_id: this.clientData.customer_info_id,
+              wx_user_id: this.clientData.wx_user_id,
               page: this.pageData.page,
               is_remind: '1'
             },
@@ -265,7 +269,7 @@
           this.ajax.addRemind({
             data: {
               remind_content: this.txta,
-              customer_info_id: this.clientData.customer_info_id,
+              wx_user_id: this.clientData.wx_user_id,
               remind_time: this.RemindDate,
               remind_uid: this.userInfo.uid,
               remind_type: this.userData.user_info.is_clue === -1 || 1 ? 1 : this.userData.user_info.is_clue === 2 || 3 ? 2 : this.userData.user_info.is_clue === 4 ? 3 : ''
@@ -293,7 +297,7 @@
           this.ajax.setComplete({
             data: {
               remind_id: this.RemindData.remind_id,
-              complete_content: this.txta
+              complete_content: this.successTxt
             },
             success: (res) => {
               this.txtra = '';

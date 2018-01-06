@@ -199,7 +199,7 @@
             <Button type="info" size="small" @click="popup14 = true">添加标签</Button>
          </div>
          <div class="label-box">
-            <Tag v-for="(k, i) in userData.label" color="green" :key="i">{{k.label_name}}</Tag>
+            <Tag v-for="(k, i) in userData.label" color="green" :key="i" v-if="k">{{k.label_name}}</Tag>
          </div>
       </div>
 
@@ -254,9 +254,16 @@
 
 
       <!-- 添加标签 -->
-      <Modal v-model="popup14" title="标签" @on-ok="setWxUserLabel">
-         <div><span style="color: #ff3300">点击其中一项即选择</span></div>
-         <div style="max-height: 450px;overflow: auto;">
+      <Modal v-model="popup14" title="标签" @on-ok="setWxUserLabel" width="800">
+         <div class="">
+            <Select v-model="label_group_id" style="width:200px">
+               <Option v-for="item in labelGroupArr" :value="item.label_group_id" :key="item.label_group_id">{{ item.group_name }}</Option>
+            </Select>
+            <Input v-model="seek_label_name" style="width:100px;"></Input>
+            <Button type="info" size="small" @click="getLabelList(label_group_id = '')">搜索</Button>
+         </div>
+         <div style="text-align: right;"><span style="color: #ff3300;">点击其中一项即选择</span></div>
+         <div  style="max-height: 450px;overflow: auto;">
             <Table border :columns="columns9" highlight-row :data="Label" @on-current-change="selLabelFun"></Table>
          </div>
 
@@ -473,7 +480,10 @@
               key: 'label_group_id'
             }
           ],
-          selLabelData: null
+          selLabelData: null,
+          labelGroupArr: [],
+          label_group_id: '',
+          seek_label_name: ''
         };
       },
       mounted () {
@@ -482,8 +492,33 @@
       beforeDestroy () {
       },
       watch: {
+        label_group_id: function (v) {
+          if (v !== '') {
+            this.seek_label_name = '';
+            this.getLabelList();
+          }
+        }
       },
       methods: {
+        labelGroupList () {
+          this.ajax.getLabelGroup({
+            data: {
+            },
+            success: (res) => {
+              this.labelGroupArr = res.body;
+              this.labelGroupArr.unshift({
+                company_id: '',
+                group_name: '全部',
+                label_group_id: -1
+              });
+              this.label_group_id = -1;
+            },
+            error: (res) => {
+              this.is_Loading = false;
+              this.$Message.waiting(res.meta.message);
+            }
+          });
+        },
         // 选择标签列表 中的数据
         selLabelFun (v) {
           this.selLabelData = v;
@@ -513,10 +548,11 @@
         },
         // 获取微信用户基本信息
         getWxUserInfo () {
+          console.log(this.clientData, 33333);
           this.ajax.getWxUserInfo({
             data: {
               appid: this.clientData.appid,
-              openid: this.clientData.openid
+              openid: this.clientData.openid || this.clientData.customer_wx_openid
             },
             success: (res) => {
               this.userData = res.body;
@@ -531,7 +567,10 @@
         // 获取标签列表
         getLabelList () {
           this.ajax.getLabelList({
-            data: {},
+            data: {
+              label_group_id: this.label_group_id === -1 ? '' : this.label_group_id,
+              label_name: this.seek_label_name
+            },
             success: (res) => {
               this.Label = res.body;
             },
@@ -665,7 +704,6 @@
         },
         // 获取客户信息
         getClientFun (res) {
-          console.log(res.product_list, 1321312321);
           this.formData.birthday = res.birthday;
           this.formData.company_id = res.wx_company_id;
           this.formData.customer_type = res.customer_type;
@@ -786,16 +824,18 @@
         selPurposeFun (v) {
           Object.assign(this.selPurposeData, v);
         },
-        // 意向产品分页方法 1213
+        // 意向产品分页方法
         pageFun (v) {
           this.pageData.page = v;
           this.getProductList();
         }
       },
       destroyed (s) {
+        // Bus.$off();
       },
       created () {
         this.getLabelList();
+        this.labelGroupList();
         // Bus.$off();
         Bus.$on('WxAuthList', (k) => {
           this.WxAuthList = k.body;

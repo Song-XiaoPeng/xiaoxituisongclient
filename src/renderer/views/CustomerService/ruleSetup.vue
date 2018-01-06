@@ -456,7 +456,9 @@
           count: 0,
           rows_num: 0,
           page: 1
-        }
+        },
+        label_group_id: '',
+        label_name: ''
       };
     },
     components: {
@@ -526,7 +528,6 @@
             this.$Message.warning(res.meta.message);
           }
         });
-        console.log(this.ruleFrom);
       },
       // 获取标签分组列表
       getLabelGroupListFun () {
@@ -545,7 +546,10 @@
       // 获取标签列表
       getLabelListFun () {
         this.ajax.getLabelList({
-          data: {},
+          data: {
+            label_group_id: '',
+            label_name: ''
+          },
           success: (res) => {
             this.labelTableData = res.body;
             this.is_Loading = false;

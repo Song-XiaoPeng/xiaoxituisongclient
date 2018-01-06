@@ -238,7 +238,7 @@
             <Button type="info" size="small" @click="popup14 = true">添加标签</Button>
          </div>
          <div class="label-box">
-            <Tag v-for="(k, i) in userData.label" color="green" :key="i">{{k.label_name}}</Tag>
+            <Tag v-for="(k, i) in labelArr" color="green" :key="i" v-if="k">{{k.label_name}}</Tag>
          </div>
       </div>
 
@@ -246,7 +246,7 @@
 
 
 
-      <!-- 添加或修改客户池 -->
+      <!-- 添加或修改客户池 1231-->
       <Modal v-model="popup1" title="客户池组" @on-ok="addCustomerGroup" :styles="{'z-index': 1000}">
          <Form label-position="right" :label-width="80">
             <FormItem label="池组名称：">
@@ -291,9 +291,16 @@
       <!-- end添加或修改意向产品 -->
 
 
-      <!-- 添加标签 -->
-      <Modal v-model="popup14" title="标签" @on-ok="setWxUserLabel">
-         <div><span style="color: #ff3300">点击其中一项即选择</span></div>
+      <!-- 添加标签 dawddwad-->
+      <Modal v-model="popup14" title="标签" @on-ok="setWxUserLabel" width="800">
+         <div class="">
+            <Select v-model="label_group_id" style="width:200px">
+               <Option v-for="item in labelGroupArr" :value="item.label_group_id" :key="item.label_group_id">{{ item.group_name }}</Option>
+            </Select>
+            <Input v-model="seek_label_name" style="width:100px;"></Input>
+            <Button type="info" size="small" @click="getLabelList(label_group_id = '')">搜索</Button>
+         </div>
+         <div style="text-align: right;"><span style="color: #ff3300;">点击其中一项即选择</span></div>
          <div  style="max-height: 450px;overflow: auto;">
             <Table border :columns="columns9" highlight-row :data="Label" @on-current-change="selLabelFun"></Table>
          </div>
@@ -306,7 +313,7 @@
          <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
          <div>请求中....</div>
       </Spin>
-      <!-- end请求状态  21312-->
+      <!-- end请求状态  -->
    </div>
 </template>
 <script>
@@ -506,8 +513,12 @@
           Label: [],
           tabelName: '',
           selLabelData: null,
-          userData: [],
-          is_client_btn_txt: '标签'
+          userData: [{}],
+          is_client_btn_txt: '标签',
+          labelArr: [],
+          labelGroupArr: [],
+          label_group_id: '',
+          seek_label_name: ''
         };
       },
       mounted () {
@@ -516,8 +527,37 @@
       beforeDestroy () {
       },
       watch: {
+        label_group_id: function (v) {
+          if (v !== '') {
+            this.seek_label_name = '';
+            this.getLabelList();
+          }
+        }
       },
       methods: {
+        // 标签分组改变获取标签list
+        selLabelGroupFun () {
+        },
+        // 获取标签分组
+        labelGroupList () {
+          this.ajax.getLabelGroup({
+            data: {
+            },
+            success: (res) => {
+              this.labelGroupArr = res.body;
+              this.labelGroupArr.unshift({
+                company_id: '',
+                group_name: '全部',
+                label_group_id: -1
+              });
+              this.label_group_id = -1;
+            },
+            error: (res) => {
+              this.is_Loading = false;
+              this.$Message.waiting(res.meta.message);
+            }
+          });
+        },
         // 客户信息显示
         labelShowFun () {
           let div = this.$refs.client;
@@ -552,12 +592,14 @@
         },
         // 获取微信用户基本信息
         getWxUserInfo () {
+          console.log(this.clientData, 11111);
           this.ajax.getWxUserInfo({
             data: {
               appid: this.clientData.appid,
               openid: this.clientData.customer_wx_openid
             },
             success: (res) => {
+              this.labelArr = res.body.label;
               this.userData = res.body;
               this.is_Loading = false;
               Bus.$emit('userEV', res.body);
@@ -594,7 +636,10 @@
         // 获取标签列表
         getLabelList () {
           this.ajax.getLabelList({
-            data: {},
+            data: {
+              label_group_id: this.label_group_id === -1 ? '' : this.label_group_id,
+              label_name: this.seek_label_name
+            },
             success: (res) => {
               this.Label = res.body;
             },
@@ -769,8 +814,8 @@
           this.ajax.setCustomerInfo({
             data: this.formData,
             success: (res) => {
-              if (res.body.customer_info_id && res.body.customer_info_id !== null) {
-                Bus.$emit('is_remind', {'remind': true});
+              if (res.body.customer_info_id) {
+                Bus.$emit('is_remind', {}, {'remind': true});
               }
 
               this.$Message.success('操作成功');
@@ -780,7 +825,7 @@
             }
           });
         },
-        // 获取客户信息 123123213
+        // 获取客户信息 12312
         getClientFun () {
           this.selPurposeData = [];
           this.is_Loading = true;
@@ -810,7 +855,7 @@
               this.formData.wx_user_group_id = res.body.wx_user_group_id;
               this.formData.wx_user_group_name = res.body.wx_user_group_name;
               this.is_Loading = false;
-              if (res.body.customer_info_id && res.body.customer_info_id !== null) {
+              if (res.body.customer_info_id) {
                 Bus.$emit('is_remind', res.body, {'remind': true}, this.userData);
               }
             },
@@ -863,8 +908,10 @@
         // Bus.$off();
       },
       created () {
+        // Bus.$off();
         this.getProductList();
         this.getLabelList();
+        this.labelGroupList();
         Bus.$on('WxAuthList', (k) => {
           this.WxAuthList = k.body;
           this.getWxGroup();
@@ -873,6 +920,7 @@
           this.is_CRM = o ? o.is_CRM : false;
           this.clientData = k;
           if (u) {
+            this.labelArr = u.body ? u.body.label : [];
             this.userData = u;
           } else {
             this.getWxUserInfo();

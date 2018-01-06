@@ -224,7 +224,7 @@
             <Button type="info" size="small" @click="popup14 = true" disabled>添加标签</Button>
          </div>
          <div class="label-box">
-            <Tag v-for="(k, i) in userData.label" color="green" :key="i">{{k.label_name}}</Tag>
+            <Tag v-for="(k, i) in userData.label" color="green" :key="i" v-if="k">{{k.label_name}}</Tag>
          </div>
       </div>
 
@@ -288,10 +288,10 @@
 
 
       <!-- 请求状态 -->
-      <Spin fix v-if="is_Loading">
-         <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
-         <div>请求中....</div>
-      </Spin>
+      <!--<Spin fix v-if="is_Loading">-->
+         <!--<Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>-->
+         <!--<div>请求中....</div>-->
+      <!--</Spin>-->
       <!-- end请求状态 -->
    </div>
 </template>
@@ -534,6 +534,7 @@
         },
         // 获取微信用户基本信息
         getWxUserInfo () {
+          console.log(this.clientData, 22222);
           this.ajax.getWxUserInfo({
             data: {
               appid: this.clientData.appid,
@@ -815,7 +816,7 @@
             }
           });
         },
-        // 模糊搜索返回的值
+        // 模糊搜索返回的值 dwad
         selNameSeekFun (v) {
           this.formData.birthday = v.birthday;
           this.formData.company_id = v.wx_company_id;
@@ -841,6 +842,7 @@
         // Bus.$off();
       },
       created () {
+        // Bus.$off();
         this.userInfo = JSON.parse(localStorage.getItem('userInfo'));
         this.getProductList();
         this.getLabelList();
@@ -849,9 +851,9 @@
           this.getWxGroup();
         });
         Bus.$on('change', (k, o) => {
+          this.clientData = k;
           this.is_CRM = o ? o.is_CRM : false;
           if (k.session_id) {
-            this.clientData = k;
             this.getClientFun();
             this.getWxUserInfo();
           }

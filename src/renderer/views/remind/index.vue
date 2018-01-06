@@ -256,7 +256,6 @@
       }
     },
     created () {
-      console.log(1914);
     }
   };
 </script>

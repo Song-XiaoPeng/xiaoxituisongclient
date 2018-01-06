@@ -319,7 +319,6 @@
             db.tabName = 'message';
             db.data = d[k];
             db.fun = function (res) {
-              console.log('DB---》添加数据成功');
               db.close();
             };
           }
@@ -543,12 +542,12 @@
         const thumbSize = this.determineScreenShotSize();
         let options = { types: ['screen'], thumbnailSize: thumbSize };
         desktopCapturer.getSources(options, function (error, sources) {
-          if (error) return console.log(error);
+          if (error) return;
           sources.forEach(function (source) {
             if (source.name === 'Entire screen' || source.name === 'Screen 1') {
               const screenshotPath = path.join(os.tmpdir(), 'screenshot.png');
               fs.writeFile(screenshotPath, source.thumbnail.toPng(), function (error) {
-                if (error) return console.log(error);
+                if (error) return;
                 const message = `${screenshotPath}`;
                 e.sender.send('shortcut-capture', message);
               });

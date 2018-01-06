@@ -54,7 +54,6 @@
                         padding: 5px 0;
                         border-bottom: 1px #EAEAEA solid;
                         font-size: 14px;
-                        cursor: pointer;
                         transition: all .3s;
                     }
                     li:hover{
@@ -124,7 +123,7 @@
                 <!---->
                 <div class="f-r r">
                     <div class="title">所有分组</div>
-                    <div class="list">
+                    <div class="list" style="height: 600px; overflow: auto">
                         <ul>
                             <li v-for="(k, index) in data7" :key="index">
                                 {{k.name}}({{k.count}})

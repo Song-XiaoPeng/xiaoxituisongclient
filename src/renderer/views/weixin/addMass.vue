@@ -331,7 +331,6 @@
     },
     watch: {
       anima2: (v) => {
-        console.log(v);
       }
     },
     props: {

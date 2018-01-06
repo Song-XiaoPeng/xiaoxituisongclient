@@ -468,7 +468,6 @@
       animal: (v) => {
       },
       area: (v) => {
-        console.log(v);
       }
     },
     methods: {
@@ -595,7 +594,6 @@
           },
           success: (res) => {
             this.is_Loading = false;
-            console.log(res.body);
             this.defaultData(res.body);
           },
           error: (res) => {
@@ -836,7 +834,6 @@
             page: this.pageData.page
           },
           success: (res) => {
-            console.log(res.body);
             this.is_Loading = false;
             this.pageData.count = parseInt(res.body.page_data.count);
             this.pageData.rows_num = res.body.page_data.rows_num;
@@ -936,7 +933,6 @@
       // 组合数据
       combination () {
         let arr = [];
-        console.log(this.menu);
         for (let i = 0; i < this.menu.length; i++) {
           // 首选筛选设置的菜单
           if (this.menu[i].is_menu_btn !== true) {
@@ -1200,7 +1196,6 @@
         }
         this.addressData.push(obj1);
       }
-      console.log(157894561236);
     }
   };
 </script>

@@ -179,7 +179,6 @@
   };
   //抛出异常
   HZRecorder.throwError = function (message) {
-    console.log(message);
     throw new function () { this.toString = function () { return message; };};
   };
   //是否支持录音

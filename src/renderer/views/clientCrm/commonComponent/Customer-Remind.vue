@@ -215,7 +215,8 @@
           popup3: false,
           RemindDate: '',
           txta: '',
-          RemindData: ''
+          RemindData: '',
+          userInfo: null
         };
       },
       mounted () {
@@ -228,7 +229,7 @@
           this.is_Loading = true;
           this.ajax.getRemindList({
             data: {
-              customer_info_id: this.clientData.customer_info_id,
+              wx_user_id: this.clientData.wx_user_id,
               page: this.pageData.page,
               is_remind: '1'
             },
@@ -256,9 +257,9 @@
           this.ajax.addRemind({
             data: {
               remind_content: this.txta,
-              customer_info_id: this.clientData.customer_info_id,
+              wx_user_id: this.clientData.wx_user_id,
               remind_time: this.RemindDate,
-              remind_uid: this.clientData.uid,
+              remind_uid: this.userInfo.uid,
               remind_type: this.RemindDate.is_clue === -1 || 1 ? 1 : this.RemindDate.is_clue === 2 || 3 ? 2 : this.RemindDate.is_clue === 4 ? 3 : ''
             },
             success: (res) => {
@@ -354,6 +355,7 @@
         // Bus.$off();
       },
       created () {
+        this.userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
         Bus.$on('change', (k) => {
           this.clientData = k;
         });

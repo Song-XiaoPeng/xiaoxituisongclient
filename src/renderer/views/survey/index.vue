@@ -177,7 +177,7 @@
     <div class="table-box">
       <div class="tab-top">
         <div class="ranking">
-          客服排名
+          客服排名 <span style="font-size: 12px; color: #999;font-weight: 100">(6小时更新一次数据)</span>
         </div>
         <div class="f-r date-sel-box">
           <ul class="cl">
@@ -191,7 +191,7 @@
         </div>
       </div>
       <div style="padding: 10px 15px">
-        <Table border :columns="columns1" stripe :data="data1"></Table>
+        <Table border :columns="columns1" stripe :data="data1" :loading="is_Loading"></Table>
       </div>
     </div>
 
@@ -208,7 +208,7 @@
         <!--</div>-->
       <!--</div>-->
       <!--<div style="padding:10px 15px; margin-bottom: 10px;">-->
-        <!--<ve-line :data="chartData"></ve-line>-->
+        <!--<ve-line :data="chartData"></ve-line> -->
       <!--</div>-->
     <!--</div>-->
 
@@ -223,10 +223,10 @@
     <!-- end自定义时间段弹窗 -->
 
     <!-- 状态 -->
-    <Spin fix v-if="is_Loading">
-      <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
-      <div>请求中....</div>
-    </Spin>
+    <!--<Spin fix v-if="is_Loading">-->
+      <!--<Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>-->
+      <!--<div>请求中....</div>-->
+    <!--</Spin>-->
     <!-- end状态 -->
   </div>
 </template>
@@ -239,7 +239,7 @@
       return {
         columns1: [
           {
-            title: '客户姓名',
+            title: '客服姓名',
             key: 'name',
             align: 'center'
           },
@@ -384,7 +384,6 @@
         } else if (v === 5) {
           this.popup1 = true;
         } else if (v === 6) {
-          console.log(2131);
         }
       },
       // 获取客户排行数据
@@ -399,7 +398,6 @@
           success: (res) => {
             this.is_Loading = false;
             this.data1 = res.body;
-            console.log(res);
           },
           error: (res) => {
             this.is_Loading = false;

@@ -1346,7 +1346,7 @@ ajax.accessQueuingSession = (obj) => {
 
 // 获取标签列表
 ajax.getLabelList = (obj) => {
-  util.ajax.get('/api/v1/setting/Rule/getLabelList', obj.data).then(function (response) {
+  util.ajax.get('/api/v1/setting/Rule/getLabelList?label_group_id=' + obj.data.label_group_id + '&label_name=' + obj.data.label_name, obj.data).then(function (response) {
     if (response.data) {
       if (response.data.meta.code === 200) {
         obj.success(response.data);

@@ -136,7 +136,6 @@
     methods: {
       // tab切换方法
       tabFun (v) {
-        console.log(v);
         this.is_tab = v;
       },
       // 获取发送数据列表
