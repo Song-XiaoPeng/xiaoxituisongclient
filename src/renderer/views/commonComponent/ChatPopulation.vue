@@ -98,6 +98,7 @@
                             line-height: 25px;
                             overflow:hidden;
                             text-overflow:ellipsis;
+                            white-space: nowrap;
                             color: #1a1a1a;
                         }
                         .remark{

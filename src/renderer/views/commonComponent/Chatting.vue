@@ -474,17 +474,12 @@ ul.img-txt{
 
       <!-- 视频弹窗弹窗 -->
       <Modal v-model="popup2" title="提示">
-          <div style="position: relative;text-align: center;">
-              <Spin fix v-if="is_video_loading">
-                  <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
-                  <div>视频加载中...</div>
-              </Spin>
-              <video v-if="popup2" width="420" height="320"  controls autoplay style="background-color: #fff;" v-on:loadstart="mp4StartFun()" v-on:loadeddata="mp4SendFun()">
-                  <source :src="mp4Url" type="video/mp4" >
-              </video>
+          <div style="position: relative">
+
           </div>
+
       </Modal>
-      <!-- end视频弹窗弹窗 12313-->
+      <!-- end视频弹窗弹窗 -->
 
 
       <!-- 音频弹窗 -->

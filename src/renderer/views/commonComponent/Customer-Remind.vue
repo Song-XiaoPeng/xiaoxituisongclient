@@ -131,7 +131,7 @@
         <Modal v-model="popup1" title="添加提醒" @on-ok="addRemind">
             <Form :label-width="100">
                 <FormItem label="提醒日期：">
-                    <DatePicker type="date" placeholder="提醒时间" style="width: 100%" @on-change="dateFun"></DatePicker>
+                    <DatePicker type="datetime" placeholder="提醒时间" style="width: 100%" @on-change="dateFun"></DatePicker>
                 </FormItem>
                 <!--<FormItem label="提醒条目：">-->
                 <!--<Select v-model="model1">-->
@@ -159,7 +159,7 @@
         <Modal v-model="popup3" title="修改" @on-ok="updateRemindFun">
             <Form :label-width="100">
                 <FormItem label="提醒日期：">
-                    <DatePicker type="date" placeholder="提醒时间" style="width: 100%" @on-change="dateFun"></DatePicker>
+                    <DatePicker type="datetime" placeholder="提醒时间" style="width: 100%" @on-change="dateFun"></DatePicker>
                 </FormItem>
                 <!--<FormItem label="提醒条目：">-->
                 <!--<Select v-model="model1">-->
@@ -199,10 +199,10 @@
 
 
         <!-- 状态 -->
-        <Spin fix v-if="is_Loading">
-            <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
-            <div>请求中....</div>
-        </Spin>
+        <!--<Spin fix v-if="is_Loading">-->
+            <!--<Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>-->
+            <!--<div>请求中....</div>-->
+        <!--</Spin>-->
         <!-- end状态 -->
     </div>
 </template>
@@ -263,7 +263,7 @@
             }
           });
         },
-        // 添加业务提醒
+        // 添加业务提醒 dawddawd
         addRemind () {
           this.is_Loading = true;
           this.ajax.addRemind({
@@ -364,14 +364,14 @@
         this.userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
         Bus.$on('change', (k) => {
           this.clientData = k;
-        });
-        Bus.$on('is_remind', (k, obj, user) => {
-          Object.assign(this.clientData, {'customer_info_id': k.customer_info_id});
           this.getRemindList();
         });
+        // Bus.$on('is_remind', (k, obj, user) => {
+        // this.getRemindList();
+        // });
         // 获取客户信息传递本页面
         Bus.$on('userEV', (user) => {
-          this.userData = user;
+          this.userData = user.body;
         });
       }
     };

@@ -157,7 +157,6 @@
                 line-height: 60px;
                 color: #848484;
                 font-size: 14px;
-                cursor: pointer;
             }
             li.active{
                 color: #3399ff;

@@ -65,10 +65,13 @@
           <a href="javascript:void(0)" style="color:#fff">
             <Icon type="wrench" style="color: #818181"></Icon>
           </a>
-          <DropdownMenu slot="list" style="text-align:center; font-size:22px;">
-            <DropdownItem>快捷操作</DropdownItem>
-            <DropdownItem>
+          <DropdownMenu slot="list" name="name1" style="text-align:center; font-size:22px;">
+            <!--<DropdownItem>快捷操作</DropdownItem>-->
+            <DropdownItem name="name2">
               <Icon type="disc" style="margin-right: 10px;"></Icon>注销退出
+            </DropdownItem>
+            <DropdownItem name="name3">
+              修改密码
             </DropdownItem>
           </DropdownMenu>
         </Dropdown>
@@ -125,6 +128,22 @@
           <router-view></router-view>
         </div>
         <!--</Col>-->
+
+
+
+      <Modal v-model="popup1" title="修改密码"  @on-ok="modificationPassFun">
+        <Form label-position="right" :label-width="100">
+          <FormItem label="旧密码">
+            <Input type="password" v-model="passObj.password"></Input>
+          </FormItem>
+          <FormItem label="新密码">
+            <Input type="password" v-model="passObj.password1"></Input>
+          </FormItem>
+          <FormItem label="确认密码">
+            <Input type="password" v-model="passObj.password2"></Input>
+          </FormItem>
+        </Form>
+      </Modal>
     </div>
   </div>
 </template>
@@ -137,6 +156,7 @@
   import os from 'os';
   import fs from 'fs';
   import path from 'path';
+  import md5 from 'js-md5';
   import { desktopCapturer, screen } from 'electron';
   export default {
     data () {
@@ -162,7 +182,14 @@
         is_win: true,
         data3: [],
         lineUpObj: {},
-        lineTime: null
+        lineTime: null,
+        popup1: false,
+        passObj: {
+          password: '',
+          password1: '',
+          password2: ''
+        },
+        is_loading_pass: true
       };
     },
     components: {
@@ -187,14 +214,54 @@
           height: maxDimension * window.devicePixelRatio
         };
       },
-      // 注销事件
-      signOut () {
-        var CancelToken = axios.CancelToken;
-        var source = CancelToken.source();
-        source.cancel();
-        this.$router.push({name: '/'});
-        this.is_ws_initiative_off = true;
-        this.socketCloseFun();
+      // 注销事件dwad
+      signOut (v) {
+        if (v === 'name2') {
+          var CancelToken = axios.CancelToken;
+          var source = CancelToken.source();
+          source.cancel();
+          this.$router.push({name: '/'});
+          this.is_ws_initiative_off = true;
+          this.socketCloseFun();
+        } else if (v === 'name3') {
+          this.popup1 = true;
+        }
+      },
+      // 修改密码
+      modificationPassFun (e) {
+        // this.is_loading_pass = true;
+        if (this.passObj.password === '') {
+          this.$Message.warning(`密码不能为空`);
+          return;
+        }
+        if (this.passObj.password1 === '') {
+          this.$Message.warning(`新密码不能为空`);
+          return;
+        }
+        if (this.passObj.password2 === '') {
+          this.$Message.warning(`确认密码不能为空`);
+          return;
+        }
+        if (this.passObj.password1 !== this.passObj.password2) {
+          this.$Message.warning(`两次密码不一致`);
+          return;
+        }
+        this.ajax.updatePassword({
+          data: {
+            password: md5(this.passObj.password),
+            new_password: md5(this.passObj.password1)
+          },
+          success: (res) => {
+            this.passObj.password = '';
+            this.passObj.password1 = '';
+            this.passObj.password2 = '';
+            this.$Message.success(`修改成功`);
+          },
+          error: (res) => {
+            this.$Message.warning(res.meta.message);
+          }
+        });
+        // this.popup1 = false;
       },
       routeSwitchMenu (name) {
         this.menuList = [];
@@ -279,7 +346,7 @@
         // res.body.pending_access_session['data'] = [];
         // 等待中的客户数据
       },
-      // 获取正在会话列表中客户会话数据
+      // 获取正在会话列表中客户会话数据 dwadw
       getMessage (d) {
         let that = this;
         // 读取会话数据表中的数据

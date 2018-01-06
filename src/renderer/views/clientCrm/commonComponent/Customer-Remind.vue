@@ -132,7 +132,7 @@
         <Modal v-model="popup3" title="添加提醒" @on-ok="addRemind">
             <Form :label-width="100">
                 <FormItem label="提醒日期：">
-                    <DatePicker type="date" placeholder="提醒时间" style="width: 100%" @on-change="dateFun"></DatePicker>
+                    <DatePicker type="datetime" placeholder="提醒时间" style="width: 100%" @on-change="dateFun"></DatePicker>
                 </FormItem>
                 <FormItem label="具体内容：">
                     <Input v-model="txta" type="textarea" :autosize="{minRows: 2}" placeholder="请输入..."></Input>
@@ -148,7 +148,7 @@
         <Modal v-model="popup1" title="修改" @on-ok="updateRemindFun">
             <Form :label-width="100">
                 <FormItem label="提醒日期：">
-                    <DatePicker type="date" placeholder="提醒时间" style="width: 100%" @on-change="dateFun"></DatePicker>
+                    <DatePicker type="datetime" placeholder="提醒时间" style="width: 100%" @on-change="dateFun"></DatePicker>
                 </FormItem>
                 <!--<FormItem label="提醒条目：">-->
                 <!--<Select v-model="model1">-->
@@ -176,8 +176,11 @@
         <!-- 完成提醒弹窗 -->
         <Modal v-model="popup2" title="完成提醒" @on-ok="setFulfillFun">
             <Form :label-width="100">
+                <FormItem label="提醒内容：">
+                    <span>{{RemindData.remind_content}}</span>
+                </FormItem>
                 <FormItem label="完成内容：">
-                    <Input v-model="txta" type="textarea" :autosize="{minRows: 2}" placeholder="请输入..."></Input>
+                    <Input v-model="successTxt" type="textarea" :autosize="{minRows: 2}" placeholder="请输入..."></Input>
                 </FormItem>
             </Form>
         </Modal>
@@ -188,10 +191,10 @@
 
 
         <!-- 状态 -->
-        <Spin fix v-if="is_Loading">
-            <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
-            <div>请求中....</div>
-        </Spin>
+        <!--<Spin fix v-if="is_Loading">-->
+            <!--<Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>-->
+            <!--<div>请求中....</div>-->
+        <!--</Spin>-->
         <!-- end状态 -->
     </div>
 
@@ -216,7 +219,8 @@
           RemindDate: '',
           txta: '',
           RemindData: '',
-          userInfo: null
+          userInfo: null,
+          successTxt: ''
         };
       },
       mounted () {

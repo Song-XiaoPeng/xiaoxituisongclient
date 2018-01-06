@@ -108,7 +108,6 @@
                 line-height: 60px;
                 color: #848484;
                 font-size: 14px;
-                cursor: pointer;
             }
             li.active{
                 color: #3399ff;
@@ -324,16 +323,16 @@
 
 
         <!-- 分配人员列表 1213-->
-        <Modal v-model="popup6" title="添加用户" @on-ok="allocationUserFun">
+        <Modal v-model="popup6" title="添加用户" @on-ok="allocationUserFun" width="800">
             <div class="" style="max-height: 500px; overflow: auto">
                 <Form :label-width="80">
-                    <FormItem label="所属部门">
-                        <Select  v-model="user_group_id">
-                            <Option  :value="k.uid" v-for="(k, i) in subordinateList" :key="i">{{k.user_group_name}}</Option>
-                        </Select>
-                    </FormItem>
+                    <!--<FormItem label="所属部门">-->
+                        <!--<Select  v-model="user_group_id">-->
+                            <!--<Option  :value="k.uid" v-for="(k, i) in subordinateList" :key="i">{{k.user_group_name}}</Option>-->
+                        <!--</Select>-->
+                    <!--</FormItem>-->
                     <FormItem label="人员">
-                        <Table border ref="selection" highlight-row :columns="columns6" :data="data6" @on-current-change="selAllocationUser"></Table>
+                        <Table border ref="selection" highlight-row :columns="columns6" :data="subordinateList" @on-current-change="selAllocationUser"></Table>
                     </FormItem>
                 </Form>
             </div>
@@ -642,6 +641,14 @@
             title: '手机号',
             ellipsis: true,
             key: 'phone_no'
+          },
+          {
+            title: '性别',
+            ellipsis: true,
+            key: 'sex',
+            render: (h, p) => {
+              return h('span', p.row.sex === 1 ? '男' : '女');
+            }
           }
         ],
         data2: [],

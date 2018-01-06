@@ -108,7 +108,6 @@
                 line-height: 60px;
                 color: #848484;
                 font-size: 14px;
-                cursor: pointer;
             }
             li.active{
                 color: #3399ff;
@@ -138,7 +137,7 @@
             </div>
             <div class="filtrate-box">
                 <ul class="my-box cl">
-                    <li v-bind:class="ascription == '' ?  'active' : ''" @click="ascriptionFun('')">全部</li>
+                    <li v-bind:class="ascription == '3' ?  'active' : ''" @click="ascriptionFun('3')">全部</li>
                     <li v-bind:class="ascription == '1' ?  'active' : ''" @click="ascriptionFun('1')">我的客户</li>
                     <li v-bind:class="ascription == '2' ?  'active' : ''" @click="ascriptionFun('2')">下属客户</li>
                 </ul>
@@ -557,7 +556,7 @@
           page: 1,
           rows_num: 1
         },
-        ascription: '',
+        ascription: '3',
         intentionStatistics: {}
       };
     },

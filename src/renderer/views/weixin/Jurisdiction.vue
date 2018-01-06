@@ -44,7 +44,7 @@
                <thead>
                <tr >
                    <th style="background-color: #e6f1fe">logo</th>
-                   <th style="background-color: #e6f1fe">类型</th>
+                   <!--<th style="background-color: #e6f1fe">类型</th>-->
                    <th style="background-color: #e6f1fe">名称</th>
                    <th style="background-color: #e6f1fe">公众号或小程序所属公司名称</th>
                    <th style="background-color: #e6f1fe">二维码</th>
@@ -58,7 +58,7 @@
                        <img :src="k.logo" style="width: 100px;height: 100px" alt="">
                    </td>
                    <td style="padding: 4px;">
-                       {{k.type == 1 ? '小程序' : k.type == 2 ? '公共号' : '未知'}}
+                       {{k.type == 2 ? '小程序' : k.type == 1 ? '公众号' : '未知'}}
                    </td>
                    <td style="padding: 4px;">
                        {{k.nick_name}}
@@ -131,6 +131,13 @@
        </Modal>
        <!-- end支付凭证弹窗 -->
 
+       <!-- 询问弹窗 12313-->
+       <Modal v-model="modal1" title="支付凭证" @on-ok="getWxAuthList">
+           <h2 style="text-align: center">
+               <Icon type="information-circled" style="margin: 0 10px;color: #3399ff;font-size: 20px"></Icon>是否授权成功？
+           </h2>
+       </Modal>
+       <!-- end询问弹窗 -->
        <Spin fix v-if="is_Loading">
            <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
            <div>请求中....</div>

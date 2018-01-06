@@ -592,7 +592,6 @@
         },
         // 获取微信用户基本信息
         getWxUserInfo () {
-          console.log(this.clientData, 11111);
           this.ajax.getWxUserInfo({
             data: {
               appid: this.clientData.appid,
@@ -811,13 +810,10 @@
           Object.assign(this.formData, {'appid': this.clientData.appid});
           Object.assign(this.formData, {'product_id': arr});
           Object.assign(this.formData, {'openid': this.clientData.customer_wx_openid});
+          Bus.$emit('is_remind', {}, {'remind': true});
           this.ajax.setCustomerInfo({
             data: this.formData,
             success: (res) => {
-              if (res.body.customer_info_id) {
-                Bus.$emit('is_remind', {}, {'remind': true});
-              }
-
               this.$Message.success('操作成功');
             },
             error: (res) => {
@@ -829,6 +825,7 @@
         getClientFun () {
           this.selPurposeData = [];
           this.is_Loading = true;
+          Bus.$emit('is_remind', {}, {'remind': true}, this.userData);
           this.ajax.getWxCustomerInfo({
             data: {
               appid: this.clientData.appid,
@@ -855,9 +852,6 @@
               this.formData.wx_user_group_id = res.body.wx_user_group_id;
               this.formData.wx_user_group_name = res.body.wx_user_group_name;
               this.is_Loading = false;
-              if (res.body.customer_info_id) {
-                Bus.$emit('is_remind', res.body, {'remind': true}, this.userData);
-              }
             },
             error: (res) => {
               this.is_Loading = false;
@@ -922,6 +916,7 @@
           if (u) {
             this.labelArr = u.body ? u.body.label : [];
             this.userData = u;
+            Bus.$emit('userEV', u);
           } else {
             this.getWxUserInfo();
           }

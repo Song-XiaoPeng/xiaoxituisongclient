@@ -110,7 +110,6 @@
                 line-height: 60px;
                 color: #848484;
                 font-size: 14px;
-                cursor: pointer;
             }
             li.active{
                 color: #3399ff;
@@ -178,11 +177,11 @@
                                     <div class="title-box cl">
                                         <div class="f-l txt-box">提醒</div>
                                         <div class="f-r">
-                                            <!--<Button type="ghost" @click="hintFun" style="margin: 15px">设置标题</Button>-->
+                                            <!--<Button type="ghost" @click="hintFun" style="margin: 15px">设置标题</Button>  -->
                                         </div>
                                     </div>
                                     <div class="table-box">
-                                        <Table border ref="selection" highlight-row :loading="is_Loading" :columns="columns4" :data="data1" ></Table>
+                                        <Table border ref="selection" highlight-row :loading="is_Loading"  :columns="columns4" :data="data1" ></Table>
                                     </div>
                                     <div style="text-align: center;padding: 5px">
                                         <Page :total="pageData.count" :page-size="pageData.rows_num" @on-change="pageFun"></Page>
@@ -235,7 +234,7 @@
         <!--<Modal v-model="modal3" title="群发"  :width="800">-->
             <!--<chart  :isMass="isMass"></chart>-->
             <!--<div slot="footer">-->
-                <!--<span class="" style="color: #ff3300">最多同时发送30人，只可用模版消息/或文字消息</span>-->
+                <!--<span class="" style="color: #ff3300">最多同时发送30人，只可用模版消息/或文字消息</span>  -->
             <!--</div>-->
         <!--</Modal>-->
         <!-- end群发弹窗 -->
@@ -288,7 +287,7 @@
             <!--<Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>-->
             <!--<div>请求中....</div>-->
         <!--</Spin>-->
-        <!-- end加载状态 -->
+        <!-- end加载状态 dsadsasadasdfasfsafsaf-->
     </div>
 </template>
 <script>
@@ -309,6 +308,7 @@
         columns4: [
           {
             title: '微信用户昵称',
+            fixed: 'left',
             render: (h, p) => {
               return h('div', [
                 h('a', {
@@ -329,35 +329,35 @@
           },
           {
             title: '真实姓名',
-            ellipsis: true,
             render: (h, p) => {
               return h('span', p.row.real_name === null || p.row.real_name === '' ? '暂无' : p.row.real_name);
             }
           },
           {
             title: '公司名称',
-            ellipsis: true,
             render: (h, p) => {
               return h('span', p.row.wx_comapny_name === null || p.row.wx_comapny_name === '' ? '暂无' : p.row.wx_comapny_name);
             }
           },
           {
             title: '产品',
-            ellipsis: true,
             render: (h, p) => {
               return h('span', p.row.product_name === null || p.row.product_name === '' ? '暂无' : p.row.product_name);
             }
           },
           {
+            title: '提醒内容',
+            key: 'remind_content'
+          },
+          {
             title: '所在城市',
-            ellipsis: true,
             render: (h, p) => {
               return h('span', p.row.province + ',' + p.row.city);
             }
           },
           {
             title: '负责人',
-            ellipsis: true,
+            width: '200',
             key: 'customer_service_name'
           },
           {
@@ -368,7 +368,6 @@
           },
           {
             title: '进入公共号次数',
-            ellipsis: true,
             key: 'get_into_count'
           },
           {
@@ -523,7 +522,7 @@
     beforeDestroy () {
     },
     methods: {
-      // 接入
+      // 接入d wad
       jionUpFun (k) {
         this.is_Loading = true;
         this.ajax.createWxUserSession({
@@ -676,7 +675,7 @@
       }
     },
     destroyed (s) {
-      Bus.$off();
+      // Bus.$off();
     },
     created () {
       Bus.$off();
@@ -685,7 +684,7 @@
         data: {},
         success: (res) => {
           Bus.$emit('WxAuthList', res);
-          // sessionStorage.setItem('WxAuthList', JSON.stringify(res.body));
+          // sessionStorage.setItem('WxAuthList', JSON.stringify(res.body)); 112
         },
         error: (res) => {
           this.is_Loading = false;

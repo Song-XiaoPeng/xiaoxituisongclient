@@ -103,7 +103,7 @@
 
         </div>
         <div class="title-box">
-            <Select class="" v-model="model1" style="width:200px;margin: 14px">
+            <Select class="" v-model="model1" v-show="tabVal == 'name1'" style="width:200px;margin: 14px">
                 <Option v-for="item in cityList" :value="item.appid" :key="item.appid">{{ item.nick_name }}</Option>
             </Select>
             <!--<Button type="info" slot="extra" class="f-r" @click="modal4 = true" size="small" v-show="tabVal == 'name1'" style="margin: 15px">新建分组</Button>-->
@@ -120,7 +120,7 @@
                 </div>
 
 
-                <!---->
+                <!-- dwad-->
                 <div class="f-r r">
                     <div class="title">所有分组</div>
                     <div class="list" style="height: 600px; overflow: auto">
@@ -224,10 +224,10 @@
 
 
         <!-- 请求状态 -->
-        <Spin fix v-if="is_Loading">
-            <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
-            <div>请求中....</div>
-        </Spin>
+        <!--<Spin fix v-if="is_Loading">-->
+            <!--<Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>-->
+            <!--<div>请求中....</div>-->
+        <!--</Spin>-->
         <!-- end请求状态 -->
     </div>
 </template>
@@ -321,6 +321,14 @@
     },
     beforeDestroy () {
     },
+    watch: {
+      model1: function (v) {
+        if (v !== '') {
+          this.getFansFun();
+          this.pageData1.page = 1;
+        }
+      }
+    },
     methods: {
       addMassFun () {
         this.$router.push({
@@ -341,7 +349,8 @@
         this.is_Loading = true;
         this.ajax.getWxUserList({
           data: {
-            page: this.pageData1.page
+            page: this.pageData1.page,
+            appid: this.model1
           },
           success: (res) => {
             this.is_Loading = false;
@@ -503,7 +512,6 @@
         success: (res) => {
           this.cityList = res.body;
           this.model1 = res.body[0].appid;
-          this.getFansFun();
           this.getWxGroup();
           this.getTaskList();
         },

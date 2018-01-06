@@ -61,7 +61,7 @@
             common: false,
             information: false,
             record: false,
-            remind: false
+            remind: true
           }
         };
       },

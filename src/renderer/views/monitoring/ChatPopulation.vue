@@ -810,7 +810,7 @@
         next();
       },
       created () {
-        // Bus.$off();
+        Bus.$off();
         this.getSubordinateList();
         // this.clueData = this.$route.query;
         // 调用本地数据库 获取储存的数据

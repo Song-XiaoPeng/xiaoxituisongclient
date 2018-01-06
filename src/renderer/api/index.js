@@ -2091,4 +2091,21 @@ ajax.receiveCuedPool = (obj) => {
     console.log(error);
   });
 };
+// 修改密码
+ajax.updatePassword = (obj) => {
+  util.ajax.post('/api/v1/user/UserOperation/updatePassword', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
 export default ajax;

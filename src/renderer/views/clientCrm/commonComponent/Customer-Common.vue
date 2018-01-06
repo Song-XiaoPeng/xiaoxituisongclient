@@ -548,7 +548,6 @@
         },
         // 获取微信用户基本信息
         getWxUserInfo () {
-          console.log(this.clientData, 33333);
           this.ajax.getWxUserInfo({
             data: {
               appid: this.clientData.appid,

@@ -126,7 +126,7 @@
         <Modal v-model="popup1" title="添加提醒" @on-ok="addRemind">
             <Form :label-width="100">
                 <FormItem label="提醒日期：">
-                    <DatePicker type="date" placeholder="提醒时间" style="width: 100%" @on-change="dateFun"></DatePicker>
+                    <DatePicker type="datetime" placeholder="提醒时间" style="width: 100%" @on-change="dateFun"></DatePicker>
                 </FormItem>
                 <!--<FormItem label="提醒条目：">-->
                 <!--<Select v-model="model1">-->
@@ -154,7 +154,7 @@
         <Modal v-model="popup3" title="修改" @on-ok="updateRemindFun">
             <Form :label-width="100">
                 <FormItem label="提醒日期：">
-                    <DatePicker type="date" placeholder="提醒时间" style="width: 100%" @on-change="dateFun"></DatePicker>
+                    <DatePicker type="datetime" placeholder="提醒时间" style="width: 100%" @on-change="dateFun"></DatePicker>
                 </FormItem>
                 <!--<FormItem label="提醒条目：">-->
                 <!--<Select v-model="model1">-->

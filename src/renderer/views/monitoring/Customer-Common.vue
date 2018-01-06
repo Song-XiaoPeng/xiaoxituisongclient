@@ -534,7 +534,6 @@
         },
         // 获取微信用户基本信息
         getWxUserInfo () {
-          console.log(this.clientData, 22222);
           this.ajax.getWxUserInfo({
             data: {
               appid: this.clientData.appid,
@@ -816,7 +815,7 @@
             }
           });
         },
-        // 模糊搜索返回的值 dwad
+        // 模糊搜索返回的值
         selNameSeekFun (v) {
           this.formData.birthday = v.birthday;
           this.formData.company_id = v.wx_company_id;
@@ -850,12 +849,16 @@
           this.WxAuthList = k.body;
           this.getWxGroup();
         });
-        Bus.$on('change', (k, o) => {
+        Bus.$on('change', (k, o, u) => {
           this.clientData = k;
           this.is_CRM = o ? o.is_CRM : false;
           if (k.session_id) {
             this.getClientFun();
-            this.getWxUserInfo();
+            if (!u.body) {
+              this.getWxUserInfo();
+            } else {
+              this.userData = u.body;
+            }
           }
         });
       }
