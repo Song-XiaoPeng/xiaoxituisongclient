@@ -718,13 +718,13 @@
     created () {
       this.userInfo = JSON.parse(localStorage.getItem('userInfo'));
       this.getModelAuthList();
+      this.getSection();
+      this.getUserList();
       this.ajax.getWxAuthList({
         data: {},
         success: (res) => {
           this.cityList = res.body;
           this.appid = res.body[0].appid;
-          this.getSection();
-          this.getUserList();
         },
         error: (res) => {
           this.is_Loading = false;
