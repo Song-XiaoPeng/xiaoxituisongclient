@@ -110,6 +110,7 @@
                 line-height: 60px;
                 color: #848484;
                 font-size: 14px;
+                cursor: pointer;
             }
             li.active{
                 color: #3399ff;
@@ -308,7 +309,6 @@
         columns4: [
           {
             title: '微信用户昵称',
-            fixed: 'left',
             render: (h, p) => {
               return h('div', [
                 h('a', {
@@ -357,7 +357,6 @@
           },
           {
             title: '负责人',
-            width: '200',
             key: 'customer_service_name'
           },
           {
@@ -624,7 +623,7 @@
           common: true,
           information: false,
           record: false,
-          remind: false,
+          remind: true,
           type: this.tabName === 'name1' ? '' : '',
           ajax_type: 'clue'
         };

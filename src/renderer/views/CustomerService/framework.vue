@@ -1008,6 +1008,7 @@
       // 获取岗位列表
       getPostListFun (id) {
         let obj = {};
+        this.data4.length = 0;
         if (this.popup6) {
           Object.assign(obj, {user_group_id: id});
         } else {
