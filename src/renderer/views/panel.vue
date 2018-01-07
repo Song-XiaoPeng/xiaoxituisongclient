@@ -71,7 +71,7 @@
               <Icon type="disc" style="margin-right: 10px;"></Icon>注销退出
             </DropdownItem>
             <DropdownItem name="name3">
-              修改密码
+             <Icon type="locked" style="margin-right: 10px;"></Icon> 修改密码
             </DropdownItem>
           </DropdownMenu>
         </Dropdown>

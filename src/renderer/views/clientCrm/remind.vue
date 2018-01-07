@@ -330,19 +330,19 @@
           {
             title: '真实姓名',
             render: (h, p) => {
-              return h('span', p.row.real_name === null || p.row.real_name === '' ? '暂无' : p.row.real_name);
+              return h('span', p.row.real_name === null || p.row.real_name === '' ? '--' : p.row.real_name);
             }
           },
           {
             title: '公司名称',
             render: (h, p) => {
-              return h('span', p.row.wx_comapny_name === null || p.row.wx_comapny_name === '' ? '暂无' : p.row.wx_comapny_name);
+              return h('span', p.row.wx_comapny_name === null || p.row.wx_comapny_name === '' ? '--' : p.row.wx_comapny_name);
             }
           },
           {
             title: '产品',
             render: (h, p) => {
-              return h('span', p.row.product_name === null || p.row.product_name === '' ? '暂无' : p.row.product_name);
+              return h('span', p.row.product_name === null || p.row.product_name === '' ? '--' : p.row.product_name);
             }
           },
           {
@@ -362,7 +362,7 @@
           {
             title: '手机号码',
             render: (h, p) => {
-              return h('span', p.row.real_phone === null || p.row.real_phone === '' ? '暂无' : p.row.real_phone);
+              return h('span', p.row.real_phone === null || p.row.real_phone === '' ? '--' : p.row.real_phone);
             }
           },
           {
@@ -415,28 +415,28 @@
             title: '真实姓名',
             ellipsis: true,
             render: (h, p) => {
-              return h('span', p.row.real_name === null || p.row.real_name === '' ? '暂无' : p.row.real_name);
+              return h('span', p.row.real_name === null || p.row.real_name === '' ? '--' : p.row.real_name);
             }
           },
           {
             title: '产品',
             ellipsis: true,
             render: (h, p) => {
-              return h('span', p.row.product_name === null || p.row.product_name === '' ? '暂无' : p.row.product_name);
+              return h('span', p.row.product_name === null || p.row.product_name === '' ? '--' : p.row.product_name);
             }
           },
           {
             title: '公司名称',
             ellipsis: true,
             render: (h, p) => {
-              return h('span', p.row.wx_comapny_name === null || p.row.wx_comapny_name === '' ? '暂无' : p.row.wx_comapny_name);
+              return h('span', p.row.wx_comapny_name === null || p.row.wx_comapny_name === '' ? '--' : p.row.wx_comapny_name);
             }
           },
           {
             title: '手机号码',
             ellipsis: true,
             render: (h, p) => {
-              return h('span', p.row.real_phone === null || p.row.real_phone === '' ? '暂无' : p.row.real_phone);
+              return h('span', p.row.real_phone === null || p.row.real_phone === '' ? '--' : p.row.real_phone);
             }
           },
           {

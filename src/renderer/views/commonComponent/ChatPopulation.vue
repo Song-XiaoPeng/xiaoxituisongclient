@@ -322,20 +322,6 @@
               arr.push(json[k]);
             }
             this.data2 = arr;
-            // 检测是否 线索页面接入客服
-            let sess = (typeof this.clueData.data === 'object') ? this.clueData.data.body.session_id : '';
-            if (sess !== '') {
-              this.data2.forEach((k) => {
-                if (k.session_id === sess) {
-                  // Object.assign(k, {'is_class': false});
-                  this.clientData = k;
-                  this.is_w_v = 2;
-                  this.clientDataIndex = 0;
-                  this.underwayPopupFun();
-                  this.clueData.data.body = '';
-                }
-              });
-            }
           };
         },
         // 等待中---》点击加入会话列表
@@ -702,21 +688,36 @@
         };
       },
       created () {
-        this.clueData = this.$route.query;
+        let that = this;
+        that.clueData = this.$route.query;
+        // 检测是否 线索页面接入客服
+        let sess = (typeof that.clueData.data === 'object') ? that.clueData.data.body : '';
+        if (sess !== '') {
+          let db2 = new DB();
+          db2.type = 'update'; // 执行类型
+          db2.tabName = 'visitor'; // 数据表名称
+          Object.assign(sess.insert_data, {'is_class': false});
+          db2.data = [sess.insert_data];
+          db2.fun = function (res) { // 执行成功回掉函数
+            db2.close();
+            that.getWaitingTab();
+          };
+          console.log(sess);
+        }
         // 调用本地数据库 获取储存的数据
         // Notification.requestPermission();
         this.getWaitingTab();
         // this.getLossDialogueFun();
         Bus.$on('conversationList', (k) => {
-          this.getDialogueList(k);
+          that.getDialogueList(k);
         });
         Bus.$on('MessageList', (k) => {
-          this.getMessage(k);
+          that.getMessage(k);
         });
         // 监听发送消息 如果返回错误会话已关闭    就关闭会话列表中的这个客户
         Bus.$on('closeDialogue', () => {
-          this.is_w_v = 1;
-          this.endFun();
+          that.is_w_v = 1;
+          that.endFun();
         });
         // store.state['dialogueArr'] = '132123123';
         // this.$electron.ipcRenderer.send('getCookie');

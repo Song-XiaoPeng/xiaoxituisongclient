@@ -26,7 +26,7 @@
          top:0;
          left: 110px;
          right: 0;
-         bottom: 30px;
+         bottom: 10px;
          ul{
             height: 100%;
             li{
@@ -157,6 +157,8 @@
                <li><span>来源：</span> <span style="color:#999">{{clientData.app_name}}</span> </li>
                <!--<li><span>公共平台</span> <span style="color:#999">哇大王</span> </li>-->
                <li><span>来访次数</span> <span style="color:#999">{{clientData.session_frequency}}</span> </li>
+               <li><Button type="info" size="small" >客户活动轨迹</Button></li>
+               <!--<li><Button type="info" size="small" @click="getGeocoderFun">客户活动轨迹</Button></li>-->
             </ul>
          </div>
          <!--<div class="txt-bot">-->
@@ -166,7 +168,7 @@
            <!--<span style="margin-left: 10px">最近沟通：</span>-->
            <!--<span >2017-03-05</span>-->
            <!--<span style="color: #2db7f5">张三</span>-->
-         <!--</div>-->
+         <!--</div> -->
       </div>
       <div class="form-box" >
          <Form id="client-form" label-position="right" :label-width="80" style="border-bottom: 0">
@@ -308,6 +310,14 @@
       <!-- end添加标签 -->
 
 
+      <!-- 地图轨迹 -->
+      <Modal v-model="popup15" title="轨迹" width="800">
+         <img src="" alt="">
+      </Modal>
+      <!-- end地图轨迹 -->
+
+
+
       <!-- 请求状态 -->
       <Spin fix v-if="is_Loading">
          <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
@@ -413,7 +423,7 @@
             is_Loading: false,
             wx_company_id: '',
             wx_user_group_id: '',
-            customer_type: 0,
+            customer_type: '',
             company_id: '',
             desc: '',
             birthday: '',
@@ -518,7 +528,8 @@
           labelArr: [],
           labelGroupArr: [],
           label_group_id: '',
-          seek_label_name: ''
+          seek_label_name: '',
+          popup15: false
         };
       },
       mounted () {
@@ -599,7 +610,7 @@
             },
             success: (res) => {
               this.labelArr = res.body.label;
-              this.userData = res.body;
+              this.userData = res;
               this.is_Loading = false;
               Bus.$emit('userEV', res.body);
             },
@@ -896,6 +907,20 @@
           this.formData.wx_user_group_id = v.wx_user_group_id;
           this.formData.wx_user_group_name = v.wx_user_group_name;
           this.is_name_show = false;
+        },
+        // 获取地图客户轨迹
+        getGeocoderFun () {
+          let userInfo = this.userData.body.user_info;
+          this.ajax.geocoder({
+            data: {
+              lat: userInfo.lat,
+              lng: userInfo.lng
+            },
+            success: (res) => {
+              this.popup15 = true;
+            },
+            error: () => {}
+          });
         }
       },
       destroyed (s) {

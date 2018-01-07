@@ -2108,4 +2108,21 @@ ajax.updatePassword = (obj) => {
     console.log(error);
   });
 };
+// 腾讯地图逆地址解析
+ajax.geocoder = (obj) => {
+  util.ajax.post('/api/v1/map/Address/geocoder', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
 export default ajax;

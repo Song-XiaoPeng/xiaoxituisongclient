@@ -417,6 +417,13 @@
         clientData: {},
         columns4: [
           {
+            title: '客户类型',
+            ellipsis: true,
+            render: (h, p) => {
+              return h('span', '意向客户');
+            }
+          },
+          {
             title: '微信用户昵称',
             render: (h, p) => {
               return h('div', [
@@ -440,28 +447,28 @@
             title: '真实姓名',
             ellipsis: true,
             render: (h, p) => {
-              return h('span', p.row.real_name === null || p.row.real_name === '' ? '暂无' : p.row.real_name);
+              return h('span', p.row.real_name === null || p.row.real_name === '' ? '--' : p.row.real_name);
             }
           },
           {
             title: '产品',
             ellipsis: true,
             render: (h, p) => {
-              return h('span', p.row.product_name === null || p.row.product_name === '' ? '暂无' : p.row.product_name);
+              return h('span', p.row.product_name === null || p.row.product_name === '' ? '--' : p.row.product_name);
             }
           },
           {
             title: '公司名称',
             ellipsis: true,
             render: (h, p) => {
-              return h('span', p.row.wx_comapny_name === null || p.row.wx_comapny_name === '' ? '暂无' : p.row.wx_comapny_name);
+              return h('span', p.row.wx_comapny_name === null || p.row.wx_comapny_name === '' ? '--' : p.row.wx_comapny_name);
             }
           },
           {
             title: '手机号码',
             ellipsis: true,
             render: (h, p) => {
-              return h('span', p.row.real_phone === null || p.row.real_phone === '' ? '暂无' : p.row.real_phone);
+              return h('span', p.row.real_phone === null || p.row.real_phone === '' ? '--' : p.row.real_phone);
             }
           },
           {
@@ -528,7 +535,7 @@
             title: '真实姓名',
             ellipsis: true,
             render: (h, p) => {
-              return h('span', p.row.real_name === null || p.row.real_name === '' ? '暂无' : p.row.real_name);
+              return h('span', p.row.real_name === null || p.row.real_name === '' ? '--' : p.row.real_name);
             }
           },
           {
@@ -545,14 +552,14 @@
             title: '公司名称',
             ellipsis: true,
             render: (h, p) => {
-              return h('span', p.row.wx_comapny_name === null || p.row.wx_comapny_name === '' ? '暂无' : p.row.wx_comapny_name);
+              return h('span', p.row.wx_comapny_name === null || p.row.wx_comapny_name === '' ? '--' : p.row.wx_comapny_name);
             }
           },
           {
             title: '手机号码',
             ellipsis: true,
             render: (h, p) => {
-              return h('span', p.row.real_phone === null || p.row.real_phone === '' ? '暂无' : p.row.real_phone);
+              return h('span', p.row.real_phone === null || p.row.real_phone === '' ? '--' : p.row.real_phone);
             }
           },
           {
@@ -896,7 +903,7 @@
           success: (res) => {
             res.body.data_list.forEach((k) => {
               if (k.complete_content === null || k.complete_content === '' || k.complete_content === undefined) {
-                k.complete_content = '暂无内容';
+                k.complete_content = '--';
               }
             });
             this.data2 = res.body.data_list;

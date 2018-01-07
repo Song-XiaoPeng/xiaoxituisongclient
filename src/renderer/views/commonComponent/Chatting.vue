@@ -80,6 +80,39 @@
                     border-top-color: #6ca9f2;
                     border-top-style: solid;
                 }
+                .video-btn-box{
+                    width: 200px;
+                    height: 100px;
+                    background-color: #313540;
+                    position: relative;
+                    // background: url("~@/assets/images/MP4-bg.png") no-repeat;
+                    .btn-box{
+                        position: absolute;
+                        display: inline-block;
+                        left: 50%;
+                        top: 50%;
+                        font-size: 50px;
+                        margin-left: -25px;
+                        margin-top: -25px;
+                        cursor: pointer;
+                        width: 50px;
+                        height: 50px;
+                        background-color: rgba(255,255,255,.7);
+                        border-radius: 10px;
+                        text-align: center;
+                        .btn-icon{
+                            font-size: 50px;
+                            position: relative;
+                            left: 2px;
+                            vertical-align: top;
+                            transition: all .3s;
+                            color: #3399ff;
+                        }
+                    }
+                    .btn-box:hover  .btn-icon{
+                        color: #0c00fc;
+                    }
+                }
             }
         }
     }
@@ -270,9 +303,11 @@ ul.img-txt{
                  <!---------------------------------- 客户消息 ------------------------------------>
                  <div class="content-box"  v-if="k.opercode == 2">
                      <div class="" style="text-align: left;font-size: 10px;color: #999;box-sizing: border-box;padding-left: 50px">{{k.add_time}}</div>
-                     <div class="graphic" ><Avatar :src="clientData.customer_wx_portrait" style="margin-left: 5px"/></div>
+                     <div class="graphic">
+                         <Avatar :src="clientData.customer_wx_portrait" style="margin-left: 5px"/>
+                     </div>
                      <div class="crate" style="left: 10px">
-                         <div style="display: inline-block;overflow: hidden">
+                         <div style="overflow: hidden">
 
 
                              <!-- 普通文本 -->
@@ -286,8 +321,14 @@ ul.img-txt{
                              <!-- end图片 -->
 
                              <!-- 视频 -->
-                             <Button v-if="k.message_type == 4" type="dashed" @click="mp4Url = 'http://kf.lyfz.net/api/v1/we_chat/Business/getMaterial?company_id=' + k.company_id + '&appid=' + k.appid + '&media_id=' + k.media_id + '&type=2',popup2 = true"><Icon type="play"></Icon>视频文件</Button>
-                             <audio  style="width: 200px;height: 100px" ></audio>
+                             <div v-if="k.message_type == 4" class="video-btn-box">
+                                 <div class="btn-box" @click="mp4Url = 'http://kf.lyfz.net/api/v1/we_chat/Business/getMaterial?company_id=' + k.company_id + '&appid=' + k.appid + '&media_id=' + k.media_id + '&type=2',popup2 = true,mp4Data1 = k">
+                                     <Icon type="arrow-right-b" class="btn-icon" style="font-size: 50px"></Icon>
+                                 </div>
+                             </div>
+                             <!--<audio  style="width: 200px;height: 100px" ></audio>-->
+                             <!--<Button v-if="k.message_type == 4" type="dashed" @click="mp4Url = 'http://kf.lyfz.net/api/v1/we_chat/Business/getMaterial?company_id=' + k.company_id + '&appid=' + k.appid + '&media_id=' + k.media_id + '&type=2',popup2 = true"><Icon type="play"></Icon>视频文件</Button>-->
+
                              <!-- end视频 -->
 
                              <!-- 语音 -->
@@ -329,19 +370,13 @@ ul.img-txt{
 
 
                  <!---------------------------------- 客服消息 ------------------------------------>
-                 <div class="content-box" style="text-align: right" v-if="k.opercode == 1">
+                 <div class="content-box" style="text-align: right" v-if="k.opercode == 1 || k.opercode == 3">
                      <div class="" style="text-align: right;font-size: 10px;color: #999;box-sizing: border-box;padding-right: 50px">{{k.add_time}}</div>
                      <div class="crate" style="right: 10px;background-color: #e7e8ea;">
-                         <div class="video_loading" v-if="k.is_video_loading" style="position: absolute;top:5px;left:5px;bottom: 5px;right: 5px;">
-                             <Spin fix v-if="k.is_video_loading">
-                                 <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
-                                 <div>视频加载中...</div>
-                             </Spin>
-                         </div>
                          <div class="is-err" v-if="k.is_err">
                              <Icon type="close-circled"></Icon>
                          </div>
-                         <div class="crate-box" style="display: inline-block;height: 100%;width: 100%;overflow: hidden">
+                         <div class="crate-box" style="height: 100%;width: 100%;overflow: hidden">
                              <!-- 文字 -->
                              <pre v-if="k.message_type == 1" v-text="k.text" style="text-align: left; margin: 0; color: #3e3e3e;white-space: pre-wrap;word-wrap: break-word;max-width: 400px;"></pre>
                              <!-- end文字 -->
@@ -353,10 +388,15 @@ ul.img-txt{
 
 
                              <!-- 视频 -->
-                             <video v-if="k.message_type == 4"  width="320" height="240" controls style="background-color: #fff;" v-on:loadstart="mp4StartFun(k, i)" v-on:loadeddata="mp4SendFun(k, i)">
-                                 <source :src="k.file_url" type="video/mp4">
-                             </video>
-                             <!-- end视频 -->
+                             <div v-if="k.message_type == 4" class="video-btn-box">
+                                 <div class="btn-box" @click="mp4Url = k.file_url,popup2 = true,mp4Data1 = k">
+                                     <Icon type="arrow-right-b" class="btn-icon" style="font-size: 50px"></Icon>
+                                 </div>
+                             </div>
+                             <!--<video v-if="k.message_type == 4"  width="320" height="240" controls style="background-color: #fff;" v-on:loadstart="mp4StartFun(k, i)" v-on:loadeddata="mp4SendFun(k, i)">-->
+                                 <!--<source :src="k.file_url" type="video/mp4"> dsadsa-->
+                             <!--</video>-->
+                             <!-- end视频 dwadwa-->
 
                              <!-- 语音 -->
                              <div v-if="k.message_type == 3" class="audio-box" @click="audioFun('audio' + i, k, i)">
@@ -391,7 +431,12 @@ ul.img-txt{
                          <i class="arrow arrow_out" style="right: -9px;transform: rotate(270deg);border-top-color: #e7e8ea"></i>
                          <i class="arrow arrow_in" style="right: -9px;transform: rotate(270deg);border-top-color: #e7e8ea"></i>
                      </div>
-                     <div class="graphic" ><Avatar :src="userInfo.avatar_url" style="margin-right: 5px"/></div>
+                     <div class="graphic" >
+                         <Avatar v-if="k.opercode == 1" :src="userInfo.avatar_url" style="margin-right: 5px"/>
+                         <div v-if="k.opercode == 3">
+                             管理员
+                         </div>
+                     </div>
                  </div>
                  <!---------------------------------- end客服消息 ------------------------------------>
              </div>
@@ -467,19 +512,24 @@ ul.img-txt{
          <!--<input class="txt"  @keyup.enter="subFun" style="opacity: 0; position: absolute; z-index: 10;width: 98%;height: 95%;" @focus="ipt">-->
          <!--<textarea ref="txtra" class="txt" @blur="focusState = false" v-focus="focusState" style="position: absolute;z-index: 1;width: 98%;height: 95%;"></textarea>-->
          <div class="btm" style="z-index: 100">
-             <Button  class="f-r"  type="ghost" @click="subFun">发送</Button>
+             <Button  class="f-r"  type="ghost" @click="subFun" :loading="btn_loading">发送</Button>
          </div>
      </div>
 
 
       <!-- 视频弹窗弹窗 -->
       <Modal v-model="popup2" title="提示">
-          <div style="position: relative">
-
+          <div style="position: relative;text-align: center;">
+              <Spin fix v-if="is_video_loading">
+                  <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
+                  <div>视频加载中...</div>
+              </Spin>
+              <video v-if="popup2" width="420" height="320"  controls autoplay style="background-color: #fff;" v-on:loadstart="mp4StartFun()" v-on:loadeddata="mp4SendFun()">
+                  <source :src="mp4Url" type="video/mp4" >
+              </video>
           </div>
-
       </Modal>
-      <!-- end视频弹窗弹窗 -->
+      <!-- end视频弹窗弹窗 dsadsaddsadasd-->
 
 
       <!-- 音频弹窗 -->
@@ -788,7 +838,10 @@ ul.img-txt{
           popup8: false,
           strongData: null,
           is_sub: true,
-          is_video_loading: false
+          mp4Data1: null,
+          is_video_loading: false,
+          btn_loading: false,
+          sebtxt: ''
         };
       },
       components: {
@@ -816,9 +869,10 @@ ul.img-txt{
       // }
       // }
       // }
+      // http://kf.lyfz.net/api/v1/we_chat/Business/getMaterial?company_id=51454009d…id=EiqY81jswZpYnEsQ_w8PaWvzhTZ1qQVvTUlIw0fpbONJq1WeRMZlkF88FSQ0_kS1&type=2
       // },
       methods: {
-        // 视频加载完成
+        // 视频加载完成dwd dwad
         mp4SendFun (k, i) {
           if (k) {
             k.is_video_loading = false;
@@ -962,14 +1016,10 @@ ul.img-txt{
         selTxtFun (v) {
           this.el = v;
         },
-        // 根据不同类型 组合发送数据
+        // 根据不同类型 组合发送数据 dwad
         groupData () {
           let data;
           if (this.replyType === 1) {
-            if (this.txtra === '') {
-              this.$Message.warning('请输入内容');
-              return;
-            }
             data = {
               session_id: this.clientData.session_id,
               message: this.txtra,
@@ -1140,9 +1190,18 @@ ul.img-txt{
             this.$Message.warning('请选择会话客户');
             return;
           }
+          if (this.replyType === 1) {
+            if (this.txtra.length === 1 || this.txtra === '') {
+              this.$Message.warning('请输入内容');
+              this.txtra = '';
+              return;
+            }
+          }
+          this.btn_loading = true;
           this.messData = this.groupData();
           let obj = this.subBeforeGroupFun();
           this.clientData.data.push(obj);
+          this.txtra = '';
           this.is_sub = false;
           this.ajax.sendMessage({
             data: this.messData,
@@ -1150,12 +1209,15 @@ ul.img-txt{
               Object.assign(obj, {is_loading: false});
               this.is_sub = true;
               this.is_percent = false;
+              this.btn_loading = false;
+              this.up_state = 0;
               this.el = '';
               this.scroFun();
               this.updbFun(obj);
-              this.txtra = '';
+              // this.txtra = '';
             },
             error: (res) => {
+              this.btn_loading = false;
               if (res.meta.code === 3020) {
                 // 调用强制会话
                 this.strongData = obj;

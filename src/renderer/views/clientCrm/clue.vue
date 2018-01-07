@@ -396,37 +396,9 @@
         clientData: {},
         columns4: [
           {
-            title: '微信用户昵称',
+            title: '客户类型',
             render: (h, p) => {
-              return h('div', [
-                h('a', {
-                  style: {
-                    cursor: 'pointer',
-                    textDecoration: 'underline'
-                  },
-                  on: {
-                    click: () => {
-                      if (this.userInfo.user_type !== 3) {
-                        this.jionUpFun(p.row);
-                      }
-                    }
-                  }
-                }, p.row.nickname === '' || p.row.nickname === null ? '无法显示名称' : p.row.nickname)
-              ]);
-            }
-          },
-          {
-            title: '真实姓名',
-            ellipsis: true,
-            render: (h, p) => {
-              return h('span', p.row.real_name === null || p.row.real_name === '' ? '暂无' : p.row.real_name);
-            }
-          },
-          {
-            title: '公司名称',
-            ellipsis: true,
-            render: (h, p) => {
-              return h('span', p.row.wx_comapny_name === null || p.row.wx_comapny_name === '' ? '暂无' : p.row.wx_comapny_name);
+              return h('span', '线索客户');
             }
           },
           {
@@ -439,22 +411,50 @@
             }
           },
           {
-            title: '所在城市',
+            title: '微信用户昵称',
+            render: (h, p) => {
+              return h('div', [
+                h('a', {
+                  style: {
+                    cursor: 'pointer',
+                    textDecoration: 'underline',
+                    color: '#c3dcfc'
+                  },
+                  on: {
+                    click: () => {
+                      if (this.userInfo.user_type !== 3) {
+                        this.jionUpFun(p.row);
+                      }
+                    }
+                  }
+                }, p.row.nickname === '' || p.row.nickname === null ? '--' : p.row.nickname)
+              ]);
+            }
+          },
+          {
+            title: '公司名称',
             ellipsis: true,
             render: (h, p) => {
-              return h('span', p.row.province + ',' + p.row.city);
+              return h('span', p.row.wx_comapny_name === null || p.row.wx_comapny_name === '' ? '--' : p.row.wx_comapny_name);
+            }
+          },
+          {
+            title: '真实姓名',
+            ellipsis: true,
+            render: (h, p) => {
+              return h('span', p.row.real_name === null || p.row.real_name === '' ? '--' : p.row.real_name);
+            }
+          },
+          {
+            title: '手机号码',
+            render: (h, p) => {
+              return h('span', p.row.real_phone === null || p.row.real_phone === '' ? '--' : p.row.real_phone);
             }
           },
           {
             title: '负责人',
             ellipsis: true,
             key: 'customer_service_name'
-          },
-          {
-            title: '手机号码',
-            render: (h, p) => {
-              return h('span', p.row.real_phone === null || p.row.real_phone === '' ? '暂无' : p.row.real_phone);
-            }
           },
           {
             title: '进入公共号次数',
@@ -484,6 +484,19 @@
         data1: [],
         columns5: [
           {
+            title: '客户类型',
+            render: (h, p) => {
+              return h('span', '线索客户');
+            }
+          },
+          {
+            title: '产品',
+            ellipsis: true,
+            render: (h, p) => {
+              return h('span', p.row.product_name === null || p.row.product_name === '' ? '--' : p.row.product_name);
+            }
+          },
+          {
             title: '微信用户昵称',
             render: (h, p) => {
               return h('div', [
@@ -504,31 +517,24 @@
             }
           },
           {
-            title: '真实姓名',
-            ellipsis: true,
-            render: (h, p) => {
-              return h('span', p.row.real_name === null || p.row.real_name === '' ? '暂无' : p.row.real_name);
-            }
-          },
-          {
-            title: '产品',
-            ellipsis: true,
-            render: (h, p) => {
-              return h('span', p.row.product_name === null || p.row.product_name === '' ? '暂无' : p.row.product_name);
-            }
-          },
-          {
             title: '公司名称',
             ellipsis: true,
             render: (h, p) => {
-              return h('span', p.row.wx_comapny_name === null || p.row.wx_comapny_name === '' ? '暂无' : p.row.wx_comapny_name);
+              return h('span', p.row.wx_comapny_name === null || p.row.wx_comapny_name === '' ? '--' : p.row.wx_comapny_name);
+            }
+          },
+          {
+            title: '真实姓名',
+            ellipsis: true,
+            render: (h, p) => {
+              return h('span', p.row.real_name === null || p.row.real_name === '' ? '--' : p.row.real_name);
             }
           },
           {
             title: '手机号码',
             ellipsis: true,
             render: (h, p) => {
-              return h('span', p.row.real_phone === null || p.row.real_phone === '' ? '暂无' : p.row.real_phone);
+              return h('span', p.row.real_phone === null || p.row.real_phone === '' ? '--' : p.row.real_phone);
             }
           },
           {
@@ -573,7 +579,7 @@
                     size: 'small'
                   },
                   style: {
-                    marginRight: '5px'
+                    margin: '5px'
                   },
                   on: {
                     click: () => {
@@ -589,7 +595,7 @@
                     size: 'small'
                   },
                   style: {
-                    marginRight: '5px'
+                    margin: '5px'
                   },
                   on: {
                     click: () => {
@@ -664,23 +670,13 @@
           },
           success: (res) => {
             this.is_Loading = false;
-            this.$Spin.show({
-              render: (h) => {
-                return h('div', [
-                  h('div', '正在创建链接。。。')
-                ]);
+            this.$router.push({
+              name: 'ServeIndex',
+              query: {
+                type: 'clue',
+                data: res
               }
             });
-            setTimeout(() => {
-              this.$Spin.hide();
-              this.$router.push({
-                name: 'ServeIndex',
-                query: {
-                  type: 'clue',
-                  data: res
-                }
-              });
-            }, 3000);
           },
           error: (res) => {
             this.is_Loading = false;
@@ -805,7 +801,7 @@
           success: (res) => {
             res.body.data_list.forEach((k) => {
               if (k.complete_content === null || k.complete_content === '' || k.complete_content === undefined) {
-                k.complete_content = '暂无内容';
+                k.complete_content = '--';
               }
             });
             this.data2 = res.body.data_list;

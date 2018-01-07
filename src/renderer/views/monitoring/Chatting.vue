@@ -88,6 +88,39 @@
                     border-top-color: #6ca9f2;
                     border-top-style: solid;
                 }
+                .video-btn-box{
+                    width: 200px;
+                    height: 100px;
+                    background-color: #313540;
+                    position: relative;
+                    // background: url("~@/assets/images/MP4-bg.png") no-repeat;
+                    .btn-box{
+                        position: absolute;
+                        display: inline-block;
+                        left: 50%;
+                        top: 50%;
+                        font-size: 50px;
+                        margin-left: -25px;
+                        margin-top: -25px;
+                        cursor: pointer;
+                        width: 50px;
+                        height: 50px;
+                        background-color: rgba(255,255,255,.7);
+                        border-radius: 10px;
+                        text-align: center;
+                        .btn-icon{
+                            font-size: 50px;
+                            position: relative;
+                            left: 2px;
+                            vertical-align: top;
+                            transition: all .3s;
+                            color: #3399ff;
+                        }
+                    }
+                    .btn-box:hover  .btn-icon{
+                        color: #0c00fc;
+                    }
+                }
             }
         }
     }
@@ -283,7 +316,7 @@
                         <div class="" style="text-align: left;font-size: 10px;color: #999;box-sizing: border-box;padding-left: 50px">{{k.add_time}}</div>
                         <div class="graphic" ><Avatar :src="clientData.customer_wx_portrait" style="margin-left: 5px"/></div>
                         <div class="crate" style="left: 10px">
-                            <div style="display: inline-block">
+                            <div >
 
 
                                 <!-- 普通文本 -->
@@ -297,8 +330,13 @@
                                 <!-- end图片 -->
 
                                 <!-- 视频 -->
-                                <Button v-if="k.message_type == 4" type="dashed" @click="mp4Url = 'http://kf.lyfz.net/api/v1/we_chat/Business/getMaterial?company_id=' + k.company_id + '&appid=' + k.appid + '&media_id=' + k.media_id + '&type=2',popup2 = true"><Icon type="play"></Icon>视频文件</Button>
-                                <audio  style="width: 200px;height: 100px" ></audio>
+                                <div v-if="k.message_type == 4" class="video-btn-box">
+                                    <div class="btn-box" @click="mp4Url = 'http://kf.lyfz.net/api/v1/we_chat/Business/getMaterial?company_id=' + k.company_id + '&appid=' + k.appid + '&media_id=' + k.media_id + '&type=2',popup2 = true,mp4Data1 = k">
+                                        <Icon type="arrow-right-b" class="btn-icon" style="font-size: 50px"></Icon>
+                                    </div>
+                                </div>
+                                <!--<Button v-if="k.message_type == 4" type="dashed" @click="mp4Url = 'http://kf.lyfz.net/api/v1/we_chat/Business/getMaterial?company_id=' + k.company_id + '&appid=' + k.appid + '&media_id=' + k.media_id + '&type=2',popup2 = true"><Icon type="play"></Icon>视频文件</Button>-->
+                                <!--<audio  style="width: 200px;height: 100px" ></audio>-->
                                 <!-- end视频 -->
 
                                 <!-- 语音 -->
@@ -357,7 +395,7 @@
                             <div class="is-err" v-if="k.is_err">
                                 <Icon type="close-circled"></Icon>
                             </div>
-                            <div class="crate-box" style="display: inline-block;">
+                            <div class="crate-box" >
                                 <!-- 文字 -->
                                 <pre v-if="k.message_type == 1" v-text="k.text" style="text-align: left; margin: 0; color: #3e3e3e;white-space: pre-wrap;word-wrap: break-word;max-width: 400px;"></pre>
                                 <!-- end文字 -->
@@ -369,10 +407,15 @@
 
 
                                 <!-- 视频 -->
-                                <video v-if="k.message_type == 4"  width="320" height="240" controls style="background-color: #fff;">
-                                    <source :src="k.file_url" type="video/mp4">
-                                </video>
-                                <!-- end视频 -->
+                                <div v-if="k.message_type == 4" class="video-btn-box">
+                                    <div class="btn-box" @click="mp4Url = k.file_url,popup2 = true,mp4Data1 = k">
+                                        <Icon type="arrow-right-b" class="btn-icon" style="font-size: 50px"></Icon>
+                                    </div>
+                                </div>
+                                <!--<video v-if="k.message_type == 4"  width="320" height="240" controls style="background-color: #fff;">-->
+                                    <!--<source :src="k.file_url" type="video/mp4">-->
+                                <!--</video>-->
+                                <!-- end视频 dadw-->
 
                                 <!-- 语音 -->
                                 <div v-if="k.message_type == 3" class="audio-box" @click="audioFun('audio' + i, k, i)">
@@ -853,6 +896,7 @@
         is_scorllTopAjax: false,
         is_scorH: 0, // 选择客户，获取客户数据后控制滚动条到底部，只执行一次
         scorH: 0,
+        mp4Data1: null,
         is_video_loading: false
       };
     },
@@ -1228,13 +1272,15 @@
         }
         this.messData = this.groupData();
         let obj = this.subBeforeGroupFun();
-        this.elmetArr.push(obj);
+        // this.elmetArr.push(obj);
         // this.clientData.data.push(obj);
         this.is_sub = false;
         this.ajax.sendMessage({
           data: this.messData,
           success: (res) => {
             Object.assign(obj, {is_loading: false});
+            this.elmetArr.push(obj);
+            this.up_state = 0;
             this.is_sub = true;
             this.is_percent = false;
             this.el = '';
@@ -1357,7 +1403,7 @@
         setTimeout(() => {
           let div1 = this.$refs.win1;
           let div = this.$refs.win;
-          div.scrollTop = div1.offsetHeight;
+          div.scrollTop = div1.offsetHeight || '';
         }, 300);
       },
       // 实时获取当前时间并返回字符串 */

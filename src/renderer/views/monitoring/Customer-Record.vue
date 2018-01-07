@@ -62,6 +62,39 @@
                     border-top-color: #fff;
                     border-top-style: solid;
                 }
+                .video-btn-box{
+                    width: 200px;
+                    height: 100px;
+                    background-color: #313540;
+                    position: relative;
+                    // background: url("~@/assets/images/MP4-bg.png") no-repeat;
+                    .btn-box{
+                        position: absolute;
+                        display: inline-block;
+                        left: 50%;
+                        top: 50%;
+                        font-size: 50px;
+                        margin-left: -25px;
+                        margin-top: -25px;
+                        cursor: pointer;
+                        width: 50px;
+                        height: 50px;
+                        background-color: rgba(255,255,255,.7);
+                        border-radius: 10px;
+                        text-align: center;
+                        .btn-icon{
+                            font-size: 50px;
+                            position: relative;
+                            left: 2px;
+                            vertical-align: top;
+                            transition: all .3s;
+                            color: #3399ff;
+                        }
+                    }
+                    .btn-box:hover  .btn-icon{
+                        color: #0c00fc;
+                    }
+                }
             }
         }
     }
@@ -223,7 +256,7 @@
                <!--<Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>-->
            <!--</Select>-->
            <!--<Select v-model="model1" style="width:200px">-->
-               <!--<Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>-->
+               <!--<Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option> dwadw-->
            <!--</Select>-->
        <!--</div>-->
        <div class="list">
@@ -234,8 +267,8 @@
                        <div class="content-box"  v-if="k.opercode == 2">
                            <div class="" style="text-align: left;font-size: 10px;color: #999;box-sizing: border-box;padding-left: 50px">{{k.add_time}}</div>
                            <div class="graphic" ><Avatar :src="clientData.customer_wx_portrait" style="margin-left: 5px"/></div>
-                           <div class="crate" style="left: 10px">
-                               <div style="display: inline-block">
+                           <div class="crate" style="left: 10px" v-bind:class="k.message_type == 4 ? 'video-crate' : ''">
+                               <div>
 
 
                                    <!-- 普通文本 -->
@@ -248,8 +281,13 @@
                                    <!-- end图片 -->
 
                                    <!-- 视频 -->
-                                   <Button v-if="k.message_type == 4" type="dashed" @click="mp4Url = 'http://kf.lyfz.net/api/v1/we_chat/Business/getMaterial?company_id=' + k.company_id + '&appid=' + k.appid + '&media_id=' + k.media_id + '&type=2',popup2 = true"><Icon type="play"></Icon>视频文件</Button>
-                                   <audio  style="width: 200px;height: 100px" ></audio>
+                                   <div v-if="k.message_type == 4" class="video-btn-box">
+                                       <div class="btn-box" @click="mp4Url = 'http://kf.lyfz.net/api/v1/we_chat/Business/getMaterial?company_id=' + k.company_id + '&appid=' + k.appid + '&media_id=' + k.media_id + '&type=2',popup2 = true,mp4Data1 = k">
+                                           <Icon type="arrow-right-b" class="btn-icon" style="font-size: 50px"></Icon>
+                                       </div>
+                                   </div>
+                                   <!--<Button v-if="k.message_type == 4" type="dashed" @click="mp4Url = 'http://kf.lyfz.net/api/v1/we_chat/Business/getMaterial?company_id=' + k.company_id + '&appid=' + k.appid + '&media_id=' + k.media_id + '&type=2',popup2 = true"><Icon type="play"></Icon>视频文件</Button>-->
+                                   <!--<audio  style="width: 200px;height: 100px" ></audio>-->
                                    <!-- end视频 -->
 
                                    <!-- 语音 -->
@@ -292,7 +330,7 @@
                        <div class="content-box" style="text-align: right" v-if="k.opercode == 1 || k.opercode == 3">
                            <div class="" style="text-align: right;font-size: 10px;color: #999;box-sizing: border-box;padding-right: 50px">{{k.add_time}}</div>
                            <div class="crate" style="right: 10px;background-color: #66cc00;">
-                               <div style="display: inline-block;">
+                               <div>
                                    <!-- 文字 -->
                                    <pre v-if="k.message_type == 1" style="text-align: left; margin: 0; color: #3e3e3e;white-space: pre-wrap;word-wrap: break-word;max-width: 300px;">{{k.text}}</pre>
                                    <!-- end文字 -->
@@ -304,9 +342,12 @@
 
 
                                    <!-- 视频 -->
-                                   <video v-if="k.message_type == 4"  width="220" height="140" controls style="background-color: #fff;">
-                                       <source :src="k.file_url" type="video/mp4">
-                                   </video>
+                                   <!-- 视频 -->
+                                   <div v-if="k.message_type == 4" class="video-btn-box">
+                                       <div class="btn-box" @click="mp4Url = k.file_url,popup2 = true">
+                                           <Icon type="arrow-right-b" class="btn-icon" style="font-size: 50px"></Icon>
+                                       </div>
+                                   </div>
                                    <!-- end视频 -->
 
                                    <!-- 语音 -->
@@ -355,9 +396,15 @@
 
        <!-- 视频弹窗弹窗 -->
        <Modal v-model="popup2" title="提示">
-           <video v-if="popup2" width="420" height="320"  controls autoplay style="background-color: #fff;">
-               <source :src="mp4Url" type="video/mp4" >
-           </video>
+           <div style="position: relative;text-align: center;">
+               <Spin fix v-if="is_video_loading">
+                   <Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon>
+                   <div>视频加载中...</div>
+               </Spin>
+               <video v-if="popup2" width="420" height="320"  controls autoplay style="background-color: #fff;" v-on:loadstart="mp4StartFun()" v-on:loadeddata="mp4SendFun()">
+                   <source :src="mp4Url" type="video/mp4" >
+               </video>
+           </div>
        </Modal>
        <!-- end视频弹窗弹窗 -->
 
@@ -390,7 +437,9 @@
             count: 0,
             rows_num: 0
           },
-          is_Loading: false
+          is_Loading: false,
+          mp4Data1: null,
+          is_video_loading: false
         };
       },
       mounted () {
@@ -398,6 +447,22 @@
       beforeDestroy () {
       },
       methods: {
+        // 视频加载完成
+        mp4SendFun (k, i) {
+          if (k) {
+            k.is_video_loading = false;
+          } else {
+            this.is_video_loading = false;
+          }
+        },
+        // 视频是否加载 123123sdsad
+        mp4StartFun (k, i) {
+          if (k) {
+            k.is_video_loading = true;
+          } else {
+            this.is_video_loading = true;
+          }
+        },
         // 获取数据列表
         getHistoryMessage () {
           this.elmetArr.length = 0;
