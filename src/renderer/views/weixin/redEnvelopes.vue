@@ -642,6 +642,7 @@
         this.addActivityFormItem.share_cover = this.staffData[index].share_cover;
         this.addActivityFormItem.details_list = this.staffData[index].details_list;
         this.addActivityFormItem.share_title = this.staffData[index].share_title;
+        this.addActivityFormItem.amount_type = this.staffData[index].amount_type;
 
         this.uploadList.splice(0, this.uploadList.length);
         this.addActivityFormItem.details_url_list.splice(0, this.addActivityFormItem.details_url_list.length);
