@@ -332,8 +332,12 @@
       this.ajax.getWxAuthList({
         data: {},
         success: (res) => {
-          this.cityList = res.body;
-          this.appid = res.body[0].appid;
+          this.cityList = res.body.filter((k) => {
+            if (k.type !== 2) {
+              return k;
+            }
+          });
+          this.appid = this.cityList[0].appid;
           let day1 = new Date();
           let y = day1.getFullYear();
           let m = day1.getMonth() + 1;

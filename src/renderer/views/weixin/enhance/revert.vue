@@ -169,8 +169,12 @@
           data: {},
           success: (res) => {
             this.is_Loading = false;
-            this.cityList = res.body;
-            this.model2 = res.body[0].appid;
+            this.cityList = res.body.filter((k) => {
+              if (k.type !== 2) {
+                return k;
+              }
+            });
+            this.model2 = this.cityList[0].appid;
             this.getMessageRuleList();
           },
           error: (res) => {

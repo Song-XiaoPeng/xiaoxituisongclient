@@ -362,9 +362,11 @@
       },
       created () {
         this.userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
-        Bus.$on('change', (k) => {
+        Bus.$on('change', (k, obj, obj1, t) => {
           this.clientData = k;
-          this.getRemindList();
+          if (t !== 'r') {
+            this.getRemindList();
+          }
         });
         // Bus.$on('is_remind', (k, obj, user) => {
         // this.getRemindList();

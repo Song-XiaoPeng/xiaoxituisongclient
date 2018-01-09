@@ -692,8 +692,11 @@
       this.ajax.getWxAuthList({
         success: (res) => {
           this.appList.splice(0, this.appList.length);
-
-          this.appList = res.body;
+          this.appList = res.body.filter((k) => {
+            if (k.type !== 2) {
+              return k;
+            }
+          });
         },
         error: () => {}
       });

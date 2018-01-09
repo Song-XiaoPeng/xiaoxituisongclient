@@ -45,8 +45,9 @@
                <tr >
                    <th style="background-color: #e6f1fe">logo</th>
                    <!--<th style="background-color: #e6f1fe">类型</th>-->
-                   <th style="background-color: #e6f1fe">名称</th>
+                   <th style="background-color: #e6f1fe">类型</th>
                    <th style="background-color: #e6f1fe">公众号或小程序所属公司名称</th>
+                   <th style="background-color: #e6f1fe">公司名称</th>
                    <th style="background-color: #e6f1fe">二维码</th>
                    <th style="background-color: #e6f1fe">证书</th>
                    <!-- <th>能否接单</th> dwa231d23wa1d -->
@@ -239,7 +240,11 @@
           data: {},
           success: (res) => {
             this.is_Loading = false;
-            this.data6 = res.body;
+            this.data6 = res.body.filter((k) => {
+              if (k.type !== 2) {
+                return k;
+              }
+            });
           },
           error: (res) => {
             this.is_Loading = false;

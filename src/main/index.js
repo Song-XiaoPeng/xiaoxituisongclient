@@ -92,6 +92,7 @@ app.on('activate', () => {
 
 // 下载文件
 ipcMain.on('download-btn', (e, args) => {
+  console.log(args);
   download(
     BrowserWindow.getFocusedWindow(),
     args.url,

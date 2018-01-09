@@ -211,6 +211,11 @@
         <!-- 选择分组弹窗 -->
         <Modal v-model="modal6" title="创建同步任务" @on-ok="synchronizationFun">
             <Form label-position="left" :label-width="100">
+                <FormItem label="公共平台">
+                    <Select class="" v-model="model2">
+                        <Option v-for="item in cityList" :value="item.appid" :key="item.appid">{{ item.nick_name }}</Option>
+                    </Select>
+                </FormItem>
                 <FormItem label="任务类型">
                     <Select v-model="synchronization" style="width:200px">
                         <Option :value=1 >同步粉丝列表</Option>
@@ -314,7 +319,8 @@
         userArr: [],
         group_id: '',
         synchronization: 1,
-        GroupId: ''
+        GroupId: '',
+        model2: ''
       };
     },
     mounted () {
@@ -463,7 +469,7 @@
       synchronizationFun () {
         this.ajax.syncWxUser({
           data: {
-            appid: this.model1,
+            appid: this.model2,
             type: this.synchronization
           },
           success: (res) => {
@@ -510,8 +516,12 @@
       this.ajax.getWxAuthList({
         data: {},
         success: (res) => {
-          this.cityList = res.body;
-          this.model1 = res.body[0].appid;
+          this.cityList = res.body.filter((k) => {
+            if (k.type !== 2) {
+              return k;
+            }
+          });
+          this.model1 = this.cityList[0].appid;
           this.getWxGroup();
           this.getTaskList();
         },

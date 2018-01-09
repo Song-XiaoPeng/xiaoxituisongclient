@@ -50,7 +50,11 @@
         <span  v-if="tabVal == 'name3'">企业常用话术</span>
         <span  v-if="tabVal == 'name4'">标签设置</span>
         <!--<Button v-show="tabVal == 'name3'" type="primary" class="f-r" style="margin: 17px"  size="small" @click="addConversationRule = true">新建分组</Button>-->
+        <Button v-show="tabVal == 'name3'" type="primary" class="f-r" style="margin: 17px"  size="small" @click="popup4 = true">企业话术分组操作</Button>
         <Button v-show="tabVal == 'name3'" type="primary" class="f-r" style="margin: 17px"  size="small" @click="addConversationContent = true">新建企业话术内容</Button>
+        <Select v-show="tabVal == 'name3'" v-model="firmGroupingId1" style="width: 200px">
+          <Option :value="k.reply_group_id" v-for="(k, i) in cityList1" :key="i">{{k.group_name}}</Option>
+        </Select>
       </div>
 
 
@@ -194,6 +198,11 @@
 
     <Modal v-model="addConversationContent" title="新建话术内容" @on-ok="addEnterpriseTxtFun">
       <Form :label-width="80">
+        <FormItem label="分组">
+          <Select v-model="firmGroupingId">
+            <Option :value="k.reply_group_id" v-for="(k, i) in cityList1" :key="i">{{k.group_name}}</Option>
+          </Select>
+        </FormItem>
         <FormItem label="内容">
           <Input v-model="enterpriseData.text" placeholder="请输入内容" :autosize="{minRows: 4,maxRows: 8}" type="textarea"></Input>
         </FormItem>
@@ -217,7 +226,7 @@
       <Form :label-width="80">
         <FormItem label="分组">
           <Select v-model="group_id" style="width:200px">
-            <Option v-for="item in cityList" :value="item.label_group_id" :key="item.label_group_id">{{ item.group_name }}</Option>
+            <Option v-for="(item, i) in cityList" :value="item.label_group_id" :key="i">{{ item.group_name }}</Option>
           </Select>
         </FormItem>
       </Form>
@@ -240,6 +249,32 @@
     <!-- edn分组操作 弹窗 123132-->
 
 
+    <!-- 企业快捷回复分组 弹窗-->
+    <Modal v-model="popup4" title="企业快捷回复分组">
+     <div style="max-height: 400px;overflow: auto;">
+       <div style="margin-bottom: 5px;"><Button type="primary" @click="popup5 = true">创建企业快捷回复分组</Button></div>
+       <div>
+         <Table :columns="GroupColumns1" :loading="is_Loading" :data="cityList1"></Table>
+       </div>
+     </div>
+    </Modal>
+    <!-- edn企业快捷回复分组 -->
+
+
+    <!-- 创建企业快捷回复分组 弹窗-->
+    <Modal v-model="popup5" title="创建企业快捷回复分组" @on-ok="addCommonQuickReplyGroup">
+      <div style="margin-bottom: 5px;">
+        <Form :label-width="80">
+          <FormItem label="组名称">
+            <Input v-model="firmGroupingName" placeholder="请输入"></Input>
+          </FormItem>
+        </Form>
+      </div>
+    </Modal>
+    <!-- edn创建企业快捷回复分组 弹窗 123132-->
+
+
+
 
     <!-- 加载状态 -->
     <!--<Spin fix v-if="is_Loading">-->
@@ -253,6 +288,11 @@
   export default {
     data () {
       return {
+        firmGroupingName: '',
+        firmGroupingId: '',
+        firmGroupingId1: '',
+        popup5: false,
+        popup4: false,
         popup3: false,
         addConversationContent: false,
         addConversationRule: false,
@@ -441,6 +481,36 @@
             }
           }
         ],
+        GroupColumns1: [
+          {
+            title: '分组名',
+            key: 'group_name',
+            align: 'center'
+          },
+          {
+            title: '操作',
+            key: 'operation',
+            align: 'center',
+            render: (h, params) => {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'error',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.delCommonQuickReplyGroup(params.row.reply_group_id, params.index);
+                    }
+                  }
+                }, '删除')
+              ]);
+            }
+          }
+        ],
         labelTableData: [],
         is_Loading: false,
         popup1: false,
@@ -448,6 +518,7 @@
         LabelGroupListData: [],
         group_id: '',
         cityList: [],
+        cityList1: [],
         labelGroupContent: '',
         label_id: '',
         is_group_label: false,
@@ -465,7 +536,58 @@
     },
     mounted () {
     },
+    watch: {
+      firmGroupingId1: function (v) {
+        this.getEnterpriseTxtListFun();
+      }
+    },
     methods: {
+      // 删除企业话术分组 sdsad
+      delCommonQuickReplyGroup (id, i) {
+        this.ajax.delCommonQuickReplyGroup({
+          data: {
+            reply_group_id: id
+          },
+          success: (res) => {
+            this.$Message.success(`操作成功`);
+            this.cityList1.splice(i, 1);
+          },
+          error: (res) => {
+            this.$Message.warning(res.meta.message);
+          }
+        });
+      },
+      // 获取企业话术分组
+      getCommonQuickReplyGroup () {
+        this.ajax.getCommonQuickReplyGroup({
+          data: {
+          },
+          success: (res) => {
+            this.cityList1 = res.body;
+            this.firmGroupingId1 = this.cityList1[0].reply_group_id;
+            this.firmGroupingId = this.cityList1[0].reply_group_id;
+          },
+          error: (res) => {
+            this.$Message.warning(res.meta.message);
+          }
+        });
+      },
+      // 创建企业话术分组
+      addCommonQuickReplyGroup () {
+        this.ajax.addCommonQuickReplyGroup({
+          data: {
+            reply_group_id: '',
+            group_name: this.firmGroupingName
+          },
+          success: () => {
+            this.getCommonQuickReplyGroup();
+            this.$Message.success(`操作成功`);
+          },
+          error: (res) => {
+            this.$Message.warning(res.meta.message);
+          }
+        });
+      },
       // tab 切换
       tabFun (v) {
         this.tabVal = v;
@@ -706,6 +828,7 @@
       },
       // 添加企业数据
       addEnterpriseTxtFun () {
+        Object.assign(this.enterpriseData, {reply_group_id: this.firmGroupingId});
         this.ajax.setCommonQuickReplyText({
           data: this.enterpriseData,
           success: (res) => {
@@ -723,7 +846,8 @@
       getEnterpriseTxtListFun () {
         this.ajax.getEnterpriseSentence({
           data: {
-            page: this.pageData1.page
+            page: this.pageData1.page,
+            reply_group_id: this.firmGroupingId1
           },
           success: (res) => {
             this.replyTableData = res.body.data_list;
@@ -774,9 +898,10 @@
     created () {
       this.getLabelListFun();
       this.getSessionRule();
-      this.getEnterpriseTxtListFun();
+      // this.getEnterpriseTxtListFun();
       this.getCustomerResourcesRule();
       this.getLabelGroupListFun();
+      this.getCommonQuickReplyGroup();
     }
   };
 </script>

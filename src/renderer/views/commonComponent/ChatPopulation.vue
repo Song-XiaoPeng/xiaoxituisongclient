@@ -501,7 +501,7 @@
                 remind: false,
                 type: 'close'
               };
-              Bus.$emit('change', this.messageData, obj, {});
+              Bus.$emit('change', this.messageData, obj, {}, 'r');
               this.is_Loading = false;
               this.clientName = '';
               this.delMessRecordFun();

@@ -671,7 +671,7 @@
             }
           });
         },
-        // 客户池分组改变方法
+        // 保存
         saveFun (v) {
           let arr = this.selPurposeData.map((k) => {
             return k.product_id;
@@ -683,6 +683,7 @@
           this.ajax.setCustomerInfo({
             data: this.formData,
             success: (res) => {
+              this.getWxCustomerInfo(this.clientData);
               this.$Message.success('操作成功');
             },
             error: (res) => {
@@ -701,7 +702,7 @@
           // });
           // }
         },
-        // 获取客户信息
+        // 获取客户信息dwad
         getClientFun (res) {
           this.formData.birthday = res.birthday;
           this.formData.company_id = res.wx_company_id;
@@ -827,6 +828,41 @@
         pageFun (v) {
           this.pageData.page = v;
           this.getProductList();
+        },
+        // 获取客户信息dwadwaddwadwad
+        getWxCustomerInfo (obj) {
+          this.formData.birthday = '';
+          this.formData.company_id = '';
+          this.formData.customer_type = '';
+          this.formData.product_name = '';
+          this.formData.product_id = '';
+          this.formData.desc = '';
+          this.formData.uid = '';
+          // this.nameArr.push(res.body);
+          this.formData.real_name = '';
+          this.formData.real_phone = '';
+          this.formData.wx_company_name = '';
+          this.formData.wx_number = '';
+          this.formData.email = '';
+          this.formData.tel = '';
+          this.formData.contact_address = '';
+          this.formData.customer_info_id = '';
+          this.formData.real_sex = '';
+          this.formData.wx_user_group_id = '';
+          this.formData.wx_user_group_name = '';
+          this.selPurposeData = [];
+          this.ajax.getWxCustomerInfo({
+            data: {
+              openid: obj.openid,
+              appid: obj.appid
+            },
+            success: (res) => {
+              this.getClientFun(res.body);
+            },
+            error: (res) => {
+              this.$Message.warning(res.meta.message);
+            }
+          });
         }
       },
       destroyed (s) {
@@ -837,7 +873,11 @@
         this.labelGroupList();
         // Bus.$off();
         Bus.$on('WxAuthList', (k) => {
-          this.WxAuthList = k.body;
+          this.WxAuthList = k.body.filter((k) => {
+            if (k.type !== 2) {
+              return k;
+            }
+          });
           this.getWxGroup();
         });
         Bus.$on('change', (k, o) => {
@@ -854,8 +894,8 @@
           this.is_CRM = o ? o.is_CRM : false;
           this.clientData = k;
           let obj = k.customer_info ? k.customer_info : k;
-          this.getClientFun(obj);
           this.getWxUserInfo();
+          this.getWxCustomerInfo(obj);
         });
         this.getProductList();
       }

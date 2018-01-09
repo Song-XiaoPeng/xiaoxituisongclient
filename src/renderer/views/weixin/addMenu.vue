@@ -1163,8 +1163,12 @@
       this.ajax.getWxAuthList({
         data: {},
         success: (res) => {
-          this.cityList = res.body;
-          this.model1 = res.body[0].appid;
+          this.cityList = res.body.filter((k) => {
+            if (k.type !== 2) {
+              return k;
+            }
+          });
+          this.model1 = this.cityList[0].appid;
           this.getUserList();
         },
         error: (res) => {

@@ -531,23 +531,13 @@
           },
           success: (res) => {
             this.is_Loading = false;
-            this.$Spin.show({
-              render: (h) => {
-                return h('div', [
-                  h('div', '正在创建链接。。。')
-                ]);
+            this.$router.push({
+              name: 'ServeIndex',
+              query: {
+                type: 'clue',
+                data: res
               }
             });
-            setTimeout(() => {
-              this.$Spin.hide();
-              this.$router.push({
-                name: 'ServeIndex',
-                query: {
-                  type: 'clue',
-                  data: res
-                }
-              });
-            }, 3000);
           },
           error: (res) => {
             this.is_Loading = false;

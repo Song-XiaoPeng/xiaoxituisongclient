@@ -932,7 +932,11 @@
         this.getLabelList();
         this.labelGroupList();
         Bus.$on('WxAuthList', (k) => {
-          this.WxAuthList = k.body;
+          this.WxAuthList = k.body.filter((k) => {
+            if (k.type !== 2) {
+              return k;
+            }
+          });
           this.getWxGroup();
         });
         Bus.$on('change', (k, o, u) => {

@@ -824,7 +824,7 @@ ajax.setQuickReplyText = (obj) => {
 
 // 获取快捷回复列表
 ajax.getQuickReplyList = (obj) => {
-  util.ajax.get('/api/v1/message/Common/getQuickReplyList', obj.data).then(function (response) {
+  util.ajax.post('/api/v1/message/Common/getQuickReplyList?reply_group_id=' + obj.data.reply_group_id).then(function (response) {
     if (response.data) {
       if (response.data.meta.code === 200) {
         obj.success(response.data);
@@ -841,7 +841,7 @@ ajax.getQuickReplyList = (obj) => {
 };
 
 // 删除快捷回复 语句
-ajax.delQuickReply = (obj) => {
+ajax.delUserQuickReply = (obj) => {
   util.ajax.post('/api/v1/message/Common/delQuickReply', obj.data).then(function (response) {
     if (response.data) {
       if (response.data.meta.code === 200) {
@@ -2111,6 +2111,108 @@ ajax.updatePassword = (obj) => {
 // 腾讯地图逆地址解析
 ajax.geocoder = (obj) => {
   util.ajax.post('/api/v1/map/Address/geocoder', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 创建企业快捷回复分组
+ajax.addCommonQuickReplyGroup = (obj) => {
+  util.ajax.post('/api/v1/setting/Rule/addCommonQuickReplyGroup', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 添加个人快捷回复分组
+ajax.addUserQuickReplyGroup = (obj) => {
+  util.ajax.post('/api/v1/setting/Rule/addUserQuickReplyGroup', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 获取个人快捷回复分组
+ajax.getUserQuickReplyGroup = (obj) => {
+  util.ajax.get('/api/v1/setting/Rule/getUserQuickReplyGroup', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 删除个人快捷回复分组
+ajax.delUserQuickReplyGroup = (obj) => {
+  util.ajax.post('/api/v1/setting/Rule/delUserQuickReplyGroup', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 获取企业快捷回复分组
+ajax.getCommonQuickReplyGroup = (obj) => {
+  util.ajax.get('/api/v1/setting/Rule/getCommonQuickReplyGroup', obj.data).then(function (response) {
+    if (response.data) {
+      if (response.data.meta.code === 200) {
+        obj.success(response.data);
+      } else {
+        obj.error(response.data);
+      }
+    } else {
+      obj.error(response.data);
+    }
+  }).catch(function (error) {
+    // obj.error(error);
+    console.log(error);
+  });
+};
+// 获取企业快捷回复分组
+ajax.delCommonQuickReplyGroup = (obj) => {
+  util.ajax.post('/api/v1/setting/Rule/delCommonQuickReplyGroup', obj.data).then(function (response) {
     if (response.data) {
       if (response.data.meta.code === 200) {
         obj.success(response.data);
