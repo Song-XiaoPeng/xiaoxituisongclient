@@ -59,6 +59,12 @@
       }
     }
   }
+
+  .modal-style {
+    width: 101%;
+    height: 500px;
+    overflow: auto;
+  }
 </style>
 
 <template>
@@ -89,7 +95,7 @@
     </Modal>
 
     <Modal v-model="addActivity" title="添加编辑红包活动" @on-ok="addRedEnvelopes">
-      <Form :label-width="85">
+      <Form :label-width="85" class="modal-style">
         <Row>
           <Col span="12">
             <FormItem label="公众号">
@@ -118,6 +124,16 @@
         </Row>
         <FormItem label="活动时间">
           <DatePicker type="datetimerange" placeholder="请选择活动时间段" v-model="timeSlot" style="width:403px" @on-change="selectTime"></DatePicker>
+        </FormItem>
+        <FormItem label="领取规则">
+          <RadioGroup v-model="addActivityFormItem.payment" :disabled="isEdit">
+            <Radio :label="1">限制领取</Radio>
+            <Radio :label="2">限制每天领取</Radio>
+            <Radio :label="3">不限制</Radio>
+          </RadioGroup>
+        </FormItem>
+        <FormItem label="领取次数" v-if="addActivityFormItem.payment == 1 || addActivityFormItem.payment == 2">
+          <Input placeholder="请输入限制领取次数" v-model="addActivityFormItem.receive_count"></Input>
         </FormItem>
         <Row>
           <Col span="12">
@@ -168,8 +184,8 @@
             </FormItem>
           </Col>
         </Row>
-        <Row v-if="addActivityFormItem.is_share == 1">
-          <Col span="7">
+        <Row>
+          <Col span="7" v-if="addActivityFormItem.is_share == 1">
             <FormItem label="分享封面">
               <Upload 
                 ref="upload"
@@ -189,23 +205,33 @@
               </Upload>
             </FormItem>
           </Col>
-          <Col span="16" offset="1" style="line-height:30px;">
-            <Row>
-              <Col span="24">
-                <FormItem label="分享标题">
-                  <Input placeholder="请输入分享标题" v-model="addActivityFormItem.share_title"></Input>
-                </FormItem>
-              </Col>
-            </Row>
-            <Row>
-              <Col span="24">
-                <FormItem label="分享链接">
-                  <Input placeholder="请输入分享链接" v-model="addActivityFormItem.share_url"></Input>
-                </FormItem>
-              </Col>
-            </Row>
+          <Col span="7" v-if="addActivityFormItem.is_follow == 1">
+            <FormItem label="关注二维码">
+              <Upload 
+                ref="upload"
+                :show-upload-list="false"
+                :on-success="handleQrCodeSuccess"
+                :format="['jpg','jpeg','png']"
+                :max-size="2048"
+                :on-format-error="handleCoverFormatError"
+                :on-exceeded-size="handleCoverMaxSize"
+                :data="{resources_type: 4}"
+                :headers="{token: userInfo.token}"
+                type="drag"
+                action="http://kf.lyfz.net/api/v1/we_chat/WxOperation/uploadResources">
+                <div style="width:58px; height:58px; line-height:58px; background-size: cover;" :style="{backgroundImage: 'url(' + qrCodeUrl + ')'}">
+                  <Icon type="camera" size="20" v-if="!qrCodeUrl"></Icon>
+                </div>
+              </Upload>
+            </FormItem>
           </Col>
         </Row>
+        <FormItem label="分享标题" v-if="addActivityFormItem.is_share == 1">
+          <Input placeholder="请输入分享标题" v-model="addActivityFormItem.share_title"></Input>
+        </FormItem>
+        <FormItem label="分享链接" v-if="addActivityFormItem.is_share == 1">
+          <Input placeholder="请输入分享链接" v-model="addActivityFormItem.share_url"></Input>
+        </FormItem>
         <FormItem label="详情图">
           <Upload
             ref="upload"
@@ -283,6 +309,7 @@
         ],
         imgName: '',
         coverUrl: '',
+        qrCodeUrl: '',
         userInfo: null,
         visible: false,
         isEdit: false,
@@ -301,7 +328,7 @@
         addActivityFormItem: {
           is_open: 1,
           is_follow: 1,
-          is_share: -1,
+          is_share: 1,
           amount_type: 1,
           activity_id: '',
           share_url: '',
@@ -315,7 +342,10 @@
           start_time: '',
           end_time: '',
           share_cover: '',
+          qrcode: '',
           share_title: '',
+          payment: 3,
+          receive_count: 1,
           details_list: [],
           details_url_list: []
         },
@@ -478,6 +508,10 @@
         this.coverUrl = file.response.body.url;
         this.addActivityFormItem.share_cover = file.response.body.resources_id;
       },
+      handleQrCodeSuccess (res, file) {
+        this.qrCodeUrl = file.response.body.url;
+        this.addActivityFormItem.qrcode = file.response.body.resources_id;
+      },
       handleCoverFormatError (file) {
         this.$Notice.warning({
           title: '文件类型不正确',
@@ -506,7 +540,7 @@
               this.addActivityFormItem[index] = 1;
               break;
             case 'is_share':
-              this.addActivityFormItem[index] = -1;
+              this.addActivityFormItem[index] = 1;
               break;
             case 'amount_type':
               this.addActivityFormItem[index] = 1;
@@ -517,12 +551,20 @@
             case 'details_url_list':
               this.addActivityFormItem[index] = [];
               break;
+            case 'payment':
+              this.addActivityFormItem[index] = 3;
+              break;
+            case 'receive_count':
+              this.addActivityFormItem[index] = 1;
+              break;
             default:
               this.addActivityFormItem[index] = '';
           }
         }
 
         this.coverUrl = '';
+
+        this.qrCodeUrl = '';
 
         this.uploadList.splice(0, this.uploadList.length);
 
@@ -544,7 +586,10 @@
             end_time: this.addActivityFormItem.end_time,
             is_follow: this.addActivityFormItem.is_follow,
             appid: this.addActivityFormItem.appid,
+            qrcode: this.addActivityFormItem.qrcode,
             is_share: this.addActivityFormItem.is_share,
+            receive_count: this.addActivityFormItem.receive_count,
+            payment: this.addActivityFormItem.payment,
             share_url: this.addActivityFormItem.share_url,
             share_title: this.addActivityFormItem.share_title,
             share_cover: this.addActivityFormItem.share_cover,
@@ -591,6 +636,8 @@
               obj.appid = item.appid;
               obj.is_share = item.is_share;
               obj.share_url = item.share_url;
+              obj.qrcode = item.qrcode;
+              obj.qrcode_url = item.qrcode_url;
               obj.share_cover = item.share_cover;
               obj.amount_upper_limit = item.amount_upper_limit;
               obj.already_amount = item.already_amount;
@@ -598,6 +645,8 @@
               obj.details_list = item.details_list;
               obj.app_name = item.app_name;
               obj.state = item.state;
+              obj.payment = item.payment;
+              obj.receive_count = item.receive_count;
               obj.share_cover_url = item.share_cover_url;
               obj.details_url_list = item.details_url_list;
               obj.share_title = item.share_title;
@@ -640,6 +689,8 @@
         this.addActivityFormItem.start_time = this.staffData[index].start_time;
         this.addActivityFormItem.end_time = this.staffData[index].end_time;
         this.addActivityFormItem.share_cover = this.staffData[index].share_cover;
+        this.addActivityFormItem.payment = this.staffData[index].payment;
+        this.addActivityFormItem.receive_count = this.staffData[index].receive_count;
         this.addActivityFormItem.details_list = this.staffData[index].details_list;
         this.addActivityFormItem.share_title = this.staffData[index].share_title;
         this.addActivityFormItem.amount_type = this.staffData[index].amount_type;
@@ -656,6 +707,7 @@
         }
 
         this.coverUrl = this.staffData[index].share_cover_url;
+        this.qrCodeUrl = this.staffData[index].qrcode_url;
 
         this.timeSlot.splice(0, this.timeSlot.length);
 
