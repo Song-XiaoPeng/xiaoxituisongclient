@@ -190,13 +190,6 @@ let menuData = [
           sonMenu: []
         },
         {
-          model_id: 13,
-          menuTitle: '带参二维码',
-          route: 'yard',
-          routeBreadcrumb: [],
-          sonMenu: []
-        },
-        {
           model_id: 14,
           menuTitle: '图文群发',
           route: 'Mass',
@@ -214,6 +207,13 @@ let menuData = [
           model_id: 27,
           menuTitle: '扫码红包',
           route: 'redEnvelopes',
+          routeBreadcrumb: [],
+          sonMenu: []
+        },
+        {
+          model_id: 13,
+          menuTitle: '带参二维码',
+          route: 'yard',
           routeBreadcrumb: [],
           sonMenu: []
         }
