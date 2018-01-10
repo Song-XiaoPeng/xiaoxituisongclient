@@ -686,6 +686,7 @@
         this.addActivityFormItem.amount_upper_limit = this.staffData[index].amount_upper_limit;
         this.addActivityFormItem.amount = this.staffData[index].amount;
         this.addActivityFormItem.appid = this.staffData[index].appid;
+        this.addActivityFormItem.qrcode = this.staffData[index].qrcode;
         this.addActivityFormItem.start_time = this.staffData[index].start_time;
         this.addActivityFormItem.end_time = this.staffData[index].end_time;
         this.addActivityFormItem.share_cover = this.staffData[index].share_cover;
