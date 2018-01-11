@@ -440,6 +440,23 @@
         clientData: {},
         columns4: [
           {
+            title: '客户类型',
+            ellipsis: true,
+            render: (h, p) => {
+              return h('span', '追销客户');
+            }
+          },
+          {
+            title: '产品',
+            ellipsis: true,
+            render: (h, p) => {
+              let names = p.row.product_list.map((k) => {
+                return k.product_name;
+              });
+              return h('span', names.join());
+            }
+          },
+          {
             title: '微信用户昵称',
             render: (h, p) => {
               return h('div', [
@@ -460,34 +477,18 @@
             }
           },
           {
-            title: '真实姓名',
-            ellipsis: true,
-            render: (h, p) => {
-              return h('span', p.row.real_name === null || p.row.real_name === '' ? '--' : p.row.real_name);
-            }
-          },
-          {
             title: '公司名称',
             ellipsis: true,
             render: (h, p) => {
               return h('span', p.row.wx_comapny_name === null || p.row.wx_comapny_name === '' ? '--' : p.row.wx_comapny_name);
             }
           },
+
           {
-            title: '产品',
+            title: '真实姓名',
             ellipsis: true,
             render: (h, p) => {
-              let names = p.row.product_list.map((k) => {
-                return k.product_name;
-              });
-              return h('span', names.join());
-            }
-          },
-          {
-            title: '所在城市',
-            ellipsis: true,
-            render: (h, p) => {
-              return h('span', p.row.province + ',' + p.row.city);
+              return h('span', p.row.real_name === null || p.row.real_name === '' ? '--' : p.row.real_name);
             }
           },
           {

@@ -424,6 +424,13 @@
             }
           },
           {
+            title: '产品',
+            ellipsis: true,
+            render: (h, p) => {
+              return h('span', p.row.product_name === null || p.row.product_name === '' ? '--' : p.row.product_name);
+            }
+          },
+          {
             title: '微信用户昵称',
             render: (h, p) => {
               return h('div', [
@@ -444,24 +451,17 @@
             }
           },
           {
-            title: '真实姓名',
-            ellipsis: true,
-            render: (h, p) => {
-              return h('span', p.row.real_name === null || p.row.real_name === '' ? '--' : p.row.real_name);
-            }
-          },
-          {
-            title: '产品',
-            ellipsis: true,
-            render: (h, p) => {
-              return h('span', p.row.product_name === null || p.row.product_name === '' ? '--' : p.row.product_name);
-            }
-          },
-          {
             title: '公司名称',
             ellipsis: true,
             render: (h, p) => {
               return h('span', p.row.wx_comapny_name === null || p.row.wx_comapny_name === '' ? '--' : p.row.wx_comapny_name);
+            }
+          },
+          {
+            title: '真实姓名',
+            ellipsis: true,
+            render: (h, p) => {
+              return h('span', p.row.real_name === null || p.row.real_name === '' ? '--' : p.row.real_name);
             }
           },
           {
@@ -472,18 +472,16 @@
             }
           },
           {
-            title: '所在城市',
-            ellipsis: true,
-            render: (h, p) => {
-              return h('span', p.row.province + ',' + p.row.city);
-            }
-          },
-          {
             title: '进入公共号次数',
             ellipsis: true,
             render: (h, p) => {
               return h('span', p.row.get_into_count);
             }
+          },
+          {
+            title: '负责人',
+            ellipsis: true,
+            key: 'customer_service_name'
           },
           {
             title: '最近沟通时间',
@@ -512,6 +510,20 @@
         data1: [],
         columns5: [
           {
+            title: '客户类型',
+            ellipsis: true,
+            render: (h, p) => {
+              return h('span', '意向客户');
+            }
+          },
+          {
+            title: '产品',
+            ellipsis: true,
+            render: (h, p) => {
+              return h('span', p.row.product_name === null || p.row.product_name === '' ? '--' : p.row.product_name);
+            }
+          },
+          {
             title: '微信用户昵称',
             render: (h, p) => {
               return h('div', [
@@ -532,27 +544,17 @@
             }
           },
           {
-            title: '真实姓名',
-            ellipsis: true,
-            render: (h, p) => {
-              return h('span', p.row.real_name === null || p.row.real_name === '' ? '--' : p.row.real_name);
-            }
-          },
-          {
-            title: '产品',
-            ellipsis: true,
-            render: (h, p) => {
-              let names = p.row.product_list.map((k) => {
-                return k.product_name;
-              });
-              return h('span', names.join());
-            }
-          },
-          {
             title: '公司名称',
             ellipsis: true,
             render: (h, p) => {
               return h('span', p.row.wx_comapny_name === null || p.row.wx_comapny_name === '' ? '--' : p.row.wx_comapny_name);
+            }
+          },
+          {
+            title: '真实姓名',
+            ellipsis: true,
+            render: (h, p) => {
+              return h('span', p.row.real_name === null || p.row.real_name === '' ? '--' : p.row.real_name);
             }
           },
           {
@@ -563,18 +565,16 @@
             }
           },
           {
-            title: '所在城市',
-            ellipsis: true,
-            render: (h, p) => {
-              return h('span', p.row.province + ',' + p.row.city);
-            }
-          },
-          {
             title: '进入公共号次数',
             ellipsis: true,
             render: (h, p) => {
               return h('span', p.row.get_into_count);
             }
+          },
+          {
+            title: '负责人',
+            ellipsis: true,
+            key: 'customer_service_name'
           },
           {
             title: '最近沟通时间',

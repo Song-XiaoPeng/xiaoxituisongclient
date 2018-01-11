@@ -371,6 +371,23 @@
         clientData: {},
         columns4: [
           {
+            title: '客户类型',
+            ellipsis: true,
+            render: (h, p) => {
+              return h('span', '订单客户');
+            }
+          },
+          {
+            title: '产品',
+            ellipsis: true,
+            render: (h, p) => {
+              let names = p.row.product_list.map((k) => {
+                return k.product_name;
+              });
+              return h('span', names.join());
+            }
+          },
+          {
             title: '微信用户昵称',
             render: (h, p) => {
               return h('div', [
@@ -391,13 +408,6 @@
             }
           },
           {
-            title: '真实姓名',
-            ellipsis: true,
-            render: (h, p) => {
-              return h('span', p.row.real_name === null || p.row.real_name === '' ? '--' : p.row.real_name);
-            }
-          },
-          {
             title: '公司名称',
             ellipsis: true,
             render: (h, p) => {
@@ -405,32 +415,22 @@
             }
           },
           {
-            title: '产品',
+            title: '真实姓名',
             ellipsis: true,
             render: (h, p) => {
-              let names = p.row.product_list.map((k) => {
-                return k.product_name;
-              });
-              return h('span', names.join());
+              return h('span', p.row.real_name === null || p.row.real_name === '' ? '--' : p.row.real_name);
             }
-          },
-          {
-            title: '所在城市',
-            ellipsis: true,
-            render: (h, p) => {
-              return h('span', p.row.province + ',' + p.row.city);
-            }
-          },
-          {
-            title: '负责人',
-            ellipsis: true,
-            key: 'customer_service_name'
           },
           {
             title: '手机号码',
             render: (h, p) => {
               return h('span', p.row.real_phone === null || p.row.real_phone === '' ? '--' : p.row.real_phone);
             }
+          },
+          {
+            title: '负责人',
+            ellipsis: true,
+            key: 'customer_service_name'
           },
           {
             title: '进入公共号次数',
