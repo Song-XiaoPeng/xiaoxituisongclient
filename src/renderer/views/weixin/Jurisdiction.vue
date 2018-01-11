@@ -221,7 +221,7 @@
         this.$Message.success('上传成功');
         this.selData.cert_path = res.body.resources_id;
       },
-      // 支付私钥文件
+      // 支付私钥文件dwdwa
       upfileKeyFun (res) {
         this.$Message.success('上传成功');
         this.selData.key_path = res.body.resources_id;
@@ -240,11 +240,7 @@
           data: {},
           success: (res) => {
             this.is_Loading = false;
-            this.data6 = res.body.filter((k) => {
-              if (k.type !== 2) {
-                return k;
-              }
-            });
+            this.data6 = res.body;
           },
           error: (res) => {
             this.is_Loading = false;

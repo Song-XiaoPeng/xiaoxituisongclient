@@ -417,8 +417,7 @@
                 h('a', {
                   style: {
                     cursor: 'pointer',
-                    textDecoration: 'underline',
-                    color: '#c3dcfc'
+                    textDecoration: 'underline'
                   },
                   on: {
                     click: () => {

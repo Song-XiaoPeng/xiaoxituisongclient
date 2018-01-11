@@ -240,7 +240,7 @@
             <Button type="info" size="small" @click="popup14 = true">添加标签</Button>
          </div>
          <div class="label-box">
-            <Tag v-for="(k, i) in labelArr" color="green" :key="i" v-if="k">{{k.label_name}}</Tag>
+            <Tag v-for="(k, i) in labelArr" color="green" :key="i" v-if="k" closable @on-close="lableCloseFun(k, i)">{{k.label_name}}</Tag>
          </div>
       </div>
 
@@ -546,6 +546,23 @@
         }
       },
       methods: {
+        // 关闭标签wdd
+        lableCloseFun (k, i) {
+          this.ajax.canelWxUserLabel({
+            data: {
+              appid: this.userData.body.user_info.appid,
+              openid: this.userData.body.user_info.openid,
+              label_id: k.label_id
+            },
+            success: () => {
+              this.labelArr.splice(i, 1);
+              this.$Message.success(`操作成功`);
+            },
+            error: (res) => {
+              this.$Message.warning(`${res.meta.message}`);
+            }
+          });
+        },
         // 标签分组改变获取标签list
         selLabelGroupFun () {
         },
