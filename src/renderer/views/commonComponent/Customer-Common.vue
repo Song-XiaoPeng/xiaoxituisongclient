@@ -157,8 +157,7 @@
                <li><span>来源：</span> <span style="color:#999">{{clientData.app_name}}</span> </li>
                <!--<li><span>公共平台</span> <span style="color:#999">哇大王</span> </li>-->
                <li><span>来访次数</span> <span style="color:#999">{{clientData.session_frequency}}</span> </li>
-               <li><Button type="info" size="small" >客户活动轨迹</Button></li>
-               <!--<li><Button type="info" size="small" @click="getGeocoderFun">客户活动轨迹</Button></li>-->
+               <li><Button type="info" size="small" @click="getGeocoderFun">客户活动轨迹</Button></li>
             </ul>
          </div>
          <!--<div class="txt-bot">-->
@@ -312,7 +311,7 @@
 
       <!-- 地图轨迹 -->
       <Modal v-model="popup15" title="轨迹" width="800">
-         <img src="" alt="">
+         <img src="http://apis.map.qq.com/uri/v1/marker?marker=coord:39.892326,116.342763;title:超好吃冰激凌;addr:手帕口桥北铁路道口&referer=myapp" alt="">
       </Modal>
       <!-- end地图轨迹 -->
 
@@ -934,7 +933,9 @@
               lng: userInfo.lng
             },
             success: (res) => {
-              this.popup15 = true;
+              Object.assign(res.body, {'coordinate': this.userData.body.position_locus});
+              this.$electron.ipcRenderer.send('map', res.body);
+              // this.popup15 = true; 213123dsadsad
             },
             error: () => {}
           });

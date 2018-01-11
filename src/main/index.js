@@ -215,3 +215,25 @@ function closeWindow () {
   $windows.length = 0;
   isClose = false;
 }
+// 注册地图事件
+ipcMain.on(`map`, (k, d) => {
+  map(d);
+});
+// 创建地图窗口
+function map (data) {
+  var win = new BrowserWindow({ title: '客户轨迹', width: 1000, height: 800, show: false, autoHideMenuBar: true });
+  win.on('closed', function () {
+    win = null;
+  });
+
+  win.loadURL(url.format({
+    pathname: path.join(__static, `/map/index.html`),
+    protocol: 'file:',
+    slashes: true
+  }));
+  win.webContents.closeDevTools();
+  win.show();
+  win.webContents.on('did-finish-load', () => {
+    win.webContents.send('information', JSON.stringify(data));
+  });
+};
