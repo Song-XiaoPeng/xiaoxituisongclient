@@ -1510,16 +1510,16 @@ ul.img-txt{
           this.elmetArr.length = 0;
           // 如果传过来客户聊天数据为空 就添加轨迹地图
           if (k.data.length === 0 && d.type === 'mess') {
-            if (user.body.user_info.lat) {
-              k.data.push({
-                message_type: -5,
-                map_label: '客户当前位置',
-                lat: user.body.user_info.lat,
-                opercode: 2,
-                lng: user.body.user_info.lng,
-                precision: user.body.user_info.precision
-              });
-            }
+            // if (user.body.user_info.lat) {
+            //   k.data.push({
+            //     message_type: -5,
+            //     map_label: '客户当前位置',
+            //     lat: user.body.user_info.lat,
+            //     opercode: 2,
+            //     lng: user.body.user_info.lng,
+            //     precision: user.body.user_info.precision
+            //   });
+            // }
           }
           this.elmetArr = k.data;
           this.clientData = k;

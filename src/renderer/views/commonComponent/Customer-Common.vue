@@ -937,7 +937,9 @@
               this.$electron.ipcRenderer.send('map', res.body);
               // this.popup15 = true; 213123dsadsad
             },
-            error: () => {}
+            error: (res) => {
+              this.$Message.warning(res.meta.message);
+            }
           });
         }
       },

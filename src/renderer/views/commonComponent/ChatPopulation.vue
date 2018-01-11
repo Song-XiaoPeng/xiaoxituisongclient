@@ -702,7 +702,6 @@
             db2.close();
             that.getWaitingTab();
           };
-          console.log(sess);
         }
         // 调用本地数据库 获取储存的数据
         // Notification.requestPermission();
