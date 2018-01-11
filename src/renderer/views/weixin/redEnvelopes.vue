@@ -90,7 +90,7 @@
       <Table :columns="qrCodeColumn" :data="qrCodeList"></Table>
 
       <div class="page-centent">
-        <Page :total="qrCodePage.total" :page-size="qrCodePage.pageSize"></Page>
+        <Page :total="qrCodePage.total" :page-size="qrCodePage.pageSize"  @on-change="checkQrcode"></Page>
       </div>
     </Modal>
 
@@ -341,6 +341,7 @@
           appid: '',
           start_time: '',
           end_time: '',
+          selectActivityId: '',
           share_cover: '',
           qrcode: '',
           share_title: '',
@@ -424,7 +425,8 @@
                   },
                   on: {
                     click: () => {
-                      this.checkQrcode(params.row.activity_id);
+                      this.selectActivityId = params.row.activity_id;
+                      this.checkQrcode(1);
                     }
                   }
                 }, '领取情况'),
@@ -717,11 +719,13 @@
 
         this.addActivity = true;
       },
-      checkQrcode (activityId) {
+      checkQrcode (page) {
+        this.qrCodePage.page = page;
+
         this.ajax.getRedEnvelopeList({
           data: {
             page: this.qrCodePage.page,
-            activity_id: activityId
+            activity_id: this.selectActivityId
           },
           success: (res) => {
             this.qrCodePage.total = parseInt(res.body.page_data.count);
